@@ -4,7 +4,10 @@ import json
 import os
 import shutil
 import subprocess
+import threading
 from fractions import Fraction
+
+from . import events
 
 EXE = ".exe" if os.name == "nt" else ""
 
@@ -52,32 +55,74 @@ def find_tools():
     raise ToolMissing("ffmpeg / ffprobe 를 찾지 못했습니다.")
 
 
+_procs = set()
+_plock = threading.Lock()
+
+
+def _spawn(cmd, **kw):
+    events.check()
+    p = subprocess.Popen(cmd, **kw)
+    with _plock:
+        _procs.add(p)
+    return p
+
+
+def release(p):
+    with _plock:
+        _procs.discard(p)
+
+
+def kill_all():
+    """Stop every running ffmpeg (used by the 'stop' button)."""
+    with _plock:
+        procs = list(_procs)
+    for p in procs:
+        try:
+            p.kill()
+        except OSError:
+            pass
+
+
+def _finish(p, cmd):
+    out, err = p.communicate()
+    release(p)
+    events.check()
+    text = (err or b"").decode("utf-8", "replace")
+    if p.returncode != 0:
+        tail = text.strip().splitlines()[-15:]
+        raise FFError("ffmpeg 실패:\n  " + " ".join(cmd[:12]) + " ...\n" + "\n".join(tail))
+    return out, text
+
+
 def run(args, cwd=None, capture=False):
     """Run ffmpeg with args (list, without the executable). Raises FFError with stderr tail."""
     cmd = [FFMPEG, "-hide_banner", "-nostdin", "-y"] + list(args)
-    proc = subprocess.run(cmd, cwd=cwd, stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
-                          stderr=subprocess.PIPE)
-    if proc.returncode != 0:
-        tail = proc.stderr.decode("utf-8", "replace").strip().splitlines()[-15:]
-        raise FFError("ffmpeg 실패:\n  " + " ".join(cmd[:12]) + " ...\n" + "\n".join(tail))
-    return proc
+    p = _spawn(cmd, cwd=cwd, stdout=subprocess.PIPE if capture else subprocess.DEVNULL, stderr=subprocess.PIPE)
+    out, _ = _finish(p, cmd)
+    return out
 
 
 def run_stderr(args, cwd=None):
     """Run ffmpeg and return stderr text (for filters that report via log, e.g. loudnorm)."""
     cmd = [FFMPEG, "-hide_banner", "-nostdin", "-y"] + list(args)
-    proc = subprocess.run(cmd, cwd=cwd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-    text = proc.stderr.decode("utf-8", "replace")
-    if proc.returncode != 0:
-        raise FFError("ffmpeg 실패:\n" + "\n".join(text.strip().splitlines()[-15:]))
-    return text
+    p = _spawn(cmd, cwd=cwd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    return _finish(p, cmd)[1]
 
 
 def popen_raw(args, cwd=None):
-    """Start ffmpeg writing raw data to stdout."""
+    """Start ffmpeg writing raw data to stdout. Call release(p) when done."""
     cmd = [FFMPEG, "-hide_banner", "-nostdin", "-v", "error"] + list(args)
     # stderr is discarded: an undrained pipe could fill up and stall ffmpeg while we read stdout
-    return subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    return _spawn(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+
+
+def communicate_raw(args, cwd=None):
+    """Run ffmpeg and return its raw stdout bytes."""
+    p = popen_raw(args, cwd=cwd)
+    data, _ = p.communicate()
+    release(p)
+    events.check()
+    return data
 
 
 def probe(path):

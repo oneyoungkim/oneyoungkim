@@ -16,14 +16,13 @@ import shutil
 
 import numpy as np
 
-from . import ff
+from . import events, ff
+from .events import log
 
 LUT_N = 33
 SAMPLE_W = 320
 
 
-def log(msg):
-    print(msg, flush=True)
 
 
 # ------------------------------------------------------------ transforms ---
@@ -84,9 +83,8 @@ def grab_frames(clip, times, chain, cwd, width=SAMPLE_W):
     frames = []
     vf = ",".join(chain + ["scale=%d:-2:flags=area" % width, "format=rgb48le"])
     for t in times:
-        p = ff.popen_raw(["-ss", "%.3f" % t, "-i", clip.path, "-frames:v", "1", "-an", "-vf", vf,
-                          "-f", "rawvideo", "-"], cwd=cwd)
-        data, _ = p.communicate()
+        data = ff.communicate_raw(["-ss", "%.3f" % t, "-i", clip.path, "-frames:v", "1", "-an", "-vf", vf,
+                                   "-f", "rawvideo", "-"], cwd=cwd)
         w = width
         n = len(data) // 6
         if n < w * 10:
@@ -314,9 +312,9 @@ def build_luts(cameras, main_kind, src_root, work, lut_dir, strength=1.0):
             log("  %s: 사용자 LUT 먼저 적용 (%s)" % (kind, os.path.basename(user_lut)))
     result = {k: dict(pre=pres.get(k), match=None) for k in cameras}
     views, notes = {}, {}
-    for kind in cameras:
-        if kind == main_kind:
-            continue
+    others = [k for k in cameras if k != main_kind]
+    for i, kind in enumerate(others):
+        events.progress(i / max(1, len(others)))
         pairs = moment_pairs(cameras, main_kind, kind, pres, work)
         if not pairs:
             log("  %s: 메인 카메라와 같은 시간대 화면이 없어 색 맞춤을 건너뜁니다" % kind)

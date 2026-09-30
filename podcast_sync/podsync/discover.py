@@ -99,10 +99,12 @@ def read_overrides(csv_path):
     return out
 
 
-def scan(root, out_dir):
-    """Return list of dicts: rel, path, kind, reason, info."""
+def scan(root, out_dir, extra_overrides=None):
+    """Return list of dicts: rel, path, kind, reason, info.
+    extra_overrides: {rel: kind} chosen in the UI; saved into 파일분류.csv."""
     csv_path = os.path.join(out_dir, CSV_NAME)
     overrides = read_overrides(csv_path)
+    picked = {rel.replace("\\", "/"): kind for rel, kind in (extra_overrides or {}).items() if kind in KINDS}
     items = []
     for path in _walk(root, {os.path.abspath(out_dir)}):
         rel = os.path.relpath(path, root).replace("\\", "/")
@@ -111,8 +113,10 @@ def scan(root, out_dir):
         except ff.FFError as exc:
             items.append(dict(rel=rel, path=path, kind="skip", reason="읽기 실패: %s" % exc, info=None))
             continue
-        if rel in overrides:
-            kind, reason = overrides[rel], "파일분류.csv"
+        if rel in picked:
+            kind, reason = picked[rel], "직접 지정"
+        elif rel in overrides:
+            kind, reason = overrides[rel], "저장된 분류"
         else:
             kind, reason = classify(path, rel, info)
         if kind != "skip" and info.duration < 3:

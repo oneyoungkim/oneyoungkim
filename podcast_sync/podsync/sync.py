@@ -21,7 +21,8 @@ import numpy as np
 from scipy.ndimage import uniform_filter1d
 from scipy.signal import butter, sosfilt
 
-from . import ff
+from . import events, ff
+from .events import log
 
 ANA_SR = 16000
 HOP = 160                      # 100 Hz envelope
@@ -69,8 +70,6 @@ class Clip:
         return self.a + self.r * vo, self.a + self.r * (vo + vd)
 
 
-def log(msg):
-    print(msg, flush=True)
 
 
 # ---------------------------------------------------------------- decoding ---
@@ -83,6 +82,8 @@ def _sig_key(clip):
 def load_analysis_audio(clips, work):
     os.makedirs(os.path.join(work, "ana"), exist_ok=True)
     for i, c in enumerate(clips, 1):
+        events.check()
+        events.progress(0.5 * (i - 1) / max(1, len(clips)))
         out = os.path.join(work, "ana", _sig_key(c) + ".f32")
         if not (os.path.isfile(out) and os.path.getsize(out) > 0):
             log("  [%d/%d] 소리 추출: %s" % (i, len(clips), c.rel))
@@ -454,6 +455,7 @@ def synchronise(clips, work):
     anchor = max(pool, key=lambda c: len(c.sig))
     idx = clips.index(anchor)
     log("  대략 위치 찾는 중 (파일 %d개 서로 비교)..." % len(clips))
+    events.progress(0.5)
     coarse_place(clips, idx)
     for c in clips:
         if c.coarse is None:
@@ -463,7 +465,12 @@ def synchronise(clips, work):
     placed = [anchor]
 
     group_a = [c for c in pool if c is not anchor and c.coarse is not None]
+    n_fit = max(1, sum(1 for c in clips if c.coarse is not None) - 1)
+    k_fit = 0
     while group_a:
+        events.check()
+        k_fit += 1
+        events.progress(0.55 + 0.45 * k_fit / n_fit)
         nxt = max(group_a, key=lambda c: _overlap(c, placed))
         group_a.remove(nxt)
         log("  정밀 정렬: %s" % nxt.rel)
@@ -473,6 +480,9 @@ def synchronise(clips, work):
     for c in clips:
         if c in ref or c.coarse is None:
             continue
+        events.check()
+        k_fit += 1
+        events.progress(0.55 + 0.45 * min(1.0, k_fit / n_fit))
         log("  정밀 정렬: %s" % c.rel)
         c.diag = fine_fit(c, ref, two_cluster=False)
         if mics and not c.is_mic:

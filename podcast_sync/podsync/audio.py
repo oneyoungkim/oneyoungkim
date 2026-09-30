@@ -18,15 +18,14 @@ import soxr
 from scipy.ndimage import maximum_filter1d
 from scipy.signal import filtfilt, lfilter
 
-from . import ff
+from . import events, ff
+from .events import log
 
 SR = 48000
 CTRL = 48                      # 1 kHz control rate for the automixer
 TARGET_SPEECH_DB = -23.0
 
 
-def log(msg):
-    print(msg, flush=True)
 
 
 # ------------------------------------------------------------- channels ---
@@ -34,9 +33,8 @@ def log(msg):
 def _snippet(clip, seconds=60.0):
     dur = clip.info.audio_duration
     start = max(0.0, dur / 2 - seconds / 2)
-    p = ff.popen_raw(["-ss", "%.3f" % start, "-t", "%.3f" % seconds, "-i", clip.path, "-map", "0:a:0",
-                      "-vn", "-ar", "16000", "-f", "f32le", "-"])
-    data, _ = p.communicate()
+    data = ff.communicate_raw(["-ss", "%.3f" % start, "-t", "%.3f" % seconds, "-i", clip.path, "-map", "0:a:0",
+                               "-vn", "-ar", "16000", "-f", "f32le", "-"])
     ch = max(1, clip.info.channels)
     x = np.frombuffer(data, dtype=np.float32)
     return x[: len(x) // ch * ch].reshape(-1, ch)
@@ -120,6 +118,8 @@ def _decode_into(src, lane_mm, R0, n_total):
     block = sr_in * nch * 4 * 2
     placed = 0
     while True:
+        if events.cancelled():
+            break
         buf = p.stdout.read(block)
         last = len(buf) < block
         x = np.frombuffer(buf, dtype=np.float32)
@@ -140,6 +140,8 @@ def _decode_into(src, lane_mm, R0, n_total):
     p.stdout.close()
     p.kill()
     p.wait()
+    ff.release(p)
+    events.check()
     return placed
 
 
@@ -147,6 +149,8 @@ def build_lanes(sources, R0, R1, work):
     n_total = int(round((R1 - R0) * SR))
     lane_names = sorted({s["lane"] for s in sources})
     raw = {}
+    n_src = max(1, len(sources))
+    done = 0
     for ln in lane_names:
         path = os.path.join(work, "lane_%s.raw" % ln)
         mm = np.memmap(path, dtype=np.float32, mode="w+", shape=(n_total,))
@@ -156,6 +160,8 @@ def build_lanes(sources, R0, R1, work):
             if s1 <= R0 or s0 >= R1:
                 continue
             log("  마이크 트랙 배치: %s (%s)" % (s["clip"].rel, s["chan"]))
+            done += 1
+            events.progress(0.45 * done / n_src)
             if _decode_into(s, mm, R0, n_total) == 0:
                 log("  ! 이 파일의 소리를 읽지 못했습니다: %s" % s["clip"].rel)
         mm.flush()
@@ -322,14 +328,17 @@ def build_programme_audio(mic_clips, R0, R1, work, out_wav, stem_dir, denoise_db
     sources = assign_lanes(mic_clips)
     raw, n_total = build_lanes(sources, R0, R1, work)
     clean = {}
-    for ln, path in raw.items():
+    for i, (ln, path) in enumerate(raw.items(), 1):
+        events.progress(0.45 + 0.3 * i / max(1, len(raw)))
         log("  잡음 정리: %s" % ln)
         out = path.replace(".raw", "_clean.raw")
         clean_lane(path, out, denoise_db, work)
         clean[ln] = out
         os.remove(path)
     mix_path = os.path.join(work, "mix.raw")
+    events.progress(0.8)
     report = automix(clean, sources, R0, n_total, mix_path, stem_dir, enabled=use_automix)
+    events.progress(0.9)
     log("  음량 마감 (%.0f LUFS)..." % lufs)
     meas = master(mix_path, out_wav, lufs)
     for p in list(clean.values()) + [mix_path]:

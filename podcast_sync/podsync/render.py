@@ -6,11 +6,10 @@ import os
 import time
 from fractions import Fraction
 
-from . import color, ff
+from . import events, color, ff
+from .events import log
 
 
-def log(msg):
-    print(msg, flush=True)
 
 
 def pick_encoder(prefer="auto", height=1080):
@@ -99,22 +98,30 @@ def render(shots, P0, fps, W, H, luts, work, out_mp4, audio_wav, encoder="auto",
     done = 0
     total_frames = sum(j["n"] for j in jobs)
     frames_done = 0
-    with cf.ThreadPoolExecutor(max_workers=max(1, workers)) as ex:
+    ex = cf.ThreadPoolExecutor(max_workers=max(1, workers))
+    try:
         futs = {ex.submit(render_shot, j): j for j in jobs}
         for fut in cf.as_completed(futs):
             fut.result()
             done += 1
             frames_done += futs[fut]["n"]
+            events.progress(frames_done / max(1, total_frames))
             if done % max(1, len(jobs) // 40) == 0 or done == len(jobs):
                 el = time.time() - t0
                 rate = frames_done / el if el > 0 else 0
                 left = (total_frames - frames_done) / rate if rate > 0 else 0
                 log("  %d/%d 조각 (%.0f%%) · 남은 시간 약 %d분" % (done, len(jobs), 100.0 * frames_done / total_frames,
                                                            int(left / 60 + 0.5)))
+    except BaseException:
+        ex.shutdown(wait=False, cancel_futures=True)
+        ff.kill_all()
+        raise
+    ex.shutdown(wait=True)
     list_path = os.path.join(seg_dir, "list.txt")
     with open(list_path, "w", encoding="utf-8", newline="\n") as fh:
         for j in jobs:
             fh.write("file '%s'\n" % os.path.basename(j["out"]))
+    events.stage("mux")
     log("[5/5] 조각 이어붙이고 오디오 합치는 중...")
     tmp = out_mp4 + ".part.mp4"
     ff.run(["-f", "concat", "-safe", "0", "-i", "list.txt", "-i", os.path.abspath(audio_wav),
