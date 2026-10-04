@@ -12,26 +12,51 @@ const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion:
 // ---------- art styles ----------
 const STYLES = {
   A: {
-    key: 'A', name: '애니 셀셰이딩',
-    heads: { siwoo: 6.3, taeo: 6.8 },
+    key: 'A', name: '스타일리시 셀', stylish: true,
+    heads: { siwoo: 7.6, taeo: 8.4 },
     body: { neck: .22, torso: 1.52, shoulder: .80, hip: .52, depth: .62, upperArm: 1.08, foreArm: .98, handR: .17, armR: .15, foreR: .13, thighR: .27, shinR: .20, footL: .95, squash: 1.08, jaw: .26, hair: 1.08 },
     shading: 'toon', ramp: [128, 255],
-    outline: { w: .011, color: '#1c1a2e', tint: false },
-    face: 'anime', tone: 'vivid',
-    sky: ['#3f8fe8', '#a9d6ff', '#eaf5ff'], fog: ['#d6eaff', 30, 140],
-    hemi: ['#eef6ff', '#a49e8e', 1.0], sun: ['#fff7ea', 2.2, [-3, 9, 7]], rim: null,
+    outline: { w: .0075, color: '#14151d', tint: false },
+    face: 'stylish', tone: 'vivid',
+    ink: { mode: 'color', ink: '#151722', paper: '#f6f4ee', shadowMix: .6, hatch: { spacing: 5, width: 1.4, angle: .95 }, tone: { size: 4.5 }, rim: .7 },
+    sky: ['#8fbbe6', '#dbe9f4', '#f3f5f4'], fog: ['#e4edf4', 30, 140],
+    hemi: ['#ffffff', '#9a9486', 1.0], sun: ['#fff4e6', 2.4, [-4, 8, 6]], rim: null,
     aces: false, softShadow: false,
-    env: { ground: '#d2cbbd', tileA: '#e6dfd1', tileB: '#dad2c2', mortar: '#b9b09f', stone: '#dcd6c9', stoneVar: .07, leaf: '#ffcc33', trunk: '#7a5a40', lamp: '#3a3f4d', glow: 0, city: '#a6b8cd', win: null, box: '#e8572a', cat: '#f2a03d', sign: '#7b5536' },
-    fx: 'anime', word: { font: 'Black Han Sans', fill: '#ffd640', stroke: '#1c1a2e', shadow: '#e8572a' },
-    dist: 1.0, cam: { d: 4.3, y: 1.35, look: .98 },
+    env: { ground: '#cfc9be', tileA: '#e2ddd2', tileB: '#d6d0c4', mortar: '#a9a193', stone: '#d8d3c8', stoneVar: .06, leaf: '#f6c531', trunk: '#4a3a30', lamp: '#22242e', glow: 0, city: '#a9b6c6', win: null, box: '#e8572a', cat: '#f2a03d', sign: '#5b4030' },
+    fx: 'anime', word: { font: 'Black Han Sans', fill: '#ffffff', stroke: '#14151d', shadow: '#e8572a' },
+    dist: 1.0, cam: { d: 4.5, y: 1.42, look: 1.02 },
     card: {
-      one: '웹툰 컷이 그대로 움직이는 느낌. 굵은 외곽선, 2단 명암, 쨍한 색.',
-      swatch: ['#2b3566', '#e8572a', '#ffcc33', '#a9d6ff', '#1c1a2e'],
-      meters: [['제작 난이도', 2], ['1인 개발 속도', 5], ['타격 무게감', 3], ['캐주얼함', 4]],
-      ref: '하이파이 러시, 젠레스 존 제로, 원신',
-      pipe: 'VRoid Studio로 캐릭터 → Blender 보정 → Unity + 툰 셰이더(lilToon) · UniVRM',
-      fit: '웹소설 감성과 제일 잘 맞고, 캐릭터를 가장 빨리 많이 만들 수 있음',
-      care: '애니풍이 흔해서 배경 톤과 외곽선 색으로 개성을 잡아야 함',
+      one: '레퍼런스처럼 길쭉한 비율, 오버핏 교복, 날카로운 얼굴. 2단 명암에 잉크색 그림자와 해칭.',
+      swatch: ['#151722', '#f6f4ee', '#e8572a', '#1d5bd0', '#8fbbe6'],
+      meters: [['제작 난이도', 3], ['1인 개발 속도', 4], ['타격 무게감', 4], ['캐주얼함', 4]],
+      ref: '주술회전·도쿄 리벤저스 계열 스타일, 하이파이 러시, 페르소나 5',
+      pipe: 'VRoid로 베이스 → Blender에서 머리·옷 실루엣 다듬기 → Unity 툰 셰이더 + 해칭 셰이더',
+      fit: '웹툰·웹소설 감성 그대로, 캐릭터가 서 있기만 해도 그림이 됨',
+      care: '실루엣(머리·옷 주름)을 Blender에서 공들여야 레퍼런스 느낌이 남',
+    },
+  },
+  I: {
+    key: 'I', name: '잉크 망가', stylish: true,
+    heads: { siwoo: 7.6, taeo: 8.4 },
+    body: { neck: .22, torso: 1.52, shoulder: .80, hip: .52, depth: .62, upperArm: 1.08, foreArm: .98, handR: .17, armR: .15, foreR: .13, thighR: .27, shinR: .20, footL: .95, squash: 1.08, jaw: .26, hair: 1.08 },
+    shading: 'toon', ramp: [128, 255],
+    outline: { w: .0075, color: '#111111', tint: false },
+    face: 'stylish', tone: 'vivid',
+    ink: { mode: 'mono', ink: '#111111', paper: '#f7f5f0', shadowMix: 1, hatch: { spacing: 5, width: 1.5, angle: .95 }, tone: { size: 4.5 }, rim: .68, spot: true },
+    sky: ['#f7f5f0', '#f7f5f0', '#f7f5f0'], fog: ['#f7f5f0', 34, 150],
+    hemi: ['#ffffff', '#9a9486', 1.0], sun: ['#ffffff', 2.4, [-4, 8, 6]], rim: null,
+    aces: false, softShadow: false,
+    env: { ground: '#d8d4cc', tileA: '#ece8e0', tileB: '#e2ded5', mortar: '#8f8a80', stone: '#e6e2da', stoneVar: .04, leaf: '#e8e4dc', trunk: '#2a2622', lamp: '#1a1a1a', glow: 0, city: '#c9c7c2', win: null, box: '#e8572a', cat: '#ece6dc', sign: '#2a2622' },
+    fx: 'ink', word: { font: 'Black Han Sans', fill: '#111111', stroke: '#f7f5f0', shadow: '#f7f5f0' },
+    dist: 1.0, cam: { d: 4.5, y: 1.42, look: 1.02 },
+    card: {
+      one: '흑백 만화 원고가 그대로 움직이는 느낌. 먹 그림자, 흰 하이라이트, 스크린톤.',
+      swatch: ['#111111', '#f7f5f0', '#8f8a80', '#e8572a', '#1d5bd0'],
+      meters: [['제작 난이도', 3], ['1인 개발 속도', 4], ['타격 무게감', 4], ['캐주얼함', 3]],
+      ref: '보내주신 흑백 레퍼런스, 매드월드, 사무라이 잭',
+      pipe: 'A와 같은 모델 + 잉크 셰이더(먹/종이 2톤, 해칭, 스크린톤). 컷신·필살기 연출 전용으로 섞어 쓰기도 좋음',
+      fit: '레퍼런스 분위기에 가장 가깝고, 다른 게임과 확실히 구별됨',
+      care: '오래 하면 눈이 피로할 수 있어 본편 전체보다 회상·필살기·컷신에 쓰는 것도 방법',
     },
   },
   B: {
@@ -135,8 +160,8 @@ const SHOW = {
 };
 
 // attack keyframes (overrides on STANCE). `aim` lifts/lowers straight punches toward the opponent's head.
-function attackClips(aim) {
-  const S = STANCE;
+function attackClips(aim, base) {
+  const S = base || STANCE;
   return {
     jab: { dur: .34, keys: [[0, S], [.05, ov(S, { uaL: [-1.0, .15, .3], chest: [.08, .02, 0] })], [.11, ov(S, { uaL: [-1.57 - aim, .12, .06], faL: [-.06, 0, 0], haL: [0, 0, 0], chest: [.05, -.32, 0], hips: [0, -.62, 0], head: [.16, .38, 0], fwd: .1 })], [.19, ov(S, { uaL: [-1.45 - aim, .12, .08], faL: [-.3, 0, 0], fwd: .08 })], [.34, S]], hit: [.11, { zone: 'head', power: 1, word: '퍽!' }], hand: 'L', whoosh: .03 },
     cross: { dur: .4, keys: [[0, S], [.06, ov(S, { hips: [0, -.62, 0], chest: [.1, .0, 0] })], [.14, ov(S, { uaR: [-1.57 - aim, -.12, -.05], faR: [-.06, 0, 0], haR: [0, 0, 0], chest: [.1, .5, 0], hips: [0, .08, 0], head: [.16, -.25, 0], thR: [.28, .7, -.1], ftR: [-.4, .9, 0], uaL: [-.6, .2, .3], faL: [-2.1, 0, 0], fwd: .16 })], [.24, ov(S, { uaR: [-1.4 - aim, -.1, -.1], faR: [-.4, 0, 0], chest: [.1, .4, 0], fwd: .12 })], [.4, S]], hit: [.14, { zone: 'head', power: 2, word: '빡!' }], hand: 'R', whoosh: .05 },

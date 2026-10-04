@@ -155,17 +155,18 @@ function setStyle(key) {
   sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -5, right: 5, top: 4, bottom: -2, near: .5, far: 30 }); sun.shadow.bias = -.0004; sun.shadow.normalBias = .02;
   sun.target.position.set(0, .8, 0); scene.add(sun, sun.target); lights.push(sun, sun.target);
   if (S.rim) { const rim = new THREE.DirectionalLight(S.rim[0], S.rim[1]); rim.position.set(...S.rim[2]); scene.add(rim); lights.push(rim); }
-  const kit = materialKit(S);
+  const kit = S.ink && typeof inkKit !== 'undefined' ? inkKit(S) : materialKit(S);
   app.env = buildEnv(S, kit, scene); app.cat = app.env.cat; app.cat.look = 0;
   app.fx = new FX(scene, S);
   for (const id of ['siwoo', 'taeo']) {
-    const f = new Fighter(FIGHTERS[id], S, scene); app.f[id] = f;
+    const Cls = S.stylish && typeof StylishFighter !== 'undefined' ? StylishFighter : Fighter;
+    const f = new Cls(FIGHTERS[id], S, scene); app.f[id] = f;
   }
   // aim straight punches at the opponent's head height
   for (const id of ['siwoo', 'taeo']) {
     const A = app.f[id], V = app.f[other(id)];
     const sy = A.legL + A.torsoL * .92, hy = V.legL + V.torsoL + V.neckL + V.headR, dx = Math.abs(A.home.x - V.home.x);
-    A.clips = attackClips(clamp(Math.atan2(hy - sy, dx * .9), -.45, .45));
+    A.clips = attackClips(clamp(Math.atan2(hy - sy, dx * .9), -.45, .45), A.fightPoseDef);
   }
   app.cam.setStyle(S);
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.style === key)));

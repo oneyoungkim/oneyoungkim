@@ -68,6 +68,13 @@ function materialKit(S) {
 class Fighter {
   constructor(def, S, scene) {
     this.def = def; this.S = S; this.side = def.side;
+    this.build(scene);
+    this.initState();
+  }
+
+  // builds dims, materials, joint hierarchy and meshes. Subclasses (StylishFighter) override this.
+  build(scene) {
+    const def = this.def, S = this.S;
     const kit = materialKit(S); this.kit = kit;
     const B = S.body, H = def.H, hh = H / S.heads[def.id], headR = hh * .5;
     const neckL = hh * B.neck, torsoL = hh * B.torso;
@@ -79,7 +86,7 @@ class Fighter {
     const armR = hh * B.armR * def.build * arm, foreR = hh * B.foreR * def.build * arm;
     const upperL = hh * B.upperArm, foreL = hh * B.foreArm, handR = hh * B.handR * (def.build > 1 ? 1.08 : 1);
     const thighR = hh * B.thighR * def.build, shinR = hh * B.shinR * def.build;
-    Object.assign(this, { hh, headR, neckL, torsoL, legL, footH, sh, hip, handR });
+    Object.assign(this, { hh, headR, neckL, torsoL, legL, footH, sh, hip, handR, upperL, foreL, thighL, shinL });
 
     // materials
     const M = {
@@ -168,14 +175,17 @@ class Fighter {
       part(ft, sole, M.sole, { pos: [0, -footH + fr * .32, -fr * .72], scl: [.95, .36, 1.02], outline: false });
     }
 
-    // state
+  }
+
+  initState() {
+    const def = this.def, S = this.S;
     this.home = new THREE.Vector3(this.side * .5 * S.dist, 0, .2);
     this.pos = this.home.clone(); this.yaw = 0; this.mode = 'show'; this.blend = 0; this.t = Math.random() * 10;
     this.clip = null; this.ct = 0; this.queue = [];
     this.flinch = new Float32Array(PLEN); this.kb = 0; this.kbv = 0; this.kbIdle = 0;
     this.flashT = 0; this.exprT = 0; this.override = null; this.tiltA = 0; this.pivot = 0; this.adj = new THREE.Vector3();
     this.cur = new Float32Array(PLEN);
-    this.basePose = { show: P(SHOW[def.id]), fight: P(STANCE) };
+    this.basePose = { show: P(this.showPoseDef || SHOW[def.id]), fight: P(this.fightPoseDef || STANCE) };
     this.setExpr('normal');
   }
 
@@ -267,6 +277,8 @@ class Fighter {
     for (let j = 0; j < NJ; j++) J[JN[j]].rotation.set(cur[j * 3], cur[j * 3 + 1], cur[j * 3 + 2]);
     J.uaL.rotation.z += .1; J.uaR.rotation.z -= .1;
     J.hips.position.y = this.legL * (1 - cur[NJ * 3]);
+    // optional IK for show poses (hands/feet targets); weight = how much of the show pose is active
+    if (this.applyIK) this.applyIK(1 - this.blend, !!this.clip || !!this.override);
 
     // knockback spring
     this.kb += this.kbv * dt; this.kbv *= Math.exp(-dt * 10); this.kbIdle += dt;
