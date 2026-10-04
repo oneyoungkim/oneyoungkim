@@ -23,8 +23,8 @@ const STYLES = {
     hemi: ['#ffffff', '#9a9486', 1.0], sun: ['#fff4e6', 2.4, [-4, 8, 6]], rim: null,
     aces: false, softShadow: false,
     env: { ground: '#cfc9be', tileA: '#e2ddd2', tileB: '#d6d0c4', mortar: '#a9a193', stone: '#d8d3c8', stoneVar: .06, leaf: '#f6c531', trunk: '#4a3a30', lamp: '#22242e', glow: 0, city: '#a9b6c6', win: null, box: '#e8572a', cat: '#f2a03d', sign: '#5b4030' },
-    fx: 'anime', word: { font: 'Black Han Sans', fill: '#ffffff', stroke: '#14151d', shadow: '#e8572a' },
-    dist: 1.0, cam: { d: 4.5, y: 1.42, look: 1.02 },
+    fx: 'ink', word: { font: 'Black Han Sans', fill: '#ffffff', stroke: '#14151d', shadow: '#e8572a' },
+    dist: 1.0, cam: { d: 4.5, y: 1.0, look: 1.1 },
     card: {
       one: '레퍼런스처럼 길쭉한 비율, 오버핏 교복, 날카로운 얼굴. 2단 명암에 잉크색 그림자와 해칭.',
       swatch: ['#151722', '#f6f4ee', '#e8572a', '#1d5bd0', '#8fbbe6'],
@@ -48,7 +48,7 @@ const STYLES = {
     aces: false, softShadow: false,
     env: { ground: '#d8d4cc', tileA: '#ece8e0', tileB: '#e2ded5', mortar: '#8f8a80', stone: '#e6e2da', stoneVar: .04, leaf: '#e8e4dc', trunk: '#2a2622', lamp: '#1a1a1a', glow: 0, city: '#c9c7c2', win: null, box: '#e8572a', cat: '#ece6dc', sign: '#2a2622' },
     fx: 'ink', word: { font: 'Black Han Sans', fill: '#111111', stroke: '#f7f5f0', shadow: '#f7f5f0' },
-    dist: 1.0, cam: { d: 4.5, y: 1.42, look: 1.02 },
+    dist: 1.0, cam: { d: 4.5, y: 1.0, look: 1.1 },
     card: {
       one: '흑백 만화 원고가 그대로 움직이는 느낌. 먹 그림자, 흰 하이라이트, 스크린톤.',
       swatch: ['#111111', '#f7f5f0', '#8f8a80', '#e8572a', '#1d5bd0'],

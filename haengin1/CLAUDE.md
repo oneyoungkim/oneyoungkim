@@ -7,21 +7,23 @@
 - `docs/02_세계관_스토리바이블.md` — 인물·플롯·문체 기준 (시나리오는 이 문서가 기준)
 - `docs/03_맵_혜화동.md` + `data/map_zones.json` — 실제 지리 기반 맵 (좌표 원점 = 혜화동 로터리)
 - `docs/05_개발환경_설치가이드.md` — 엔진은 Unity 6.3 LTS 권장(사용자 확정 전)
+- `concept/REFERENCES.md` — **대표가 준 그림체·배경 레퍼런스(글로 옮김)**. 캐릭터 = 주술회전풍 먹 노탄, 배경 = 평면 채색 한옥 골목 일러스트
 - `concept/STYLISH_SPEC.md` — 아트 방향 A(스타일리시 셀)/A′(잉크 망가) 리디자인 계약서. 레퍼런스: 길쭉한 비율, 오버핏 교복, 날카로운 얼굴, 흑백 노탄 대비
 
 ## 3D 시안 페이지 (three.js, 브라우저)
 - 소스: `concept/src/NN_*.js` + `concept/src/page.html` → `node concept/build.mjs` → `concept/style_drafts_3d.html` (한 파일)
 - 파일은 숫자 순으로 한 ES 모듈에 이어 붙음. `99_app.js`가 마지막.
 - 관절 규약: 팔다리는 로컬 -Y로 뻗음, 정면 +Z, 캐릭터 왼쪽 +X (자세한 내용은 STYLISH_SPEC 3장)
-- 스크린샷: `concept/tools/shot.cjs` (Playwright, 상단 주석 참고). 로컬에선 `THREE` 환경변수로 three r170 `three.module.min.js` 경로를 지정
+- 스크린샷: `concept/tools/shot.cjs` (Playwright 헤드리스, `--mute-audio`). 로컬(Windows)에선 three@0.170.0 + playwright@1.60.0(설치된 ms-playwright 브라우저 1223과 맞는 버전)을 아무 폴더에 `npm i` 하고 `THREE=<그 폴더>/node_modules/three/build/three.module.min.js NODE_PATH=<그 폴더>/node_modules` 로 실행. 페이지에 효과음(AudioContext)이 있으니 앱 안 브라우저에 띄우지 말 것
 - 게시본: https://claude.ai/artifact/LF2wzj7QSebCe56FERZM83
 
-## 진행 상황 (클라우드 세션 종료 시점, 2026-10-04)
-- 시우 루트 1부: 회차 구성 + 1~2화 완료(태오 루트와 공유 장면 맞춤 수정 반영 중이었음), **3화는 초안이 분량 미달(약 4,300자) 상태로 중단** → 5,000~6,500자로 보강 필요, 4화 미작성
+## 진행 상황 (2026-10-05, 로컬 세션)
+- 시우 루트 1부: 회차 구성 + 1~4화 완료 (3화 6,020자·4화 5,812자, 공백 포함·제목과 연출 노트 제외로 잼). 회차구성 부록 A·B 갱신. 다음은 5화부터
 - 태오 루트 1부: 회차 구성 + 1~4화 완료
-- 스타일리시 캐릭터 리디자인: `concept/STYLISH_SPEC.md` 계약서와 스타일 정의(STYLES.A/I), 리팩터링(Fighter.build/initState, IK 훅)까지 완료. **모듈 파일(src/07_ink, 08_shapes, 09_ik, 10_faces, 11_stylish) 작성 전 중단** → 스펙 4장대로 이어서 구현
-- Windows 설치 스크립트(`tools/install_windows.ps1`): 미작성. 설치 목록은 `docs/05_개발환경_설치가이드.md`
-- 사용자 결정 대기: 아트 시안 최종(A 방향 + 더 스타일리시하게), 엔진 확정, 코너맨 세계관 공유 범위, 시우 다문화 설정, UFC 실명 여부
+- 스타일리시 캐릭터 리디자인: src/07_ink, 08_shapes, 09_ik, 10_faces, 11_stylish 구현 완료 (A·A′ 탭). 남은 아쉬움: 기본 거리에서 얼굴이 작아 이목구비가 잘 안 읽힘, 옷 주름이 셰이더 가짜, 태오 윗머리 헬멧 느낌, 주머니 손은 숨김 처리
+- 배경: A·A′에 한옥 골목(기와·막새 점·주칠 목재·돌 아랫벽), 종이색 하늘, 북쪽 산·도시 원경, 혜화문(옆 시점) 추가. 타격 이펙트 먹 레시피(fx:'ink'). 카메라 로우 앵글로 낮춤(cam y 1.0). 남은 것: 팔작지붕 추녀, 혜화문 문루가 화면 밖
+- Windows 설치 스크립트 `tools/install_windows.ps1` 완료 (winget, `-DryRun` 시험만 함, 실제 설치는 엔진 확정 후)
+- 사용자 결정 대기: 아트 시안 최종, 엔진 확정, 코너맨 세계관 공유 범위, 시우 다문화 설정, UFC 실명 여부, 시우 3·4화 새 설정(곽반장=아빠 15년 동료, 미성년 하루 7시간 노동 규칙의 시스템화, 성인 흡연 묘사도 뺄지)
 
 ## 규칙
 - 17세 캐릭터: 흡연·음주 묘사 금지(소품은 바나나우유 등으로)

@@ -14,7 +14,7 @@ const READY = process.env.READY || '(window.__ready || (window.__hy && window.__
 const three = fs.readFileSync(THREE_PATH);
 fs.mkdirSync(OUT, { recursive: true });
 (async () => {
-  const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--mute-audio'] });
   const p = await b.newPage({ viewport: { width: +(process.env.VW || 1200), height: +(process.env.VH || 900) }, colorScheme: process.env.SCHEME || 'light' });
   const logs = [];
   p.on('console', m => { if (m.type() === 'error' || m.type() === 'warning') { const t = m.text(); if (!/ERR_CERT|fonts\.g/.test(t)) logs.push(m.type() + ': ' + t); } });

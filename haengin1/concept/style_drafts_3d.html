@@ -259,8 +259,8 @@ const STYLES = {
     hemi: ['#ffffff', '#9a9486', 1.0], sun: ['#fff4e6', 2.4, [-4, 8, 6]], rim: null,
     aces: false, softShadow: false,
     env: { ground: '#cfc9be', tileA: '#e2ddd2', tileB: '#d6d0c4', mortar: '#a9a193', stone: '#d8d3c8', stoneVar: .06, leaf: '#f6c531', trunk: '#4a3a30', lamp: '#22242e', glow: 0, city: '#a9b6c6', win: null, box: '#e8572a', cat: '#f2a03d', sign: '#5b4030' },
-    fx: 'anime', word: { font: 'Black Han Sans', fill: '#ffffff', stroke: '#14151d', shadow: '#e8572a' },
-    dist: 1.0, cam: { d: 4.5, y: 1.42, look: 1.02 },
+    fx: 'ink', word: { font: 'Black Han Sans', fill: '#ffffff', stroke: '#14151d', shadow: '#e8572a' },
+    dist: 1.0, cam: { d: 4.5, y: 1.0, look: 1.1 },
     card: {
       one: '레퍼런스처럼 길쭉한 비율, 오버핏 교복, 날카로운 얼굴. 2단 명암에 잉크색 그림자와 해칭.',
       swatch: ['#151722', '#f6f4ee', '#e8572a', '#1d5bd0', '#8fbbe6'],
@@ -284,7 +284,7 @@ const STYLES = {
     aces: false, softShadow: false,
     env: { ground: '#d8d4cc', tileA: '#ece8e0', tileB: '#e2ded5', mortar: '#8f8a80', stone: '#e6e2da', stoneVar: .04, leaf: '#e8e4dc', trunk: '#2a2622', lamp: '#1a1a1a', glow: 0, city: '#c9c7c2', win: null, box: '#e8572a', cat: '#ece6dc', sign: '#2a2622' },
     fx: 'ink', word: { font: 'Black Han Sans', fill: '#111111', stroke: '#f7f5f0', shadow: '#f7f5f0' },
-    dist: 1.0, cam: { d: 4.5, y: 1.42, look: 1.02 },
+    dist: 1.0, cam: { d: 4.5, y: 1.0, look: 1.1 },
     card: {
       one: '흑백 만화 원고가 그대로 움직이는 느낌. 먹 그림자, 흰 하이라이트, 스크린톤.',
       swatch: ['#111111', '#f7f5f0', '#8f8a80', '#e8572a', '#1d5bd0'],
@@ -983,27 +983,77 @@ class Fighter {
 
 // ===== 04_env.js =====
 // ---------- environment: 한양도성 성곽길 한 토막 ----------
+// B/C: 기존 장면 그대로. A/I(S.ink 있음): REFERENCES.md 2장 '한옥 골목 일러스트' 룩 —
+// 종이색 평면 하늘, 북쪽 산(북악·북한산) 판 + 도시 스카이라인 판, 성곽 너머로 이어지는 한옥 골목.
+
+// 배경 팔레트 기본값. 메인이 STYLES.X.ink.env = { roof: '#..' } 식으로 일부만 덮어쓸 수 있다.
+const INK_ENV = {
+  color: {
+    sky: '#e9e0cc', mtnBack: '#aba59a', mtn: '#8f8a80', mtnInk: '#4e4a43', rock: '#c4beb2',
+    city: '#cdc6b8', cityFar: '#d9d2c3', cityInk: '#8f897e',
+    roof: '#3a3a3a', soffit: '#4f3a33', ridgeWhite: '#e6e0d2', mak: '#f6f2e8', rafter: '#8a4436',
+    wood: '#8e4b3d', plaster: '#f3efe4', hanji: '#efe4cc', stone: '#a49e94', door: '#8a3f31',
+    ground: '#d9c9a8', speck: '#3d362d', path: '#e0d1b2', joint: '#5d5244',
+    fort: '#c4bcab', leaf: '#ddb03f', trunk: '#4a3a30', lamp: '#2a2b30', sign: '#5b4030', box: '#d4552c', boxText: '#ffffff', cat: '#e3a04a',
+    wire: '#2a2a2e', pole: '#77736b', shop: '#2f6aa8', shopText: '#ffffff', tunnel: '#2b2826', dancheong: '#5d7b70',
+  },
+  mono: {
+    sky: null, mtnBack: '#e4e2dc', mtn: '#cfccc5', mtnInk: '#111111', rock: '#f2f1ec',
+    city: '#e3e0da', cityFar: '#ebe9e4', cityInk: '#6a6762',
+    roof: '#2a2a2a', soffit: '#3a3632', ridgeWhite: '#f2f0ea', mak: '#f7f5f0', rafter: '#3d3935',
+    wood: '#3d3935', plaster: '#f7f5f0', hanji: '#efede7', stone: '#cdc9c1', door: '#34302c',
+    ground: '#ebe7df', speck: '#111111', path: '#f1eee8', joint: '#2a2622',
+    fort: '#e2ded6', leaf: '#ece8df', trunk: '#2a2622', lamp: '#1a1a1a', sign: '#2a2622', box: '#e4e0d8', boxText: '#111111', cat: '#ece6dc',
+    wire: '#111111', pole: '#c9c5bd', shop: '#2a2622', shopText: '#f7f5f0', tunnel: '#111111', dancheong: '#3d3935',
+  },
+};
+function inkEnvPalette(S) {
+  const mono = S.ink.mode === 'mono';
+  const P = Object.assign({}, INK_ENV[mono ? 'mono' : 'color'], S.ink.env || {});
+  if (!P.sky) P.sky = S.ink.paper;
+  return P;
+}
+
 function buildEnv(S, kit, scene) {
   const env = new THREE.Group(); scene.add(env);
-  const E = S.env, rnd = mulberry(42);
+  const ink = S.ink ? inkEnvPalette(S) : null;
+  const E = ink ? Object.assign({}, S.env, { stone: ink.fort, stoneVar: .05, leaf: ink.leaf, trunk: ink.trunk, lamp: ink.lamp, sign: ink.sign, box: ink.box, cat: ink.cat, ground: ink.ground }) : S.env;
+  const rnd = mulberry(42);
   const part = (p, g, m, o) => kit.part(p, g, m, o);
+  const owned = []; // textures/materials made here (ink branch) to dispose with the env
 
-  // sky dome
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(120, 32, 16), new THREE.ShaderMaterial({
-    side: THREE.BackSide, depthWrite: false, fog: false, toneMapped: false,
-    uniforms: { top: { value: new THREE.Color(S.sky[0]) }, mid: { value: new THREE.Color(S.sky[1]) }, bot: { value: new THREE.Color(S.sky[2]) } },
-    vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-    fragmentShader: 'uniform vec3 top; uniform vec3 mid; uniform vec3 bot; varying vec3 vP; void main(){ float h = vP.y; vec3 c = h > 0.0 ? mix(mid, top, smoothstep(0.0, 0.5, h)) : mix(mid, bot, smoothstep(0.0, 0.2, -h)); gl_FragColor = vec4(c, 1.0);\n#include <colorspace_fragment>\n}',
-  }));
-  env.add(sky);
-  scene.fog = new THREE.Fog(new THREE.Color(S.fog[0]), S.fog[1], S.fog[2]);
+  if (ink) {
+    // 종이색 평면 하늘 (그라데이션 없음)
+    const skyM = new THREE.MeshBasicMaterial({ color: new THREE.Color(ink.sky), side: THREE.BackSide, depthWrite: false, fog: false, toneMapped: false });
+    const sky = new THREE.Mesh(new THREE.SphereGeometry(320, 24, 12), skyM); sky.renderOrder = -10; env.add(sky); owned.push(skyM);
+    scene.fog = new THREE.Fog(new THREE.Color(ink.sky), 30, 220);
+  } else {
+    // sky dome
+    const sky = new THREE.Mesh(new THREE.SphereGeometry(120, 32, 16), new THREE.ShaderMaterial({
+      side: THREE.BackSide, depthWrite: false, fog: false, toneMapped: false,
+      uniforms: { top: { value: new THREE.Color(S.sky[0]) }, mid: { value: new THREE.Color(S.sky[1]) }, bot: { value: new THREE.Color(S.sky[2]) } },
+      vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+      fragmentShader: 'uniform vec3 top; uniform vec3 mid; uniform vec3 bot; varying vec3 vP; void main(){ float h = vP.y; vec3 c = h > 0.0 ? mix(mid, top, smoothstep(0.0, 0.5, h)) : mix(mid, bot, smoothstep(0.0, 0.2, -h)); gl_FragColor = vec4(c, 1.0);\n#include <colorspace_fragment>\n}',
+    }));
+    env.add(sky);
+    scene.fog = new THREE.Fog(new THREE.Color(S.fog[0]), S.fog[1], S.fog[2]);
+  }
 
   // ground + paving
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(90, 44), kit.solid(E.ground, { rough: .95 }));
-  ground.rotation.x = -Math.PI / 2; ground.position.set(0, 0, 19.7); ground.receiveShadow = true; env.add(ground);
-  const pave = pavingTexture(S); pave.repeat.set(9, 1.4);
-  const path = new THREE.Mesh(new THREE.PlaneGeometry(26, 3.4), kit.solid('#ffffff', { map: pave, rough: .9 }));
-  path.rotation.x = -Math.PI / 2; path.position.set(0, .004, .05); path.receiveShadow = true; env.add(path);
+  if (ink) {
+    const gt = inkGroundTexture(S, ink, false); gt.repeat.set(40, 18); owned.push(gt);
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(160, 72), kit.solid('#ffffff', { map: gt, rough: .95, role: 'face' }));
+    ground.rotation.x = -Math.PI / 2; ground.position.set(0, 0, 33.9); ground.receiveShadow = true; env.add(ground);
+    const pt = inkGroundTexture(S, ink, true); pt.repeat.set(6.5, 1); owned.push(pt);
+    const path = new THREE.Mesh(new THREE.PlaneGeometry(26, 3.4), kit.solid('#ffffff', { map: pt, rough: .9, role: 'face' }));
+    path.rotation.x = -Math.PI / 2; path.position.set(0, .004, .05); path.receiveShadow = true; env.add(path);
+  } else {
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(90, 44), kit.solid(E.ground, { rough: .95 }));
+    ground.rotation.x = -Math.PI / 2; ground.position.set(0, 0, 19.7); ground.receiveShadow = true; env.add(ground);
+    const pave = pavingTexture(S); pave.repeat.set(9, 1.4);
+    const path = new THREE.Mesh(new THREE.PlaneGeometry(26, 3.4), kit.solid('#ffffff', { map: pave, rough: .9 }));
+    path.rotation.x = -Math.PI / 2; path.position.set(0, .004, .05); path.receiveShadow = true; env.add(path);
+  }
 
   // fortress wall (body courses + 여장 parapet + coping)
   const wallZ = -1.75, x0 = -13, x1 = 13, bodyH = 1.05, depthW = .7;
@@ -1018,54 +1068,64 @@ function buildEnv(S, kit, scene) {
     stones.push([x + .6, bodyH + .27, wallZ + .05, 1.22, .52, .52]);
     stones.push([x + .6, bodyH + .57, wallZ + .05, 1.3, .08, .62]);
   }
-  const stoneMat = kit.solid(E.stone, { rough: .95 });
+  // A/I: 성곽은 캐릭터 바로 뒤 큰 면이라 평면('face': 종이 + 그늘에만 해칭). 굵은 먹 줄눈은 외곽선이 만든다.
+  const stoneMat = ink ? kit.solid(E.stone, { rough: .95, role: 'face' }) : kit.solid(E.stone, { rough: .95 });
   const box = new THREE.BoxGeometry(1, 1, 1);
   const inst = new THREE.InstancedMesh(box, stoneMat, stones.length);
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), col = new THREE.Color();
   stones.forEach((s, i) => {
     m4.compose(new THREE.Vector3(s[0], s[1], s[2]), q, new THREE.Vector3(s[3], s[4], s[5])); inst.setMatrixAt(i, m4);
-    col.copy(styleColor(S, E.stone)).multiplyScalar(1 - E.stoneVar + rnd() * E.stoneVar * 2); inst.setColorAt(i, col);
+    if (ink) col.setScalar(1 - E.stoneVar + rnd() * E.stoneVar * 2);
+    else col.copy(styleColor(S, E.stone)).multiplyScalar(1 - E.stoneVar + rnd() * E.stoneVar * 2);
+    inst.setColorAt(i, col);
   });
   inst.castShadow = true; inst.receiveShadow = true; env.add(inst);
   const om = kit.outline(stoneMat);
   if (om) {
-    const o = new THREE.InstancedMesh(box, om, stones.length), e = S.outline.w * 1.6;
+    const o = new THREE.InstancedMesh(box, om, stones.length), e = S.outline.w * (ink ? 3.2 : 1.6);
     stones.forEach((s, i) => { m4.compose(new THREE.Vector3(s[0], s[1], s[2]), q, new THREE.Vector3(s[3] + e, s[4] + e, s[5] + e)); o.setMatrixAt(i, m4); });
     env.add(o);
   }
-  // land drops away behind the wall: a darker slope strip
-  const slope = new THREE.Mesh(new THREE.PlaneGeometry(90, 8), kit.solid(E.ground, { rough: 1 }));
-  slope.position.set(0, -2.6, wallZ - 4.4); slope.rotation.x = -Math.PI / 2 + .62; env.add(slope);
 
-  // distant city (대학로 쪽) + N Seoul Tower silhouette
-  const cityMat = kit.solid(E.city, { rough: 1 });
-  const bN = 130, bg = new THREE.InstancedMesh(box, cityMat, bN);
-  const wins = [];
-  for (let i = 0; i < bN; i++) {
-    const x = (rnd() * 2 - 1) * 110, z = -55 - rnd() * 70, w = 4 + rnd() * 8, h = 6 + rnd() * 18, d = 4 + rnd() * 8, yb = -12;
-    m4.compose(new THREE.Vector3(x, yb + h / 2, z), q, new THREE.Vector3(w, h, d)); bg.setMatrixAt(i, m4);
-    if (E.win) for (let k = 0; k < 4; k++) if (rnd() < .7) wins.push([x + (rnd() - .5) * w * .7, yb + 2 + rnd() * (h - 3), z + d / 2 + .05]);
+  if (ink) {
+    // 성곽 너머: 한옥 골목 + 도시 판 + 북쪽 산 판
+    buildInkAlley(env, S, kit, ink, owned);
+    buildInkBackdrop(env, S, ink, owned);
+  } else {
+    // land drops away behind the wall: a darker slope strip
+    const slope = new THREE.Mesh(new THREE.PlaneGeometry(90, 8), kit.solid(E.ground, { rough: 1 }));
+    slope.position.set(0, -2.6, wallZ - 4.4); slope.rotation.x = -Math.PI / 2 + .62; env.add(slope);
+
+    // distant city (대학로 쪽) + N Seoul Tower silhouette
+    const cityMat = kit.solid(E.city, { rough: 1 });
+    const bN = 130, bg = new THREE.InstancedMesh(box, cityMat, bN);
+    const wins = [];
+    for (let i = 0; i < bN; i++) {
+      const x = (rnd() * 2 - 1) * 110, z = -55 - rnd() * 70, w = 4 + rnd() * 8, h = 6 + rnd() * 18, d = 4 + rnd() * 8, yb = -12;
+      m4.compose(new THREE.Vector3(x, yb + h / 2, z), q, new THREE.Vector3(w, h, d)); bg.setMatrixAt(i, m4);
+      if (E.win) for (let k = 0; k < 4; k++) if (rnd() < .7) wins.push([x + (rnd() - .5) * w * .7, yb + 2 + rnd() * (h - 3), z + d / 2 + .05]);
+    }
+    env.add(bg);
+    if (E.win && wins.length) {
+      const wm = new THREE.MeshBasicMaterial({ color: new THREE.Color(E.win), fog: true });
+      const wi = new THREE.InstancedMesh(new THREE.PlaneGeometry(.9, .7), wm, wins.length);
+      wins.forEach((w, i) => { m4.compose(new THREE.Vector3(...w), q, new THREE.Vector3(1, 1, 1)); wi.setMatrixAt(i, m4); });
+      env.add(wi);
+    }
+    const tower = new THREE.Group(); tower.position.set(-52, -12, -125); tower.scale.setScalar(1.3); env.add(tower);
+    const tm = kit.solid(E.city, { rough: 1 });
+    tower.add(new THREE.Mesh(new THREE.SphereGeometry(16, 20, 10, 0, TAU, 0, Math.PI / 2), tm));
+    const tw = new THREE.Mesh(new THREE.CylinderGeometry(.7, 1.1, 14, 10), tm); tw.position.y = 22; tower.add(tw);
+    const pod = new THREE.Mesh(new THREE.CylinderGeometry(2.1, 1.6, 2.4, 14), tm); pod.position.y = 29; tower.add(pod);
+    const ant = new THREE.Mesh(new THREE.CylinderGeometry(.18, .3, 9, 6), tm); ant.position.y = 34.5; tower.add(ant);
   }
-  env.add(bg);
-  if (E.win && wins.length) {
-    const wm = new THREE.MeshBasicMaterial({ color: new THREE.Color(E.win), fog: true });
-    const wi = new THREE.InstancedMesh(new THREE.PlaneGeometry(.9, .7), wm, wins.length);
-    wins.forEach((w, i) => { m4.compose(new THREE.Vector3(...w), q, new THREE.Vector3(1, 1, 1)); wi.setMatrixAt(i, m4); });
-    env.add(wi);
-  }
-  const tower = new THREE.Group(); tower.position.set(-52, -12, -125); tower.scale.setScalar(1.3); env.add(tower);
-  const tm = kit.solid(E.city, { rough: 1 });
-  tower.add(new THREE.Mesh(new THREE.SphereGeometry(16, 20, 10, 0, TAU, 0, Math.PI / 2), tm));
-  const tw = new THREE.Mesh(new THREE.CylinderGeometry(.7, 1.1, 14, 10), tm); tw.position.y = 22; tower.add(tw);
-  const pod = new THREE.Mesh(new THREE.CylinderGeometry(2.1, 1.6, 2.4, 14), tm); pod.position.y = 29; tower.add(pod);
-  const ant = new THREE.Mesh(new THREE.CylinderGeometry(.18, .3, 9, 6), tm); ant.position.y = 34.5; tower.add(ant);
 
   // ginkgo tree (10월 은행나무)
   const tree = new THREE.Group(); tree.position.set(-3.7, 0, -1.0); env.add(tree);
   part(tree, tCapsule(.12, .18, 2.4), kit.solid(E.trunk, { rough: 1 }), { pos: [0, 2.4, 0] });
   const leafM = kit.solid(E.leaf, { rough: .9 });
   [[0, 3.1, 0, 1.1], [.7, 2.7, .2, .8], [-.7, 2.8, -.1, .85], [.2, 3.7, -.2, .8], [-.3, 2.5, .5, .7], [.5, 3.3, .5, .65]]
-    .forEach(([x, y, z, r]) => part(tree, new THREE.IcosahedronGeometry(r, 1), leafM, { pos: [x, y, z], ow: 1.2 }));
+    .forEach(([x, y, z, r]) => part(tree, new THREE.IcosahedronGeometry(r, 1), leafM, { pos: [x, y, z], ow: ink ? 2.4 : 1.2 }));
   const leafGeo = new THREE.CircleGeometry(.06, 6, Math.PI * .25, Math.PI * .5); leafGeo.rotateX(-Math.PI / 2);
   const leaves = new THREE.InstancedMesh(leafGeo, kit.solid(E.leaf, { rough: .9 }), 160);
   for (let i = 0; i < 160; i++) {
@@ -1091,7 +1151,7 @@ function buildEnv(S, kit, scene) {
   const sign = new THREE.Group(); sign.position.set(2.5, 0, -1.2); env.add(sign);
   const wood = kit.solid(E.sign, { rough: .9 });
   part(sign, new THREE.BoxGeometry(.08, 1.2, .08), wood, { pos: [0, .6, 0] });
-  const st = labelTexture([['한양도성 순성길', 64, .38], ['혜화문 ← · → 와룡공원', 40, .72]], css(S, E.sign), '#fff8ec');
+  const st = labelTexture([['한양도성 순성길', 64, .38], ['혜화문 ← · → 와룡공원', 40, .72]], css(S, E.sign), ink && S.ink.mode === 'mono' ? S.ink.paper : '#fff8ec');
   part(sign, new THREE.BoxGeometry(.9, .36, .05), kit.solid('#ffffff', { map: st, rough: .9 }), { pos: [0, 1.15, .03] });
 
   // delivery bike with the 국밥 box
@@ -1102,7 +1162,7 @@ function buildEnv(S, kit, scene) {
   part(bike, new THREE.CylinderGeometry(.025, .025, .55, 8), bm, { pos: [.42, .62, 0], rot: [0, 0, -.25] });
   part(bike, new THREE.BoxGeometry(.06, .04, .5), bm, { pos: [.48, .92, 0] });
   part(bike, new THREE.BoxGeometry(.24, .05, .12), kit.solid('#1b1d24'), { pos: [-.15, .8, 0] });
-  const bt = labelTexture([['성대후문', 72, .36], ['국밥', 96, .7]], css(S, E.box), '#ffffff', 256, 256);
+  const bt = labelTexture([['성대후문', 72, .36], ['국밥', 96, .7]], css(S, E.box), ink ? ink.boxText : '#ffffff', 256, 256);
   const bmat = kit.solid('#ffffff', { map: bt, rough: .7 });
   part(bike, new THREE.BoxGeometry(.4, .34, .34), bmat, { pos: [-.5, .88, 0] });
 
@@ -1115,14 +1175,618 @@ function buildEnv(S, kit, scene) {
   for (const s of [-1, 1]) part(ch, new THREE.ConeGeometry(.03, .06, 6), cm, { pos: [.0, .08, s * .045], rot: [s * .25, 0, -.2], ow: .6 });
   const tail = new THREE.Group(); tail.position.set(-.16, .1, 0); cat.add(tail);
   part(tail, tCapsule(.025, .02, .22), cm, { rot: [0, 0, 2.4] });
-  return { group: env, cat: { head: ch, tail }, dispose() { env.traverse(o => { if (o.geometry) o.geometry.dispose(); }); env.removeFromParent(); scene.fog = null; } };
+  return { group: env, cat: { head: ch, tail }, dispose() { env.traverse(o => { if (o.geometry) o.geometry.dispose(); }); owned.forEach(x => x.dispose()); env.removeFromParent(); scene.fog = null; } };
 }
 let _fxTex = null; const fxTex = () => (_fxTex || (_fxTex = fxTextures()));
 
+// ---------- ink style: ground textures (모래 베이지 + 드문 먹 점 / 박석 길) ----------
+function inkGroundTexture(S, P, paved) {
+  const W = paved ? 1024 : 512, H = paved ? 512 : 512, c = mkCanvas(W, H), g = c.getContext('2d'), r = mulberry(paved ? 11 : 5);
+  if (paved) {
+    // 큰 박석: 연한 모래색 판석 + 굵지 않은 먹 줄눈 (한 장 = 4m x 3.4m)
+    g.fillStyle = css(S, P.joint); g.fillRect(0, 0, W, H);
+    const rows = 4, rh = H / rows;
+    for (let j = 0; j < rows; j++) {
+      let x = -r() * 60;
+      while (x < W) {
+        const w = 120 + r() * 110, k = .97 + r() * .05, inset = 1.7;
+        const base = styleColor(S, P.path).multiplyScalar(k);
+        g.fillStyle = '#' + base.getHexString();
+        g.beginPath();
+        const x0 = x + inset, x1 = x + w - inset, y0 = j * rh + inset, y1 = (j + 1) * rh - inset, jt = () => (r() - .5) * 4;
+        g.moveTo(x0 + jt(), y0 + jt()); g.lineTo(x1 + jt(), y0 + jt()); g.lineTo(x1 + jt(), y1 + jt()); g.lineTo(x0 + jt(), y1 + jt()); g.closePath(); g.fill();
+        x += w;
+      }
+    }
+  } else {
+    g.fillStyle = css(S, P.ground); g.fillRect(0, 0, W, H);
+  }
+  // 드문드문 먹 점 (크기 섞어서)
+  g.fillStyle = css(S, P.speck);
+  const n = paved ? 70 : 26;
+  for (let i = 0; i < n; i++) {
+    const x = r() * W, y = r() * H, s = .8 + r() * 1.6;
+    g.globalAlpha = .55 + r() * .45; g.beginPath(); g.ellipse(x, y, s * (1 + r()), s, r() * Math.PI, 0, TAU); g.fill();
+    if (r() < .25) { g.beginPath(); g.ellipse(x + 5 + r() * 6, y + (r() - .5) * 6, s * .6, s * .5, 0, 0, TAU); g.fill(); }
+  }
+  g.globalAlpha = 1;
+  const t = canvasTex(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; return t;
+}
+
+// ---------- ink style: hanok alley beyond the wall ----------
+// 성곽 뒤(북쪽, -Z)로 한 점 투시 골목. 양옆 한옥(맞배지붕, 처마 막새 흰 점 띠, 서까래 끝, 주칠 기둥·창살, 아랫벽 돌 블록, 흰 회벽).
+// 모든 반복 요소는 InstancedMesh. 무대(성곽 앞)는 건드리지 않는다.
+function inkRoofGeo(a, b, H, thick, lift, grow) {
+  // 맞배지붕: 용마루는 z축, 처마 쪽은 오목하게 처지고 양 끝이 살짝 들린다. 원점 = 처마 높이 중앙.
+  const NU = 18, NV = 7, P = 1.55;
+  const pos = [], uv = [], idx = [], grp = [];
+  const top = (u, v) => { const av = Math.abs(v); return [v * (b + grow), H * Math.pow(1 - av, P) + lift * Math.pow(Math.abs(u), 4) * Math.pow(av, 1.5) + grow, u * (a + grow)]; };
+  const addGrid = (fn, flip) => {
+    const s = pos.length / 3;
+    for (let i = 0; i <= NU; i++) for (let j = 0; j <= NV; j++) { const p = fn(i / NU * 2 - 1, j / NV); pos.push(...p); uv.push(p[2], Math.abs(p[0])); }
+    for (let i = 0; i < NU; i++) for (let j = 0; j < NV; j++) {
+      const A = s + i * (NV + 1) + j, B = A + 1, C = A + NV + 1, D = C + 1;
+      if (flip) idx.push(A, C, B, B, C, D); else idx.push(A, B, C, B, D, C);
+    }
+  };
+  const start0 = 0;
+  for (const side of [1, -1]) {
+    // top surface (side: +x or -x), bottom (soffit) surface offset down by thickness
+    addGrid((u, t) => top(u, side * t), side > 0);
+    addGrid((u, t) => { const p = top(u, side * t); p[1] -= thick + grow * 2; return p; }, side < 0);
+  }
+  const topCount = idx.length; // groups: we flag soffit triangles separately below
+  // edges: eave fascia (v=±1) and gable rakes (u=±1)
+  const edge = (pts, flip) => {
+    const s = pos.length / 3;
+    pts.forEach(p => { pos.push(p[0], p[1], p[2]); uv.push(p[2], p[1]); pos.push(p[0], p[1] - thick - grow * 2, p[2]); uv.push(p[2], p[1] - thick); });
+    for (let k = 0; k < pts.length - 1; k++) { const A = s + k * 2, B = A + 1, C = A + 2, D = A + 3; if (flip) idx.push(A, C, B, B, C, D); else idx.push(A, B, C, B, D, C); }
+  };
+  for (const side of [1, -1]) {
+    const eave = [], rake = [];
+    for (let i = 0; i <= NU; i++) eave.push(top(i / NU * 2 - 1, side));
+    edge(eave, side > 0);
+    for (let j = -NV; j <= NV; j++) rake.push(top(side, j / NV));
+    edge(rake, side < 0);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  // reorder indices into groups: 0 = top + edges (기와), 1 = soffit (처마 밑)
+  const quadsPerGrid = NU * NV * 6, gridOrder = [0, 1, 0, 1]; // top,+soffit for side +1, then side -1
+  const g0 = [], g1 = [];
+  for (let k = 0; k < 4; k++) (gridOrder[k] ? g1 : g0).push(...idx.slice(start0 + k * quadsPerGrid, start0 + (k + 1) * quadsPerGrid));
+  g0.push(...idx.slice(topCount));
+  geo.setIndex(g0.concat(g1));
+  geo.addGroup(0, g0.length, 0); geo.addGroup(g0.length, g1.length, 1);
+  geo.computeVertexNormals();
+  return geo;
+}
+function inkRoofTexture(S, P) {
+  // 기와골: 짙은 먹회색 바탕에 경사 방향 골 선 (1m 반복, 골 간격 25cm)
+  const c = mkCanvas(256, 256), g = c.getContext('2d');
+  g.fillStyle = css(S, P.roof); g.fillRect(0, 0, 256, 256);
+  const dark = styleColor(S, P.roof).multiplyScalar(.55), lite = styleColor(S, P.roof).lerp(new THREE.Color(1, 1, 1), .16);
+  for (let k = 0; k < 4; k++) {
+    const x = k * 64;
+    g.fillStyle = '#' + dark.getHexString(); g.fillRect(x, 0, 9, 256);
+    g.fillStyle = '#' + lite.getHexString(); g.fillRect(x + 22, 0, 6, 256);
+  }
+  const t = canvasTex(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; return t;
+}
+function inkLatticeTexture(S, P, door) {
+  // 창살(띠살) 창 / 판문: 한지 바탕 + 주칠 살
+  const W = 256, H = door ? 384 : 192, c = mkCanvas(W, H), g = c.getContext('2d');
+  const wood = css(S, P.wood), paper = css(S, P.hanji);
+  g.fillStyle = wood; g.fillRect(0, 0, W, H);
+  if (door) {
+    // 두 짝 판문 + 문고리
+    for (const x of [10, W / 2 + 4]) { g.fillStyle = css(S, P.door); g.fillRect(x, 10, W / 2 - 14, H - 20); }
+    g.fillStyle = paper; for (const x of [W / 2 - 22, W / 2 + 14]) { g.beginPath(); g.arc(x + 4, H * .52, 7, 0, TAU); g.fill(); }
+    g.strokeStyle = wood; g.lineWidth = 5; for (const x of [10, W / 2 + 4]) for (const yy of [.3, .7]) { g.beginPath(); g.moveTo(x, H * yy); g.lineTo(x + W / 2 - 14, H * yy); g.stroke(); }
+  } else {
+    const fr = 14; g.fillStyle = paper; g.fillRect(fr, fr, W - fr * 2, H - fr * 2);
+    g.fillStyle = wood;
+    g.fillRect(W / 2 - 4, 0, 8, H);
+    for (let x = fr + 16; x < W - fr; x += 19) if (Math.abs(x - W / 2) > 10) g.fillRect(x - 1.5, fr, 3, H - fr * 2);
+    for (const yy of [.3, .5, .7]) g.fillRect(fr, H * yy - 2.5, W - fr * 2, 5);
+  }
+  return canvasTex(c);
+}
+function inkShopTexture(S, P, chars, aspect) {
+  // 돌출 간판 (세로 글씨). 실존 상호 금지: 가상 이름만.
+  const W = 128, H = Math.round(W * aspect), c = mkCanvas(W, H), g = c.getContext('2d');
+  g.fillStyle = css(S, P.shop); g.fillRect(0, 0, W, H);
+  g.strokeStyle = css(S, P.shopText); g.lineWidth = 5; g.strokeRect(9, 9, W - 18, H - 18);
+  g.fillStyle = css(S, P.shopText); g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.font = '62px "Black Han Sans", "Gothic A1", sans-serif';
+  const step = (H - 40) / chars.length; [...chars].forEach((ch, i) => g.fillText(ch, W / 2, 20 + step * (i + .5)));
+  return canvasTex(c);
+}
+
+function buildInkAlley(env, S, kit, P, owned) {
+  const rnd = mulberry(1907), mono = S.ink.mode === 'mono';
+  // 배경 재질 역할: 평면 채색 + 아주 옅은 한 단계 그림자('face'), mono에선 돌 = 스크린톤('mid'), 목재 = 먹('dark')
+  const R = { flat: 'face', stone: mono ? 'mid' : 'face', wood: mono ? 'dark' : 'face', roof: 'dark' };
+  const BOX = new THREE.BoxGeometry(1, 1, 1);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), v3 = new THREE.Vector3(), sc = new THREE.Vector3(), col = new THREE.Color();
+  const yAxis = new THREE.Vector3(0, 1, 0);
+  const CAM = new THREE.Vector3(.45, 1.95, 4.4); // 기본 카메라 근처: 거리별 외곽선 굵기 계산용
+  const slopeK = .03, wallBack = -2.15, dip = -.6;
+  const gy = z => (z < wallBack ? dip + (wallBack - z) * slopeK : 0); // 성곽 바깥은 한 단 낮고, 북쪽(산 쪽)으로 완만한 오르막
+
+  // 골목 바닥 (성곽 뒤)
+  const gt = inkGroundTexture(S, P, false); gt.repeat.set(36, 18); owned.push(gt);
+  const gg = new THREE.PlaneGeometry(150, 75, 1, 1); gg.rotateX(-Math.PI / 2); gg.translate(0, 0, wallBack - 37.5);
+  { const p = gg.attributes.position; for (let i = 0; i < p.count; i++) p.setY(i, gy(p.getZ(i)) - .02); p.needsUpdate = true; gg.computeVertexNormals(); }
+  const back = new THREE.Mesh(gg, kit.solid('#ffffff', { map: gt, rough: 1, role: 'face' })); back.receiveShadow = true; env.add(back);
+  // 성곽 뒷면 축대 (바깥 땅이 낮아서 생기는 단차)
+  kit.part(env, new THREE.BoxGeometry(26, -dip + .1, .3), kit.solid(P.stone, { rough: 1, role: R.stone }), { pos: [0, dip / 2 - .05, wallBack + .1], outline: false, shadow: false });
+
+  // ---- collectors ----
+  const B = {}; // key -> [[x,y,z,w,h,d,ry,shade,rz]]
+  const box = (key, x, y, z, w, h, d, ry = 0, shade = 1, rz = 0) => (B[key] || (B[key] = [])).push([x, y, z, w, h, d, ry, shade, rz]);
+  const roofs = [], gables = [], dots = [], rafters = [], wins = [], doors = []; // [x, y, z, yaw]
+
+  // 한 채의 로컬 틀: lx = 골목 쪽(+), lz = 줄 방향, 원점 = 정면 선 가운데. yaw th: 로컬 x → 월드 (cos th, -sin th), 로컬 z → (sin th, cos th)
+  const frame = (ox, oz, th) => { const c = Math.cos(th), s = Math.sin(th); return { th, P: (lx, lz) => [ox + c * lx + s * lz, oz - s * lx + c * lz] }; };
+  const D = 4.6, L = 7.0, eaveY = 2.78, ridgeH = 1.75, ovB = .88, ovA = .5, thick = .22, lift = .17;
+  const RA = L / 2 + ovA, RB = D / 2 + ovB;
+  const lowY = (F, pts) => Math.min(...pts.map(([lx, lz]) => gy(F.P(lx, lz)[1]))); // 집 바닥 = 발치에서 가장 낮은 땅
+  // 처마 막새 점 + 서까래 끝 (양쪽 처마)
+  function eaveDots(F, cl, y, a, b, lf, th, len, far) {
+    for (const side of far ? [1] : [1, -1]) { // far: 뒷줄은 골목 쪽 처마만, 서까래 생략
+      const n = Math.round(a * 2 / .3);
+      for (let i = 0; i <= n; i++) { const u = (i / n * 2 - 1) * .985, [x, z] = F.P(cl + side * (b + .008), u * a); dots.push([x, y + lf * Math.pow(Math.abs(u), 4) - th * .52, z, F.th]); }
+      const m = far ? -1 : Math.round(len / .3);
+      for (let i = 0; i <= m; i++) { const u = (i / m * 2 - 1) * (len / 2 + .2) / a, [x, z] = F.P(cl + side * (b - .32), u * a); rafters.push([x, y + lf * Math.pow(Math.abs(u), 4) - th - .045, z, F.th]); }
+    }
+  }
+  function house(F, o = {}) {
+    const end = o.end || 1; // 카메라 쪽 마구리: 로컬 +lz(1) / -lz(-1)
+    const y0 = o.y0 ?? lowY(F, [[0, L / 2], [0, -L / 2], [-D, L / 2], [-D, -L / 2]]);
+    const fb = (key, lx, ly, lz, w, h, d, shade) => { const [x, z] = F.P(lx, lz); box(key, x, ly, z, w, h, d, F.th, shade); };
+    const at = (list, lx, ly, lz, yaw) => { const [x, z] = F.P(lx, lz); list.push([x, ly, z, yaw]); };
+    // 몸채 회벽 + 기단
+    fb('plaster', -D / 2, y0 + eaveY / 2, 0, D, eaveY, L);
+    fb('stone', .05 - D / 2, y0 + .09, 0, D + .5, .18, L + .4, .92);
+    // 기둥 4개 + 창방(위) + 중인방
+    const bays = 3, bw = L / bays;
+    for (let k = 0; k <= bays; k++) fb('wood', .07, y0 + eaveY / 2, -L / 2 + k * bw, .22, eaveY, .22);
+    fb('wood', .06, y0 + eaveY - .14, 0, .2, .28, L + .1);
+    fb('wood', .05, y0 + 1.16, 0, .16, .13, L);
+    // 칸마다: 아랫벽 돌 블록(굵은 줄눈은 외곽선이 만든다) + 창살 창 / 대문
+    const doorBay = o.door ?? -1;
+    for (let k = 0; k < bays; k++) {
+      const z0 = -L / 2 + k * bw + .11, z1 = z0 + bw - .22;
+      if (k === doorBay) { at(doors, .03, y0 + 1.12, (z0 + z1) / 2, F.th); continue; }
+      let yy = y0 + .18;
+      for (const rh of [.46, .48]) {
+        let z = z0;
+        while (z < z1 - .05) { const w = Math.min(.42 + rnd() * .42, z1 - z); fb('stone', .05, yy + rh / 2, z + w / 2, .1, rh - .045, w - .045, .9 + rnd() * .16); z += w; }
+        yy += rh;
+      }
+      at(wins, .035, y0 + 1.86, (z0 + z1) / 2, F.th);
+    }
+    // 마구리(카메라 쪽 끝면) 목재 틀 + 창
+    { const zf = end * (L / 2 + .06);
+      for (const t of [-D + .07, -D / 2]) fb('wood', t, y0 + eaveY / 2, zf, .22, eaveY, .2);
+      fb('wood', -D / 2, y0 + eaveY - .12, zf, D + .1, .24, .18);
+      fb('wood', -D / 2, y0 + 1.16, zf, D - .1, .13, .16);
+      at(wins, -D * .27, y0 + 1.86, zf + end * .03, F.th - end * Math.PI / 2); } // 골목 쪽 칸에 창 → 기본 시점에서 보인다
+    // 마구리 아랫벽 돌 (뒷줄은 카메라 쪽만)
+    for (const e of o.far ? [end] : [1, -1]) {
+      const zf = e * (L / 2 + .04); let yy = y0 + .18;
+      for (const rh of [.46, .48]) { let t = -D + .1; while (t < -.12) { const w = Math.min(.45 + rnd() * .4, -.12 - t); fb('stone', t + w / 2, yy + rh / 2, zf, w - .045, rh - .045, .1, .9 + rnd() * .16); t += w; } yy += rh; }
+    }
+    // 지붕 + 용마루(먹 + 흰 회 띠) + 박공 회벽
+    at(roofs, -D / 2, y0 + eaveY, 0, F.th);
+    fb('roof', -D / 2, y0 + eaveY + ridgeH + .1, 0, .34, .32, RA * 2 - .3);
+    fb('ridgeW', -D / 2, y0 + eaveY + ridgeH - .08, 0, .4, .1, RA * 2 - .4);
+    for (const e of [1, -1]) at(gables, -D / 2, y0 + eaveY, e * (L / 2 - .02), F.th);
+    eaveDots(F, -D / 2, y0 + eaveY, RA, RB, lift, thick, L, o.far);
+  }
+  // 집 사이 담장: 돌 아랫벽 + 회벽 + 기와 갓 (로컬 lz a~b)
+  function fence(F, za, zb) {
+    const len = zb - za; if (len < .3) return;
+    const y0 = lowY(F, [[0, za], [0, zb]]), zc = (za + zb) / 2;
+    const fb = (key, lx, ly, lz, w, h, d, shade) => { const [x, z] = F.P(lx, lz); box(key, x, ly, z, w, h, d, F.th, shade); };
+    let yy = y0; for (const rh of [.42, .42]) { let z = za; while (z < zb - .05) { const w = Math.min(.36 + rnd() * .4, zb - z); fb('stone', -.2, yy + rh / 2, z + w / 2, .34, rh - .045, w - .045, .9 + rnd() * .16); z += w; } yy += rh; }
+    fb('plaster', -.2, y0 + 1.3, zc, .3, .62, len);
+    fb('roof', -.2, y0 + 1.68, zc, .62, .16, len + .1);
+    fb('roof', -.2, y0 + 1.8, zc, .2, .12, len + .1);
+  }
+  // 한 줄: start에서 dir 방향으로 n채, 집 가운데 좌표 목록을 돌려준다
+  function row(n, start, dir, gapMin, gapMax, mk) {
+    let t = start; const cs = [];
+    for (let i = 0; i < n; i++) { cs.push(t + dir * L / 2); t += dir * (L + gapMin + rnd() * (gapMax - gapMin)); }
+    cs.forEach((c, i) => mk(c, i));
+    return cs;
+  }
+
+  // 성곽 너머 골목: 왼쪽 줄(골목이 +x, yaw 0), 오른쪽 줄(골목이 -x, yaw π). 소실점은 화면 가운데 근처.
+  const laneL = -2.25, laneR = 2.85;
+  const leftZ = row(5, -3.6, -1, .8, 1.6, (zc, i) => house(frame(laneL, zc, 0), { door: i % 2 ? 1 : -1, end: 1 }));
+  const rightZ = row(5, -4.1, -1, .8, 1.6, (zc, i) => house(frame(laneR, zc, Math.PI), { door: i % 2 ? -1 : 2, end: -1 }));
+  for (let i = 0; i < leftZ.length - 1; i++) fence(frame(laneL, 0, 0), leftZ[i + 1] + L / 2, leftZ[i] - L / 2);
+  for (let i = 0; i < rightZ.length - 1; i++) fence(frame(laneR, 0, Math.PI), -(rightZ[i] - L / 2), -(rightZ[i + 1] + L / 2));
+  // 뒷줄 (지붕 바다): 엇갈려 배치
+  row(4, -6.5, -1, 1.4, 2.6, zc => house(frame(laneL - D - 1.6, zc, 0), { far: true }));
+  row(4, -5.8, -1, 1.4, 2.6, zc => house(frame(laneR + D + 1.6, zc, Math.PI), { end: -1, far: true }));
+  row(4, -6.4, -1, 2.2, 3.5, zc => house(frame(laneL - 2 * D - 3.4, zc, 0), { far: true }));
+  row(4, -4.8, -1, 2.2, 3.5, zc => house(frame(laneR + 2 * D + 3.4, zc, Math.PI), { end: -1, far: true }));
+  // 성곽 안쪽(카메라 쪽) 양 끝: 순성길을 따라 늘어선 한옥 — 시점을 옆으로 돌리면 성곽과 한옥 사이 골목이 된다. 무대(|x|<9)는 비움.
+  const inZ = 2.7, th90 = Math.PI / 2;
+  row(4, -9.6, -1, .9, 1.8, (xc, i) => house(frame(xc, inZ, th90), { end: 1, door: i % 2 ? 1 : -1 }));
+  row(4, 9.6, 1, .9, 1.8, (xc, i) => house(frame(xc, inZ, th90), { end: -1, door: i % 2 ? -1 : 1 }));
+  row(3, -12, -1, 2, 3, xc => house(frame(xc, inZ + D + 2.4, th90), { end: 1, far: true }));
+  row(3, 12, 1, 2, 3, xc => house(frame(xc, inZ + D + 2.4, th90), { end: -1, far: true }));
+
+  // ---- 성곽 연장 (무대 밖 양 끝) + 혜화문 ----
+  // 기존 성곽(x -13~13)은 그대로 두고, 서쪽은 혜화문 너머로, 동쪽은 와룡공원 쪽으로 더 이어 그린다.
+  const fortW = [];
+  const fortRun = (xa, xb) => {
+    let y = 0, rw = 0;
+    while (y < 1.0) { const h = Math.min(.3 + rnd() * .1, 1.05 - y); let x = xa - (rw % 2) * .35; while (x < xb) { const w = .5 + rnd() * .45; fortW.push([x + w / 2, y + h / 2, -1.75, w - .03, h - .03, .7]); x += w; } y += h; rw++; }
+    for (let x = xa; x < xb; x += 1.34) { fortW.push([x + .6, 1.32, -1.7, 1.22, .52, .52]); fortW.push([x + .6, 1.62, -1.7, 1.3, .08, .62]); }
+  };
+  fortRun(13.2, 40); fortRun(-42, -24.6);
+  // 혜화문: 홍예(아치) 석축 + 문루. 실존 랜드마크라 실명 사용.
+  const gx = -19, gz = -1.6, gw = 10.8, gd = 4.0, gh = 4.2, ar = 1.75, ay = 2.1; // 석축 폭·깊이·높이, 아치 반지름·아치 기둥 높이
+  const gate = [];
+  for (const fz of [gz + gd / 2, gz - gd / 2]) { // 석축 앞·뒷면 돌 (아치 구멍 제외)
+    let y = 0, rw = 0;
+    while (y < gh - .05) {
+      const h = Math.min(.42 + rnd() * .14, gh - y); let x = gx - gw / 2 - (rw % 2) * .3;
+      while (x < gx + gw / 2) {
+        const x0 = Math.max(x, gx - gw / 2), w = Math.min(.7 + rnd() * .55, gx + gw / 2 - x0), cx = x0 + w / 2, cy = y + h / 2, dx = Math.abs(cx - gx);
+        const inArch = dx < ar + .5 && (cy < ay || Math.hypot(dx, cy - ay) < ar + .5);
+        if (!inArch && w > .15) gate.push([cx, cy, fz, w - .04, h - .04, .3]);
+        x = x0 + w;
+      }
+      y += h; rw++;
+    }
+    // 홍예 쐐기돌(반원) + 아치 기둥 돌
+    const n = 13;
+    for (let i = 0; i < n; i++) { const a = Math.PI * (i + .5) / n, r = ar + .24; box('gateStone', gx + Math.cos(a) * r, ay + Math.sin(a) * r, fz, .5, .4, .32, 0, .95 + rnd() * .1, a - Math.PI / 2); }
+    for (const sx of [-1, 1]) for (let k = 0; k < 4; k++) box('gateStone', gx + sx * (ar + .24), .27 + k * .52, fz, .5, .48, .32, 0, .95 + rnd() * .1);
+  }
+  for (const sx of [-1, 1]) { // 석축 옆면 돌
+    const fx = gx + sx * gw / 2; let y = 0, rw = 0;
+    while (y < gh - .05) { const h = Math.min(.42 + rnd() * .14, gh - y); let z = gz - gd / 2 + .15 + (rw % 2) * .25; while (z < gz + gd / 2 - .15) { const w = Math.min(.6 + rnd() * .5, gz + gd / 2 - .15 - z); if (w > .15) gate.push([fx, y + h / 2, z + w / 2, .3, h - .04, w - .04]); z += w; } y += h; rw++; }
+  }
+  // 석축 속(통로 양옆·위) + 통로 안 먹 그늘
+  box('gateCore', gx - (gw / 2 + ar) / 2 - .05, gh / 2, gz, gw / 2 - ar - .2, gh, gd - .3);
+  box('gateCore', gx + (gw / 2 + ar) / 2 + .05, gh / 2, gz, gw / 2 - ar - .2, gh, gd - .3);
+  box('gateCore', gx, ay + ar + (gh - ay - ar) / 2 + .05, gz, ar * 2 + .2, gh - ay - ar, gd - .3);
+  box('tunnel', gx, (ay + ar) / 2, gz, ar * 2, ay + ar, gd - .7);
+  // 석축 위 여장(성가퀴)
+  for (let x = gx - gw / 2 + .3; x < gx + gw / 2 - .3; x += 1.2) for (const fz of [gz + gd / 2 - .2, gz - gd / 2 + .2]) box('gateStone', x + .45, gh + .3, fz, .9, .6, .4, 0, .95 + rnd() * .1);
+  // 문루: 기둥 4x2, 창방(단청), 난간, 지붕
+  const pw = 6.4, pd = 2.9, ph = 2.5, py = gh + .1;
+  box('gateFloor', gx, py - .05, gz, pw + .6, .14, pd + .6);
+  for (const sx of [-1.5, -.5, .5, 1.5]) for (const sz of [-1, 1]) box('wood', gx + sx * pw / 3, py + ph / 2, gz + sz * pd / 2, .26, ph, .26);
+  for (const sz of [-1, 1]) { box('dancheong', gx, py + ph - .16, gz + sz * pd / 2, pw + .3, .32, .24); box('wood', gx, py + .55, gz + sz * pd / 2, pw, .07, .1); }
+  for (const sx of [-1, 1]) { box('dancheong', gx + sx * pw / 2, py + ph - .16, gz, .24, .32, pd + .3); box('wood', gx + sx * pw / 2, py + .55, gz, .1, .07, pd); }
+  const GR = { a: pw / 2 + 1.25, b: pd / 2 + 1.2, H: 2.1, th: .26, lift: .55 };
+  const gateRoof = { pos: [gx, py + ph, gz], F: frame(gx, gz, th90) };
+  eaveDots(gateRoof.F, 0, py + ph, GR.a, GR.b, GR.lift, GR.th, pw);
+  box('roof', gx, py + ph + GR.H + .12, gz, GR.a * 2 - .9, .4, .4);
+  box('ridgeW', gx, py + ph + GR.H - .1, gz, GR.a * 2 - 1, .12, .46);
+  for (const sx of [-1, 1]) box('roof', gx + sx * (GR.a - .55), py + ph + GR.H + .3, gz, .35, .55, .42, 0, 1, sx * .35); // 용마루 끝 치켜올림
+  const hyeonpan = labelTexture([['惠化門', 150, .54]], css(S, mono ? P.door : '#2b2a33'), mono ? S.ink.paper : '#e9d9a8', 512, 200, 'Noto Serif KR');
+  owned.push(hyeonpan);
+  kit.part(env, new THREE.BoxGeometry(1.5, .58, .06), kit.solid('#ffffff', { map: hyeonpan, rough: .8, role: R.flat }), { pos: [gx, py + ph - .62, gz + pd / 2 + .18], ow: 2.5 });
+
+  // ---- 전봇대 + 전깃줄 (골목 위를 가로지르는 먹 선) ----
+  const poles = [[laneR - .45, -9.3], [laneL + .4, -19.6], [laneR - .45, -30.5]];
+  for (const [x, z] of poles) {
+    const y0 = gy(z);
+    box('pole', x, y0 + 3.0, z, .2, 6.0, .2);
+    box('pole', x, y0 + 5.6, z, 1.3, .1, .1);
+  }
+  const wireMat = kit.solid(P.wire, { rough: 1, role: 'dark' });
+  const wire = (a, b, sag, r) => {
+    const pts = []; for (let i = 0; i <= 14; i++) { const t = i / 14; const p = new THREE.Vector3().lerpVectors(a, b, t); p.y -= Math.sin(Math.PI * t) * sag; pts.push(p); }
+    const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 18, r, 4), wireMat); m.castShadow = false; env.add(m);
+  };
+  for (let i = 0; i < poles.length - 1; i++) {
+    const [xa, za] = poles[i], [xb, zb] = poles[i + 1];
+    for (const dx of [-.55, .55]) wire(new THREE.Vector3(xa + dx, gy(za) + 5.58, za), new THREE.Vector3(xb + dx, gy(zb) + 5.58, zb), .45, .022);
+    wire(new THREE.Vector3(xa, gy(za) + 5.1, za), new THREE.Vector3(xb, gy(zb) + 5.1, zb), .6, .03);
+  }
+  // 집으로 들어가는 인입선
+  wire(new THREE.Vector3(poles[0][0], gy(poles[0][1]) + 5.1, poles[0][1]), new THREE.Vector3(laneL - .2, gy(-6) + eaveY + .3, -6), .5, .018);
+  wire(new THREE.Vector3(poles[1][0], gy(poles[1][1]) + 5.1, poles[1][1]), new THREE.Vector3(laneR + .2, gy(-15) + eaveY + .3, -15), .5, .018);
+
+  // ---- 돌출 간판: 전통 한옥 + 스트릿 (가상 상호) ----
+  const signs = [[laneR, -1, rightZ[0] + 1.4, '하루편의점'], [laneL, 1, leftZ[1] + 2.2, '반촌공방']];
+  for (const [xf, s, z, name] of signs) {
+    const h = name.length * .22 + .16, y0 = gy(z);
+    const t = inkShopTexture(S, P, name, h / .5); owned.push(t);
+    const g = new THREE.Group(); g.position.set(xf + s * .55, y0 + 1.95, z); env.add(g);
+    kit.part(g, new THREE.BoxGeometry(.5, h, .08), kit.solid('#ffffff', { map: t, rough: .8, role: R.flat }), { ow: 3 });
+    kit.part(g, new THREE.BoxGeometry(.5, .04, .04), kit.solid(P.wire, { role: 'dark' }), { pos: [-s * .5, h * .35, 0], outline: false });
+    kit.part(g, new THREE.BoxGeometry(.5, .04, .04), kit.solid(P.wire, { role: 'dark' }), { pos: [-s * .5, -h * .35, 0], outline: false });
+    // 간판은 골목과 직각 → 정면이 카메라 쪽(+z)을 본다
+  }
+
+  // ---- build instanced meshes ----
+  const SPEC = {
+    plaster: { hex: P.plaster, ow: 1, role: R.flat }, stone: { hex: P.stone, ow: 1.25, role: R.stone }, wood: { hex: P.wood, ow: 1, role: R.wood },
+    roof: { hex: P.roof, ow: 1, role: R.roof }, ridgeW: { hex: P.ridgeWhite, ow: 0, role: 'glow' }, pole: { hex: P.pole, ow: 1, role: R.flat },
+    gateStone: { hex: P.fort, ow: 1.4, role: R.flat }, gateCore: { hex: P.fort, ow: 0, role: R.flat }, tunnel: { hex: P.tunnel, ow: 0, role: 'glow' },
+    gateFloor: { hex: P.stone, ow: 1, role: R.stone }, dancheong: { hex: P.dancheong, ow: 1, role: R.wood }, fortX: { hex: P.fort, ow: 1.6, role: R.flat },
+  };
+  const eul = new THREE.Euler();
+  const setQ = b => q.setFromEuler(eul.set(0, b[6], b[8] || 0, 'YXZ'));
+  // 성곽 연장 돌 + 혜화문 석축 돌
+  for (const s of fortW) box('fortX', s[0], s[1], s[2], s[3], s[4], s[5], 0, .95 + rnd() * .1);
+  for (const s of gate) box('gateStone', s[0], s[1], s[2], s[3], s[4], s[5], 0, .95 + rnd() * .1);
+  for (const key in B) {
+    const list = B[key], sp = SPEC[key], mat = kit.solid(sp.hex, { rough: .95, role: sp.role });
+    const im = new THREE.InstancedMesh(BOX, mat, list.length);
+    list.forEach((b, i) => {
+      setQ(b); m4.compose(v3.set(b[0], b[1], b[2]), q, sc.set(b[3], b[4], b[5])); im.setMatrixAt(i, m4);
+      im.setColorAt(i, col.setScalar(b[7]));
+    });
+    im.castShadow = true; im.receiveShadow = true; env.add(im);
+    const om = sp.ow ? kit.outline(mat) : null;
+    if (om) {
+      const o = new THREE.InstancedMesh(BOX, om, list.length);
+      list.forEach((b, i) => {
+        const e = (.016 + .0019 * v3.set(b[0], b[1], b[2]).distanceTo(CAM)) * sp.ow;
+        setQ(b); m4.compose(v3.set(b[0], b[1], b[2]), q, sc.set(b[3] + e, b[4] + e, b[5] + e)); o.setMatrixAt(i, m4);
+      });
+      env.add(o);
+    }
+  }
+  // 지붕 (기와 + 처마 밑)
+  const rt = inkRoofTexture(S, P); owned.push(rt);
+  const roofMat = kit.solid('#ffffff', { map: rt, rough: .9, role: R.roof });
+  const soffitMat = kit.solid(P.soffit, { rough: .9, role: R.roof });
+  const rg = inkRoofGeo(RA, RB, ridgeH, thick, lift, 0);
+  const roofIM = new THREE.InstancedMesh(rg, [roofMat, soffitMat], roofs.length);
+  const rOut = kit.outline(soffitMat);
+  const rgo = rOut ? inkRoofGeo(RA, RB, ridgeH, thick, lift, .045) : null;
+  const roofO = rOut ? new THREE.InstancedMesh(rgo, rOut, roofs.length) : null;
+  const yawM = r => m4.compose(v3.set(r[0], r[1], r[2]), q.setFromAxisAngle(yAxis, r[3] || 0), sc.set(1, 1, 1));
+  roofs.forEach((r, i) => { yawM(r); roofIM.setMatrixAt(i, m4); if (roofO) roofO.setMatrixAt(i, m4); });
+  roofIM.castShadow = true; roofIM.receiveShadow = true; env.add(roofIM); if (roofO) env.add(roofO);
+  // 혜화문 문루 지붕 (처마 끝이 더 들린 큰 지붕)
+  { const g = inkRoofGeo(GR.a, GR.b, GR.H, GR.th, GR.lift, 0), m = new THREE.Mesh(g, [roofMat, soffitMat]);
+    yawM([...gateRoof.pos, th90]); m.applyMatrix4(m4); m.castShadow = true; m.receiveShadow = true; env.add(m);
+    if (rOut) { const h = new THREE.Mesh(inkRoofGeo(GR.a, GR.b, GR.H, GR.th, GR.lift, .06), rOut); h.applyMatrix4(m4); env.add(h); } }
+  // 박공 회벽 삼각
+  const gs = new THREE.Shape(); gs.moveTo(-D / 2 - .1, 0); gs.lineTo(D / 2 + .1, 0); gs.lineTo(0, ridgeH * .92); gs.closePath();
+  const gGeo = new THREE.ExtrudeGeometry(gs, { depth: .1, bevelEnabled: false }); gGeo.translate(0, 0, -.05);
+  const gIM = new THREE.InstancedMesh(gGeo, kit.solid(P.plaster, { rough: .95, role: R.flat }), gables.length);
+  gables.forEach((g, i) => { yawM(g); gIM.setMatrixAt(i, m4); });
+  gIM.receiveShadow = true; env.add(gIM);
+  // 막새 흰 점 (처마 끝 띠)
+  const dGeo = new THREE.CylinderGeometry(.052, .052, .03, 7); dGeo.rotateZ(Math.PI / 2);
+  const dIM = new THREE.InstancedMesh(dGeo, kit.solid(P.mak, { rough: .8, role: 'glow' }), dots.length);
+  dots.forEach((d, i) => { yawM(d); dIM.setMatrixAt(i, m4); });
+  env.add(dIM);
+  // 서까래 끝 (붉은 갈색)
+  const rfGeo = new THREE.CylinderGeometry(.06, .06, .5, 5); rfGeo.rotateZ(Math.PI / 2);
+  const rfIM = new THREE.InstancedMesh(rfGeo, kit.solid(P.rafter, { rough: .9, role: R.wood }), rafters.length);
+  rafters.forEach((d, i) => { yawM(d); rfIM.setMatrixAt(i, m4); });
+  env.add(rfIM);
+  // 창살 창 / 대문 (골목 쪽을 보는 판)
+  const panel = (list, tex, w, h) => {
+    if (!list.length) return; owned.push(tex);
+    const pg = new THREE.PlaneGeometry(w, h); pg.rotateY(Math.PI / 2);
+    const im = new THREE.InstancedMesh(pg, kit.solid('#ffffff', { map: tex, rough: .9, role: R.flat }), list.length);
+    list.forEach((p, i) => { yawM(p); im.setMatrixAt(i, m4); });
+    im.receiveShadow = true; env.add(im);
+  };
+  panel(wins, inkLatticeTexture(S, P, false), 1.62, .98);
+  panel(doors, inkLatticeTexture(S, P, true), 1.45, 2.1);
+}
+
+// ---------- ink style: far backdrop (도시 스카이라인 판 + 북쪽 산 판) ----------
+// 원통 띠 두 장에 캔버스로 그린 그림을 붙인다. mono에선 회색 단계를 화면 공간 스크린톤 점으로 바꾼다.
+const _inkBackdropCache = new Map();
+const INK_RING = {
+  span: 3.7, // 원통 각도 (rad), 북쪽(-Z) 중심. 궤도 회전 ±1.2 + 시야 반폭까지 덮음
+  city: { R: 150, y0: -7, y1: 13, W: 4096, H: 256 },
+  mtn: { R: 260, y0: -36, y1: 62, W: 4096, H: 640 },
+};
+function inkBackdropMat(tex, S, P) {
+  const mono = S.ink.mode === 'mono', dpr = Math.min(window.devicePixelRatio || 1, 2);
+  return new THREE.ShaderMaterial({
+    side: THREE.BackSide, fog: false, toneMapped: false, transparent: false,
+    uniforms: { map: { value: tex }, ink: { value: new THREE.Color(S.ink.ink) }, paper: { value: new THREE.Color(P.sky) }, cell: { value: (S.ink.tone && S.ink.tone.size || 4.5) * dpr }, mono: { value: mono ? 1 : 0 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+    fragmentShader: [
+      'uniform sampler2D map; uniform vec3 ink; uniform vec3 paper; uniform float cell; uniform float mono; varying vec2 vUv;',
+      'void main(){',
+      '  vec4 t = texture2D(map, vUv); if (t.a < .5) discard;',
+      '  vec3 c = t.rgb;',
+      '  if (mono > .5) {',
+      '    float l = dot(c, vec3(.2126, .7152, .0722));',
+      '    float tone = clamp((0.95 - l) * 0.8, 0.0, 0.9);', // 덮는 비율 (0 = 종이)
+      '    vec2 p = mat2(.7071, -.7071, .7071, .7071) * gl_FragCoord.xy / cell;',
+      '    float d = length(fract(p) - .5);',
+      '    float on = l < .045 ? 1.0 : step(d, sqrt(tone / 3.14159)) * step(.03, tone);',
+      '    c = mix(paper, ink, on);',
+      '  }',
+      '  gl_FragColor = vec4(c, 1.0);',
+      '#include <colorspace_fragment>',
+      '}'].join('\n'),
+  });
+}
+function inkBackdropTextures(S, P) {
+  const key = S.key + JSON.stringify(P);
+  if (_inkBackdropCache.has(key)) return _inkBackdropCache.get(key);
+  const span = INK_RING.span, EYE = 1.95;
+  // 화면 기준 좌→우 각도 phi(-span/2..span/2, +가 화면 오른쪽 = +x) 와 높이각 el(rad) -> 캔버스 좌표
+  const mk = (ring, draw) => {
+    const { W, H, R, y0, y1 } = ring, c = mkCanvas(W, H), g = c.getContext('2d');
+    const X = phi => (phi / span + .5) * W;
+    const Y = el => (1 - ((EYE + R * Math.tan(el)) - y0) / (y1 - y0)) * H;
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    draw(g, X, Y, W, H);
+    // 원통 안쪽에서 보면 좌우가 뒤집히므로 한 번 뒤집어 둔다
+    const f = mkCanvas(W, H), fg = f.getContext('2d'); fg.translate(W, 0); fg.scale(-1, 1); fg.drawImage(c, 0, 0);
+    const t = canvasTex(f); t.anisotropy = 8; return t;
+  };
+  const deg = Math.PI / 180;
+  const r = mulberry(77);
+  // --- 산: 앞 = 북악(둥근 봉우리, 회갈), 뒤 = 북한산(바위 봉우리, 더 옅게) ---
+  const bump = (x, c, w, h, p = 2) => h * Math.exp(-Math.pow(Math.abs(x - c) / w, p));
+  const noise = (() => { const a = [...Array(9)].map(() => [r() * 40 + 6, r() * TAU, r()]); return x => a.reduce((s, [f, ph, m]) => s + Math.sin(x * f + ph) * m, 0); })();
+  // 기본 시점 화면 위쪽 끝이 높이각 약 5도라서, 능선이 화면 안에 들어오도록 낮게(정면 3~4.5도) 잡는다. 옆으로 돌리면 더 높은 봉우리가 보인다.
+  const backH = x => Math.max(.9, 2.0 + .62 * (bump(x, .22, .2, 4.6, 1.6) + bump(x, .36, .08, 3.4, 1.3) + bump(x, .05, .14, 2.2) + bump(x, -.7, .45, 2.4) + bump(x, 1.05, .35, 2.6)) + noise(x * 1.3) * .22 + (Math.abs(Math.sin(x * 61)) * .3));
+  const frontH = x => Math.max(.4, 1.0 + .72 * (bump(x, -.28, .26, 3.9, 2.2) + bump(x, -.62, .16, 1.6) + bump(x, .55, .3, 1.5) + bump(x, -1.25, .3, 1.9)) + noise(x) * .1);
+  const mtn = mk(INK_RING.mtn, (g, X, Y, W, H) => {
+    const ridge = (fn, fill, line, lw, hatch, rocks) => {
+      const pts = []; for (let px = 0; px <= W; px += 4) { const phi = (px / W - .5) * span; pts.push([px, Y(fn(phi) * deg)]); }
+      g.fillStyle = fill; g.beginPath(); g.moveTo(0, H); pts.forEach(p => g.lineTo(p[0], p[1])); g.lineTo(W, H); g.closePath(); g.fill();
+      // 능선 결 해칭: 그늘 쪽 비탈(오른쪽으로 내려가는 면)에 경사 따라 짧은 붓선
+      g.strokeStyle = line; g.lineWidth = hatch.w;
+      for (let i = 2; i < pts.length - 2; i++) {
+        const [x, y] = pts[i], dy = pts[i + 1][1] - pts[i - 1][1];
+        if (dy > .6 * hatch.k || (r() < .12 && Math.abs(dy) < 1.5)) {
+          if (r() > hatch.p) continue;
+          const len = (14 + r() * 26) * hatch.len, ang = Math.atan2(Math.max(dy, 2), 8) * .8 + .35;
+          g.globalAlpha = .55 + r() * .4; g.beginPath(); g.moveTo(x, y + 3); g.lineTo(x + Math.cos(ang) * len * .35, y + 3 + Math.sin(ang) * len); g.stroke();
+        }
+      }
+      // 골짜기 선 (봉우리에서 내려오는 지능선)
+      g.globalAlpha = .7; g.lineWidth = hatch.w * 1.1;
+      for (let i = 6; i < pts.length - 6; i++) {
+        const [x, y] = pts[i]; if (!(y < pts[i - 5][1] && y < pts[i + 5][1]) || r() > .55) continue;
+        let cx = x, cy = y + 4; g.beginPath(); g.moveTo(cx, cy);
+        const dir = r() < .5 ? -1 : 1, n = 3 + (r() * 4 | 0);
+        for (let k = 0; k < n; k++) { cx += dir * (6 + r() * 12); cy += 10 + r() * 16; g.lineTo(cx, cy); }
+        g.stroke();
+      }
+      g.globalAlpha = 1;
+      if (rocks) {
+        // 화강암 봉우리: 옅은 바위 면 + 세로 결
+        for (let i = 0; i < pts.length; i++) {
+          const [x, y] = pts[i], phi = (x / W - .5) * span; if (fn(phi) < rocks.min || r() > .5) continue;
+          g.fillStyle = rocks.fill; g.beginPath(); g.moveTo(x - 6, y + 2); g.lineTo(x + 7, y + 2); g.lineTo(x + 4, y + 22 + r() * 30); g.lineTo(x - 4, y + 18 + r() * 20); g.closePath(); g.fill();
+          g.strokeStyle = line; g.lineWidth = 1.2; g.globalAlpha = .6; g.beginPath(); g.moveTo(x + 2, y + 4); g.lineTo(x + 3, y + 18 + r() * 24); g.stroke(); g.globalAlpha = 1;
+        }
+      }
+      // 먹 외곽선 (능선 윗선)
+      g.strokeStyle = line; g.lineWidth = lw; g.beginPath(); pts.forEach((p, i) => (i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]))); g.stroke();
+    };
+    ridge(backH, css(S, P.mtnBack), css(S, P.mtnInk), 1.6, { w: 1.1, k: 1, p: .5, len: .8 }, { min: 5.2, fill: css(S, P.rock) });
+    ridge(frontH, css(S, P.mtn), css(S, P.mtnInk), 2.2, { w: 1.3, k: 1, p: .75, len: 1 }, null);
+  });
+  // --- 도시: 옅은 회색 빌딩 실루엣 (두 겹), 가는 선과 창 띠만 ---
+  const city = mk(INK_RING.city, (g, X, Y, W, H) => {
+    const layer = (fill, line, hMin, hMax, wMin, wMax, winP) => {
+      let x = 0;
+      while (x < W) {
+        const w = wMin + r() * (wMax - wMin), phi = (x / W - .5) * span;
+        const gap = Math.abs(phi) < .05 ? .3 : 1; // 소실점 바로 뒤는 조금 낮게
+        const el = (hMin + r() * (hMax - hMin)) * gap * deg, y = Y(el);
+        g.fillStyle = fill; g.fillRect(x, y, w, H - y);
+        g.strokeStyle = line; g.lineWidth = 1.4; g.strokeRect(x + .7, y + .7, w - 1.4, H);
+        if (r() < winP) { g.lineWidth = 1; g.globalAlpha = .55; for (let yy = y + 6; yy < Y(0) - 2; yy += 6) { g.beginPath(); g.moveTo(x + 4, yy); g.lineTo(x + w - 4, yy); g.stroke(); } g.globalAlpha = 1; }
+        if (r() < .15) { g.lineWidth = 1.2; g.beginPath(); g.moveTo(x + w * .6, y); g.lineTo(x + w * .6, y - 8 - r() * 8); g.stroke(); }
+        x += w + (r() < .3 ? 2 + r() * 10 : 0);
+      }
+    };
+    layer(css(S, P.cityFar), css(S, P.cityInk), .5, 1.6, 14, 46, .3);
+    layer(css(S, P.city), css(S, P.cityInk), .2, 1.1, 18, 60, .5);
+    g.fillStyle = css(S, P.city); g.fillRect(0, Y(-.4 * deg), W, H);
+  });
+  const res = { mtn, city };
+  _inkBackdropCache.set(key, res);
+  return res;
+}
+function buildInkBackdrop(env, S, P, owned) {
+  const T = inkBackdropTextures(S, P), span = INK_RING.span;
+  for (const [k, tex, order] of [['mtn', T.mtn, -9], ['city', T.city, -8]]) {
+    const ring = INK_RING[k], h = ring.y1 - ring.y0;
+    const geo = new THREE.CylinderGeometry(ring.R, ring.R, h, 96, 1, true, Math.PI - span / 2, span);
+    const mat = inkBackdropMat(tex, S, P); owned.push(mat);
+    const m = new THREE.Mesh(geo, mat); m.position.y = ring.y0 + h / 2; m.renderOrder = order; env.add(m);
+  }
+}
+
 // ===== 05_fx.js =====
+// ---------- ink FX sprites (A/I): 먹 붓 터치, 흰 섬광 조각, 속도선, 먹 점, 만화 먼지 구름 ----------
+// 흰색으로 그린 것(brush/splat/lines/ring)은 SpriteMaterial.color로 먹색을 입힌다. star/shard/dust는 흰 면 + 먹 테를 그대로 쓴다.
+const _inkFx = new Map();
+function inkFxTex(S) {
+  const inkHex = S.ink ? S.ink.ink : '#111111';
+  if (_inkFx.has(inkHex)) return _inkFx.get(inkHex);
+  const R = mulberry(2024), T = {};
+  const mk = (w, h, draw) => { const c = mkCanvas(w, h), g = c.getContext('2d'); g.lineCap = 'round'; g.lineJoin = 'round'; draw(g, w, h); return canvasTex(c); };
+  // 붓 획: 초승달 모양, 머리는 굵고 꼬리는 갈라지며(비백) 가늘어진다
+  T.brush = mk(512, 256, (g, W, H) => {
+    const r = H * 2, cx = W / 2, cy = H * .5 - 26 + r, a0 = -Math.PI / 2 - .47, a1 = -Math.PI / 2 + .47, N = 64; // 획 가운데가 텍스처 중심을 지난다
+    const wAt = t => H * .26 * Math.pow(Math.sin(Math.PI * Math.min(1, t * 1.15)), .55) * (1 - t * .35);
+    g.fillStyle = '#fff'; g.beginPath();
+    for (let i = 0; i <= N; i++) { const t = i / N, a = a0 + (a1 - a0) * t, rr = r + wAt(t) * .5; g.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
+    for (let i = N; i >= 0; i--) { const t = i / N, a = a0 + (a1 - a0) * t, rr = r - wAt(t) * .5; g.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
+    g.closePath(); g.fill();
+    // 비백: 꼬리 쪽으로 갈수록 결 사이가 빈다
+    g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000';
+    for (let k = 0; k < 15; k++) {
+      const off = (R() - .5) * .9, t0 = .3 + R() * .5; g.lineWidth = 1 + R() * 2.4; g.beginPath();
+      for (let i = 0; i <= 30; i++) { const t = t0 + (1 - t0) * i / 30, a = a0 + (a1 - a0) * t, rr = r + wAt(t) * off; if (i) g.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); else g.moveTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
+      g.stroke();
+    }
+    g.globalCompositeOperation = 'source-over'; g.fillStyle = '#fff';
+    for (let k = 0; k < 12; k++) { const t = R() * .35, a = a0 + (a1 - a0) * t, rr = r + (R() - .2) * H * .38; g.beginPath(); g.arc(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, 1.5 + R() * 4, 0, TAU); g.fill(); }
+  });
+  // 먹 튀김: 울퉁불퉁한 덩어리 + 작은 방울
+  T.splat = mk(128, 128, (g, W) => {
+    g.fillStyle = '#fff'; g.beginPath();
+    for (let i = 0; i <= 18; i++) { const a = i / 18 * TAU, rr = W * (.24 + R() * .12); g.lineTo(W / 2 + Math.cos(a) * rr, W / 2 + Math.sin(a) * rr); }
+    g.closePath(); g.fill();
+    for (let k = 0; k < 6; k++) { const a = R() * TAU, rr = W * (.36 + R() * .1); g.beginPath(); g.arc(W / 2 + Math.cos(a) * rr, W / 2 + Math.sin(a) * rr, 2 + R() * 5, 0, TAU); g.fill(); }
+  });
+  // 흰 섬광 조각: 가늘고 긴 마름모, 먹 테
+  T.shard = mk(64, 256, (g, W, H) => {
+    g.beginPath(); g.moveTo(W / 2, 6); g.lineTo(W * .78, H * .42); g.lineTo(W / 2, H - 6); g.lineTo(W * .26, H * .5); g.closePath();
+    g.lineWidth = 7; g.strokeStyle = inkHex; g.stroke(); g.fillStyle = '#ffffff'; g.fill();
+  });
+  // 충격 섬광: 들쭉날쭉한 흰 별 + 먹 테
+  T.star = mk(256, 256, (g, W) => {
+    const n = 11; g.beginPath();
+    for (let i = 0; i < n * 2; i++) { const a = i / (n * 2) * TAU + R() * .08, rr = W * (i % 2 ? .13 + R() * .05 : .34 + R() * .13); g.lineTo(W / 2 + Math.cos(a) * rr, W / 2 + Math.sin(a) * rr); }
+    g.closePath(); g.lineWidth = 9; g.strokeStyle = inkHex; g.stroke(); g.fillStyle = '#ffffff'; g.fill();
+  });
+  // 집중선: 바깥에서 안으로 가늘어지는 먹 선 (가운데는 비움)
+  T.lines = mk(512, 512, (g, W) => {
+    g.fillStyle = '#fff';
+    for (let i = 0; i < 70; i++) {
+      const a = R() * TAU, r0 = W * (.2 + R() * .1), r1 = W * (.44 + R() * .06), w = .006 + R() * .014;
+      g.beginPath(); g.moveTo(W / 2 + Math.cos(a) * r0, W / 2 + Math.sin(a) * r0);
+      g.lineTo(W / 2 + Math.cos(a - w) * r1, W / 2 + Math.sin(a - w) * r1); g.lineTo(W / 2 + Math.cos(a + w) * r1, W / 2 + Math.sin(a + w) * r1); g.closePath(); g.fill();
+    }
+  });
+  // 붓으로 그린 고리 (메치기 착지 땅바닥)
+  T.ring = mk(256, 256, (g, W) => {
+    g.strokeStyle = '#fff';
+    for (let k = 0; k < 4; k++) { const a0 = R() * TAU, len = TAU * (.55 + R() * .35); g.lineWidth = 5 + R() * 9; g.beginPath(); g.arc(W / 2, W / 2, W * (.4 + (R() - .5) * .04), a0, a0 + len); g.stroke(); }
+  });
+  // 만화 먼지 구름: 흰 원 뭉치 + 먹 테 (가리비 테두리)
+  T.dust = mk(256, 256, (g, W) => {
+    const cs = [[.5, .55, .2], [.32, .58, .15], [.68, .6, .15], [.42, .4, .15], [.6, .42, .13]].map(([x, y, r]) => [x * W, y * W, r * W * (.9 + R() * .2)]);
+    g.fillStyle = inkHex; cs.forEach(([x, y, r]) => { g.beginPath(); g.arc(x, y, r + 6, 0, TAU); g.fill(); });
+    g.fillStyle = '#ffffff'; cs.forEach(([x, y, r]) => { g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); });
+  });
+  _inkFx.set(inkHex, T);
+  return T;
+}
+
 // ---------- particles / impact effects ----------
 class FX {
-  constructor(scene, S) { this.S = S; this.group = new THREE.Group(); scene.add(this.group); this.items = []; this.T = fxTex(); }
+  constructor(scene, S) {
+    this.S = S; this.group = new THREE.Group(); scene.add(this.group); this.items = []; this.T = fxTex();
+    this.ink = S.fx === 'ink' || !!S.ink; // A/I: 먹 레시피
+    if (this.ink) { this.K = inkFxTex(S); this.inkC = S.ink ? S.ink.ink : '#111111'; this.accent = S.ink && S.ink.mode !== 'mono' && S.word ? S.word.shadow : null; }
+  }
   sprite(tex, o) {
     const m = new THREE.SpriteMaterial({ map: tex, color: o.color || '#ffffff', transparent: true, depthWrite: false, depthTest: !o.top, blending: o.add ? THREE.AdditiveBlending : THREE.NormalBlending, rotation: o.rot || 0, fog: false });
     const s = new THREE.Sprite(m); s.position.copy(o.pos); s.renderOrder = o.top ? 20 : 5; this.group.add(s);
@@ -1136,6 +1800,7 @@ class FX {
   hit(pos, power, dir) {
     const S = this.S, T = this.T, R = Math.random;
     const out = () => new THREE.Vector3(dir.x * (.5 + R()) + (R() - .5), .2 + R() * 1.2, dir.z * (.5 + R()) + (R() - .5));
+    if (this.ink) return this.inkHit(pos, power, dir, out);
     if (S.fx === 'anime') {
       this.sprite(T.flash, { pos, s0: .2, s1: .9 + power * .25, life: .14, add: true, top: true });
       this.sprite(T.burst, { pos, s0: .1, s1: .45 + power * .2, life: .16, rot: R() * TAU, top: true, pop: true });
@@ -1155,7 +1820,29 @@ class FX {
     const t = wordTexture(this.S, text), p = pos.clone(); p.y += .32; p.x += (Math.random() - .5) * .2;
     this.sprite(t, { pos: p, s0: .2, s1: .55 + power * .12, life: .55, aspect: 2, top: true, pop: true, vel: new THREE.Vector3(0, .35, 0) });
   }
+  // 먹 레시피: 흰 섬광 별 + 먹 붓 획(공격 방향) + 집중선 + 흰 조각 + 먹 방울. A(color)는 포인트 색 튀김 한 겹.
+  inkHit(pos, power, dir, out) {
+    const K = this.K, R = Math.random, ink = this.inkC;
+    const sx = Math.abs(dir.x) > .2 ? Math.sign(dir.x) : (R() < .5 ? -1 : 1); // 화면에서 맞는 방향 (카메라가 -Z를 봄)
+    if (this.accent) this.sprite(K.splat, { pos, s0: .2, s1: .5 + power * .14, life: .16, rot: R() * TAU, color: this.accent, top: true, pop: true });
+    this.sprite(K.brush, { pos, s0: .3, s1: .42 + power * .14, life: .2 + power * .03, aspect: 2, rot: (sx > 0 ? -.35 : Math.PI + .35) + (R() - .5) * .7, color: ink, top: true, pop: true });
+    if (power >= 2) this.sprite(K.lines, { pos, s0: .9, s1: 1.5 + power * .35, life: .17, rot: R() * TAU, color: ink, top: true, opacity: .9 });
+    this.sprite(K.star, { pos, s0: .12, s1: .36 + power * .15, life: .13, rot: R() * TAU, top: true, pop: true });
+    for (let i = 0; i < 4 + power * 3; i++) {
+      const v = out().multiplyScalar(2.6 + power * .8); v.x += sx * 1.2;
+      this.sprite(K.shard, { pos: pos.clone(), s0: .13 + R() * .06, s1: .03, life: .2 + R() * .1, vel: v, aspect: .3, rot: Math.atan2(v.y, v.x) - Math.PI / 2, top: true });
+    }
+    for (let i = 0; i < 2 + power * 2; i++) this.sprite(K.splat, { pos: pos.clone(), s0: .04 + R() * .05, s1: .02, life: .35 + R() * .2, vel: out().multiplyScalar(1.8 + power * .5), grav: -6, rot: R() * TAU, color: ink, top: true });
+  }
+  inkSlam(pos) {
+    const K = this.K, R = Math.random, ink = this.inkC;
+    this.flat(K.ring, pos.clone().setY(.03), .4, 3.0, .5, ink);
+    this.sprite(K.lines, { pos: pos.clone().setY(.5), s0: 1.2, s1: 3.2, life: .3, rot: R() * TAU, color: ink, top: true, opacity: .85 });
+    for (let i = 0; i < 9; i++) { const a = (i / 9) * TAU + R() * .3; this.sprite(K.dust, { pos: pos.clone().setY(.18), s0: .25, s1: .75 + R() * .3, life: .55 + R() * .25, vel: new THREE.Vector3(Math.cos(a) * 2.2, .25 + R() * .4, Math.sin(a) * 1.2), rot: R() * TAU, pop: true }); }
+    for (let i = 0; i < 8; i++) this.sprite(K.splat, { pos: pos.clone().setY(.2), s0: .05 + R() * .05, s1: .02, life: .45, vel: new THREE.Vector3((R() - .5) * 4, 1.5 + R() * 2, (R() - .5) * 2), grav: -8, rot: R() * TAU, color: ink });
+  }
   slam(pos) {
+    if (this.ink) return this.inkSlam(pos);
     const T = this.T, R = Math.random;
     this.flat(T.ring, pos.clone().setY(.03), .3, 3.2, .45, this.S.fx === 'cute' ? '#ffe3ef' : '#fff6e6');
     for (let i = 0; i < 14; i++) { const a = R() * TAU; this.sprite(T.puff, { pos: pos.clone().setY(.15), s0: .3, s1: 1.1, life: .7 + R() * .3, vel: new THREE.Vector3(Math.cos(a) * 2.4, .4 + R() * .6, Math.sin(a) * 1.4), color: this.S.fx === 'real' ? '#cdbfae' : '#ffffff', opacity: .7 }); }
@@ -1232,6 +1919,1185 @@ class CamRig {
     this.c.position.copy(pos); this.c.lookAt(tgt); this.c.rotation.z += s * .05 * n(.9);
     this.trauma = Math.max(0, this.trauma - rdt * 1.8);
   }
+}
+
+// ===== 07_ink.js =====
+// ---------- ink kit: A 스타일리시 셀(color) / A′ 잉크 망가(mono) ----------
+// Same shape as materialKit(S): solid / outline / part / flashables (+ hull helpers for skinned parts).
+// Shading is rebuilt after three's toon lighting: light amount L = N·L × shadow (recovered in RE_Direct),
+// then 2-tone notan + screen-space hatching / screentone / rim, keeping map, instanceColor, shadows and fog.
+const INK_ROLE = { light: 0, dark: 1, skin: 2, face: 3, glow: 4, spot: 5, mid: 6 };
+const inkLum = c => .2126 * c.r + .7152 * c.g + .0722 * c.b; // linear relative luminance
+
+const INK_PARS = /* glsl */`
+uniform vec3 uInk;
+uniform vec3 uPaper;
+uniform float uPx;
+uniform vec3 uHatch;   // spacing(px), width(px), angle(rad)
+uniform float uTone;   // screentone cell (px)
+uniform float uRimK;
+uniform float uRole;
+uniform float uMono;
+uniform float uSpot;
+uniform float uMix;
+uniform float uTh;
+uniform float uGloss;
+uniform float uHi;
+uniform float uRimM;
+uniform float uFold;
+uniform float uFoldF;
+varying vec3 vInkObj;
+// hanging-cloth fold field (object space, streaks along local Y)
+float ink_folds(vec3 p) {
+  float a = sin(p.x + sin(p.y * .23) * 2.1 + sin(p.z * .7) * 1.3);
+  float b = sin(p.z * 1.31 + p.x * .43 + sin(p.y * .31 + 1.7) * 1.8);
+  float c = sin(p.y * .55 + p.x * .2) * .5 + .5;
+  return (a * .6 + b * .4) * (.55 + .45 * c);
+}
+float ink_lum(vec3 c) { return dot(c, vec3(.2126, .7152, .0722)); }
+float ink_hash(float n) { return fract(sin(n * 91.345) * 47453.5453); }
+// parallel pen lines in screen space. w = line width in px; lines break into dashes of random length
+float ink_hatch(float ang, float sp, float w) {
+  vec2 d = vec2(cos(ang), sin(ang));
+  float p = dot(gl_FragCoord.xy, d) / sp;
+  float id = floor(p);
+  float along = dot(gl_FragCoord.xy, vec2(-d.y, d.x)) / (sp * 7.0) + ink_hash(id) * 9.0;
+  float gap = step(.86 + ink_hash(id + 3.7) * .1, fract(along));
+  float dist = abs(fract(p) - .5) * sp;
+  float c = clamp(w * .5 - dist + .5, 0.0, 1.0) * clamp(w, 0.0, 1.0);
+  return c * (1.0 - gap * step(w, sp * .55));
+}
+// rotated dot screen. amt = ink coverage 0..1
+float ink_tone(float cell, float amt) {
+  vec2 q = mat2(.7071, -.7071, .7071, .7071) * gl_FragCoord.xy / cell;
+  vec2 f = fract(q) - .5;
+  float r = length(f) * cell;
+  float rad = sqrt(clamp(amt, 0.0, .9) / 3.14159) * cell;
+  return clamp(rad - r + .5, 0.0, 1.0) * step(.02, amt);
+}
+`;
+
+const INK_TOON_PARS = /* glsl */`
+varying vec3 vViewPosition;
+struct ToonMaterial { vec3 diffuseColor; };
+float inkLight = 0.0;
+void RE_Direct_Toon( const in IncidentLight directLight, const in vec3 geometryPosition, const in vec3 geometryNormal, const in vec3 geometryViewDir, const in vec3 geometryClearcoatNormal, const in ToonMaterial material, inout ReflectedLight reflectedLight ) {
+  float ndl = max( dot( geometryNormal, directLight.direction ), 0.0 );
+  inkLight += ndl * dot( directLight.color, vec3( .2126, .7152, .0722 ) );
+  reflectedLight.directDiffuse += ndl * directLight.color * BRDF_Lambert( material.diffuseColor );
+}
+void RE_IndirectDiffuse_Toon( const in vec3 irradiance, const in vec3 geometryPosition, const in vec3 geometryNormal, const in vec3 geometryViewDir, const in vec3 geometryClearcoatNormal, const in ToonMaterial material, inout ReflectedLight reflectedLight ) {
+  reflectedLight.indirectDiffuse += irradiance * BRDF_Lambert( material.diffuseColor );
+}
+#define RE_Direct RE_Direct_Toon
+#define RE_IndirectDiffuse RE_IndirectDiffuse_Toon
+`;
+
+const INK_SHADE = /* glsl */`
+{
+#if NUM_DIR_LIGHTS > 0
+  float sunI = 0.0;
+  for ( int i = 0; i < NUM_DIR_LIGHTS; i ++ ) sunI = max( sunI, ink_lum( directionalLights[ i ].color ) );
+  vec3 sunV = directionalLights[ 0 ].direction;
+#else
+  float sunI = 1.0; vec3 sunV = vec3( 0.0, 1.0, 0.0 );
+#endif
+  float L = clamp( inkLight / max( sunI, 1e-4 ), 0.0, 1.0 );
+  float aa = clamp( fwidth( L ), .002, .08 );
+  vec3 base = diffuseColor.rgb;
+  float fres = 1.0 - clamp( dot( geometryNormal, geometryViewDir ), 0.0, 1.0 );
+  float sideL = dot( geometryNormal, sunV );
+  float sp = uHatch.x * uPx, hw = uHatch.y * uPx, ang = uHatch.z;
+  int role = int( uRole + .5 );
+  float th = uTh;
+  float lit = smoothstep( th - aa, th + aa, L );
+  float band = ( 1.0 - smoothstep( th, th + .24, L ) ) * lit;          // just above the terminator
+  float rimEdge = 1.0 - uRimK * .5;
+  float rim = smoothstep( rimEdge - .03, rimEdge + .03, fres ) * smoothstep( -.15, .25, sideL ) * uRimM;
+  vec3 col = base;
+  bool spot = role == 5 && uSpot > .5;
+  if ( role == 4 ) {
+    col = base;
+  } else if ( uMono < .5 || spot ) {
+    // ---- A: stylish cel. shadow = albedo pushed toward ink ----
+    vec3 sh = mix( base, uInk, uMix );
+    col = mix( sh, base, lit );
+    if ( role == 1 ) {
+      float hl = smoothstep( uHi + .16 - aa, uHi + .16 + aa, L );
+      col = mix( col, mix( base, uPaper, .16 ), hl * .8 );
+      col = mix( col, mix( base, uPaper, .38 ), rim * .85 );
+    } else if ( role != 3 ) {
+      col = mix( col, mix( base, uInk, min( 1.0, uMix + .25 ) ), ink_hatch( ang, sp, hw * band ) * .6 );
+      col = mix( col, mix( col, uPaper, .35 ), rim * .35 );
+    }
+  } else {
+    // ---- A′: ink manga, paper + sumi ----
+    if ( role == 1 ) {
+      col = uInk;
+      float hb = smoothstep( uHi, uHi + .24, L );
+      col = mix( col, uPaper, ink_hatch( -ang, sp, hw * 1.1 * hb ) );
+      col = mix( col, uPaper, smoothstep( uHi + .2 - aa, uHi + .2 + aa, L ) * .92 );
+      col = mix( col, uPaper, rim );
+    } else if ( role == 6 ) {
+      float amt = mix( .5, .2, lit );
+      col = mix( uPaper, uInk, ink_tone( uTone * uPx, amt ) );
+      col = mix( col, uInk, ink_hatch( ang, sp, hw * band ) );
+      col = mix( col, uPaper, rim * .9 );
+    } else {
+      float v = 1.0;
+#ifdef USE_MAP
+      if ( role != 3 ) { float lm = ink_lum( base ); v = lm > .42 ? 1.0 : ( lm > .1 ? .5 : 0.0 ); }
+      else v = 1.0;
+#endif
+      float c;   // ink coverage
+      if ( role == 3 ) {
+        c = ink_hatch( ang, sp, hw * .6 ) * ( 1.0 - smoothstep( .05 - aa, .05 + aa, L ) );
+        c = max( c, ink_hatch( ang, sp, hw * band * .45 ) );
+      } else {
+        float fill = role == 2 ? ink_tone( uTone * uPx, .42 ) : 1.0;   // skin: screentone, cloth: solid sumi
+        c = max( fill * ( 1.0 - lit ), ink_hatch( ang, sp, hw * band ) );
+      }
+      if ( v < .25 ) c = 1.0;
+      else if ( v < .75 ) c = max( c, ink_tone( uTone * uPx, .38 ) );
+#ifdef USE_MAP
+      if ( role == 3 ) { col = mix( base, uInk, c ); }
+      else col = mix( uPaper, uInk, c );
+#else
+      col = mix( uPaper, uInk, c );
+#endif
+    }
+  }
+  if ( uGloss > 0.0 && role != 4 ) {
+    // enamel: a hard white chip where the sun glints (loafers)
+    float spec = dot( geometryNormal, normalize( sunV + geometryViewDir ) );
+    float g0 = 1.0 - .045 * uGloss;
+    col = mix( col, uPaper, smoothstep( g0 - .006, g0 + .006, spec ) * step( .05, L ) );
+  }
+  outgoingLight = col + totalEmissiveRadiance;
+}
+`;
+
+const INK_FOLD = /* glsl */`
+if ( uFold > 0.0 ) {
+  float h = ink_folds( vInkObj * uFoldF ) * uFold;
+  vec3 sx = dFdx( - vViewPosition ), sy = dFdy( - vViewPosition );
+  vec3 r1 = cross( sy, normal ), r2 = cross( normal, sx );
+  float det = dot( sx, r1 ) * faceDirection;
+  vec3 grad = sign( det ) * ( dFdx( h ) * r1 + dFdy( h ) * r2 );
+  normal = normalize( abs( det ) * normal - grad );
+}
+`;
+
+const INK_HULL_VERT = /* glsl */`
+#include <begin_vertex>
+{
+  vec3 inkWn = normalize( mat3( modelMatrix ) * normal );
+  float inkSc = max( length( modelMatrix[ 0 ].xyz ), 1e-4 );
+  float inkSh = smoothstep( -.35, .55, - dot( inkWn, uSun ) );
+  transformed += normal * ( uExtra * inkSh / inkSc );
+}
+`;
+
+function inkKit(S) {
+  const I = Object.assign({ mode: 'color', ink: '#151722', paper: '#f6f4ee', shadowMix: .6, hatch: { spacing: 5, width: 1.4, angle: .95 }, tone: { size: 4.5 }, rim: .7, spot: false }, S.ink || {});
+  const mono = I.mode === 'mono';
+  const px = Math.min(window.devicePixelRatio || 1, 2);
+  const inkC = new THREE.Color(I.ink), paperC = new THREE.Color(I.paper);
+  const sun = new THREE.Vector3(...(S.sun ? S.sun[2] : [-4, 8, 6])).sub(new THREE.Vector3(0, .8, 0)).normalize();
+  const shared = {
+    uInk: { value: inkC }, uPaper: { value: paperC }, uPx: { value: px },
+    uHatch: { value: new THREE.Vector3(I.hatch.spacing, I.hatch.width, I.hatch.angle) },
+    uTone: { value: I.tone.size }, uRimK: { value: I.rim }, uMono: { value: mono ? 1 : 0 }, uSpot: { value: I.spot ? 1 : 0 },
+  };
+  const hullCache = new Map(), outlines = new Map();
+  const W = S.outline ? S.outline.w : 0;
+
+  // per-role defaults (shadow mix toward ink, light threshold)
+  const roleMix = { light: I.shadowMix * .5, skin: I.shadowMix * .42, dark: I.shadowMix, face: I.shadowMix * .2, glow: 0, spot: I.shadowMix * .55, mid: I.shadowMix * .6 };
+  const roleTh = { light: .3, skin: .3, dark: .32, face: .2, glow: 0, spot: .3, mid: .3 };
+
+  function inkMaterial(color, o, role) {
+    const m = new THREE.MeshToonMaterial({ color, map: o.map || null, side: o.side || THREE.FrontSide });
+    const own = { uRole: { value: INK_ROLE[role] }, uMix: { value: o.mix ?? roleMix[role] }, uTh: { value: o.th ?? roleTh[role] }, uGloss: { value: o.gloss || 0 }, uHi: { value: o.hi ?? .74 }, uRimM: { value: o.rimM ?? 1 }, uFold: { value: o.fold || 0 }, uFoldF: { value: o.foldF || 40 } };
+    m.onBeforeCompile = sh => {
+      Object.assign(sh.uniforms, shared, own);
+      sh.fragmentShader = sh.fragmentShader
+        .replace('#include <common>', '#include <common>\n' + INK_PARS)
+        .replace('#include <lights_toon_pars_fragment>', INK_TOON_PARS)
+        .replace('#include <opaque_fragment>', INK_SHADE + '\n#include <opaque_fragment>');
+    };
+    m.customProgramCacheKey = () => 'ink1';
+    m.userData.inkU = own;
+    return m;
+  }
+
+  function hullMaterial(col, extra) {
+    const m = new THREE.MeshBasicMaterial({ color: col, side: THREE.BackSide });
+    if (extra) {
+      const u = { uSun: { value: sun }, uExtra: { value: W * 1.15 } };
+      m.onBeforeCompile = sh => {
+        Object.assign(sh.uniforms, u);
+        sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform vec3 uSun;\nuniform float uExtra;')
+          .replace('#include <begin_vertex>', INK_HULL_VERT);
+      };
+      m.customProgramCacheKey = () => 'inkhull1';
+    }
+    return m;
+  }
+
+  // smooth (position-merged) normals so split-normal geometry (boxes, seams) gets a crack-free hull
+  function hullGeo(geo, w) {
+    const key = geo.uuid + ':' + w.toFixed(6);
+    if (hullCache.has(key)) return hullCache.get(key);
+    const g = geo.clone(), p = g.attributes.position;
+    if (!g.attributes.normal) g.computeVertexNormals();
+    const n = g.attributes.normal, acc = new Map(), keys = new Array(p.count);
+    for (let i = 0; i < p.count; i++) {
+      const k = Math.round(p.getX(i) * 1e4) + ',' + Math.round(p.getY(i) * 1e4) + ',' + Math.round(p.getZ(i) * 1e4);
+      keys[i] = k; let a = acc.get(k); if (!a) acc.set(k, a = new THREE.Vector3());
+      a.x += n.getX(i); a.y += n.getY(i); a.z += n.getZ(i);
+    }
+    for (const a of acc.values()) { if (a.lengthSq() < 1e-12) a.set(0, 1, 0); a.normalize(); }
+    const nn = new Float32Array(p.count * 3);
+    for (let i = 0; i < p.count; i++) {
+      const a = acc.get(keys[i]); nn[i * 3] = a.x; nn[i * 3 + 1] = a.y; nn[i * 3 + 2] = a.z;
+      p.setXYZ(i, p.getX(i) + a.x * w, p.getY(i) + a.y * w, p.getZ(i) + a.z * w);
+    }
+    g.setAttribute('normal', new THREE.BufferAttribute(nn, 3));
+    g.deleteAttribute('uv'); g.clearGroups();
+    p.needsUpdate = true; hullCache.set(key, g);
+    return g;
+  }
+
+  const kit = {
+    S, flashables: [], mono,
+    solid(hex, o = {}) {
+      const src = new THREE.Color(hex);
+      let role = o.role || (o.map ? 'light' : (inkLum(src) < .28 ? 'dark' : 'light'));
+      if (!(role in INK_ROLE)) role = 'light';
+      let color;
+      if (o.map) color = new THREE.Color(0xffffff);
+      else if (o.raw) color = src;
+      else color = styleColor(S, hex);
+      const m = inkMaterial(color, o, role);
+      if (o.emissive) { m.emissive = new THREE.Color(o.emissive); m.emissiveIntensity = o.ei ?? 1; }
+      m.userData.base = hex; m.userData.inkRole = role; m.userData.keyline = o.keyline;
+      return m;
+    },
+    // plain BackSide hull (used directly by env on instanced meshes): no GPU extrusion
+    outline(mat, extra = false) {
+      if (!S.outline) return null;
+      const m0 = Array.isArray(mat) ? mat[0] : mat;
+      const white = mono && m0 && m0.userData && m0.userData.inkRole === 'dark' && m0.userData.keyline !== false;
+      const k = (white ? 'p' : 'i') + (extra ? 'x' : '');
+      if (!outlines.has(k)) outlines.set(k, hullMaterial(white ? paperC : inkC, extra));
+      return outlines.get(k);
+    },
+    hullGeo,
+    // hull for a mesh: thin on the lit side, thick on the shadow side (lost edge / heavy edge)
+    hull(geo, mat, ow = 1, scale = 1) {
+      const om = kit.outline(mat, true);
+      if (!om) return null;
+      return { geo: hullGeo(geo, (W * .5 * ow) / scale), mat: om };
+    },
+    part(parent, geo, mat, o = {}) {
+      const m = new THREE.Mesh(geo, mat);
+      if (o.pos) m.position.set(...o.pos);
+      if (o.rot) m.rotation.set(...o.rot);
+      if (o.scl) m.scale.set(...o.scl);
+      m.castShadow = o.shadow !== false; m.receiveShadow = !!o.receive;
+      parent.add(m);
+      if (o.outline !== false && S.outline) {
+        const s = o.scl ? (o.scl[0] + o.scl[1] + o.scl[2]) / 3 : 1;
+        const h = kit.hull(geo, mat, o.ow || 1, s);
+        if (h) { const hm = new THREE.Mesh(h.geo, h.mat); hm.castShadow = false; hm.receiveShadow = false; m.add(hm); }
+      }
+      return m;
+    },
+  };
+  return kit;
+}
+
+// ===== 08_shapes.js =====
+// ---------- stylish shapes: tubes, hair locks, open jacket, lapels, shoes, hands, props ----------
+// All indexed with shared seams so normals are smooth and the outline hull never cracks.
+
+// tube through `points` (CatmullRom). radius: number | t => r | t => [rx, rz]  (rx along frame X, rz along `up`)
+// opts: radial, tubular, caps (rounded ends; an end with r≈0 becomes a sharp tip), up, twist (rad over length), capLen
+function taperTube(points, radius, opts = {}) {
+  const radial = opts.radial ?? 12, tubular = opts.tubular ?? 24, caps = opts.caps ?? true, twist = opts.twist || 0, capLen = opts.capLen ?? 1;
+  const up = (opts.up || new THREE.Vector3(0, 0, 1)).clone().normalize();
+  const pts = points.map(p => p.clone());
+  const curve = pts.length > 2 ? new THREE.CatmullRomCurve3(pts, false, 'centripetal') : new THREE.LineCurve3(pts[0], pts[1]);
+  const R = t => { const r = typeof radius === 'function' ? radius(t) : radius; return Array.isArray(r) ? r : [r, r]; };
+  // parallel-transported frames
+  const rings = [];
+  let N = null, Tprev = null;
+  for (let i = 0; i <= tubular; i++) {
+    const t = i / tubular, c = curve.getPointAt(t), T = curve.getTangentAt(t).normalize();
+    if (!N) { N = up.clone().addScaledVector(T, -up.dot(T)); if (N.lengthSq() < 1e-8) N = new THREE.Vector3(1, 0, 0).addScaledVector(T, -T.x); N.normalize(); }
+    else { const q = new THREE.Quaternion().setFromUnitVectors(Tprev, T); N.applyQuaternion(q).addScaledVector(T, -N.dot(T)).normalize(); }
+    Tprev = T.clone();
+    let n = N.clone(); if (twist) n.applyAxisAngle(T, twist * t);
+    const X = new THREE.Vector3().crossVectors(n, T).normalize();
+    const [rx, rz] = R(t);
+    rings.push({ c, T, X, N: n, rx, rz, t });
+  }
+  const pos = [], uv = [], idx = [];
+  const ringStart = [];
+  const pushRing = (r, v) => {
+    ringStart.push(pos.length / 3);
+    for (let j = 0; j < radial; j++) {
+      const a = (j / radial) * TAU, ca = Math.cos(a), sa = Math.sin(a);
+      pos.push(r.c.x + r.X.x * r.rx * ca + r.N.x * r.rz * sa, r.c.y + r.X.y * r.rx * ca + r.N.y * r.rz * sa, r.c.z + r.X.z * r.rx * ca + r.N.z * r.rz * sa);
+      uv.push(j / radial, v);
+    }
+  };
+  const pole = (p, v) => { const i = pos.length / 3; pos.push(p.x, p.y, p.z); uv.push(.5, v); return i; };
+  const tiny = r => Math.max(r.rx, r.rz) < 1e-5;
+  const capRings = (r, dir) => { // hemispherical cap rings beyond ring r along dir*T
+    const out = [], k = 3, len = Math.max(r.rx, r.rz) * capLen;
+    for (let s = 1; s <= k; s++) {
+      const ph = (s / (k + 1)) * Math.PI / 2, f = Math.cos(ph);
+      out.push({ c: r.c.clone().addScaledVector(r.T, dir * len * Math.sin(ph)), T: r.T, X: r.X, N: r.N, rx: r.rx * f, rz: r.rz * f });
+    }
+    return { rings: out, tip: r.c.clone().addScaledVector(r.T, dir * len) };
+  };
+  const seq = []; // list of ring descriptors or {pole}
+  const r0 = rings[0], r1 = rings[rings.length - 1];
+  if (tiny(r0)) seq.push({ pole: r0.c, v: 0 });
+  else if (caps) { const cr = capRings(r0, -1); seq.push({ pole: cr.tip, v: 0 }); cr.rings.reverse().forEach(r => seq.push({ ring: r, v: 0 })); }
+  for (let i = 0; i < rings.length; i++) { if ((i === 0 && tiny(r0)) || (i === rings.length - 1 && tiny(r1))) continue; seq.push({ ring: rings[i], v: rings[i].t }); }
+  if (tiny(r1)) seq.push({ pole: r1.c, v: 1 });
+  else if (caps) { const cr = capRings(r1, 1); cr.rings.forEach(r => seq.push({ ring: r, v: 1 })); seq.push({ pole: cr.tip, v: 1 }); }
+  const ids = seq.map(s => (s.ring ? (pushRing(s.ring, s.v), { ring: ringStart[ringStart.length - 1] }) : { pole: pole(s.pole, s.v) }));
+  for (let i = 0; i < ids.length - 1; i++) {
+    const A = ids[i], B = ids[i + 1];
+    for (let j = 0; j < radial; j++) {
+      const j1 = (j + 1) % radial;
+      if (A.ring != null && B.ring != null) { idx.push(A.ring + j, A.ring + j1, B.ring + j, A.ring + j1, B.ring + j1, B.ring + j); }
+      else if (A.pole != null && B.ring != null) idx.push(A.pole, B.ring + j1, B.ring + j);
+      else if (A.ring != null && B.pole != null) idx.push(A.ring + j, A.ring + j1, B.pole);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+
+// merge indexed geometries (position/normal/uv) into one
+function mergeGeos(list) {
+  const pos = [], nor = [], uv = [], idx = []; let off = 0;
+  for (const g0 of list) {
+    const g = g0.index ? g0 : g0.toNonIndexed();
+    if (!g.attributes.normal) g.computeVertexNormals();
+    const p = g.attributes.position, n = g.attributes.normal, u = g.attributes.uv;
+    for (let i = 0; i < p.count; i++) { pos.push(p.getX(i), p.getY(i), p.getZ(i)); nor.push(n.getX(i), n.getY(i), n.getZ(i)); uv.push(u ? u.getX(i) : 0, u ? u.getY(i) : 0); }
+    if (g.index) for (let i = 0; i < g.index.count; i++) idx.push(g.index.getX(i) + off); else for (let i = 0; i < p.count; i++) idx.push(i + off);
+    off += p.count;
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx); return g;
+}
+
+// flat pointed hair lock: starts at origin, runs along local -Y, curls toward +Z by `bend` (+ `flip` at the tip)
+function hairLock({ len = .12, width = .03, thick = .012, bend = 0, flip = 0, twist = 0, taper = .9, root = .8, radial = 8, tubular = 10 } = {}) {
+  const n = 6, pts = [new THREE.Vector3()];
+  let p = new THREE.Vector3();
+  for (let k = 1; k <= n; k++) {
+    const s = (k - .5) / n, a = bend * s + flip * s * s * s;
+    p = p.clone().add(new THREE.Vector3(0, -Math.cos(a), Math.sin(a)).multiplyScalar(len / n)); pts.push(p);
+  }
+  const prof = t => (root + (1 - root) * Math.min(1, t / .22)) * Math.pow(Math.max(0, 1 - t), taper);
+  return taperTube(pts, t => [width * .5 * prof(t), thick * .5 * prof(t)], { radial, tubular, twist, caps: true, capLen: .6 });
+}
+
+// open-front jacket shell (closed solid: outer + lining + edges). ctrl = [[yFrac, halfWidth], ...] bottom→top
+// open: total front opening angle (rad) or f => angle. Groups: 0 = outside + edges, 1 = lining.
+function jacketGeo({ ctrl, y0, y1, open = .5, depth = .7, flare = 0, thick = .012, rows = 28, cols = 36, front = .9, zOff = 0, back = null } = {}) {
+  const hwAt = f => { for (let i = 0; i < ctrl.length - 1; i++) { const [fa, ra] = ctrl[i], [fb, rb] = ctrl[i + 1]; if (f <= fb) { const t = (f - fa) / (fb - fa); return lerp(ra, rb, t * t * (3 - 2 * t)); } } return ctrl[ctrl.length - 1][1]; };
+  const opAt = f => (typeof open === 'function' ? open(f) : open);
+  const loop = [], M = cols + 1;
+  const P = (f, phi, inset) => {
+    let hw = hwAt(f) * (1 + flare * Math.pow(1 - f, 2)), hd = hw * depth * (back ? (Math.cos(phi) < 0 ? back : 1) : 1);
+    hw -= inset; hd -= inset;
+    const c = Math.cos(phi);
+    return new THREE.Vector3(hw * Math.sin(phi), lerp(y0, y1, f), hd * c * (c > 0 ? front : 1) + zOff);
+  };
+  const pos = [], uv = [], idx = [], grpIn = [];
+  const L = 2 * M; // loop length: outer arc then inner arc reversed
+  for (let i = 0; i <= rows; i++) {
+    const f = i / rows, ha = opAt(f) / 2;
+    for (let j = 0; j < M; j++) { const phi = lerp(ha, TAU - ha, j / cols), v = P(f, phi, 0); pos.push(v.x, v.y, v.z); uv.push(j / cols, f); }
+    for (let j = M - 1; j >= 0; j--) { const phi = lerp(ha, TAU - ha, j / cols), v = P(f, phi, thick); pos.push(v.x, v.y, v.z); uv.push(j / cols, f); }
+  }
+  const out = [], inn = [];
+  for (let i = 0; i < rows; i++) for (let k = 0; k < L; k++) {
+    const k1 = (k + 1) % L, a = i * L + k, b = i * L + k1, c = (i + 1) * L + k, d = (i + 1) * L + k1;
+    const dst = k >= M && k1 >= M ? inn : out;
+    dst.push(a, b, c, b, d, c);
+  }
+  // hem (bottom) and top caps between outer j and inner j
+  for (const [i, s] of [[0, 1], [rows, -1]]) for (let j = 0; j < cols; j++) {
+    const o0 = i * L + j, o1 = i * L + j + 1, n0 = i * L + (L - 1 - j), n1 = i * L + (L - 2 - j);
+    if (s > 0) out.push(o0, n0, o1, o1, n0, n1); else out.push(o0, o1, n0, o1, n1, n0);
+  }
+  idx.push(...out, ...inn);
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx); g.addGroup(0, out.length, 0); g.addGroup(out.length, inn.length, 1);
+  g.computeVertexNormals();
+  return g;
+}
+
+// one lapel as a thin plate in the XY plane, front = +Z. Roll line along x=0 from (0,0) (neck) down to (0,-len) (break point);
+// the lapel widens toward +x with a notch near the top.
+function lapelGeo({ len = .2, width = .07, notch = .02, depth = .006, peak = .3 } = {}) {
+  const s = new THREE.Shape();
+  s.moveTo(0, -len);
+  s.lineTo(width, -len * peak);
+  s.lineTo(width * .78, -len * peak + notch * .4);
+  s.lineTo(width * .92, -len * peak + notch * 1.5);
+  s.lineTo(width * .62, 0);
+  s.lineTo(0, 0);
+  s.lineTo(0, -len);
+  const g = new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: false, steps: 1 });
+  g.translate(0, 0, -depth / 2);
+  return g;
+}
+
+// shoe: origin = ground point under the ankle, toe toward +Z. Returns { upper, sole }.
+function shoeGeo({ kind = 'hightop', len = .27, width = .095, height = .07 } = {}) {
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const back = -len * .24, toe = len * .76;
+  const loafer = kind === 'loafer';
+  const solH = loafer ? height * .16 : height * .3;
+  const body = taperTube([V(0, solH + height * .42, back), V(0, solH + height * .4, back + len * .35), V(0, solH + height * (loafer ? .22 : .3), toe - len * .1), V(0, solH + height * (loafer ? .16 : .24), toe)],
+    t => [width * .5 * (.82 + .2 * Math.sin(Math.min(1, t * 1.25) * Math.PI)) * (loafer ? 1 - .25 * Math.pow(t, 3) : 1), height * (.48 - .2 * t) * (loafer ? .85 : 1)],
+    { radial: 16, tubular: 16, up: V(0, 1, 0), capLen: .7 });
+  let upper = body;
+  if (!loafer) {
+    const collar = taperTube([V(0, solH + height * .3, back + len * .08), V(0, solH + height * 1.25, back + len * .04), V(0, solH + height * 1.75, back + len * .02)], t => [width * .5 * (.95 - .12 * t), width * .5 * (1.02 - .1 * t)], { radial: 16, tubular: 8, capLen: .5 });
+    upper = mergeGeos([body, collar]);
+  }
+  const sole = taperTube([V(0, solH * .5, back - .006), V(0, solH * .5, toe + .006)], t => [width * .5 * (loafer ? 1.0 : 1.06) * (.86 + .22 * Math.sin(Math.min(1, t * 1.2) * Math.PI)) * (loafer ? 1 - .2 * Math.pow(t, 3) : 1), solH * .5], { radial: 14, tubular: 12, up: V(0, 1, 0), capLen: .35 });
+  return { upper, sole };
+}
+
+// hand: wrist at parent origin, fingers along -Y, palm facing the body (-side·X), thumb forward (+Z).
+function buildHand(kit, parent, { size = .17, side = 1, curl = 0, skinMat, tapeMat, thick = 1 } = {}) {
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const group = new THREE.Group(); parent.add(group);
+  const palmL = size * .5, palmW = size * .44, palmT = size * .17 * thick, fr = size * .052 * thick;
+  const palm = taperTube([V(0, .004, 0), V(-side * palmT * .1, -palmL * .55, 0), V(-side * palmT * .05, -palmL, 0)], t => [palmT * .5 * (1 + .15 * t), palmW * .5 * (.78 + .22 * Math.min(1, t * 1.6))], { radial: 14, tubular: 6, capLen: .45 });
+  kit.part(group, palm, skinMat, { ow: .8 });
+  const fingers = [], defs = [[.37, .96], [.12, 1.06], [-.13, 1.0], [-.36, .82]]; // [z across palm, length factor]
+  const segG = new Map();
+  const seg = (L, r0, r1, tip) => { const k = L.toFixed(4) + tip; if (!segG.has(k)) segG.set(k, taperTube([V(0, 0, 0), V(0, -L, 0)], t => lerp(r0, r1, t), { radial: 8, tubular: 2, capLen: tip ? .9 : .8 })); return segG.get(k); };
+  for (const [zf, lf] of defs) {
+    const L1 = size * .27 * lf, L2 = size * .22 * lf;
+    const k1 = new THREE.Group(); k1.position.set(-side * palmT * .05, -palmL + fr * .4, zf * palmW); group.add(k1);
+    kit.part(k1, seg(L1, fr, fr * .92, 0), skinMat, { ow: .55 });
+    const k2 = new THREE.Group(); k2.position.y = -L1; k1.add(k2);
+    kit.part(k2, seg(L2, fr * .9, fr * .72, 1), skinMat, { ow: .55 });
+    fingers.push([k1, k2]);
+  }
+  // thumb: from the heel of the palm, angled forward and across the palm
+  const tb = new THREE.Group(); tb.position.set(-side * palmT * .35, -palmL * .22, palmW * .4); group.add(tb);
+  const tL1 = size * .26, tL2 = size * .2;
+  kit.part(tb, seg(tL1, fr * 1.25, fr * 1.05, 0), skinMat, { ow: .55 });
+  const tb2 = new THREE.Group(); tb2.position.y = -tL1; tb.add(tb2);
+  kit.part(tb2, seg(tL2, fr * 1.05, fr * .8, 1), skinMat, { ow: .55 });
+  if (tapeMat) {
+    kit.part(group, taperTube([V(0, -palmL * .52, 0), V(0, -palmL * .98, 0)], [palmT * .58, palmW * .53], { radial: 14, tubular: 2, capLen: .25 }), tapeMat, { ow: .7 });
+    kit.part(group, taperTube([V(0, .03, 0), V(0, -palmL * .2, 0)], [palmT * .62, palmW * .5], { radial: 14, tubular: 2, capLen: .25 }), tapeMat, { ow: .7 });
+  }
+  const api = {
+    group, curl,
+    setCurl(c) {
+      api.curl = c;
+      fingers.forEach(([a, b], i) => {
+        const k = c * (1 + i * .04);
+        a.rotation.set(0, 0, -side * (k * 1.5 + .08)); b.rotation.set(0, 0, -side * (k * 1.75 + .1));
+      });
+      // thumb folds across the palm when closed, splays a little when open
+      tb.rotation.set(.35 - c * .15, 0, -side * (.25 + c * .55)); tb2.rotation.set(0, 0, -side * (.15 + c * .9));
+    },
+  };
+  api.setCurl(curl);
+  return api;
+}
+
+// 바나나우유: 노란 항아리 병 + 흰 뚜껑 + 빨대 (상표 글자 없음). origin = 병 바닥 중심
+function buildBananaMilk(kit) {
+  const g = new THREE.Group();
+  const prof = [[0, 0], [.021, 0], [.029, .006], [.034, .022], [.0355, .04], [.033, .058], [.026, .074], [.0185, .083], [.0165, .09], [.018, .094], [.0175, .098], [0, .098]]
+    .map(([r, y]) => new THREE.Vector2(Math.max(r, 1e-4), y));
+  const body = new THREE.LatheGeometry(prof, 24);
+  const yellow = kit.solid('#f2c641', { role: 'light' }), white = kit.solid('#f6f3ea', { role: 'light' });
+  kit.part(g, body, yellow, { ow: .7 });
+  const cap = new THREE.CylinderGeometry(.0185, .0185, .006, 20); cap.translate(0, .1, 0);
+  kit.part(g, cap, white, { ow: .6 });
+  const straw = taperTube([new THREE.Vector3(.004, .095, 0), new THREE.Vector3(.016, .17, -.012)], .0032, { radial: 8, tubular: 2, capLen: .3 });
+  kit.part(g, straw, white, { ow: .5 });
+  return g;
+}
+
+// ===== 09_ik.js =====
+// ---------- two-bone IK (show poses: squat feet / hands on knees / hand in pocket / prop at chest) ----------
+const _ik = { a: new THREE.Vector3(), t: new THREE.Vector3(), p: new THREE.Vector3(), d: new THREE.Vector3(), b: new THREE.Vector3(), u: new THREE.Vector3(), e: new THREE.Vector3(), x: new THREE.Vector3(), y: new THREE.Vector3(), z: new THREE.Vector3(), m: new THREE.Matrix4(), qp: new THREE.Quaternion(), qw: new THREE.Quaternion(), qu: new THREE.Quaternion(), ql: new THREE.Quaternion(), q0: new THREE.Quaternion(), q1: new THREE.Quaternion() };
+
+// upper/lower: joint groups whose bones extend along local -Y; lower sits at (0,-L1,0) inside upper.
+// Puts the end of `lower` (its local (0,-L2,0)) on targetWorld, bending toward poleWorld.
+// The bend is a pure rotation of `lower` about its local X: sign +1 = legs (shin folds back), -1 = arms (forearm folds forward).
+function solveTwoBone(upper, lower, L1, L2, targetWorld, poleWorld, weight = 1, sign = 1) {
+  const k = _ik;
+  if (weight <= 0) return;
+  upper.parent.updateWorldMatrix(true, false);
+  upper.parent.getWorldQuaternion(k.qp);
+  k.a.setFromMatrixPosition(k.m.multiplyMatrices(upper.parent.matrixWorld, k.m.compose(upper.position, upper.quaternion, upper.scale)));
+  k.d.subVectors(targetWorld, k.a);
+  let dist = k.d.length();
+  const maxD = (L1 + L2) * .99999, minD = Math.abs(L1 - L2) + 1e-5;
+  if (dist < 1e-6) { k.d.set(0, -1, 0); dist = minD; } else k.d.multiplyScalar(1 / dist);
+  dist = clamp(dist, minD, maxD);
+  // bend direction: pole projected perpendicular to the a→t line
+  k.b.subVectors(poleWorld, k.a); k.b.addScaledVector(k.d, -k.b.dot(k.d));
+  if (k.b.lengthSq() < 1e-10) { k.b.set(0, 0, 1).addScaledVector(k.d, -k.d.z); if (k.b.lengthSq() < 1e-10) k.b.set(1, 0, 0).addScaledVector(k.d, -k.d.x); }
+  k.b.normalize();
+  const cosA = clamp((L1 * L1 + dist * dist - L2 * L2) / (2 * L1 * dist), -1, 1), sinA = Math.sqrt(1 - cosA * cosA);
+  // upper bone direction u (from joint toward elbow/knee)
+  k.u.copy(k.d).multiplyScalar(cosA).addScaledVector(k.b, sinA).normalize();
+  // upper frame: -Y = u ; +Z = bend side (legs) or opposite (arms) ; X = Y × Z
+  k.y.copy(k.u).negate();
+  // u rotated 90° toward the pole inside the bend plane (stays continuous when the shoulder angle passes 90°)
+  k.z.copy(k.d).multiplyScalar(-sinA).addScaledVector(k.b, cosA).normalize().multiplyScalar(sign >= 0 ? 1 : -1);
+  k.x.crossVectors(k.y, k.z).normalize();
+  k.m.makeBasis(k.x, k.y, k.z);
+  k.qw.setFromRotationMatrix(k.m);
+  k.qu.copy(k.qp).invert().multiply(k.qw);
+  // interior angle at the middle joint
+  const cosB = clamp((L1 * L1 + L2 * L2 - dist * dist) / (2 * L1 * L2), -1, 1), bend = Math.PI - Math.acos(cosB);
+  k.ql.setFromAxisAngle(k.x.set(1, 0, 0), sign >= 0 ? bend : -bend);
+  if (weight >= 1) { upper.quaternion.copy(k.qu); lower.quaternion.copy(k.ql); }
+  else { upper.quaternion.slerp(k.qu, weight); lower.quaternion.slerp(k.ql, weight); }
+}
+
+// ikTargets (root-local, m): { L:{hand,pole,hide?}, R:{...}, FL:{foot,pole,flat,yaw}, FR:{...} }
+Fighter.prototype.applyIK = function (w, busy) {
+  const T = this.ikTargets, J = this.J;
+  const restoreHands = () => { for (const s of ['L', 'R']) if (J['ha' + s] && J['ha' + s].userData.ikHidden) { J['ha' + s].visible = true; J['ha' + s].userData.ikHidden = false; } };
+  if (!T || busy || w <= .001) { restoreHands(); return; }
+  w = Math.min(1, w);
+  this.root.updateMatrixWorld(true);
+  const k = _ik, tw = new THREE.Vector3(), pw = new THREE.Vector3();
+  for (const s of ['FL', 'FR']) {
+    const t = T[s]; if (!t) continue;
+    const side = s[1], th = J['th' + side], sh = J['sh' + side], ft = J['ft' + side];
+    tw.set(...t.foot); this.root.localToWorld(tw); pw.set(...t.pole); this.root.localToWorld(pw);
+    solveTwoBone(th, sh, this.thighL, this.shinL, tw, pw, w, 1);
+    if (t.flat) {
+      // foot parallel to the ground: world orientation = root yaw (+ optional extra yaw)
+      th.updateWorldMatrix(true, true);
+      sh.getWorldQuaternion(k.q0);
+      this.root.getWorldQuaternion(k.q1);
+      if (t.yaw) k.q1.multiply(k.qw.setFromAxisAngle(k.x.set(0, 1, 0), t.yaw));
+      k.q0.invert().multiply(k.q1);
+      ft.quaternion.slerp(k.q0, w);
+    }
+  }
+  for (const s of ['L', 'R']) {
+    const t = T[s], ua = J['ua' + s], fa = J['fa' + s], ha = J['ha' + s];
+    if (!t) continue;
+    tw.set(...t.hand); this.root.localToWorld(tw); pw.set(...t.pole); this.root.localToWorld(pw);
+    solveTwoBone(ua, fa, this.upperL, this.foreL, tw, pw, w, -1);
+    if (t.hide && w > .5) { ha.visible = false; ha.userData.ikHidden = true; }
+    else if (ha.userData.ikHidden) { ha.visible = true; ha.userData.ikHidden = false; }
+  }
+};
+
+// ===== 10_faces.js =====
+// ---------- stylish faces (equirect 1024×512 on the head sphere; face front at u=.25, equator v=0, +down) ----------
+// Degrees. The head mesh in 11_stylish.js places the nose ridge / chin from these numbers.
+const FACE_LAYOUT = { eyeU: 23, eyeV: 5, eyeW: 10.5, browV: -6, noseV: 21, mouthV: 37, chinV: 62 };
+
+function stylishFaceTexture(def, S, expr = 'normal') {
+  const W = 1024, H = 512, c = mkCanvas(W, H), g = c.getContext('2d');
+  const F = FACE_LAYOUT, mono = S.ink && S.ink.mode === 'mono';
+  const D = W / 360;
+  const X = u => W * (.25 + u / 360), Y = v => H * (.5 + v / 180);
+  // equirect squeeze: a mark drawn at latitude v gets wider in u by 1/cos(v)
+  const sx = v => 1 / Math.cos(v * Math.PI / 180);
+  const inkC = mono ? S.ink.ink : '#1a1520';
+  const paper = mono ? S.ink.paper : '#fbf7f0';
+  const skin = mono ? S.ink.paper : css(S, def.skin);
+  const skinDark = mono ? S.ink.ink : shade(S, def.skin, .62);
+  const isSiwoo = def.id === 'siwoo';
+  g.fillStyle = skin; g.fillRect(0, 0, W, H);
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  const P = (u, v) => [X(u), Y(v)];
+  const stroke = (w, col = inkC) => { g.lineWidth = w; g.strokeStyle = col; g.stroke(); };
+  // tapered brush stroke along a quadratic: width w0 → w1
+  const brush = (a, ctl, b, w0, w1, col = inkC, n = 14) => {
+    g.fillStyle = col;
+    for (let i = 0; i <= n; i++) {
+      const t = i / n, it = 1 - t;
+      const x = it * it * a[0] + 2 * it * t * ctl[0] + t * t * b[0], y = it * it * a[1] + 2 * it * t * ctl[1] + t * t * b[1];
+      g.beginPath(); g.arc(x, y, Math.max(.4, lerp(w0, w1, t) / 2), 0, TAU); g.fill();
+    }
+  };
+
+  // ---- cheeks: a few manga hatch strokes (Taeo smiling / hurt) ----
+  if (expr === 'hurt' || (!isSiwoo && expr !== 'ko')) {
+    g.strokeStyle = mono ? inkC : 'rgba(205,90,80,.55)'; g.lineWidth = 2;
+    for (const s of [-1, 1]) for (let k = 0; k < 3; k++) {
+      const u = s * (F.eyeU + 1 + k * 2.6), v = F.eyeV + 11;
+      g.beginPath(); g.moveTo(X(u + 1.6), Y(v - 1.4)); g.lineTo(X(u - 1.2), Y(v + 2)); g.stroke();
+    }
+  }
+
+  // ---- nose: one bridge line on the shadow side + tip tick ----
+  const nv = F.noseV;
+  brush(P(-1.2, nv - 9), P(-1.6, nv - 4), P(-.6, nv), 2.6, 4.4, skinDark);
+  brush(P(-1.8, nv + .8), P(0, nv + 2), P(2.4, nv + .6), 4, 1.6, inkC);
+
+  // ---- eyes ----
+  const eyes = (s) => {
+    const cu = s * F.eyeU, cv = F.eyeV, ew = F.eyeW * sx(cv);
+    const inner = cu - s * ew, outer = cu + s * ew;
+    if (expr === 'hurt') {
+      // squeezed: > <
+      brush(P(outer, cv - 3), P(cu, cv - .5), P(inner + s * 1.5, cv + 1), 5, 3);
+      brush(P(inner + s * 1.5, cv + 1), P(cu, cv + 1.5), P(outer, cv + 4), 3, 4.5);
+      return;
+    }
+    if (expr === 'ko') {
+      g.beginPath(); g.moveTo(X(cu - 5), Y(cv - 4)); g.lineTo(X(cu + 5), Y(cv + 4)); g.moveTo(X(cu + 5), Y(cv - 4)); g.lineTo(X(cu - 5), Y(cv + 4)); stroke(4);
+      return;
+    }
+    const smile = !isSiwoo && expr !== 'hurt';
+    if (smile) {
+      // 실눈: closed arc, thick in the middle, flick at the outer end
+      brush(P(inner, cv + 2), P(cu, cv - 4.2), P(outer, cv + 1.2), 5, 11);
+      brush(P(outer - s * .5, cv + 1.1), P(outer + s * 1.8, cv + .5), P(outer + s * 3.8, cv - 1.2), 8, 1.5);
+      g.beginPath(); g.moveTo(X(cu + s * ew * .2), Y(cv + 3.8)); g.quadraticCurveTo(X(cu + s * ew * .7), Y(cv + 4.6), X(outer), Y(cv + 2.8)); stroke(2.6);
+      return;
+    }
+    // sharp half-lidded almond (Siwoo; win = narrower glare)
+    const lidDrop = expr === 'win' ? 1.6 : (isSiwoo ? .9 : 0);
+    const top = cv - 2.6 + lidDrop, bot = cv + 2.4;
+    const innerY = cv + .6 + (isSiwoo ? -.4 : 0), outerY = cv - 1.2 + (isSiwoo ? .8 : 0);
+    // white
+    g.beginPath(); g.moveTo(X(inner), Y(innerY));
+    g.quadraticCurveTo(X(cu - s * ew * .1), Y(top - 1.4), X(outer), Y(outerY));
+    g.quadraticCurveTo(X(cu + s * ew * .15), Y(bot + 1.2), X(inner), Y(innerY));
+    g.closePath(); g.fillStyle = paper; g.fill();
+    g.save(); g.clip();
+    // small iris, cut by the lid, looking slightly inward
+    const ir = 3.4, iu = cu - s * 1.2, iv = cv + .9;
+    g.fillStyle = mono ? inkC : def.iris; g.beginPath(); g.ellipse(X(iu), Y(iv), ir * D * sx(cv), ir * D * 1.05, 0, 0, TAU); g.fill();
+    g.fillStyle = inkC; g.beginPath(); g.ellipse(X(iu), Y(iv), ir * .55 * D * sx(cv), ir * .6 * D, 0, 0, TAU); g.fill();
+    g.fillStyle = paper; g.beginPath(); g.arc(X(iu + s * .9), Y(iv - 1.3), 2.2, 0, TAU); g.fill();
+    g.restore();
+    // heavy upper lid with a sharp outer wing
+    brush(P(inner - s * .4, innerY + .2), P(cu - s * ew * .15, top - 1.8), P(outer, outerY), 5, 11);
+    brush(P(outer - s * .4, outerY), P(outer + s * 2, outerY - .4), P(outer + s * 4.2, outerY - 1.8 + (isSiwoo ? 1 : 0)), 9, 1.5);
+    // short lower lid at the outer third
+    g.beginPath(); g.moveTo(X(cu + s * ew * .05), Y(bot + .9)); g.quadraticCurveTo(X(cu + s * ew * .6), Y(bot + .9), X(outer - s * .3), Y(outerY + 1.2)); stroke(2.8);
+    // double-lid crease
+    g.beginPath(); g.moveTo(X(cu - s * ew * .2), Y(top - 3.2)); g.quadraticCurveTo(X(cu + s * ew * .4), Y(top - 3.8), X(outer + s * .4), Y(outerY - 2.6)); stroke(2, skinDark);
+  };
+  eyes(-1); eyes(1);
+
+  // ---- brows: thin straight blades; Siwoo's dip toward the glabella ----
+  for (const s of [-1, 1]) {
+    const bv = F.browV, inn = s * (F.eyeU - F.eyeW * .95), out = s * (F.eyeU + F.eyeW * 1.25);
+    const angry = isSiwoo ? 3.4 : (expr === 'hurt' ? 2.6 : -.4);
+    const relaxed = !isSiwoo && expr !== 'hurt' ? -1.2 : 0;
+    const thick = isSiwoo ? 8 : 10.5;
+    brush(P(inn, bv + angry), P((inn + out) / 2, bv - 1 + relaxed), P(out, bv + .6 + relaxed * .3), thick, thick * .35);
+  }
+
+  // ---- mouth ----
+  const mv = F.mouthV, mw = 6 * sx(mv);
+  if (expr === 'hurt') {
+    g.beginPath(); g.moveTo(X(-mw), Y(mv)); g.lineTo(X(mw), Y(mv)); g.lineTo(X(mw * .8), Y(mv + 3)); g.lineTo(X(-mw * .8), Y(mv + 3)); g.closePath();
+    g.fillStyle = paper; g.fill(); stroke(3);
+    g.beginPath(); g.moveTo(X(-mw * .9), Y(mv + 1.5)); g.lineTo(X(mw * .9), Y(mv + 1.5)); stroke(1.6);
+  } else if (expr === 'ko') {
+    g.beginPath(); g.ellipse(X(0), Y(mv + 1), 3 * D * sx(mv), 2.4 * D, 0, 0, TAU); g.fillStyle = inkC; g.fill();
+  } else if (expr === 'win' || !isSiwoo) {
+    const wide = expr === 'win' ? 1.15 : 1;
+    if (expr === 'win' || !isSiwoo) {
+      // easy grin: thin upturned line, teeth only on win
+      if (expr === 'win') {
+        g.beginPath(); g.moveTo(X(-mw * wide), Y(mv - .8)); g.quadraticCurveTo(X(0), Y(mv + 5.2), X(mw * wide), Y(mv - 1.6)); g.closePath();
+        g.fillStyle = inkC; g.fill();
+        g.save(); g.clip(); g.fillStyle = paper; g.fillRect(X(-mw * wide), Y(mv - 1.6), 2 * mw * wide * D, 2.1 * D); g.restore();
+      } else {
+        brush(P(-mw * .95, mv - .6), P(0, mv + 2.8), P(mw * .95, mv - 1.4), 2.6, 4.4);
+        brush(P(mw * .95, mv - 1.4), P(mw * 1.1, mv - 1.9), P(mw * 1.25, mv - 2.8), 4, 1.2);
+      }
+    }
+  } else {
+    // Siwoo: short flat line, one corner pulled down
+    brush(P(-mw * .7, mv + .2), P(0, mv - .5), P(mw * .75, mv + 1.1), 3.4, 4.6);
+    g.beginPath(); g.moveTo(X(-mw * .3), Y(mv + 3.4)); g.lineTo(X(mw * .3), Y(mv + 3.4)); stroke(1.4, skinDark);
+  }
+
+  // ---- jaw shadow tick under the chin ----
+  g.beginPath(); g.moveTo(X(-6), Y(F.chinV - 1)); g.quadraticCurveTo(X(0), Y(F.chinV + 1.5), X(6), Y(F.chinV - 1)); stroke(1.5, skinDark);
+
+  // ---- band-aid across the bridge (Siwoo) ----
+  if (def.bandaid) {
+    g.save(); g.translate(X(-.5), Y(F.noseV - 6.5)); g.rotate(-.22);
+    const bw = 15 * D, bh = 4 * D;
+    g.fillStyle = mono ? paper : '#f1d3a6'; g.strokeStyle = inkC; g.lineWidth = 2;
+    g.beginPath(); g.roundRect(-bw / 2, -bh / 2, bw, bh, bh / 2); g.fill(); g.stroke();
+    g.fillStyle = mono ? 'rgba(0,0,0,0)' : '#e3b882'; g.fillRect(-bw * .16, -bh / 2 + 2, bw * .32, bh - 4);
+    g.strokeStyle = inkC; g.lineWidth = 1.2; g.strokeRect(-bw * .16, -bh / 2 + 2, bw * .32, bh - 4);
+    g.fillStyle = inkC; for (const i of [-3, -2, 2, 3]) { g.beginPath(); g.arc(i * bw * .11, 0, 1.4, 0, TAU); g.fill(); }
+    g.restore();
+  }
+  return canvasTex(c);
+}
+
+// ===== 11_stylish.js =====
+// ---------- stylish fighters (A 스타일리시 셀 / A′ 잉크 망가) ----------
+// Long proportions, oversized open jacket (skinned to hips/spine/chest/shoulders), pointed hair locks,
+// sharp texture faces, big jointed hands, show poses held by IK.
+const STYLISH_DEF = {
+  siwoo: {
+    heads: 7.6, legF: .54, footH: .066, sh: .165, hip: .086, upperL: .29, foreL: .255, hand: .178, neckR: .035,
+    skin: '#c58b63', hair: '#17141c', jacket: '#252c4f', lining: '#1c2140', inner: '#9c9ea6', pants: '#2c2e36',
+    shoe: '#f3f1ea', sole: '#e8572a', tape: '#f4efe2',
+    torso: [[-.07, .118, .084], [0, .124, .088], [.15, .128, .086], [.3, .142, .098], [.4, .158, .098], [.455, .12, .07], [.48, .05, .045]],
+    coat: { hem: .14, depth: .64, flare: .1, w: [[-.14, .178], [0, .182], [.12, .172], [.25, .186], [.33, .2], [.4, .212], [.43, .214], [.452, .198], [.468, .158], [.48, .112], [.49, .064]] },
+    pantsR: [.088, .077, .075, .08], seat: [.142, .096], shoeKind: 'hightop', shoeLen: .27, shoeW: .1, shoeH: .075,
+    sleeve: [.066, .057], cuff: .062, fore: [.031, .025],
+  },
+  taeo: {
+    heads: 8.4, legF: .555, footH: .07, sh: .215, hip: .1, upperL: .32, foreL: .28, hand: .195, neckR: .045,
+    skin: '#e7bd97', hair: '#121318', hairSide: '#3a3d47', jacket: '#252c4f', lining: '#1d5bd0', inner: '#f6f6f2', pants: '#2c2e36',
+    tie: '#1f2747', belt: '#141418', shoe: '#15161a', sole: '#0e0e11',
+    torso: [[.04, .138, .092], [.09, .146, .098], [.16, .162, .106], [.33, .19, .124], [.44, .205, .124], [.5, .15, .085], [.53, .062, .058]],
+    coat: { hem: .13, depth: .66, flare: .1, w: [[-.13, .212], [0, .214], [.14, .2], [.3, .228], [.4, .246], [.47, .254], [.5, .244], [.52, .208], [.538, .148], [.555, .078]] },
+    pantsR: [.1, .088, .084, .09], seat: [.158, .104], shoeKind: 'loafer', shoeLen: .29, shoeW: .1, shoeH: .062,
+    sleeve: [.072, .064], cuff: .068, fore: [.046, .032],
+  },
+};
+
+// poses (same format as STANCE / SHOW). ik = show-pose IK targets in root space, filled in by StylishFighter.
+const STYLISH_POSES = {
+  siwoo: {
+    // 양키 스쿼트: deep squat, knees wide, forearms over the knees, chin up, glaring
+    show: {
+      hips: [-.1, 0, 0], spine: [.4, 0, 0], chest: [.24, .05, 0], neck: [-.34, -.05, 0], head: [-.42, .14, .2],
+      uaL: [-.9, 0, .4], faL: [-.9, 0, 0], haL: [.55, 0, .1], uaR: [-.9, 0, -.4], faR: [-.9, 0, 0], haR: [.55, 0, -.1],
+      thL: [-1.9, -.2, .5], shL: [2.5, 0, 0], ftL: [-.65, .3, 0], thR: [-1.9, .2, -.5], shR: [2.5, 0, 0], ftR: [-.65, -.3, 0],
+      drop: .65,
+    },
+    // low, quick high guard, chin tucked
+    fight: {
+      hips: [0, -.48, 0], spine: [.08, .08, 0], chest: [.12, .12, 0], neck: [.06, .08, 0], head: [.24, .2, 0],
+      uaL: [-.98, .2, .4], faL: [-2.25, 0, 0], haL: [.12, 0, 0],
+      uaR: [-.72, -.14, -.38], faR: [-2.4, 0, 0], haR: [.18, 0, 0],
+      thL: [-.42, .3, .08], shL: [.46, 0, 0], ftL: [.0, .2, 0],
+      thR: [.32, .25, -.14], shR: [.48, 0, 0], ftR: [-.24, .35, 0],
+      drop: .1,
+    },
+    curl: { show: .3, fight: 1 },
+  },
+  taeo: {
+    // 콘트라포스토: weight on the right leg, left hand in the pocket, banana milk at the chest, head tilted
+    show: {
+      hips: [0, .12, -.07], spine: [-.02, -.04, .03], chest: [-.05, -.1, .07], neck: [.02, -.04, -.02], head: [-.02, -.12, .13],
+      uaL: [.1, 0, .3], faL: [-.5, 0, 0], haL: [0, 0, 0], uaR: [-.3, 0, -.25], faR: [-1.9, 0, 0], haR: [0, -1.3, 0],
+      thL: [-.22, -.12, .14], shL: [.42, 0, 0], ftL: [-.2, .35, 0], thR: [.04, .05, .05], shR: [.03, 0, 0], ftR: [0, -.15, 0],
+      drop: .015,
+    },
+    // judo base: low, open hands reaching for the collar
+    fight: {
+      hips: [0, -.28, 0], spine: [.12, .05, 0], chest: [.16, .08, 0], neck: [0, .05, 0], head: [.12, .14, 0],
+      uaL: [-1.12, .12, .22], faL: [-1.05, 0, 0], haL: [-.25, 0, 0],
+      uaR: [-.92, -.12, -.24], faR: [-1.3, 0, 0], haR: [-.2, 0, 0],
+      thL: [-.46, .22, .16], shL: [.55, 0, 0], ftL: [-.05, .15, 0],
+      thR: [.22, .15, -.22], shR: [.55, 0, 0], ftR: [-.25, .3, 0],
+      drop: .15,
+    },
+    curl: { show: .62, fight: .28 },
+  },
+};
+
+class StylishFighter extends Fighter {
+  build(scene) {
+    const def = this.def, S = this.S, D = STYLISH_DEF[def.id];
+    const kit = inkKit(S); this.kit = kit; this.D = D;
+    const V = (x, y, z) => new THREE.Vector3(x, y, z);
+    const H = def.H, hh = H / ((S.heads && S.heads[def.id]) || D.heads), headR = hh * .5;
+    const legL = H * D.legF, footH = D.footH, thighL = (legL - footH) / 2, shinL = thighL;
+    const neckL = hh * .55, headTop = hh * .78, torsoL = H - legL - neckL - headTop;
+    const sh = D.sh, hip = D.hip, upperL = D.upperL, foreL = D.foreL, handR = D.hand / 2;
+    Object.assign(this, { hh, headR, neckL, torsoL, legL, footH, sh, hip, handR, upperL, foreL, thighL, shinL });
+    const P = STYLISH_POSES[def.id];
+    this.showPoseDef = P.show; this.fightPoseDef = P.fight; this.curlDef = P.curl;
+
+    // ---- materials ----
+    const mono = kit.mono;
+    const M = {
+      skin: kit.solid(D.skin, { role: 'skin' }),
+      hair: kit.solid(D.hair, { role: 'dark', hi: .8, rimM: .45, keyline: false, fold: .0022, foldF: 170 }),
+      side: kit.solid(D.hairSide || D.hair, { role: D.hairSide ? 'mid' : 'dark', mix: .55 }),
+      jacket: kit.solid(D.jacket, { role: 'dark', fold: .011, foldF: 34, hi: .56 }),
+      lapel: kit.solid('#' + new THREE.Color(D.jacket).lerp(new THREE.Color('#8790b8'), .16).getHexString(), { role: 'dark', hi: .66 }),
+      lining: kit.solid(D.lining, { role: def.id === 'taeo' ? 'spot' : 'dark' }),
+      inner: kit.solid(D.inner, { role: def.id === 'siwoo' ? 'mid' : 'light', fold: .007, foldF: 42 }),
+      pants: kit.solid(D.pants, { role: 'dark', fold: .011, foldF: 28, hi: .6 }),
+      shoe: kit.solid(D.shoe, { role: def.id === 'siwoo' ? 'light' : 'dark', gloss: def.id === 'taeo' ? 1 : 0 }),
+      sole: kit.solid(D.sole, { role: def.id === 'siwoo' ? 'spot' : 'dark' }),
+      tape: kit.solid(D.tape || '#ffffff', { role: 'light' }),
+    };
+    if (D.tie) { M.tie = kit.solid(D.tie, { role: 'dark' }); M.belt = kit.solid(D.belt, { role: 'dark', gloss: .5 }); M.buckle = kit.solid('#cfcabd', { role: 'light' }); }
+    this.faces = {}; for (const e of ['normal', 'hurt', 'ko', 'win']) this.faces[e] = stylishFaceTexture(def, S, e);
+    M.face = kit.solid('#ffffff', { map: this.faces.normal, role: 'face' });
+    this.M = M;
+    for (const k in M) if (M[k].emissive) { M[k].emissive.set(0xffffff); M[k].emissiveIntensity = 0; kit.flashables.push(M[k]); }
+
+    // ---- joints ----
+    const J = {}; this.J = J;
+    const root = new THREE.Group(); root.rotation.order = 'YXZ'; this.root = root; scene.add(root);
+    const tilt = new THREE.Group(), off = new THREE.Group(); root.add(tilt); tilt.add(off); this.tilt = tilt; this.off = off;
+    const G = (name, parent, y = 0, x = 0, z = 0) => { const g = new THREE.Group(); g.name = name; g.position.set(x, y, z); parent.add(g); J[name] = g; return g; };
+    G('hips', off, legL); G('spine', J.hips, 0); G('chest', J.spine, torsoL * .45); G('neck', J.chest, torsoL * .56); G('head', J.neck, neckL);
+    for (const s of [-1, 1]) {
+      const L = s > 0 ? 'L' : 'R';
+      G('ua' + L, J.chest, torsoL * .47, s * sh, 0); G('fa' + L, J['ua' + L], -upperL); G('ha' + L, J['fa' + L], -foreL);
+      G('th' + L, J.hips, -hip * .1, s * hip, 0); G('sh' + L, J['th' + L], -thighL); G('ft' + L, J['sh' + L], -shinL);
+    }
+    root.updateMatrixWorld(true);
+    const bones = ['hips', 'spine', 'chest', 'uaL', 'uaR'].map(n => J[n]);
+    this.skel = new THREE.Skeleton(bones);
+    const part = (p, geo, mat, o = {}) => kit.part(p, geo, mat, Object.assign({ receive: true }, o));
+    const skinned = (geo, mat, ow = 1, wfn) => {
+      skinWeights(geo, wfn);
+      const m = new THREE.SkinnedMesh(geo, mat); m.castShadow = true; m.receiveShadow = true; m.frustumCulled = false;
+      off.add(m); m.bind(this.skel, new THREE.Matrix4());
+      const h = kit.hull(geo, Array.isArray(mat) ? mat[0] : mat, ow);
+      if (h) { const hm = new THREE.SkinnedMesh(h.geo, h.mat); hm.frustumCulled = false; off.add(hm); hm.bind(this.skel, new THREE.Matrix4()); }
+      return m;
+    };
+    // torso weights: hem → hips, belly → spine, ribcage → chest, outer shoulder → upper arm
+    const torsoW = (x, y) => {
+      const yr = y - legL;
+      const wh = 1 - smooth01(-.03, .09, yr), wc = smooth01(torsoL * .28, torsoL * .62, yr);
+      let wua = smooth01(sh * .72, sh * 1.25, Math.abs(x)) * smooth01(torsoL * .62, torsoL * .86, yr) * .55;
+      const ws = Math.max(0, 1 - wh - wc);
+      const wcc = wc * (1 - wua); wua *= wc;
+      return [[0, wh], [1, ws], [2, wcc], [x > 0 ? 3 : 4, wua]];
+    };
+
+    // ---- torso (hoodie / shirt) ----
+    const tz = (tbl, yr) => interpTable(tbl, yr);
+    const yb = D.torso[0][0], yt = D.torso[D.torso.length - 1][0];
+    const torsoGeo = taperTube([V(0, legL + yb, 0), V(0, legL + yt, 0)], t => { const r = tz(D.torso, lerp(yb, yt, t)); return [r[0], r[1]]; }, { radial: 24, tubular: 20, capLen: .3 });
+    skinned(torsoGeo, M.inner, 1, torsoW);
+
+    // ---- jacket: open front, dropped shoulders, hem below the seat ----
+    const JK = D.coat, jy0 = legL - JK.hem, jy1 = legL + JK.w[JK.w.length - 1][0];
+    const yf = yr => (legL + yr - jy0) / (jy1 - jy0);
+    const ctrl = JK.w.map(([yr, w]) => [yf(yr), w]);
+    const openAt = f => { const yr = lerp(jy0, jy1, f) - legL; return yr < .2 ? lerp(.95, .62, smooth01(-JK.hem, .2, yr)) : yr < torsoL * .9 ? lerp(.62, 1.5, smooth01(.2, torsoL * .9, yr)) : lerp(1.5, 2.5, smooth01(torsoL * .9, torsoL * 1.06, yr)); };
+    const jg = jacketGeo({ ctrl, y0: jy0, y1: jy1, open: openAt, depth: JK.depth, flare: JK.flare, thick: .01, rows: 34, cols: 40, front: .92, back: 1.05 });
+    this.jacket = skinned(jg, [M.jacket, M.lining], 1, torsoW);
+    // lapels on the chest (rigid with the ribcage): roll line follows the jacket's front edge
+    const jEdge = yr => { const f = yf(yr), ha = openAt(f) / 2, w = interpTable(JK.w, yr)[0]; return new THREE.Vector3(w * Math.sin(ha), yr - torsoL * .45, w * JK.depth * .92 * Math.cos(ha)); };
+    const jNorm = yr => { const f = yf(yr), ha = openAt(f) / 2 + .25, w = interpTable(JK.w, yr)[0]; return new THREE.Vector3(Math.sin(ha) / w, 0, Math.cos(ha) / (w * JK.depth * .92)).normalize(); };
+    const plate = (geoFn, a, b, mat, lift, nrm) => {
+      for (const s of [-1, 1]) {
+        const mir = new THREE.Group(); if (s < 0) mir.scale.x = -1; J.chest.add(mir);
+        const Y = a.clone().sub(b).normalize();
+        const Z = nrm.clone().normalize(); Z.addScaledVector(Y, -Z.dot(Y)).normalize();
+        const X = new THREE.Vector3().crossVectors(Y, Z);
+        const g = new THREE.Group(); g.position.copy(a).addScaledVector(Z, lift); g.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(X, Y, Z)); mir.add(g);
+        part(g, geoFn(a.distanceTo(b)), mat, { ow: .7 });
+      }
+    };
+    const lapTop = jEdge(torsoL * .975), lapBrk = jEdge(torsoL * (def.id === 'taeo' ? .3 : .38));
+    plate(len => lapelGeo({ len, width: hh * (def.id === 'taeo' ? .46 : .38), notch: hh * .1, peak: .3 }), lapTop, lapBrk, M.lapel, .008, jNorm(torsoL * .7));
+
+    // ---- neck & head ----
+    part(J.neck, taperTube([V(0, -.03, -.006), V(0, neckL * .55, .0), V(0, neckL + headR * .22, -.022)], t => lerp(D.neckR * 1.05, D.neckR * .8, t), { radial: 16, tubular: 6 }), M.skin);
+    this.buildHead(J.head, headR, M, part, kit);
+
+    // ---- inner details: hood (Siwoo) / collar + loose tie (Taeo) ----
+    const topY = torsoL * .56; // neck joint in chest space
+    if (def.id === 'siwoo') {
+      const hood = taperTube([V(.075, topY - .05, .05), V(.092, topY - .01, -.02), V(.05, topY + .012, -.085), V(0, topY + .016, -.1), V(-.05, topY + .012, -.085), V(-.092, topY - .01, -.02), V(-.075, topY - .05, .05)],
+        t => [.024 + .018 * Math.sin(t * Math.PI), .03 + .014 * Math.sin(t * Math.PI)], { radial: 12, tubular: 30 });
+      part(J.chest, hood, M.inner);
+      const bag = taperTube([V(0, topY + .005, -.1), V(0, topY - .06, -.135), V(0, topY - .13, -.135)], t => [.085 * (1 - .35 * t), .03 * (1 - .3 * t)], { radial: 14, tubular: 8, up: V(0, 0, 1) });
+      part(J.chest, bag, M.inner);
+      for (const s of [-1, 1]) {
+        const cord = taperTube([V(s * .03, topY - .045, .085), V(s * .034, topY - .1, .094), V(s * .03, topY - .16, .097)], .0035, { radial: 6, tubular: 6 });
+        part(J.chest, cord, M.tape, { ow: .5 });
+      }
+    } else {
+      // open collar points + skin V + loosened tie
+      const collar = jacketGeo({ ctrl: [[0, D.neckR + .012], [1, D.neckR + .016]], y0: topY - .03, y1: topY + .03, open: 1.15, depth: 1, thick: .004, rows: 3, cols: 24 });
+      part(J.chest, collar, [M.inner, M.inner], { pos: [0, 0, .008], ow: .6 });
+      plate(len => lapelGeo({ len, width: .056, notch: .001, peak: .85 }), new THREE.Vector3(.036, topY + .02, .05), new THREE.Vector3(.062, topY - .055, .1), M.inner, .004, new THREE.Vector3(.5, .3, .85));
+      const vee = new THREE.Shape(); vee.moveTo(-.04, 0); vee.lineTo(.04, 0); vee.lineTo(0, -.085); vee.lineTo(-.04, 0);
+      const vg = new THREE.ShapeGeometry(vee); part(J.chest, vg, M.skin, { pos: [0, topY - .012, .1], rot: [-.25, 0, 0], outline: false });
+      const knot = taperTube([V(0, topY - .085, .118), V(0, topY - .12, .122)], t => [.017 - .004 * t, .01], { radial: 10, tubular: 3, capLen: .5 });
+      part(J.chest, knot, M.tie, { ow: .7 });
+      const blade = taperTube([V(0, topY - .115, .121), V(.004, topY - .2, .126), V(-.006, topY - .3, .124), V(-.004, topY - .37, .118)], t => [.018 + .012 * t, .0045], { radial: 8, tubular: 10, capLen: .3 });
+      part(J.chest, blade, M.tie, { ow: .6 });
+    }
+
+    // ---- arms ----
+    this.hands = {};
+    for (const s of [-1, 1]) {
+      const L = s > 0 ? 'L' : 'R', ua = J['ua' + L], fa = J['fa' + L], ha = J['ha' + L];
+      part(ua, taperTube([V(s * .006, -.008, 0), V(0, -upperL * .5, 0), V(0, -upperL - .012, 0)], t => [lerp(D.sleeve[0] * .96, D.sleeve[1], t), lerp(D.sleeve[0], D.sleeve[1], t) * .94], { radial: 16, tubular: 8, capLen: .55 }), M.jacket);
+      if (def.id === 'siwoo') {
+        part(fa, taperTube([V(0, .03, 0), V(0, -foreL * .44, 0)], t => D.cuff * (1 - .1 * t) * (1 + .07 * Math.sin(t * Math.PI * 4.5)), { radial: 16, tubular: 16, capLen: .5 }), M.jacket);
+        part(fa, taperTube([V(0, -foreL * .3, 0), V(0, -foreL + .004, 0)], t => lerp(D.fore[0], D.fore[1], t), { radial: 12, tubular: 6 }), M.skin);
+      } else {
+        part(fa, taperTube([V(0, .045, 0), V(0, -foreL * .14, 0)], t => D.cuff * (1 + .06 * Math.sin(t * Math.PI * 3.5)), { radial: 16, tubular: 10, capLen: .5 }), M.jacket);
+        part(fa, taperTube([V(0, -foreL * .08, 0), V(0, -foreL * .25, 0)], t => .058 * (1 + .05 * Math.sin(t * Math.PI * 2)), { radial: 16, tubular: 6, capLen: .4 }), M.inner);
+        part(fa, taperTube([V(0, -foreL * .12, 0), V(0, -foreL * .6, .004), V(0, -foreL + .004, 0)], t => lerp(D.fore[0], D.fore[1], t) * (1 + .1 * Math.sin(t * Math.PI)), { radial: 12, tubular: 8 }), M.skin);
+      }
+      this.hands[L] = buildHand(kit, ha, { size: D.hand, side: s, curl: P.curl.show, skinMat: M.skin, tapeMat: def.id === 'siwoo' ? M.tape : null, thick: def.id === 'taeo' ? 1.12 : 1 });
+    }
+
+    // ---- legs: wide slacks breaking over the shoes ----
+    const PR = D.pantsR;
+    part(J.hips, taperTube([V(0, .115, .004), V(0, .02, -.004), V(0, -.07, -.002)], t => [lerp(D.seat[0], D.seat[0] * .9, t), lerp(D.seat[1], D.seat[1] * 1.04, t)], { radial: 20, tubular: 8, capLen: .45 }), M.pants);
+    if (M.belt) {
+      const belt = new THREE.TorusGeometry(1, .14, 8, 36); belt.rotateX(Math.PI / 2);
+      part(J.hips, belt, M.belt, { pos: [0, .1, 0], scl: [D.seat[0] * .93, .1, D.seat[1] * 1.08], ow: .6 });
+      part(J.hips, new THREE.BoxGeometry(.04, .03, .012), M.buckle, { pos: [0, .1, D.seat[1] * 1.08 + .004], ow: .6 });
+    }
+    for (const s of [-1, 1]) {
+      const L = s > 0 ? 'L' : 'R', th = J['th' + L], sn = J['sh' + L], ft = J['ft' + L];
+      part(th, taperTube([V(0, .05, 0), V(0, -thighL * .5, 0), V(0, -thighL - .01, .004)], t => [lerp(PR[0], PR[1], t), lerp(PR[0], PR[1], t) * .96], { radial: 18, tubular: 8 }), M.pants);
+      part(sn, taperTube([V(0, .02, .004), V(0, -shinL * .5, 0), V(0, -shinL + .012, 0)], t => [lerp(PR[2], PR[3], t * t), lerp(PR[2], PR[3], t * t) * 1.02], { radial: 18, tubular: 10 }), M.pants);
+      // hem break: a soft fold ring sitting on the shoe
+      part(sn, taperTube([V(0, -shinL + .05, 0), V(0, -shinL + .005, .006)], t => [PR[3] * (1.02 + .1 * t), PR[3] * (1.05 + .12 * t)], { radial: 18, tubular: 4, capLen: .3 }), M.pants, { ow: .9 });
+      const shoe = shoeGeo({ kind: D.shoeKind, len: D.shoeLen, width: D.shoeW, height: D.shoeH });
+      part(ft, shoe.upper, M.shoe, { pos: [0, -footH, .01] });
+      part(ft, shoe.sole, M.sole, { pos: [0, -footH, .01], ow: .8 });
+    }
+
+    // ---- props ----
+    if (def.id === 'taeo') {
+      const milk = buildBananaMilk(kit); milk.scale.setScalar(1.0);
+      const hold = new THREE.Group(); J.haR.add(hold);
+      hold.position.set(D.hand * .085 + .037, -D.hand * .3, .0);
+      hold.add(milk); milk.position.y = -.03;
+      this.milk = hold;
+      // show pose: right hand thumb-up, fingers forward, palm toward the body's midline (root space basis)
+      const hz = new THREE.Vector3(.1, 1, .3).normalize(), hy = new THREE.Vector3(-.15, .1, -1); hy.addScaledVector(hz, -hy.dot(hz)).normalize();
+      this.handShowQ = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3().crossVectors(hy, hz), hy, hz));
+    }
+
+    // ---- show-pose IK targets (root space) ----
+    if (def.id === 'siwoo') {
+      this.ikTargets = {
+        FL: { foot: [.15, footH, .13], pole: [.75, 1.5, 1.3], flat: true, yaw: .42 },
+        FR: { foot: [-.15, footH, .13], pole: [-.75, 1.5, 1.3], flat: true, yaw: -.42 },
+        L: { hand: [.2, .4, .52], pole: [.75, .7, .32] },
+        R: { hand: [-.2, .4, .52], pole: [-.75, .7, .32] },
+      };
+    } else {
+      this.ikTargets = {
+        L: { hand: [.205, legL - .04, .05], pole: [.7, legL + .25, -.5], hide: true },
+        R: { hand: [-.03, legL + torsoL * .62, .24], pole: [-.7, legL + .1, -.25] },
+        FR: { foot: [-.07, footH, -.01], pole: [-.2, .5, 1], flat: true, yaw: -.18 },
+      };
+    }
+  }
+
+  buildHead(head, R, M, part, kit) {
+    const def = this.def, F = FACE_LAYOUT, D2R = Math.PI / 180;
+    const c = new THREE.Vector3(0, R * .56, R * .08); this.headC = c;
+    const geo = new THREE.SphereGeometry(R, 56, 40), p = geo.attributes.position;
+    const JW = def.id === 'taeo' ? { w: .8, jaw: .3, pow: 1.9, chin: .17 } : { w: .76, jaw: .44, pow: 1.35, chin: .22 };
+    const sq = (a, b, x) => smooth01(a, b, x);
+    for (let i = 0; i < p.count; i++) {
+      let x = p.getX(i) / R, y = p.getY(i) / R, z = p.getZ(i) / R;
+      const lat = Math.asin(clamp(-y, -1, 1)) / D2R, lon = Math.atan2(x, z) / D2R; // lat: + below the equator (texture v)
+      const t = Math.max(0, -y), front = Math.max(0, z);
+      x *= JW.w * (1 - JW.jaw * Math.pow(t, JW.pow)) * (1 - .06 * front * sq(10, 40, lat));
+      z *= .9;
+      if (y < 0) { y *= 1 + JW.chin * t * (.45 + .55 * front); z += .07 * t * front; }
+      // nose ridge + tip
+      const nose = Math.exp(-Math.pow(lon / 5.5, 2)) * sq(F.noseV - 14, F.noseV - 1, lat) * (1 - sq(F.noseV, F.noseV + 4, lat));
+      z += .1 * nose;
+      // brow ridge, cheekbones
+      z += .025 * Math.exp(-Math.pow((lat - F.browV) / 5, 2)) * Math.exp(-Math.pow((Math.abs(lon) - F.eyeU) / 14, 2));
+      z -= .02 * Math.exp(-Math.pow((lat - F.eyeV) / 6, 2)) * Math.exp(-Math.pow((Math.abs(lon) - F.eyeU) / 9, 2));
+      p.setXYZ(i, x * R, y * R, z * R);
+    }
+    geo.computeVertexNormals();
+    this.headMesh = part(head, geo, M.face, { pos: [c.x, c.y, c.z], receive: false });
+    // ears
+    for (const s of [-1, 1]) {
+      const cauli = def.id === 'taeo' && s === 1;
+      const ear = part(head, new THREE.SphereGeometry(R * .2, 12, 10), M.skin, { pos: [c.x + s * R * .73, c.y - R * .12, c.z - R * .1], scl: cauli ? [.62, 1.05, .82] : [.38, 1.0, .66], rot: [0, s * .25, 0], ow: .7 });
+      if (cauli) for (const b of [[.25, .3, .2], [.2, -.25, .3]]) part(ear, new THREE.SphereGeometry(R * .075, 8, 6), M.skin, { pos: [b[0] * R * .2, b[1] * R * .2, b[2] * R * .2], outline: false });
+    }
+    if (def.id === 'siwoo') this.hairSiwoo(head, R, c, M, part);
+    else this.hairTaeo(head, R, c, M, part);
+  }
+
+  // point on the skull (head-local). lat: degrees above the equator, lon: 0 = front, + toward the character's left (+X)
+  skull(lat, lon, lift = 0, sc = 1) {
+    const R = this.headR * sc, c = this.headC, la = lat * Math.PI / 180, lo = lon * Math.PI / 180;
+    const p = new THREE.Vector3(R * .76 * Math.cos(la) * Math.sin(lo), R * Math.sin(la), R * .9 * Math.cos(la) * Math.cos(lo)).add(c);
+    const n = new THREE.Vector3(Math.cos(la) * Math.sin(lo) / .76, Math.sin(la), Math.cos(la) * Math.cos(lo) / .9).normalize();
+    return { p: p.addScaledVector(n, lift), n };
+  }
+  // hair lock rooted on the skull, flowing along `flow` (head-local, projected onto the scalp), +Z of the lock = outward
+  lock(parent, mat, part, lat, lon, o) {
+    const { p, n } = this.skull(lat, lon, o.lift ?? .006, o.sc ?? 1.04);
+    const f = new THREE.Vector3(...o.flow).normalize();
+    f.addScaledVector(n, -f.dot(n) * (o.hug ?? 1)).normalize();
+    const y = f.clone().negate(), z = n.clone().addScaledVector(y, -n.dot(y)).normalize();
+    if (o.roll) z.applyAxisAngle(y, o.roll);
+    const x = new THREE.Vector3().crossVectors(y, z);
+    const g = hairLock({ len: o.len, width: o.w, thick: o.t ?? o.w * .38, bend: o.bend ?? -.6, flip: o.flip ?? 0, twist: o.twist ?? 0, taper: o.taper ?? .9, root: o.root ?? .8 });
+    const m = part(parent, g, mat, { ow: o.ow ?? .6, receive: false });
+    m.position.copy(p); m.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z));
+    return m;
+  }
+
+  hairSiwoo(head, R, c, M, part) {
+    const H = M.hair, L = (...a) => this.lock(head, H, part, ...a);
+    // scalp cap (top + back/sides, open over the face)
+    const cap = new THREE.SphereGeometry(R * 1.05, 32, 16, 0, TAU, 0, Math.PI * .34);
+    part(head, cap, H, { pos: [c.x, c.y, c.z], scl: [.79, 1, .93], receive: false });
+    const back = new THREE.SphereGeometry(R * 1.04, 32, 16, Math.PI / 2 + 1.25, TAU - 2.5, Math.PI * .3, Math.PI * .42);
+    part(head, back, H, { pos: [c.x, c.y, c.z], scl: [.8, 1, .94], receive: false });
+    const rnd = mulberry(7);
+    // crown: layered locks flowing outward from the whorl
+    for (let i = 0; i < 14; i++) {
+      const lon = -180 + i * (360 / 14) + rnd() * 10, lat = 62 + rnd() * 10;
+      const fl = new THREE.Vector3(Math.sin(lon * Math.PI / 180), -.25, Math.cos(lon * Math.PI / 180));
+      L(lat, lon, { flow: [fl.x, fl.y, fl.z], len: R * (.95 + rnd() * .35), w: R * .44, t: R * .17, bend: -1.15, flip: .8, lift: .006 });
+    }
+    // back + nape: long layered locks, ends flicking out (wolf / mullet)
+    for (let i = 0; i < 11; i++) {
+      const lon = 118 + i * (124 / 10) + (rnd() - .5) * 6, lat = 30 + (i % 2) * 14 + rnd() * 6;
+      L(lat, lon, { flow: [0, -1, -.15], len: R * (1.25 + rnd() * .4 + (i % 2 ? 0 : .25)), w: R * .42, t: R * .15, bend: -.6, flip: 1.05, lift: .006, ow: .55 });
+    }
+    // sides: over the ears, tips out
+    for (const s of [-1, 1]) for (let k = 0; k < 3; k++) {
+      L(36 - k * 4, s * (78 + k * 16), { flow: [s * .1, -1, -.2 - k * .1], len: R * (1.0 + k * .15), w: R * .4, t: R * .14, bend: -.5, flip: .75, lift: .006 });
+    }
+    // fringe: falls forward; the long lock covers the right eye (-X)
+    const fr = [[-26, 1.45, .44, -.3], [-12, 1.3, .4, -.15], [3, 1.05, .36, .05], [17, .95, .34, .2], [31, .8, .3, .35]];
+    for (const [lon, len, w, sway] of fr) {
+      L(50, lon, { flow: [sway, -1, .12], len: R * len, w: R * w, t: R * .14, bend: -.25, flip: .35, hug: .35, lift: .012, roll: -sway * .3, ow: .55 });
+    }
+    L(56, -36, { flow: [-.15, -1, .15], len: R * 1.25, w: R * .36, t: R * .13, bend: -.2, flip: .3, hug: .35, lift: .012, ow: .55 });
+  }
+
+  hairTaeo(head, R, c, M, part) {
+    const H = M.hair, L = (...a) => this.lock(head, H, part, ...a);
+    // two-block undercut: short grey-black sides/back
+    const under = new THREE.SphereGeometry(R * 1.015, 32, 18, Math.PI / 2 + 1.15, TAU - 2.3, Math.PI * .2, Math.PI * .52);
+    part(head, under, M.side, { pos: [c.x, c.y, c.z], scl: [.78, 1, .925], receive: false, ow: .7 });
+    // top: slicked-back mass with a little lift at the hairline
+    const top = new THREE.SphereGeometry(R * 1.08, 32, 14, 0, TAU, 0, Math.PI * .31);
+    part(head, top, H, { pos: [c.x, c.y + R * .03, c.z - R * .02], scl: [.82, 1.08, .97], receive: false });
+    const rnd = mulberry(3);
+    // combed-back streaks from the hairline toward the bun
+    for (let i = 0; i < 9; i++) {
+      const lon = -44 + i * 11 + (rnd() - .5) * 4;
+      L(50, lon, { flow: [-Math.sin(lon * Math.PI / 180) * .2, .45, -1], len: R * (1.35 + rnd() * .2), w: R * .44, t: R * .16, bend: -1.25, flip: .25, lift: .012, sc: 1.07, ow: .5 });
+    }
+    // high half-up bun on the back of the crown (shows above the head from the front)
+    const bun = new THREE.Group(); const bp = this.skull(58, 180, 0, 1.06);
+    bun.position.copy(bp.p).addScaledVector(bp.n, R * .2).add(new THREE.Vector3(0, R * .08, 0));
+    head.add(bun); bun.rotation.x = -.5;
+    part(bun, new THREE.SphereGeometry(R * .31, 18, 14), H, { scl: [1.05, .95, 1], receive: false });
+    for (let k = 0; k < 5; k++) {
+      // wrapped strands around the knot
+      const a0 = k / 5 * TAU;
+      const pts = []; for (let j = 0; j <= 6; j++) { const a = a0 + j * .55; pts.push(new THREE.Vector3(Math.cos(a) * R * .3, Math.sin(a) * R * .27, (j - 3) * R * .035)); }
+      part(bun, taperTube(pts, t => [R * .1 * Math.sin(Math.PI * (.15 + .85 * t)), R * .07], { radial: 8, tubular: 14 }), H, { receive: false, ow: .45 });
+    }
+    // gathered hair from the nape/sides up into the bun
+    for (const s of [-1, 1]) L(30, s * 140, { flow: [-s * .3, 1, -.4], len: R * .8, w: R * .4, t: R * .12, bend: -.7, lift: .01, sc: 1.05, ow: .45 });
+    // two loose strands falling onto the forehead (S-curve)
+    L(51, -5, { flow: [-.12, -1, .1], len: R * 1.02, w: R * .075, t: R * .035, bend: -.2, flip: 1.0, hug: .3, lift: .016, twist: 1.6, taper: .5, root: 1, ow: .35 });
+    L(51, 7, { flow: [.18, -1, .1], len: R * .82, w: R * .065, t: R * .03, bend: -.15, flip: .9, hug: .3, lift: .016, twist: -1.4, taper: .5, root: 1, ow: .35 });
+    // raised hairline: short locks lifting up and back off the forehead
+    for (const [lon, l] of [[-30, .8], [-15, .9], [18, .85], [33, .75]]) L(47, lon, { flow: [-Math.sin(lon * Math.PI / 180) * .3, 1, -.35], len: R * l, w: R * .42, t: R * .16, bend: -1.4, flip: .3, lift: .014, sc: 1.07, ow: .5 });
+  }
+
+  update(dt, rdt) {
+    super.update(dt, rdt);
+    const b = this.blend;
+    const cs = this.curlDef.show, cf = this.clip ? 1 : this.curlDef.fight;
+    const c = lerp(cs, cf, smooth01(.15, .85, b));
+    this.hands.L.setCurl(c); this.hands.R.setCurl(c);
+    if (this.handShowQ && !this.clip && !this.override && b < .999) {
+      const q = new THREE.Quaternion(), r = new THREE.Quaternion(), ha = this.J.haR;
+      ha.parent.updateWorldMatrix(true, false); ha.parent.getWorldQuaternion(q);
+      this.root.getWorldQuaternion(r); r.multiply(this.handShowQ);
+      ha.quaternion.slerp(q.invert().multiply(r), 1 - smooth01(0, .6, b));
+    }
+    if (this.milk) {
+      this.milk.visible = b < .5 && !this.override;
+      if (this.milk.visible) {
+        // keep the bottle upright in the world whatever the wrist does
+        const q = new THREE.Quaternion(), r = new THREE.Quaternion();
+        this.milk.parent.updateWorldMatrix(true, false); this.milk.parent.getWorldQuaternion(q);
+        this.root.getWorldQuaternion(r); r.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(.12, 0, -.08)));
+        this.milk.quaternion.copy(q.invert().multiply(r));
+      }
+    }
+  }
+
+  dispose() {
+    const mats = new Set();
+    this.root.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) [].concat(o.material).forEach(m => mats.add(m)); });
+    mats.forEach(m => m.dispose());
+    Object.values(this.faces).forEach(t => t.dispose());
+    this.skel && this.skel.dispose();
+    this.root.removeFromParent();
+  }
+}
+
+function smooth01(a, b, x) { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
+// table rows [key, v1, v2, ...] sorted by key → smooth-interpolated values at k
+function interpTable(tbl, k) {
+  if (k <= tbl[0][0]) return tbl[0].slice(1);
+  for (let i = 0; i < tbl.length - 1; i++) {
+    const a = tbl[i], b = tbl[i + 1];
+    if (k <= b[0]) { const t = smooth01(a[0], b[0], k); return a.slice(1).map((v, j) => lerp(v, b[j + 1], t)); }
+  }
+  return tbl[tbl.length - 1].slice(1);
+}
+// skin weights from fn(x,y,z) → [[boneIndex, weight] x ≤4]
+function skinWeights(geo, fn) {
+  const p = geo.attributes.position, n = p.count, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4);
+  for (let i = 0; i < n; i++) {
+    const w = fn(p.getX(i), p.getY(i), p.getZ(i)); let tot = 0;
+    for (let k = 0; k < 4; k++) { const e = w[k]; if (e) { si[i * 4 + k] = e[0]; sw[i * 4 + k] = e[1]; tot += e[1]; } }
+    if (tot < 1e-6) { si[i * 4] = 0; sw[i * 4] = 1; tot = 1; }
+    for (let k = 0; k < 4; k++) sw[i * 4 + k] /= tot;
+  }
+  geo.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4));
+  geo.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
 }
 
 // ===== 99_app.js =====

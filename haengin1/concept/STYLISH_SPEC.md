@@ -1,11 +1,7 @@
 # 스타일리시 리디자인 스펙 (A / A′) — 빌더 공통 계약서
 
 사용자 피드백: "A 애니 셀셰이딩 느낌은 괜찮은데 캐릭터가 너무 스타일리시하지 않다. 이 정도로 스타일리시해야 한다."
-레퍼런스 이미지 (Read 툴로 직접 볼 것):
-- `/tmp/claude-0/-home-user-oneyoungkim/77dfc82b-fac7-5f26-9c5b-0b5f07a51bad/images/1.png` — 정장 두 남자, 앞 남자는 양키 스쿼트(쪼그려 앉기), 한쪽 눈을 덮는 앞머리/안대, 극단적 흑백 노탄(notan): 큰 먹 덩어리 + 흰 하이라이트 띠. 로우 앵글.
-- `.../images/2.png` — 오버사이즈 재킷, 긴 생머리, 무릎까지 오는 양말, 로퍼. 펜 해칭, 스크린톤 점.
-- `.../images/3.png` — 뒷모습, 하프업 상투(번), 반팔 셔츠 뒷면, 빠른 붓 터치와 평행 해칭.
-- `.../images/4.png` — 주술회전 게토·고죠 정장: 상투 번 + 실눈 미소 / 흰 삐죽머리 + 동그란 선글라스, 넥타이 느슨, 손가락 포인트. 길쭉한 체형, 작은 머리.
+레퍼런스: **`concept/REFERENCES.md`** (2026-10-05 대표가 다시 준 캐릭터 C1~C5 + 배경 한옥 골목 일러스트를 글로 옮긴 것. 원본 이미지 파일은 없다).
 
 ## 1. 목표 룩
 
@@ -93,7 +89,7 @@ kit.flashables          // 피격 번쩍임용: emissive를 가진 재질 배열
 - `Fighter.prototype.applyIK = function (w, busy)` — `this.ikTargets`가 있고 `busy`가 false이며 w>0.001일 때만 동작. 형식(모두 root 로컬 좌표, m):
   `{ L: { hand:[x,y,z], pole:[x,y,z], hide?:bool }, R: {...}, FL: { foot:[x,y,z], pole:[x,y,z], flat:true, yaw:0 }, FR: {...} }`
   다리 IK 뒤에 `flat`이면 발 그룹을 바닥과 평행(root 기준 yaw만)으로 맞춘다. 호출 전 `this.root.updateMatrixWorld(true)`.
-- Node에서 수치 테스트: three를 `file:///tmp/claude-0/-home-user-oneyoungkim/77dfc82b-fac7-5f26-9c5b-0b5f07a51bad/scratchpad/three170/package/build/three.module.js`에서 import 해서 끝점 오차 < 1mm 검증.
+- Node에서 수치 테스트: three(r170) `three.module.js`를 로컬 경로에서 import 해서 끝점 오차 < 1mm 검증.
 
 ### 4-4. `10_faces.js`
 - `FACE_LAYOUT = { eyeU, eyeV, browV, noseV, mouthV, chinV }` (도 단위, 얼굴 정면 = 텍스처 u .25, 적도 = v 0, 아래가 +). 캐릭터 담당이 코 돌출·턱 위치를 여기에 맞춤.
@@ -101,8 +97,8 @@ kit.flashables          // 피격 번쩍임용: emissive를 가진 재질 배열
 
 ## 5. 테스트 방법
 
-- 스크린샷: `PAGE=... OUT=... STEPS='[...]' READY='window.__ready' NODE_PATH=/opt/node22/lib/node_modules node concept/tools/shot.cjs` (사용법은 파일 상단 주석). `OUT/logs.txt`의 에러는 0이어야 함.
+- 스크린샷: `PAGE=... OUT=... STEPS='[...]' READY='window.__ready' THREE=<three.module.min.js 경로> NODE_PATH=<playwright가 있는 node_modules> node concept/tools/shot.cjs` (사용법은 파일 상단 주석). `OUT/logs.txt`의 에러는 0이어야 함.
 - `--bare` 테스트 페이지는 `#gl` 캔버스 하나만 있다. 테스트 스크립트에서 renderer/scene/camera를 직접 만들고 다 그린 뒤 `window.__ready = true`.
 - 스크린샷은 Read 툴로 직접 보고, 레퍼런스 이미지와 나란히 비교하며 판단할 것.
-- 테스트 파일·스크린샷은 `/tmp/claude-0/-home-user-oneyoungkim/77dfc82b-fac7-5f26-9c5b-0b5f07a51bad/scratchpad/<담당명>/` 아래에 둘 것 (레포에 넣지 않음).
+- 테스트 파일·스크린샷은 레포 밖 작업 폴더(세션 scratchpad)에 둘 것.
 - git commit 금지.
