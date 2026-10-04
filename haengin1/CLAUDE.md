@@ -15,7 +15,7 @@
 - 파일은 숫자 순으로 한 ES 모듈에 이어 붙음. `99_app.js`가 마지막.
 - 관절 규약: 팔다리는 로컬 -Y로 뻗음, 정면 +Z, 캐릭터 왼쪽 +X (자세한 내용은 STYLISH_SPEC 3장)
 - 스크린샷: `concept/tools/shot.cjs` (Playwright 헤드리스, `--mute-audio`). 로컬(Windows)에선 three@0.170.0 + playwright@1.60.0(설치된 ms-playwright 브라우저 1223과 맞는 버전)을 아무 폴더에 `npm i` 하고 `THREE=<그 폴더>/node_modules/three/build/three.module.min.js NODE_PATH=<그 폴더>/node_modules` 로 실행. 페이지에 효과음(AudioContext)이 있으니 앱 안 브라우저에 띄우지 말 것
-- 게시본: https://claude.ai/artifact/LF2wzj7QSebCe56FERZM83
+- 게시본: 2차(A·A′ 리빌드 + 한옥 배경) https://claude.ai/artifact/4TR1JRPVj6qu1VC4k6jaw7 / 1차(A·B·C 원안) https://claude.ai/artifact/LF2wzj7QSebCe56FERZM83
 
 ## 진행 상황 (2026-10-05, 로컬 세션)
 - 시우 루트 1부: 회차 구성 + 1~4화 완료 (3화 6,020자·4화 5,812자, 공백 포함·제목과 연출 노트 제외로 잼). 회차구성 부록 A·B 갱신. 다음은 5화부터
