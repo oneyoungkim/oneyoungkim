@@ -201,3 +201,15 @@ The reference images are black-and-white model sheets of this same character: ke
 
 </details>
 
+
+## 3D 변환 시험 (2026-10-05)
+
+| 단계 | 모델 | 결과 | 크레딧 |
+|---|---|---|---|
+| A포즈 4방향 설정화 `siwoo_apose_turn_v1.png` | GPT Image 2.5 high 4k 16:9 (참조: siwoo_turn_v2, siwoo_color_v2, siwoo_face_v1) | 앞·왼쪽·뒤·오른쪽, 같은 축척. 팔이 몸에 가까움 | 4.25 |
+| 4방향 잘라 입력 `../3d_input/siwoo_{front,left,back,right}.png` | — | 1536×1536, 흰 배경 | 0 |
+| 3D 모델 `../3d/siwoo_tripo_v1.glb` | Tripo H3.1 Multiview to 3D (standard, pbr off, face_limit 60000) | 삼각형 56,608, 텍스처 1장. **모델 정면이 +X** (three.js에서 rotation.y = -π/2) | 9 |
+| 리깅 `../3d/siwoo_tripo_v1_rigged.glb` | 3D Rigging (height 1.62) | 표준 인간형 뼈 24개(Hips, Spine02/01/Spine, neck, Head, Left/RightShoulder·Arm·ForeArm·Hand, Left/RightUpLeg·Leg·Foot·ToeBase), 손가락 뼈 없음. **팔을 들면 소매·손·바지가 함께 늘어나 실패** — 입력 그림에서 손이 허벅지에 붙어 있었기 때문 | 5 |
+
+다음: 팔을 몸에서 45° 이상 떼고 다리를 벌린 A포즈(또는 T포즈)로 4방향 설정화를 다시 뽑아 재변환·재리깅. 캐릭터 1명당 약 18.25크레딧(standard) ~ 27.25크레딧(detailed).
+시험 페이지: https://claude.ai/artifact/Mab3mDahjjWeNvFxaPYfkz
