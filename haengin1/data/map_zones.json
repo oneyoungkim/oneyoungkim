@@ -1,0 +1,4160 @@
+{
+  "meta": {
+    "title": "혜화동 3D 오픈 타운 맵 데이터",
+    "version": "0.2.0-3d",
+    "updated": "2026-10-04",
+    "doc": "docs/03_맵_혜화동.md",
+    "coordinateSystem": {
+      "origin": "혜화동 로터리(혜화교차로) 중심 ≈ 37.5864N 127.0017E [추정: 혜화역·혜화문 좌표와 대학로 번지로 역산, 오차 ±100m]",
+      "axes": {
+        "x": "동쪽 +",
+        "y": "해발 고도(m, 대부분 추정)",
+        "z": "남쪽 +"
+      },
+      "unit": "m (실제 거리 근사)",
+      "latLonToXZ": "x = (lon - 127.0017) * 88213, z = -(lat - 37.5864) * 110990",
+      "gameScale": {
+        "horizontal": 0.25,
+        "horizontalRange": [
+          0.2,
+          0.333
+        ],
+        "vertical": 0.5,
+        "formula": "gameX = x*0.25, gameZ = z*0.25, gameY = (y-30)*0.5",
+        "note": "수평 1/4·수직 1/2 → 경사가 실제의 약 2배로 강조됨. 상권(대명거리·대학로·후문)은 1/3, 숲길·캠퍼스·성곽 장거리 구간은 1/5까지 가변 압축 권장"
+      },
+      "posConfidence": {
+        "confirmed": "공개 좌표(위키백과 등)에서 환산",
+        "estimated": "주소 번지·기사 묘사로 추정",
+        "fictional": "게임 창작 배치"
+      }
+    },
+    "elevationRule": {
+      "low": "y < 45",
+      "mid": "45 <= y <= 80",
+      "high": "y > 80"
+    },
+    "tagLegend": {
+      "[확인됨]": "출처로 확인",
+      "[불확실]": "출처 부족/상충",
+      "[추정]": "출처 기반 계산·추론(불확실의 일종)",
+      "[가상]": "게임 창작",
+      "[전승]": "기록·구전으로 전해지나 사실 검증 안 됨"
+    },
+    "namingRule": "공공 랜드마크(성곽·혜화문·와룡공원·성대 후문·혜화동 로터리·대학로·마로니에공원·낙산공원·성균관 등)만 실명. 학교·가게·회사는 가상 이름."
+  },
+  "layers": [
+    {
+      "id": "inside",
+      "name": "성곽 안(도성 안)",
+      "realRef": "종로구 명륜동·혜화동·동숭동·이화동 [확인됨: 성곽 안쪽은 종로구, 바깥은 성북구]",
+      "feel": "생활·학교·상권. 밝고 촘촘함"
+    },
+    {
+      "id": "wall",
+      "name": "성곽(성곽길·전망·관문)",
+      "realRef": "한양도성 백악·낙산 구간 성곽길 [확인됨]",
+      "feel": "능선, 바람, 시야가 트임. 훈련·결투·야경",
+      "rule": "성벽 위로 올라가기/훼손 불가(문화재) — 성벽 옆 안쪽길·바깥길로만 이동"
+    },
+    {
+      "id": "outside",
+      "name": "성곽 밖",
+      "realRef": "성북구 성북동(북정마을·선잠단지), 동소문동·삼선동(한성대입구역·장수마을) [확인됨]",
+      "feel": "비탈 달동네·대로변. '바깥' 사람들, 노동·새벽의 공간"
+    }
+  ],
+  "districts": [
+    {
+      "id": "A",
+      "name": "후문·명륜3가",
+      "center": {
+        "x": -720,
+        "y": 88,
+        "z": -420
+      },
+      "note": "주인공 반시우의 생활권. 알바 3종(편의점·배달·국밥) 밀집"
+    },
+    {
+      "id": "B",
+      "name": "와룡공원·북쪽 성곽",
+      "center": {
+        "x": -980,
+        "y": 125,
+        "z": -560
+      },
+      "note": "성곽 레이어. 훈련·야차·야경. 성곽 밖(북정마을)으로 내려가는 경계"
+    },
+    {
+      "id": "C",
+      "name": "혜화동 언덕(학교·성곽 위 주택)",
+      "center": {
+        "x": -120,
+        "y": 72,
+        "z": -480
+      },
+      "note": "혜성고, 등굣길, 공사 현장, 성곽 전망 쉼터"
+    },
+    {
+      "id": "D",
+      "name": "혜화동 로터리·혜화문",
+      "center": {
+        "x": 60,
+        "y": 45,
+        "z": -60
+      },
+      "note": "강태오의 생활권. 교통 허브, 성곽 밖(한성대입구 방면)으로 나가는 관문"
+    },
+    {
+      "id": "E",
+      "name": "대학로·성균관",
+      "center": {
+        "x": -120,
+        "y": 38,
+        "z": 380
+      },
+      "note": "상권·공연·역사. 저지대"
+    },
+    {
+      "id": "F",
+      "name": "낙산·이화마을",
+      "center": {
+        "x": 520,
+        "y": 100,
+        "z": 600
+      },
+      "note": "다른 구역 세력권. 계단·야경. 성곽 밖(장수마을) 바깥길"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "lm_rotary",
+      "name": "혜화동 로터리(혜화교차로) — 좌표 원점",
+      "lat": 37.5864,
+      "lon": 127.0017,
+      "pos": {
+        "x": 0,
+        "y": 40,
+        "z": 0
+      },
+      "xzConfidence": "estimated",
+      "yConfidence": "estimated",
+      "sources": [
+        "hyehwa_rotary_traffic",
+        "hyehwa_stn_wiki"
+      ]
+    },
+    {
+      "id": "lm_hyehwa_stn",
+      "name": "혜화역(4호선)",
+      "lat": 37.5821381,
+      "lon": 127.0019525,
+      "pos": {
+        "x": 22,
+        "y": 32,
+        "z": 473
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "estimated",
+      "sources": [
+        "hyehwa_stn_wiki"
+      ]
+    },
+    {
+      "id": "lm_marronnier",
+      "name": "마로니에공원",
+      "lat": 37.580503,
+      "lon": 127.002807,
+      "pos": {
+        "x": 98,
+        "y": 32,
+        "z": 655
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "estimated",
+      "sources": [
+        "marronnier_wiki",
+        "marronnier"
+      ]
+    },
+    {
+      "id": "lm_hyehwamun",
+      "name": "혜화문",
+      "lat": 37.5879389,
+      "lon": 127.0039333,
+      "pos": {
+        "x": 197,
+        "y": 55,
+        "z": -171
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "estimated",
+      "sources": [
+        "hyehwamun_wiki",
+        "hyehwamun_1994"
+      ]
+    },
+    {
+      "id": "lm_munmyo",
+      "name": "성균관 문묘(명륜당·은행나무)",
+      "lat": 37.585338,
+      "lon": 126.996688,
+      "pos": {
+        "x": -442,
+        "y": 45,
+        "z": 118
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "estimated",
+      "sources": [
+        "munmyo_wiki",
+        "ginkgo"
+      ]
+    },
+    {
+      "id": "lm_skku",
+      "name": "성균관대 인문사회과학캠퍼스(대표점)",
+      "lat": 37.58722,
+      "lon": 126.99417,
+      "pos": {
+        "x": -664,
+        "y": 65,
+        "z": -91
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "estimated",
+      "sources": [
+        "skku_wiki"
+      ]
+    },
+    {
+      "id": "lm_waryong",
+      "name": "와룡공원(대표점)",
+      "lat": 37.590589,
+      "lon": 126.990607,
+      "pos": {
+        "x": -979,
+        "y": 115,
+        "z": -465
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "estimated",
+      "sources": [
+        "waryong_wiki",
+        "waryong_mediahub"
+      ]
+    },
+    {
+      "id": "lm_sukjeongmun",
+      "name": "숙정문(맵 밖, 북서)",
+      "lat": 37.59556,
+      "lon": 126.98111,
+      "pos": {
+        "x": -1816,
+        "y": 230,
+        "z": -1017
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "estimated",
+      "sources": [
+        "sukjeongmun_wiki"
+      ]
+    },
+    {
+      "id": "lm_naksan_peak",
+      "name": "낙산 정상(해발 125m)",
+      "lat": 37.5805,
+      "lon": 127.0086,
+      "pos": {
+        "x": 609,
+        "y": 125,
+        "z": 655
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "confirmed",
+      "sources": [
+        "naksan_wiki"
+      ]
+    },
+    {
+      "id": "lm_ihwa",
+      "name": "이화벽화마을(대표점)",
+      "lat": 37.5781542,
+      "lon": 127.0072201,
+      "pos": {
+        "x": 487,
+        "y": 90,
+        "z": 915
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "estimated",
+      "sources": [
+        "ihwa_wiki",
+        "ihwa"
+      ]
+    },
+    {
+      "id": "lm_seonjamdan",
+      "name": "선잠단지(성곽 밖 참고점)",
+      "lat": 37.593778,
+      "lon": 126.999333,
+      "pos": {
+        "x": -209,
+        "y": 60,
+        "z": -819
+      },
+      "xzConfidence": "confirmed",
+      "yConfidence": "estimated",
+      "sources": [
+        "seonjamdan_wiki",
+        "seonjam_museum"
+      ]
+    }
+  ],
+  "wallLine": [
+    {
+      "label": "숙정문(맵 밖)",
+      "x": -1816,
+      "y": 230,
+      "z": -1017,
+      "conf": "xz confirmed, y estimated"
+    },
+    {
+      "label": "말바위",
+      "x": -1330,
+      "y": 190,
+      "z": -720,
+      "conf": "estimated"
+    },
+    {
+      "label": "와룡공원 서측",
+      "x": -1000,
+      "y": 125,
+      "z": -560,
+      "conf": "estimated"
+    },
+    {
+      "label": "후문 북측(와룡공원 중앙)",
+      "x": -800,
+      "y": 112,
+      "z": -600,
+      "conf": "estimated"
+    },
+    {
+      "label": "명륜3가 북측",
+      "x": -560,
+      "y": 104,
+      "z": -660,
+      "conf": "estimated"
+    },
+    {
+      "label": "혜성고 북측(과학고 담장 숲길 참고)",
+      "x": -380,
+      "y": 96,
+      "z": -720,
+      "conf": "estimated"
+    },
+    {
+      "label": "성곽 단절 도로(과학고·경신고 사이 참고)",
+      "x": -260,
+      "y": 88,
+      "z": -730,
+      "conf": "existence confirmed, position estimated",
+      "gap": true
+    },
+    {
+      "label": "경신고 담장 구간 참고",
+      "x": -140,
+      "y": 86,
+      "z": -700,
+      "conf": "existence confirmed, position estimated"
+    },
+    {
+      "label": "성곽 위 주택가(성돌 축대)",
+      "x": -20,
+      "y": 78,
+      "z": -520,
+      "conf": "existence confirmed, position estimated"
+    },
+    {
+      "label": "옛 서울시장 공관(전시·안내센터)",
+      "x": 60,
+      "y": 70,
+      "z": -360,
+      "conf": "existence confirmed, position estimated"
+    },
+    {
+      "label": "혜화문",
+      "x": 197,
+      "y": 55,
+      "z": -171,
+      "conf": "xz confirmed"
+    },
+    {
+      "label": "도로 절개부(혜화문 옆 대로)",
+      "x": 230,
+      "y": 45,
+      "z": -140,
+      "conf": "existence confirmed, position estimated",
+      "gap": true
+    },
+    {
+      "label": "낙산 북단 나무계단길",
+      "x": 330,
+      "y": 70,
+      "z": -40,
+      "conf": "estimated"
+    },
+    {
+      "label": "장수마을 경계(성곽 밖)",
+      "x": 450,
+      "y": 92,
+      "z": 200,
+      "conf": "estimated"
+    },
+    {
+      "label": "낙산공원 놀이마당 부근",
+      "x": 540,
+      "y": 112,
+      "z": 450,
+      "conf": "estimated"
+    },
+    {
+      "label": "낙산 정상(125m)",
+      "x": 609,
+      "y": 125,
+      "z": 655,
+      "conf": "confirmed"
+    },
+    {
+      "label": "이화마을 동측 → 흥인지문 방향(맵 밖)",
+      "x": 580,
+      "y": 100,
+      "z": 950,
+      "conf": "estimated"
+    }
+  ],
+  "zones": [
+    {
+      "id": "hoomun_street",
+      "name": "성대 후문 상가거리",
+      "realRef": "성균관대 인문사회과학캠퍼스 후문 일대(명륜3가): '명륜시장·성대후문' 정류장, 마을버스 종로02·08 경유 [확인됨] / 개별 상가 구성 [불확실] — 실제 상호 미사용",
+      "type": "commercial_street",
+      "district": "A",
+      "layer": "inside",
+      "pos": {
+        "x": -740,
+        "y": 88,
+        "z": -410
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "상점가 허브",
+        "알바 3종(하루편의점·번개배달·성대후문 국밥) 입구",
+        "마을버스 1번 '명륜3가 종점'·'후문시장 앞' 정류장(빠른 이동)",
+        "전봇대 전단지 퀘스트 보드"
+      ],
+      "npcs": [
+        "최사장(하루편의점 사장)",
+        "유나리(하루편의점 야간 알바)",
+        "고준(번개배달 라이더 선배)",
+        "번개배달 사장(가칭)",
+        "응운 파('파 이모', 국밥집 주방 실장)",
+        "대학생 손님들",
+        "동네 고양이 '후문이'(가상)"
+      ],
+      "openHours": "24h (상점별 상이)",
+      "mood": [
+        "언덕 위 대학가",
+        "자취생",
+        "전단지",
+        "배달 오토바이",
+        "김 오르는 국밥집"
+      ],
+      "sightlines": [
+        "북쪽 위로 와룡공원 숲과 성곽 능선 [추정]",
+        "남쪽 아래로 캠퍼스 건물 지붕 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "국밥집 육수 김, 마을버스 첫차(실제 종로08 첫차 06:00 [확인됨])",
+        "morning": "등교·출근 러시, 마을버스 만원",
+        "day": "학기 중 점심 인파 / 방학엔 한산 [분위기 확인됨]",
+        "evening": "배달 피크(번개배달 콜 폭주)",
+        "night": "편의점 불빛만 남음, 고양이 집회"
+      },
+      "sources": [
+        "bus_jongno08",
+        "bus_jongno02",
+        "skku_location",
+        "mr3ga_review"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "myeongnyun3ga_alley",
+          "via": "골목 계단(내리막)",
+          "minutes": 2
+        },
+        {
+          "to": "hoomun_parking",
+          "via": "상가 뒤 골목",
+          "minutes": 1
+        },
+        {
+          "to": "waryong_entrance",
+          "via": "후문 옆 오르막·공원 계단",
+          "minutes": 3
+        },
+        {
+          "to": "campus_path",
+          "via": "후문 게이트(캠퍼스 관통)",
+          "minutes": 4
+        },
+        {
+          "to": "myeongnyun1ga_slope",
+          "via": "성균관로 비탈(마을버스길)",
+          "minutes": 3
+        },
+        {
+          "to": "haru_conv",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        },
+        {
+          "to": "bungae_delivery",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        },
+        {
+          "to": "gukbap",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "myeongnyun3ga_alley",
+      "name": "명륜3가 성곽 아래 골목",
+      "realRef": "명륜3가 성곽 인접 주택가 — 단독·다세대·빌라, 좁은 골목, 언덕 [확인됨: 성곽 옆 동네 기사·명륜3가 빌라 후기] / 반시우 집 위치는 [가상]",
+      "type": "residential_alley",
+      "district": "A",
+      "layer": "inside",
+      "pos": {
+        "x": -650,
+        "y": 86,
+        "z": -500
+      },
+      "posConfidence": "fictional",
+      "functions": [
+        "반시우의 집 외관 + 옥상(오픈월드, 성곽 뷰)",
+        "골목 계단 숏컷",
+        "이웃 부탁 퀘스트"
+      ],
+      "npcs": [
+        "반시우",
+        "응운 파(엄마, 출퇴근 시간대)",
+        "반하늘(여동생, 초5)",
+        "아랫집 할머니(가칭)",
+        "옆집 대학원생(가칭)",
+        "고양이 '성곽이'(가상)"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "좁지만 따뜻한",
+        "계단 화분",
+        "빨랫줄",
+        "저녁 밥 냄새",
+        "올려다보면 성곽"
+      ],
+      "sightlines": [
+        "옥상에서 북쪽 위 성곽 능선(가로등 켜진 성곽길) [가상 연출 — 명륜3가 성곽 인접 주택가는 확인됨]",
+        "남쪽으로 캠퍼스와 도심 불빛 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "옥상 줄넘기/섀도복싱 가능",
+        "morning": "엄마 출근 배웅 이벤트",
+        "day": "할머니 장바구니 들어주기",
+        "evening": "골목 고양이 밥 주기",
+        "night": "옥상에서 성곽 야경 + 독백 컷신"
+      },
+      "sources": [
+        "wall_village_daum",
+        "mr3ga_review"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hoomun_street",
+          "via": "골목 계단(내리막)",
+          "minutes": 2
+        },
+        {
+          "to": "waryong_entrance",
+          "via": "성곽 아래 좁은 계단",
+          "minutes": 3
+        },
+        {
+          "to": "myeongnyun1ga_slope",
+          "via": "주택가 골목",
+          "minutes": 3
+        },
+        {
+          "to": "school_front",
+          "via": "성곽 안쪽 오솔길(동쪽, 반시우 등굣길)",
+          "minutes": 6
+        },
+        {
+          "to": "siu_house",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "hoomun_parking",
+      "name": "후문 뒷골목 주차장",
+      "realRef": "명륜3가 '명륜동 와룡공영주차장 및 문화센터' 존재 [확인됨]를 참고한 가상 주차장(실제 위치·구조는 [불확실])",
+      "type": "parking_lot",
+      "district": "A",
+      "layer": "inside",
+      "pos": {
+        "x": -700,
+        "y": 84,
+        "z": -360
+      },
+      "posConfidence": "fictional",
+      "functions": [
+        "야차 스팟 Y4(초심자)",
+        "1부 튜토리얼 보스전 무대(황민재 무리 1:3 길거리 싸움 — 스토리 바이블)",
+        "배달 오토바이 정비 미니게임"
+      ],
+      "npcs": [
+        "황민재 무리(1부 튜토리얼 보스)",
+        "주차 관리 아저씨(가칭)",
+        "초보 야차러들"
+      ],
+      "openHours": "24h (야차는 22:00~03:00)",
+      "mood": [
+        "자판기 불빛",
+        "주차 차단기",
+        "콘크리트 벽 낙서",
+        "모기"
+      ],
+      "sightlines": [
+        "주차장 끝 난간에서 아래 캠퍼스 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "청소차",
+        "morning": "출근 차량 빠져나감",
+        "day": "만차",
+        "evening": "차 빠지기 시작",
+        "night": "빈 칸에 야차 링 형성"
+      },
+      "sources": [
+        "waryong_parking"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hoomun_street",
+          "via": "상가 뒤 골목",
+          "minutes": 1
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "myeongnyun1ga_slope",
+      "name": "명륜1가 비탈길",
+      "realRef": "성균관로 동측 비탈 — '새마을금고'·'서울국제고' 정류장(종로07·08 경유) [정류장 확인됨] / 도로 형상 [추정]",
+      "type": "street",
+      "district": "A",
+      "layer": "inside",
+      "pos": {
+        "x": -470,
+        "y": 72,
+        "z": -330
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "후문↔혜화로 연결",
+        "마을버스 1·2번 '명륜1가' 정류장",
+        "배달 R3 경유"
+      ],
+      "npcs": [
+        "등교 학생들",
+        "마을버스 기사(가칭)"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "버스 한 대가 꽉 차는 길",
+        "담벼락",
+        "오르막 숨소리"
+      ],
+      "sightlines": [
+        "동쪽으로 혜화동 언덕 주택가 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "청소",
+        "morning": "등교 행렬",
+        "day": "한산",
+        "evening": "하교·배달",
+        "night": "가로등"
+      },
+      "sources": [
+        "bus_jongno08",
+        "bus_jongno07",
+        "school_intl"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hoomun_street",
+          "via": "성균관로 비탈(마을버스길)",
+          "minutes": 3
+        },
+        {
+          "to": "myeongnyun3ga_alley",
+          "via": "주택가 골목",
+          "minutes": 3
+        },
+        {
+          "to": "hyehwaro_hill",
+          "via": "성균관로→혜화로 합류",
+          "minutes": 4
+        }
+      ],
+      "elevation": "mid"
+    },
+    {
+      "id": "campus_path",
+      "name": "캠퍼스 언덕길(후문↔정문)",
+      "realRef": "성균관대 인문사회과학캠퍼스 관통로(대표 좌표 37.5872N 126.9942E [확인됨]) — 통과 전용 배경, 대학 실명은 게임 내 미표기",
+      "type": "passage",
+      "district": "E",
+      "layer": "inside",
+      "pos": {
+        "x": -664,
+        "y": 65,
+        "z": -91
+      },
+      "posConfidence": "confirmed",
+      "functions": [
+        "후문↔성균관·대명거리 숏컷(내리막)",
+        "배달 R4 경유",
+        "대학생 NPC 잡담"
+      ],
+      "npcs": [
+        "대학생들",
+        "경비원(가칭)"
+      ],
+      "openHours": "06:00-24:00 (게임 설정)",
+      "mood": [
+        "가파른 캠퍼스",
+        "벤치",
+        "현수막"
+      ],
+      "sightlines": [
+        "내려가며 남쪽 대학로 방향 도심 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘(우회)",
+        "morning": "등교 러시",
+        "day": "강의 시간 인파",
+        "evening": "동아리",
+        "night": "24시 이후 닫힘"
+      },
+      "sources": [
+        "skku_wiki"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hoomun_street",
+          "via": "후문 게이트(캠퍼스 관통)",
+          "minutes": 4
+        },
+        {
+          "to": "seonggyungwan",
+          "via": "캠퍼스 오르막",
+          "minutes": 5
+        }
+      ],
+      "elevation": "mid"
+    },
+    {
+      "id": "waryong_entrance",
+      "name": "와룡공원 입구·성곽 아래 공터",
+      "realRef": "와룡공원 — 성대 후문과 접함, 1984 조성, 성곽 따라 성북동(밖)/명륜동(안) 경계, 배드민턴장·운동기구, 상시 개방 [확인됨] / 공터 위치 [가상]",
+      "type": "park",
+      "district": "B",
+      "layer": "wall",
+      "pos": {
+        "x": -760,
+        "y": 106,
+        "z": -560
+      },
+      "posConfidence": "fictional",
+      "functions": [
+        "야차 스팟 Y1(밤, 홈 그라운드) — 1부 야차 입성·첫눈의 야차, 2부 채강혁 리매치 무대(스토리 바이블)",
+        "새벽 배드민턴 미니게임",
+        "러닝 T1 출발점",
+        "마을버스 3번 '후문·와룡공원'(맵 밖 북촌행, 확장용)"
+      ],
+      "npcs": [
+        "채강혁('성곽 호랑이', 지역 짱)",
+        "새벽 배드민턴 어르신들",
+        "산책객",
+        "야차 입회인 '심판 형'(가칭)"
+      ],
+      "openHours": "24h [확인됨: 상시 개방] (야차 21:00~01:00)",
+      "mood": [
+        "소나무",
+        "가로등 두 개",
+        "풀벌레",
+        "성벽 돌 냄새"
+      ],
+      "sightlines": [
+        "성곽 너머 성북동 쪽 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "배드민턴 어르신 집합(미니게임)",
+        "morning": "등굣길 지름길",
+        "day": "산책객",
+        "evening": "노을",
+        "night": "야차 링(가로등 아래)"
+      },
+      "sources": [
+        "waryong_mediahub",
+        "waryong_night",
+        "waryong_wiki"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hoomun_street",
+          "via": "후문 옆 오르막·공원 계단",
+          "minutes": 3
+        },
+        {
+          "to": "myeongnyun3ga_alley",
+          "via": "성곽 아래 좁은 계단",
+          "minutes": 3
+        },
+        {
+          "to": "waryong_trail",
+          "via": "성곽길",
+          "minutes": 3
+        },
+        {
+          "to": "school_front",
+          "via": "성곽 안쪽 숲길(학교 담장 옆)",
+          "minutes": 5
+        }
+      ],
+      "elevation": "high",
+      "notes": "공터는 흙바닥 원형 공간 + 벤치 2, 가로등 2. 성벽에서 몇 걸음 떨어져 있음(성벽 접촉·등반 금지 연출)."
+    },
+    {
+      "id": "waryong_trail",
+      "name": "와룡공원 성곽길",
+      "realRef": "와룡공원 성곽길(대표 좌표 37.5906N 126.9906E [확인됨]); '누운 용' 모양 길, 2023 정비(안전난간·식재) [확인됨]",
+      "type": "trail",
+      "district": "B",
+      "layer": "wall",
+      "pos": {
+        "x": -979,
+        "y": 115,
+        "z": -465
+      },
+      "posConfidence": "confirmed",
+      "functions": [
+        "러닝 T1/T5 구간",
+        "성곽 안쪽길↔바깥길 선택 루트",
+        "숨은 수집품(성돌 각자) 탐색"
+      ],
+      "npcs": [
+        "순성객",
+        "한양도성 해설사 '도성길라잡이'(실제 프로그램 존재 [확인됨], 개인은 가상)"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "굽이치는 성벽",
+        "소나무 숲",
+        "능선 바람"
+      ],
+      "sightlines": [
+        "성북동·돈암동 일대 도심 풍경 [확인됨]",
+        "북악산 능선 [확인됨]",
+        "해 질 녘 하늘+주거지 풍경 [확인됨]",
+        "남산 방향 [불확실]"
+      ],
+      "timeEvents": {
+        "dawn": "러너·등산객",
+        "morning": "안개",
+        "day": "단풍 시즌 인파(가을)",
+        "evening": "노을 명소",
+        "night": "성곽 조명, 한산"
+      },
+      "sources": [
+        "waryong_mediahub",
+        "waryong_wiki",
+        "waryong_night"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "waryong_entrance",
+          "via": "성곽길",
+          "minutes": 3
+        },
+        {
+          "to": "malbawi",
+          "via": "성곽 오르막 계단",
+          "minutes": 8
+        },
+        {
+          "to": "bukjeong_village",
+          "via": "성곽 바깥 내리막길(암문 위치 [불확실] → 게임은 '성곽 틈 계단')",
+          "minutes": 6
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "malbawi",
+      "name": "말바위 전망대",
+      "realRef": "말바위 전망대·말바위 안내소(종로구 와룡공원길 41) [확인됨] / 좌표 [추정] — 백악구간(창의문~혜화문 4.7km) 진입부",
+      "type": "viewpoint",
+      "district": "B",
+      "layer": "wall",
+      "pos": {
+        "x": -1330,
+        "y": 190,
+        "z": -720
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "러닝 T1 골인",
+        "맵 북서 경계(이후 숙정문 방면 = 확장 콘텐츠)",
+        "야경 컷신"
+      ],
+      "npcs": [
+        "안내소 직원(가칭)",
+        "등산객"
+      ],
+      "openHours": "백악구간 출입 시간 제한 있음 [불확실] — 게임: 06:00~19:00, 이후 '안내소 마감' 연출",
+      "mood": [
+        "숨찬 정상",
+        "탁 트인",
+        "바위",
+        "바람"
+      ],
+      "sightlines": [
+        "성북구·종로구 동시 조망 [확인됨]",
+        "한양도성 야경 [확인됨]",
+        "숙정문 방향 능선 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "일출 러닝 보너스",
+        "morning": "등산객",
+        "day": "등산객",
+        "evening": "마감 직전 노을",
+        "night": "출입 불가(게임 설정)"
+      },
+      "sources": [
+        "baegak_photo",
+        "baegak_course",
+        "malbawi_trail"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "waryong_trail",
+          "via": "성곽 오르막 계단",
+          "minutes": 8
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "bukjeong_village",
+      "name": "북정마을(성곽 밖)",
+      "realRef": "성북동 북정마을 — '서울의 마지막 달동네', 한양도성과 공존하는 성곽마을, 영조 때 메주 담당 유래 [확인됨] / 좌표 [추정]",
+      "type": "village",
+      "district": "B",
+      "layer": "outside",
+      "pos": {
+        "x": -520,
+        "y": 110,
+        "z": -880
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "성곽 밖 레이어 체험",
+        "배달 R2 종점",
+        "보스 야차 Y5 근처"
+      ],
+      "npcs": [
+        "마을 어르신들",
+        "마을 슈퍼 할아버지(가칭)",
+        "골목 고양이"
+      ],
+      "openHours": "24h (주민 생활공간 — 소음 페널티)",
+      "mood": [
+        "비탈",
+        "슬레이트 지붕",
+        "느린 시간",
+        "성곽을 바깥에서 올려다봄"
+      ],
+      "sightlines": [
+        "성곽을 바깥에서 올려다보는 구도 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "마을버스 대신 걷는 주민들",
+        "morning": "평상 모임",
+        "day": "볕 쬐는 고양이",
+        "evening": "저녁 연기",
+        "night": "아주 조용함(소음 페널티 2배)"
+      },
+      "sources": [
+        "bukjeong",
+        "hyehwa_heritage_walk"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "waryong_trail",
+          "via": "성곽 바깥 내리막길(암문 위치 [불확실] → 게임은 '성곽 틈 계단')",
+          "minutes": 6
+        },
+        {
+          "to": "wall_cut_road",
+          "via": "성곽 바깥 비탈길",
+          "minutes": 5
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "school_front",
+      "name": "혜성고 정문 앞",
+      "realRef": "혜화로 위쪽 언덕 학교들(혜화로 63·74 주소, 학교 담장이 곧 성곽인 구간) [주소·성곽 담장 확인됨] — 실제 학교 대신 가상 '혜성고'를 이 자리에 1개 배치",
+      "type": "school_exterior",
+      "district": "C",
+      "layer": "inside",
+      "pos": {
+        "x": -300,
+        "y": 82,
+        "z": -640
+      },
+      "posConfidence": "fictional",
+      "functions": [
+        "혜성고 실내 씬 진입",
+        "지각 체크 미니게임",
+        "하교 후 이벤트 트리거"
+      ],
+      "npcs": [
+        "반시우",
+        "강태오",
+        "황민재 무리",
+        "오대현",
+        "학생주임(가칭)"
+      ],
+      "openHours": "등교 07:30~하교 17:00, 야간자율학습 ~22:00 (게임 설정)",
+      "mood": [
+        "언덕 위 학교",
+        "교문 앞 오르막",
+        "뒤로 성벽"
+      ],
+      "sightlines": [
+        "학교 뒤 성벽(교내 담장 = 성곽) [가상 — 실제 경신고 담장 사례 확인됨]",
+        "남쪽 아래로 로터리·대학로 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "등교 러시·지각 단속",
+        "day": "수업 중(외부 출입 시 무단이탈 판정)",
+        "evening": "하교·동아리",
+        "night": "야자 끝난 학생들 귀가"
+      },
+      "sources": [
+        "school_sci",
+        "school_gs",
+        "wall_cut"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "myeongnyun3ga_alley",
+          "via": "성곽 안쪽 오솔길(동쪽, 반시우 등굣길)",
+          "minutes": 6
+        },
+        {
+          "to": "waryong_entrance",
+          "via": "성곽 안쪽 숲길(학교 담장 옆)",
+          "minutes": 5
+        },
+        {
+          "to": "wall_cut_road",
+          "via": "학교 옆 고개",
+          "minutes": 2
+        },
+        {
+          "to": "hyehwaro_hill",
+          "via": "혜화로 내리막",
+          "minutes": 3
+        },
+        {
+          "to": "wall_houses_lane",
+          "via": "성곽 골목(경신고 뒷길 참고)",
+          "minutes": 5
+        },
+        {
+          "to": "hyeseong_school",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "high",
+      "notes": "정문은 혜화로 오르막 끝. 교문 앞 경사가 지각 체크 미니게임의 무대."
+    },
+    {
+      "id": "wall_cut_road",
+      "name": "성곽 단절 고갯길",
+      "realRef": "서울과학고·경신고 사이 포장도로에서 성곽이 끊기는 구간 [확인됨] / 정확한 위치·도로 연결 [추정]",
+      "type": "street",
+      "district": "C",
+      "layer": "wall",
+      "pos": {
+        "x": -260,
+        "y": 88,
+        "z": -730
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "성곽 안↔밖 전환(혜화동↔성북동)",
+        "배달 R2 경유",
+        "러닝 T5 경유"
+      ],
+      "npcs": [
+        "순성객",
+        "택시"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "성벽이 뚝 끊긴 자리",
+        "고갯마루",
+        "넘어가면 다른 동네"
+      ],
+      "sightlines": [
+        "북쪽 아래로 성북동 골짜기 [추정]",
+        "남쪽 아래로 혜화동 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "러너",
+        "morning": "등교 차량",
+        "day": "한산",
+        "evening": "하교",
+        "night": "가로등만"
+      },
+      "sources": [
+        "wall_cut",
+        "hyehwa_alley_khan"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "bukjeong_village",
+          "via": "성곽 바깥 비탈길",
+          "minutes": 5
+        },
+        {
+          "to": "school_front",
+          "via": "학교 옆 고개",
+          "minutes": 2
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "hyehwaro_hill",
+      "name": "혜화로 등굣길",
+      "realRef": "혜화로 — 혜화동 로터리에서 시작해 언덕으로 오름(혜화초 32·과학고 63·경신고 74번지) [주소 확인됨, 도로 형상·경사 추정]",
+      "type": "street",
+      "district": "C",
+      "layer": "inside",
+      "pos": {
+        "x": -130,
+        "y": 58,
+        "z": -330
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "등굣길 이벤트(강태오 루트)",
+        "언덕분식 입구",
+        "마을버스 1번 '혜화초 앞' 정류장",
+        "러닝 T4 스프린트"
+      ],
+      "npcs": [
+        "강태오",
+        "반하늘(초5, 등굣길)",
+        "초등학생 무리",
+        "교통 지도 어르신"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "오르막 등굣길",
+        "벚꽃(봄) [명륜·혜화 숨은 벚꽃 명소 확인됨]",
+        "문방구 앞"
+      ],
+      "sightlines": [
+        "올려다보면 언덕 위 학교와 성곽 숲 [추정]",
+        "내려다보면 로터리 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "청소",
+        "morning": "등교 행렬(초·고)",
+        "day": "한산",
+        "evening": "분식집 앞 북적",
+        "night": "학원 귀가"
+      },
+      "sources": [
+        "school_elem",
+        "school_sci",
+        "school_gs",
+        "cherry"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "myeongnyun1ga_slope",
+          "via": "성균관로→혜화로 합류",
+          "minutes": 4
+        },
+        {
+          "to": "school_front",
+          "via": "혜화로 내리막",
+          "minutes": 3
+        },
+        {
+          "to": "construction_site",
+          "via": "주택가 골목",
+          "minutes": 2
+        },
+        {
+          "to": "rotary",
+          "via": "혜화로",
+          "minutes": 4
+        },
+        {
+          "to": "hyehwa_residential",
+          "via": "주택가 계단",
+          "minutes": 4
+        },
+        {
+          "to": "bunsik",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "mid"
+    },
+    {
+      "id": "construction_site",
+      "name": "언덕 빌라 신축 현장",
+      "realRef": "혜화동 언덕 주택가 — 가상 현장. 한양도성 주변은 경관 관리로 고층 불가(도심부 90m 제한 계획·문화재 주변 규제) [일반 규정 확인됨, 필지별 높이 [불확실]] → 4층 이하 소형 빌라로 설정",
+      "type": "construction",
+      "district": "C",
+      "layer": "inside",
+      "pos": {
+        "x": -20,
+        "y": 62,
+        "z": -290
+      },
+      "posConfidence": "fictional",
+      "functions": [
+        "노가다 알바(벽돌 나르기·곰방·자재 정리 미니게임)",
+        "근력/지구력(하체) 성장",
+        "곽반장 퀘스트 — 아버지 반정호 이야기 조각"
+      ],
+      "npcs": [
+        "곽춘식(곽반장, 시우 아버지의 옛 동료)",
+        "베테랑 기공 아저씨(가칭)",
+        "인력사무소에서 같이 온 형들"
+      ],
+      "openHours": "07:00-17:00 작업, 야간 출입 금지",
+      "mood": [
+        "비계",
+        "시멘트 먼지",
+        "믹서 트럭",
+        "점심 함바"
+      ],
+      "sightlines": [
+        "비계 위에서 남쪽 대학로 방향 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "인력사무소에서 승합차 도착(06:30)",
+        "morning": "작업 시작",
+        "day": "점심 함바·낮잠",
+        "evening": "정리·일당 정산",
+        "night": "잠김(경비견 짖음)"
+      },
+      "sources": [
+        "height_limit"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hyehwaro_hill",
+          "via": "주택가 골목",
+          "minutes": 2
+        },
+        {
+          "to": "changgyeong35_hill",
+          "via": "골목",
+          "minutes": 2
+        }
+      ],
+      "elevation": "mid",
+      "notes": "4층 이하 소형 빌라 골조 공사. 미니게임: 곰방(자재 메고 계단 오르기 — 언덕 지형 활용), 벽돌 쌓기 리듬, 정리정돈. 안전모·안전화 미착용 시 일감 불가."
+    },
+    {
+      "id": "wall_houses_lane",
+      "name": "성곽 위 주택 골목·성곽 전망 쉼터",
+      "realRef": "혜화문~경신고 뒷길: 성돌이 주택 축대·학교 담장이 된 구간, 100m가량 끊겼다 이어짐 [확인됨]; 한양도성 혜화동 전시·안내센터(옛 서울시장 공관, 창경궁로35길 63, 성벽 위 건물, 09~18시·월 휴관) [확인됨 / 현재 운영 여부 불확실 — 성곽 복원으로 휴관 보도 있음]",
+      "type": "alley_viewpoint",
+      "district": "C",
+      "layer": "wall",
+      "pos": {
+        "x": 30,
+        "y": 72,
+        "z": -420
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "야차 스팟 Y2(성곽 전망 쉼터)",
+        "한양도성 전시관(로어 수집)",
+        "배달 R2 경유"
+      ],
+      "npcs": [
+        "전시관 해설사(가칭)",
+        "산책하는 주민",
+        "사진 찍는 커플"
+      ],
+      "openHours": "24h (전시관 09:00-18:00, 월 휴관 — 게임 설정)",
+      "mood": [
+        "성돌 축대",
+        "담쟁이",
+        "벤치",
+        "주택 지붕 너머 하늘"
+      ],
+      "sightlines": [
+        "혜화·명륜동 지붕들 [추정]",
+        "동쪽 건너편 낙산 능선 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "고요",
+        "morning": "전시관 개관 준비",
+        "day": "순성객",
+        "evening": "노을 벤치",
+        "night": "야차 Y2(23시까지, 주민 배려)"
+      },
+      "sources": [
+        "wall_cut",
+        "exhibit_center",
+        "exhibit_center2",
+        "hyehwa_alley_khan"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "school_front",
+          "via": "성곽 골목(경신고 뒷길 참고)",
+          "minutes": 5
+        },
+        {
+          "to": "changgyeong35_hill",
+          "via": "언덕 계단",
+          "minutes": 3
+        },
+        {
+          "to": "hyehwamun",
+          "via": "성곽 따라 내리막",
+          "minutes": 4
+        }
+      ],
+      "elevation": "mid",
+      "notes": "성돌을 축대로 쓰는 집, 성벽을 담장으로 쓰는 학교 — '성곽과 함께 사는 동네'를 보여주는 핵심 골목 [확인됨]."
+    },
+    {
+      "id": "changgyeong35_hill",
+      "name": "창경궁로35길 언덕",
+      "realRef": "창경궁로35길 — 혜화로터리 주유소 옆에서 시작해 혜화문 부근에서 끝남, 오래된 식당·작은 카페·책방·갤러리·공연장 [확인됨] / 노출콘크리트 아트센터 같은 건물 실재 [확인됨] — 게임에선 이름 없는 건물로",
+      "type": "residential_street",
+      "district": "D",
+      "layer": "inside",
+      "pos": {
+        "x": 40,
+        "y": 55,
+        "z": -200
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "카페 휴식(스트레스 회복)",
+        "갤러리 이벤트",
+        "공사장·성곽 쉼터로 가는 숏컷"
+      ],
+      "npcs": [
+        "카페 사장(가칭)",
+        "갤러리 큐레이터(가칭)"
+      ],
+      "openHours": "24h (카페 10:00-22:00)",
+      "mood": [
+        "언덕 위 카페",
+        "노출콘크리트",
+        "조용한 문화 골목"
+      ],
+      "sightlines": [
+        "올라갈수록 혜화문 쪽 성곽 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "고요",
+        "morning": "출근길 커피",
+        "day": "카페 손님",
+        "evening": "갤러리 오프닝(가끔)",
+        "night": "고요(주민가)"
+      },
+      "sources": [
+        "cg35gil"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "construction_site",
+          "via": "골목",
+          "minutes": 2
+        },
+        {
+          "to": "wall_houses_lane",
+          "via": "언덕 계단",
+          "minutes": 3
+        },
+        {
+          "to": "rotary",
+          "via": "창경궁로35길 입구(주유소 옆)",
+          "minutes": 3
+        }
+      ],
+      "elevation": "mid"
+    },
+    {
+      "id": "hyehwamun",
+      "name": "혜화문",
+      "realRef": "혜화문(동소문, 한양도성 북동문) — 1928 문루·1938 홍예 철거, 1994 원래 자리보다 북쪽 언덕에 복원, 좌표 37.5879N 127.0039E [확인됨]; 문 천장 봉황 그림 [확인됨: 서울시 기사]",
+      "type": "gate_landmark",
+      "district": "D",
+      "layer": "wall",
+      "pos": {
+        "x": 197,
+        "y": 55,
+        "z": -171
+      },
+      "posConfidence": "confirmed",
+      "functions": [
+        "성곽 안↔밖 관문",
+        "낙산 구간 출발(러닝 T2)",
+        "로어 이벤트(봉황 그림)"
+      ],
+      "npcs": [
+        "도성길라잡이 해설사(가칭)",
+        "순성객"
+      ],
+      "openHours": "24h (문루 내부 출입 불가 — 게임 설정)",
+      "mood": [
+        "복원된 문루",
+        "대로 위 언덕",
+        "성곽의 끝과 시작"
+      ],
+      "sightlines": [
+        "혜화·명륜동 — 가까운 기와지붕부터 먼 고층 아파트까지 [확인됨]",
+        "길 건너 낙산 능선 [확인됨: 길 건너 낙산으로 오름]"
+      ],
+      "timeEvents": {
+        "dawn": "러너 집결",
+        "morning": "출근 차량 소음",
+        "day": "해설 투어",
+        "evening": "노을",
+        "night": "문루 조명 [추정]"
+      },
+      "sources": [
+        "hyehwamun_wiki",
+        "hyehwamun_1994",
+        "hyehwamun_mediahub",
+        "hyehwa_alley_khan"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "wall_houses_lane",
+          "via": "성곽 따라 내리막",
+          "minutes": 4
+        },
+        {
+          "to": "rotary",
+          "via": "동소문로 방향 보도",
+          "minutes": 4
+        },
+        {
+          "to": "dongsomun_outer",
+          "via": "혜화문 통과(성곽 밖)",
+          "minutes": 3
+        },
+        {
+          "to": "naksan_outer",
+          "via": "길 건너 나무계단길",
+          "minutes": 6
+        }
+      ],
+      "elevation": "mid"
+    },
+    {
+      "id": "dongsomun_outer",
+      "name": "혜화문 밖 대로변(한성대입구 방면)",
+      "realRef": "혜화문 바깥 동소문로 일대(성북구), 한성대입구역(4호선 419) [확인됨] / 인력사무소는 [가상]",
+      "type": "street",
+      "district": "D",
+      "layer": "outside",
+      "pos": {
+        "x": 380,
+        "y": 38,
+        "z": -230
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "새벽 인력사무소 입구",
+        "지하철 빠른 이동(한성대입구↔혜화)"
+      ],
+      "npcs": [
+        "새벽 인력 대기자들",
+        "편의점 앞 아저씨들"
+      ],
+      "openHours": "24h (인력사무소 04:30-07:00, 18:00-19:00 정산)",
+      "mood": [
+        "새벽 대로",
+        "승합차",
+        "자판기 커피",
+        "성곽 밖"
+      ],
+      "sightlines": [
+        "뒤돌아보면 언덕 위 혜화문 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "인력사무소 줄(핵심 시간대)",
+        "morning": "출근 러시",
+        "day": "평범한 대로",
+        "evening": "일당 정산",
+        "night": "택시"
+      },
+      "sources": [
+        "hansung_stn_wiki",
+        "exhibit_center",
+        "labor_market_guro"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hyehwamun",
+          "via": "혜화문 통과(성곽 밖)",
+          "minutes": 3
+        },
+        {
+          "to": "naksan_outer",
+          "via": "성곽 바깥 골목(삼선동 방향) [추정]",
+          "minutes": 5
+        },
+        {
+          "to": "labor_office",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        },
+        {
+          "to": "car_center",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "rotary",
+      "name": "혜화동 로터리",
+      "realRef": "혜화교차로(동소문로·창경궁로·대학로·혜화로 합류) [확인됨]; 혜화고가 철거 후 평면 교차로 [확인됨]; 좌표(원점) [추정]; 1930년대 전차 종점 [확인됨]",
+      "type": "hub_intersection",
+      "district": "D",
+      "layer": "inside",
+      "pos": {
+        "x": 0,
+        "y": 40,
+        "z": 0
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "교통 허브(마을버스 1·2번 '혜화동 로터리')",
+        "만남의 장소",
+        "한의원 입구"
+      ],
+      "npcs": [
+        "교통경찰",
+        "우체국 앞 집배원",
+        "버스 기다리는 학생들"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "넓은 교차로",
+        "우체국",
+        "버스 소리",
+        "언덕들 사이 분지"
+      ],
+      "sightlines": [
+        "북동쪽 언덕 위 혜화문 [추정]",
+        "동쪽 성당 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "첫 마을버스",
+        "morning": "출근·등교 러시",
+        "day": "점심",
+        "evening": "퇴근 정체",
+        "night": "택시 승강장"
+      },
+      "sources": [
+        "hyehwa_rotary_traffic",
+        "hyehwa_overpass",
+        "hyehwa_alley_khan"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hyehwaro_hill",
+          "via": "혜화로",
+          "minutes": 4
+        },
+        {
+          "to": "changgyeong35_hill",
+          "via": "창경궁로35길 입구(주유소 옆)",
+          "minutes": 3
+        },
+        {
+          "to": "hyehwa_residential",
+          "via": "골목",
+          "minutes": 1
+        },
+        {
+          "to": "hyehwamun",
+          "via": "동소문로 방향 보도",
+          "minutes": 4
+        },
+        {
+          "to": "cathedral_slope",
+          "via": "횡단보도",
+          "minutes": 2
+        },
+        {
+          "to": "daehakro_north",
+          "via": "대학로",
+          "minutes": 3
+        },
+        {
+          "to": "hanuiwon",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low",
+      "notes": "지금은 회전교차로가 아니라 평면 교차로지만 지명은 '로터리'로 통용됨 [확인됨: 고가 철거 후 평면 교차로]."
+    },
+    {
+      "id": "hyehwa_residential",
+      "name": "로터리 뒤 주택가",
+      "realRef": "혜화동 옛 주택가(1930년대 형성, '동촌', 일제강점기 중상류층 주택가) [분위기 확인됨] / 강태오 집 위치 [가상]",
+      "type": "residential",
+      "district": "D",
+      "layer": "inside",
+      "pos": {
+        "x": -80,
+        "y": 46,
+        "z": -60
+      },
+      "posConfidence": "fictional",
+      "functions": [
+        "강태오의 집·혜화유도관 외관",
+        "골목 퀘스트"
+      ],
+      "npcs": [
+        "강태오",
+        "강만석(아버지, 유도관 관장)",
+        "유도관 관원 아이들",
+        "이웃들"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "오래된 2층 주택",
+        "대문 위 간판",
+        "기합 소리"
+      ],
+      "sightlines": [
+        "골목 끝으로 로터리 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "유도관 앞 쓸기",
+        "morning": "등교",
+        "day": "고요",
+        "evening": "유소년부 수업 기합",
+        "night": "성인부 수업 후 불 꺼짐"
+      },
+      "sources": [
+        "hyehwa_alley_khan",
+        "school_village"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hyehwaro_hill",
+          "via": "주택가 계단",
+          "minutes": 4
+        },
+        {
+          "to": "rotary",
+          "via": "골목",
+          "minutes": 1
+        },
+        {
+          "to": "taeo_house_judo",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "mid"
+    },
+    {
+      "id": "cathedral_slope",
+      "name": "언덕 성당 앞(가칭)",
+      "realRef": "혜화동성당(1927 설립, 낙산 자락, 1955~60 신축)·동성고(대학로 156)·가톨릭 계열 기관이 모인 로터리 동쪽 [확인됨] — 게임 내 명칭은 가칭",
+      "type": "landmark_slope",
+      "district": "D",
+      "layer": "inside",
+      "pos": {
+        "x": 90,
+        "y": 48,
+        "z": 60
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "주말 바자회 이벤트",
+        "휴식 벤치"
+      ],
+      "npcs": [
+        "성당 봉사자(가칭)",
+        "주말 신자들"
+      ],
+      "openHours": "24h (마당 06:00-21:00 — 게임 설정)",
+      "mood": [
+        "석조 파사드",
+        "종소리",
+        "낙산 자락"
+      ],
+      "sightlines": [
+        "로터리와 대학로가 내려다보임 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "종소리",
+        "morning": "등교",
+        "day": "고요",
+        "evening": "저녁 미사",
+        "night": "조명"
+      },
+      "sources": [
+        "cathedral",
+        "school_ds",
+        "hyehwa_heritage_walk"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "rotary",
+          "via": "횡단보도",
+          "minutes": 2
+        }
+      ],
+      "elevation": "mid"
+    },
+    {
+      "id": "daehakro_north",
+      "name": "대학로 북쪽(로터리~혜화역)",
+      "realRef": "대학로(종로5가~혜화동 로터리) 북단 [확인됨] / 혜화 MMA 건물은 [가상]",
+      "type": "main_street",
+      "district": "E",
+      "layer": "inside",
+      "pos": {
+        "x": 12,
+        "y": 36,
+        "z": 230
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "혜화 MMA 입구(지하)",
+        "식당가",
+        "배달 R5 픽업"
+      ],
+      "npcs": [
+        "표대철(표관장)",
+        "고준",
+        "MMA 관원들",
+        "식당 직원들"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "네온",
+        "대로변 상가",
+        "지하 계단"
+      ],
+      "sightlines": [
+        "북쪽 끝에 로터리 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "청소",
+        "morning": "출근",
+        "day": "점심",
+        "evening": "MMA 저녁반",
+        "night": "술집 거리"
+      },
+      "sources": [
+        "hyehwa_rotary_traffic"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "rotary",
+          "via": "대학로",
+          "minutes": 3
+        },
+        {
+          "to": "hyehwa_station",
+          "via": "대학로",
+          "minutes": 3
+        },
+        {
+          "to": "hyehwa_mma",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "hyehwa_station",
+      "name": "혜화역 앞",
+      "realRef": "혜화역(4호선, 1985 개통, 대학로 지하 120, 좌표 37.5821N 127.0020E) [확인됨]; 2번 출구→마로니에공원, 3번 출구 서울대병원입구, 4번 출구 대명거리 방면, 1번 출구 성대 셔틀 [확인됨]",
+      "type": "transit_hub",
+      "district": "E",
+      "layer": "inside",
+      "pos": {
+        "x": 22,
+        "y": 32,
+        "z": 473
+      },
+      "posConfidence": "confirmed",
+      "functions": [
+        "지하철 빠른 이동(혜화↔한성대입구)",
+        "마을버스 1·2번 '혜화역'",
+        "찜질방 입구"
+      ],
+      "npcs": [
+        "역 앞 전단 알바",
+        "버스커"
+      ],
+      "openHours": "24h (지하철 05:30~24:00 — 게임 설정)",
+      "mood": [
+        "인파",
+        "공연 홍보 전단",
+        "젊음"
+      ],
+      "sightlines": [
+        "남북으로 뻗은 대학로 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "첫차",
+        "morning": "통근",
+        "day": "관광객",
+        "evening": "공연 관객 러시",
+        "night": "막차 전력질주 이벤트"
+      },
+      "sources": [
+        "hyehwa_stn_wiki",
+        "skku_location",
+        "bus_jongno08"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "daehakro_north",
+          "via": "대학로",
+          "minutes": 3
+        },
+        {
+          "to": "daemyung_street",
+          "via": "4번 출구 방면",
+          "minutes": 3
+        },
+        {
+          "to": "marronnier",
+          "via": "2번 출구",
+          "minutes": 2
+        },
+        {
+          "to": "jjimjilbang",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "daemyung_street",
+      "name": "대명거리",
+      "realRef": "대명거리(혜화역 4번 출구~성균관대 앞) — 혜화역 상권 최대 유동 [확인됨]; 조선 유생 하숙촌이 번성한 '원조 대학로' [확인됨(언론)]",
+      "type": "commercial_street",
+      "district": "E",
+      "layer": "inside",
+      "pos": {
+        "x": -200,
+        "y": 38,
+        "z": 330
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "PC방·코인노래방 입구",
+        "길거리 음식",
+        "대학생 퀘스트"
+      ],
+      "npcs": [
+        "대학생들",
+        "호객 알바",
+        "길거리 음식 노점 아줌마(가칭)"
+      ],
+      "openHours": "24h (상점별 상이)",
+      "mood": [
+        "간판 숲",
+        "대학가",
+        "떡볶이 냄새"
+      ],
+      "sightlines": [
+        "서쪽 끝 캠퍼스 입구 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "한산",
+        "day": "점심 인파",
+        "evening": "피크",
+        "night": "2차 인파"
+      },
+      "sources": [
+        "daemyung_seoulco"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hyehwa_station",
+          "via": "4번 출구 방면",
+          "minutes": 3
+        },
+        {
+          "to": "seonggyungwan",
+          "via": "성대 정문 앞",
+          "minutes": 4
+        },
+        {
+          "to": "pc_bang",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        },
+        {
+          "to": "coin_noraebang",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "seonggyungwan",
+      "name": "성균관(문묘·명륜당)",
+      "realRef": "서울 문묘와 성균관(좌표 37.5853N 126.9967E) — 앞 대성전·뒤 명륜당(전묘후학), 명륜당 앞 은행나무(천연기념물), 탕평비·하마비 [확인됨]; 실제 관람 시간 [불확실]",
+      "type": "heritage",
+      "district": "E",
+      "layer": "inside",
+      "pos": {
+        "x": -442,
+        "y": 45,
+        "z": 118
+      },
+      "posConfidence": "confirmed",
+      "functions": [
+        "로어 이벤트(반촌·반인 이야기)",
+        "가을 은행잎 이벤트",
+        "명상(집중력 버프)"
+      ],
+      "npcs": [
+        "관리인(가칭)",
+        "해설사(가칭)",
+        "관광객"
+      ],
+      "openHours": "09:00-18:00 (게임 설정)",
+      "mood": [
+        "고요",
+        "은행나무",
+        "기와",
+        "돌바닥"
+      ],
+      "sightlines": [
+        "명륜당 앞 은행나무 [확인됨]"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "개방",
+        "day": "관람객",
+        "evening": "폐문 직전 노을",
+        "night": "닫힘(담장 밖 은행나무 실루엣)"
+      },
+      "sources": [
+        "munmyo_wiki",
+        "ginkgo",
+        "sgk_layout"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "daemyung_street",
+          "via": "성대 정문 앞",
+          "minutes": 4
+        },
+        {
+          "to": "campus_path",
+          "via": "캠퍼스 오르막",
+          "minutes": 5
+        }
+      ],
+      "elevation": "mid"
+    },
+    {
+      "id": "marronnier",
+      "name": "마로니에공원",
+      "realRef": "마로니에공원(대학로 104, 혜화역 2번 출구 도보 3분, 아르코미술관·아르코예술극장, 좋은공연 안내소) [확인됨]",
+      "type": "park_plaza",
+      "district": "E",
+      "layer": "inside",
+      "pos": {
+        "x": 98,
+        "y": 32,
+        "z": 655
+      },
+      "posConfidence": "confirmed",
+      "functions": [
+        "버스킹/거리공연 미니게임",
+        "만남 장소",
+        "새벽 체조(러닝 T3 경유)",
+        "마을버스 2번 '방송대 앞'"
+      ],
+      "npcs": [
+        "버스커",
+        "공연 호객",
+        "벤치 어르신"
+      ],
+      "openHours": "24h [확인됨: 연중무휴]",
+      "mood": [
+        "붉은 벽돌",
+        "광장",
+        "기타 소리"
+      ],
+      "sightlines": [
+        "동쪽 언덕(낙산 방향) [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "체조",
+        "morning": "한산",
+        "day": "가족",
+        "evening": "버스킹",
+        "night": "커플·공연 뒤풀이"
+      },
+      "sources": [
+        "marronnier",
+        "marronnier_wiki"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hyehwa_station",
+          "via": "2번 출구",
+          "minutes": 2
+        },
+        {
+          "to": "theater_alley",
+          "via": "동숭동 골목",
+          "minutes": 2
+        },
+        {
+          "to": "ihwa_stairs",
+          "via": "동숭1길 오르막(약 10분 [확인됨])",
+          "minutes": 7
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "theater_alley",
+      "name": "소극장 거리",
+      "realRef": "대학로 동숭동 소극장 밀집 골목 [확인됨] / 행인극장은 [가상]",
+      "type": "street",
+      "district": "E",
+      "layer": "inside",
+      "pos": {
+        "x": 190,
+        "y": 38,
+        "z": 600
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "행인극장 입구",
+        "공연 포스터 수집",
+        "배달 R4 종점"
+      ],
+      "npcs": [
+        "윤미라(극단 행인 대표·배우, 강태오 엄마)",
+        "극단 행인 단원들",
+        "매표 알바",
+        "관객"
+      ],
+      "openHours": "24h (공연 19:30/20:00 시작 — 게임 설정)",
+      "mood": [
+        "포스터 벽",
+        "지하 극장 계단",
+        "커튼콜 박수"
+      ],
+      "sightlines": [
+        "골목 위로 낙산 쪽 언덕 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "닫힘",
+        "day": "낮 공연·리허설",
+        "evening": "관객 줄",
+        "night": "뒤풀이"
+      },
+      "sources": [
+        "marronnier"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "marronnier",
+          "via": "동숭동 골목",
+          "minutes": 2
+        },
+        {
+          "to": "naksan_wall",
+          "via": "동숭동 언덕길 [추정]",
+          "minutes": 6
+        },
+        {
+          "to": "haengin_theater",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "naksan_outer",
+      "name": "낙산 성곽 바깥길(장수마을)",
+      "realRef": "낙산구간: 혜화문→나무계단길→장수마을(성곽 밖)→낙산공원 놀이마당 [확인됨] / 좌표 [추정]",
+      "type": "trail",
+      "district": "F",
+      "layer": "outside",
+      "pos": {
+        "x": 450,
+        "y": 88,
+        "z": 150
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "러닝 T2/T3 구간",
+        "성곽 밖 레이어",
+        "낙산 세력 정찰"
+      ],
+      "npcs": [
+        "장수마을 주민",
+        "순성객"
+      ],
+      "openHours": "24h [확인됨: 낙산구간 24시간]",
+      "mood": [
+        "성벽 바깥 비탈",
+        "텃밭",
+        "나무계단"
+      ],
+      "sightlines": [
+        "성벽을 바깥에서 올려다봄 [추정]",
+        "동쪽 성북·삼선동 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "러너",
+        "morning": "주민",
+        "day": "순성객",
+        "evening": "노을",
+        "night": "어둠(손전등 연출)"
+      },
+      "sources": [
+        "naksan_course",
+        "citywall_sections"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "hyehwamun",
+          "via": "길 건너 나무계단길",
+          "minutes": 6
+        },
+        {
+          "to": "dongsomun_outer",
+          "via": "성곽 바깥 골목(삼선동 방향) [추정]",
+          "minutes": 5
+        },
+        {
+          "to": "naksan_wall",
+          "via": "성곽 바깥길→낙산 암문",
+          "minutes": 5
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "naksan_wall",
+      "name": "낙산공원 성곽",
+      "realRef": "낙산공원(정상 해발 125m, 좌표 37.5805N 127.0086E) — 서울 야경 명소 투표 1위, 조명 받은 성곽, 정상 암문 [확인됨]",
+      "type": "park_viewpoint",
+      "district": "F",
+      "layer": "wall",
+      "pos": {
+        "x": 540,
+        "y": 112,
+        "z": 450
+      },
+      "posConfidence": "estimated",
+      "functions": [
+        "야차 스팟 Y3(원정 — 낙산 세력권)",
+        "러닝 T2/T3/T5",
+        "야경 이벤트",
+        "배달 R5 종점"
+      ],
+      "npcs": [
+        "낙산 패 리더(가칭)",
+        "낙산 패 멤버들",
+        "야경 보러 온 커플·관광객"
+      ],
+      "openHours": "24h [확인됨]",
+      "mood": [
+        "성곽 조명",
+        "도시 불빛",
+        "바람",
+        "다른 동네 공기"
+      ],
+      "sightlines": [
+        "DDP·남산서울타워 [확인됨]",
+        "성곽 밖 창신동 주택가 [확인됨]",
+        "성곽 안팎 서울 시가지 [확인됨]",
+        "정상 암문 앞에서 한성대 교정 기와지붕 [확인됨]"
+      ],
+      "timeEvents": {
+        "dawn": "일출 러너",
+        "morning": "산책",
+        "day": "관광객",
+        "evening": "노을 인파",
+        "night": "야경 인파 → 22시 이후 낙산 패 등장"
+      },
+      "sources": [
+        "naksan_wiki",
+        "naksan_night",
+        "naksan_sunset",
+        "naksan_view_esquire",
+        "naksan_course"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "ihwa_stairs",
+          "via": "이화장 옆 계단",
+          "minutes": 6
+        },
+        {
+          "to": "theater_alley",
+          "via": "동숭동 언덕길 [추정]",
+          "minutes": 6
+        },
+        {
+          "to": "naksan_outer",
+          "via": "성곽 바깥길→낙산 암문",
+          "minutes": 5
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "ihwa_stairs",
+      "name": "이화마을 계단길",
+      "realRef": "이화벽화마을(좌표 37.5782N 127.0072E) — 혜화역 2번 출구→동숭1길→경사 언덕 약 10분, 이화장 옆 계단으로 낙산공원 [확인됨]; 성곽 안쪽 [확인됨]",
+      "type": "alley_stairs",
+      "district": "F",
+      "layer": "inside",
+      "pos": {
+        "x": 487,
+        "y": 90,
+        "z": 915
+      },
+      "posConfidence": "confirmed",
+      "functions": [
+        "배달 R5 난코스",
+        "러닝 T3",
+        "주민 배려(조용히) 미션 [확인됨: 주민 피해 주의 안내]"
+      ],
+      "npcs": [
+        "주민",
+        "관광객",
+        "사진가"
+      ],
+      "openHours": "24h (22시 이후 소음 페널티)",
+      "mood": [
+        "벽화",
+        "끝없는 계단",
+        "골목 화분"
+      ],
+      "sightlines": [
+        "계단 위에서 대학로 방향 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "고요",
+        "morning": "주민 출근",
+        "day": "관광객",
+        "evening": "노을",
+        "night": "조용히 모드"
+      },
+      "sources": [
+        "ihwa",
+        "ihwa_wiki",
+        "naksan_course"
+      ],
+      "interior": false,
+      "connections": [
+        {
+          "to": "marronnier",
+          "via": "동숭1길 오르막(약 10분 [확인됨])",
+          "minutes": 7
+        },
+        {
+          "to": "naksan_wall",
+          "via": "이화장 옆 계단",
+          "minutes": 6
+        }
+      ],
+      "elevation": "high"
+    },
+    {
+      "id": "siu_house",
+      "name": "반시우의 집",
+      "parent": "myeongnyun3ga_alley",
+      "interior": true,
+      "pos": {
+        "x": -650,
+        "y": 86,
+        "z": -500
+      },
+      "realRef": "명륜3가 성곽 아래 오래된 다세대주택 2층 [가상]",
+      "type": "residence",
+      "district": "A",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "저장·수면(하루 종료)",
+        "옷장·장비",
+        "엄마와 식사 대화 이벤트",
+        "옥상은 오픈월드로 연결(성곽 뷰·섀도복싱)"
+      ],
+      "npcs": [
+        "반시우",
+        "응운 파(엄마)",
+        "반하늘(여동생)"
+      ],
+      "openHours": "항상",
+      "mood": [
+        "좁지만 따뜻한",
+        "노란 조명",
+        "창가 화분",
+        "냉장고 메모",
+        "라디오"
+      ],
+      "sightlines": [
+        "창밖으로 골목 계단, 옥상에선 성곽 [가상]"
+      ],
+      "timeEvents": {
+        "dawn": "엄마가 먼저 나감(국밥집 오픈 준비)",
+        "morning": "하늘이 등교 챙기기 + 엄마의 도시락 메모",
+        "day": "빈 집",
+        "evening": "하늘이 숙제 봐주기, 엄마 퇴근 전 청소 미니게임",
+        "night": "셋이 늦은 저녁(엄마가 고기를 두 배로)"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "myeongnyun3ga_alley",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "high",
+      "notes": "다세대 2층 한 세대(방 2 + 거실 겸 부엌 + 욕실) — 엄마·하늘이 방, 시우의 아주 작은 방. 벽에 아버지 반정호의 목수 망치와 사진. 창이 골목 쪽 동남향이라 아침 햇살이 듦. 외부 철제 계단으로 옥상(오픈월드)과 연결: 장독·화분·빨랫줄·평상, 북쪽 위로 성곽 능선과 성곽길 가로등이 보임. 어둡지 않게 — 노란 조명, 엄마의 메모, 좁지만 정돈된 집."
+    },
+    {
+      "id": "taeo_house_judo",
+      "name": "강태오의 집·혜화유도관",
+      "parent": "hyehwa_residential",
+      "interior": true,
+      "pos": {
+        "x": -80,
+        "y": 46,
+        "z": -60
+      },
+      "realRef": "혜화동 로터리 근처 2층 주택, 1층 40년 된 유도관 [가상]",
+      "type": "residence_dojo",
+      "district": "D",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "유도 수련(메치기·굳히기 스킬)",
+        "강태오 방(2층)",
+        "관원 지도 알바",
+        "다다미 스파링"
+      ],
+      "npcs": [
+        "강태오",
+        "강만석(아버지, 관장)",
+        "윤미라(어머니)",
+        "강태린(누나, 스포츠재활 트레이너)",
+        "오대현(유도부 절친)",
+        "유소년부 아이들",
+        "성인부 관원"
+      ],
+      "openHours": "수업 16:00-21:30 (게임 설정)",
+      "mood": [
+        "낡은 다다미",
+        "빛바랜 띠·사진",
+        "땀 냄새",
+        "기합"
+      ],
+      "sightlines": [
+        "2층 창으로 로터리 불빛 [가상]"
+      ],
+      "timeEvents": {
+        "dawn": "새벽 개인훈련",
+        "morning": "등교",
+        "day": "닫힘",
+        "evening": "유소년부·성인부",
+        "night": "청소 후 불 끔"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "hyehwa_residential",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "mid",
+      "notes": "할아버지 때부터 40년 된 유도관(스토리 바이블). 1층 유도관(다다미 매트, 탈의실, 사무실 벽에 40년치 단체사진과 띠), 2층 가정집(강태오 방: 트로피·만화책). 대문 위 오래된 철제 간판 '혜화유도관'. 로터리 차 소리가 희미하게 들림."
+    },
+    {
+      "id": "hyeseong_school",
+      "name": "혜성고등학교",
+      "parent": "school_front",
+      "interior": true,
+      "pos": {
+        "x": -300,
+        "y": 82,
+        "z": -640
+      },
+      "realRef": "가상 학교 — 혜화로 위쪽 성곽 안쪽 언덕 학교들의 분위기 참고(실제 학교명 미사용)",
+      "type": "school",
+      "district": "C",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "수업(학업 스탯)",
+        "교실·복도·급식실·체육관·옥상·운동장 씬",
+        "옥상에서 성곽 뷰",
+        "동아리"
+      ],
+      "npcs": [
+        "반시우",
+        "강태오(같은 2학년 3반)",
+        "황민재 무리",
+        "오대현",
+        "유나리(다른 반)",
+        "담임(가칭)",
+        "학생주임(가칭)"
+      ],
+      "openHours": "07:30-17:00 (야자 ~22:00, 게임 설정)",
+      "mood": [
+        "언덕 위 학교",
+        "창밖 성벽",
+        "매점",
+        "체육복"
+      ],
+      "sightlines": [
+        "교실 창으로 학교 뒤 성벽 [가상]",
+        "옥상에서 남쪽 대학로·낙산 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "조회",
+        "day": "수업·점심",
+        "evening": "동아리·청소",
+        "night": "야자"
+      },
+      "sources": [
+        "wall_cut"
+      ],
+      "connections": [
+        {
+          "to": "school_front",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "high",
+      "notes": "실제 이 언덕엔 두 학교가 성곽 단절 도로를 사이에 두고 있음 → 게임에선 하나로 합친 가상 '혜성고'. 운동장 뒤 담장 = 한양도성 성벽(실제 경신고 담장 사례 [확인됨]). 씬: 2학년 교실(두 주인공 같은 반), 복도, 급식실, 체육관(매트 이벤트), 옥상(성곽·낙산 조망), 운동장. 실제 학교명·교복·교표 사용 금지."
+    },
+    {
+      "id": "hyehwa_mma",
+      "name": "혜화 MMA",
+      "parent": "daehakro_north",
+      "interior": true,
+      "pos": {
+        "x": 12,
+        "y": 31,
+        "z": 230
+      },
+      "realRef": "가상 체육관 — 혜화동 로터리~대학로 사이 건물 지하",
+      "type": "gym",
+      "district": "E",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "타격·그래플링 훈련",
+        "스파링",
+        "체급 측정",
+        "대회 정보"
+      ],
+      "npcs": [
+        "표대철(표관장, 46)",
+        "고준(아마 MMA 선수 → 2부 이후 코치)",
+        "MMA 관원들"
+      ],
+      "openHours": "10:00-23:00 (게임 설정)",
+      "mood": [
+        "케이지",
+        "샌드백",
+        "형광등",
+        "힙합"
+      ],
+      "sightlines": [
+        "지하 — 창 없음(계단 위로 대학로 소음)"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "개인 PT",
+        "day": "한산",
+        "evening": "피크 수업",
+        "night": "표관장 개인 지도(이벤트)"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "daehakro_north",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low",
+      "notes": "대로변 1층 출입구 → 한 층 내려간 지하. 케이지 1, 매트 구역, 샌드백 6, 소형 웨이트존, 유리창 달린 표관장 사무실. 계단으로 대학로 소음이 새어 들어옴."
+    },
+    {
+      "id": "haru_conv",
+      "name": "하루편의점 후문점",
+      "parent": "hoomun_street",
+      "interior": true,
+      "pos": {
+        "x": -735,
+        "y": 88,
+        "z": -405
+      },
+      "realRef": "가상 편의점 브랜드",
+      "type": "store",
+      "district": "A",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "야간 알바(계산·진열·폐기 정리 미니게임)",
+        "아이템 구매",
+        "택배 픽업"
+      ],
+      "npcs": [
+        "최사장(63, 사장)",
+        "유나리(야간 알바, 웹툰 작가 지망생)",
+        "야간 단골들"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "형광 흰빛",
+        "삼각김밥",
+        "새벽 폐기"
+      ],
+      "sightlines": [
+        "유리창 밖 후문 거리"
+      ],
+      "timeEvents": {
+        "dawn": "폐기 정리",
+        "morning": "등교생 러시",
+        "day": "평온",
+        "evening": "퇴근 러시",
+        "night": "야간 알바 시간"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "hoomun_street",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "high",
+      "notes": "후문 상가 1층 코너. 야간 알바 미니게임(계산·진열·폐기·택배). 유리창 너머로 마을버스 정류장이 보임."
+    },
+    {
+      "id": "bungae_delivery",
+      "name": "번개배달 사무실",
+      "parent": "hoomun_street",
+      "interior": true,
+      "pos": {
+        "x": -750,
+        "y": 89,
+        "z": -415
+      },
+      "realRef": "가상 배달대행 사무실(후문 상가 2층)",
+      "type": "workplace",
+      "district": "A",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "배달 미니게임 콜 수주(R1~R5)",
+        "오토바이/자전거 업그레이드",
+        "랭킹 보드"
+      ],
+      "npcs": [
+        "번개배달 사장(가칭)",
+        "고준(24, 라이더 겸 아마 MMA)"
+      ],
+      "openHours": "10:00-02:00",
+      "mood": [
+        "무전 소리",
+        "헬멧 걸이",
+        "컵라면"
+      ],
+      "sightlines": [
+        "창밖 후문 거리"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "준비",
+        "day": "점심 콜",
+        "evening": "저녁 콜 폭주",
+        "night": "야식 콜"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "hoomun_street",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "high",
+      "notes": "후문 상가 2층. 화이트보드 콜 목록, 무전기, 헬멧 걸이. 배달 수단 성장: 도보 → 자전거 → 전동킥보드(계단·성곽길 구간은 하차해 들고 이동)."
+    },
+    {
+      "id": "gukbap",
+      "name": "성대후문 국밥",
+      "parent": "hoomun_street",
+      "interior": true,
+      "pos": {
+        "x": -725,
+        "y": 87,
+        "z": -400
+      },
+      "realRef": "가상 국밥집 — 반시우 엄마 근무처",
+      "type": "restaurant",
+      "district": "A",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "식사(체력 회복)",
+        "주방 보조 알바",
+        "엄마 이벤트"
+      ],
+      "npcs": [
+        "응운 파(주방 실장)",
+        "반시우(설거지·서빙 알바)",
+        "국밥집 사장님(가칭)",
+        "단골 교수님(가칭)",
+        "새벽 노동자 손님"
+      ],
+      "openHours": "05:30-22:00 (게임 설정)",
+      "mood": [
+        "가마솥 김",
+        "깍두기",
+        "벽 메뉴판",
+        "라디오"
+      ],
+      "sightlines": [
+        "유리문 밖 마을버스 정류장"
+      ],
+      "timeEvents": {
+        "dawn": "새벽 손님(인력 일 가는 형들)",
+        "morning": "해장 손님",
+        "day": "점심 피크",
+        "evening": "저녁",
+        "night": "마감 청소"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "hoomun_street",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "high",
+      "notes": "후문 상가 1층. 가마솥 2개, 테이블 8개, 벽 메뉴판. 새벽 5:30 오픈 → 새벽일 가는 손님과 야간 근무 마친 손님. 반시우 엄마는 주방과 홀을 오감."
+    },
+    {
+      "id": "haengin_theater",
+      "name": "행인극장",
+      "parent": "theater_alley",
+      "interior": true,
+      "pos": {
+        "x": 190,
+        "y": 38,
+        "z": 600
+      },
+      "realRef": "가상 소극장 — 극단 행인",
+      "type": "theater",
+      "district": "E",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "단역 알바(대사 타이밍 리듬 미니게임)",
+        "무대 뒤 소품 정리",
+        "연기력 스탯"
+      ],
+      "npcs": [
+        "윤미라(극단 행인 대표·배우)",
+        "극단 행인 단원들",
+        "무대감독(가칭)"
+      ],
+      "openHours": "14:00-23:00 (게임 설정)",
+      "mood": [
+        "좁은 객석",
+        "조명 열기",
+        "분장실 거울"
+      ],
+      "sightlines": [
+        "지하 — 무대 조명"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "닫힘",
+        "day": "리허설",
+        "evening": "본공연",
+        "night": "뒤풀이"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "theater_alley",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low",
+      "notes": "지하 1층 소극장(객석 100석 안팎 [가상]). 무대, 분장실, 소품 창고, 매표 데스크. 단역 알바 = '행인1·경찰2' 같은 대사 타이밍 리듬 게임."
+    },
+    {
+      "id": "labor_office",
+      "name": "새벽별 인력사무소(가칭)",
+      "parent": "dongsomun_outer",
+      "interior": true,
+      "pos": {
+        "x": 380,
+        "y": 38,
+        "z": -230
+      },
+      "realRef": "가상 — 혜화문 밖 대로변 상가 2층. 서울 대표 새벽 인력시장은 남구로역 일대(새벽 4~6시) [확인됨] / 혜화동 일대 새벽 인력시장 존재 [불확실]",
+      "type": "workplace",
+      "district": "D",
+      "layer": "outside",
+      "posConfidence": "fictional",
+      "functions": [
+        "노가다 일감 배정(선착순 미니게임)",
+        "일당 정산",
+        "안전교육 이수 체크"
+      ],
+      "npcs": [
+        "인력사무소 소장(가칭)",
+        "곽춘식(곽반장, 승합차 인솔)",
+        "단골 기공 아저씨들",
+        "첫 출근 청년들"
+      ],
+      "openHours": "04:30-07:00, 18:00-19:00 정산",
+      "mood": [
+        "형광등",
+        "믹스커피",
+        "안전화",
+        "TV 뉴스"
+      ],
+      "sightlines": [
+        "창밖 새벽 대로"
+      ],
+      "timeEvents": {
+        "dawn": "핵심(늦으면 일감 없음)",
+        "morning": "닫힘",
+        "day": "닫힘",
+        "evening": "정산",
+        "night": "닫힘"
+      },
+      "sources": [
+        "labor_market_guro",
+        "labor_market_news"
+      ],
+      "connections": [
+        {
+          "to": "dongsomun_outer",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low",
+      "notes": "혜화문 밖 대로변 상가 2층(성곽 밖). 04:30 문 열고 06:00 전후 배차. 일감은 선착순 + 평판. 승합차로 혜화동 언덕 현장까지 이동하는 연출(성곽 밖 → 안)."
+    },
+    {
+      "id": "pc_bang",
+      "name": "PC방 '로그인'(가칭)",
+      "parent": "daemyung_street",
+      "interior": true,
+      "pos": {
+        "x": -170,
+        "y": 37,
+        "z": 345
+      },
+      "realRef": "가상 PC방",
+      "type": "leisure",
+      "district": "E",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "스트레스 해소",
+        "친구 이벤트",
+        "경기 영상 분석(격투 지식 +)"
+      ],
+      "npcs": [
+        "알바생(가칭)",
+        "같은 반 친구들"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "키보드 소리",
+        "컵라면",
+        "모니터 빛"
+      ],
+      "sightlines": [
+        "지하/창 없음"
+      ],
+      "timeEvents": {
+        "dawn": "밤샘족",
+        "morning": "한산",
+        "day": "대학생",
+        "evening": "학생 러시",
+        "night": "밤샘"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "daemyung_street",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "coin_noraebang",
+      "name": "코인노래방 '한 곡만'(가칭)",
+      "parent": "daemyung_street",
+      "interior": true,
+      "pos": {
+        "x": -220,
+        "y": 38,
+        "z": 320
+      },
+      "realRef": "가상 코인노래방",
+      "type": "leisure",
+      "district": "E",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "리듬 미니게임",
+        "관계도 이벤트",
+        "스트레스 해소"
+      ],
+      "npcs": [
+        "사장님(가칭)"
+      ],
+      "openHours": "10:00-02:00",
+      "mood": [
+        "네온 부스",
+        "탬버린"
+      ],
+      "sightlines": [
+        "창 없음"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "닫힘",
+        "day": "한산",
+        "evening": "학생 러시",
+        "night": "대학생"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "daemyung_street",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "bunsik",
+      "name": "언덕분식(가칭)",
+      "parent": "hyehwaro_hill",
+      "interior": true,
+      "pos": {
+        "x": -140,
+        "y": 57,
+        "z": -320
+      },
+      "realRef": "가상 분식집 — 학교 아래 등굣길",
+      "type": "restaurant",
+      "district": "C",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "저렴한 식사(체력 소)",
+        "하굣길 친구 이벤트",
+        "외상 장부"
+      ],
+      "npcs": [
+        "분식집 이모(가칭)",
+        "학생들"
+      ],
+      "openHours": "08:00-21:00",
+      "mood": [
+        "떡볶이 철판",
+        "어묵 국물",
+        "학생들 웃음"
+      ],
+      "sightlines": [
+        "창밖 등굣길"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "김밥 포장",
+        "day": "한산",
+        "evening": "하교 러시",
+        "night": "마감"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "hyehwaro_hill",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "mid"
+    },
+    {
+      "id": "hanuiwon",
+      "name": "로터리 한의원(가칭)",
+      "parent": "rotary",
+      "interior": true,
+      "pos": {
+        "x": 20,
+        "y": 40,
+        "z": 50
+      },
+      "realRef": "가상 한의원 — 부상 회복 거점",
+      "type": "clinic",
+      "district": "D",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "부상 치료(침·부항·찜질)",
+        "컨디션 회복",
+        "한약 버프"
+      ],
+      "npcs": [
+        "한의사 선생님(가칭)",
+        "간호조무사(가칭)"
+      ],
+      "openHours": "09:00-19:00",
+      "mood": [
+        "한약 냄새",
+        "온열 침대"
+      ],
+      "sightlines": [
+        "창밖 로터리"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "어르신 대기",
+        "day": "진료",
+        "evening": "직장인",
+        "night": "닫힘(응급은 편의점 구급상자)"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "rotary",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "jjimjilbang",
+      "name": "대학로 찜질방 '따끈'(가칭)",
+      "parent": "hyehwa_station",
+      "interior": true,
+      "pos": {
+        "x": -30,
+        "y": 31,
+        "z": 560
+      },
+      "realRef": "가상 찜질방 — 대학로 뒷골목",
+      "type": "leisure",
+      "district": "E",
+      "layer": "inside",
+      "posConfidence": "fictional",
+      "functions": [
+        "피로 회복",
+        "외박/막차 놓쳤을 때 숙박",
+        "식혜·구운 계란"
+      ],
+      "npcs": [
+        "매점 아저씨(가칭)",
+        "강태오(3부 방황기 먹방)",
+        "오대현(대현TV 촬영)",
+        "밤샘 손님들"
+      ],
+      "openHours": "24h",
+      "mood": [
+        "양머리 수건",
+        "황토방",
+        "TV"
+      ],
+      "sightlines": [
+        "창 없음"
+      ],
+      "timeEvents": {
+        "dawn": "잠든 사람들",
+        "morning": "목욕객",
+        "day": "한산",
+        "evening": "가족",
+        "night": "막차 놓친 사람들"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "hyehwa_station",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    },
+    {
+      "id": "car_center",
+      "name": "성곽카센터(가칭)",
+      "parent": "dongsomun_outer",
+      "interior": true,
+      "pos": {
+        "x": 400,
+        "y": 37,
+        "z": -250
+      },
+      "realRef": "가상 정비소 — 혜화문 밖 대로변(성곽 밖)",
+      "type": "workplace",
+      "district": "D",
+      "layer": "outside",
+      "posConfidence": "fictional",
+      "functions": [
+        "채강혁 이벤트(1부 최종보스 → 4부 코너맨)",
+        "자전거·킥보드 수리/업그레이드",
+        "야차 정보 수집"
+      ],
+      "npcs": [
+        "채강혁(19, 카센터 일, '성곽 호랑이')",
+        "카센터 사장(가칭)"
+      ],
+      "openHours": "09:00-20:00 (게임 설정)",
+      "mood": [
+        "리프트",
+        "공구 소리",
+        "기름 냄새",
+        "라디오 야구 중계"
+      ],
+      "sightlines": [
+        "셔터 밖으로 언덕 위 혜화문 [추정]"
+      ],
+      "timeEvents": {
+        "dawn": "닫힘",
+        "morning": "개점",
+        "day": "정비",
+        "evening": "마감 정리, 강혁과 대화 가능",
+        "night": "셔터 내림(강혁은 와룡공원으로)"
+      },
+      "sources": [],
+      "connections": [
+        {
+          "to": "dongsomun_outer",
+          "via": "출입문(씬 전환)",
+          "minutes": 0
+        }
+      ],
+      "elevation": "low"
+    }
+  ],
+  "fastTravel": [
+    {
+      "id": "bus1",
+      "name": "마을버스 1번(가칭)",
+      "realRef": "종로08 [확인됨: 명륜3가 기점→명륜시장·성대후문→새마을금고→서울국제고→…→혜화초교→혜화동우체국→혜화역4번출구→…→종로5가, 첫차 06:00] / 막차 [불확실]",
+      "headwayMin": 10,
+      "hours": "06:00-23:30 (게임 설정)",
+      "stops": [
+        {
+          "name": "명륜3가 종점",
+          "zone": "hoomun_street",
+          "pos": {
+            "x": -800,
+            "y": 92,
+            "z": -390
+          }
+        },
+        {
+          "name": "후문시장 앞",
+          "zone": "hoomun_street",
+          "pos": {
+            "x": -745,
+            "y": 88,
+            "z": -400
+          }
+        },
+        {
+          "name": "명륜1가",
+          "zone": "myeongnyun1ga_slope",
+          "pos": {
+            "x": -470,
+            "y": 72,
+            "z": -330
+          }
+        },
+        {
+          "name": "혜화초 앞",
+          "zone": "hyehwaro_hill",
+          "pos": {
+            "x": -130,
+            "y": 58,
+            "z": -320
+          }
+        },
+        {
+          "name": "혜화동 로터리",
+          "zone": "rotary",
+          "pos": {
+            "x": 10,
+            "y": 40,
+            "z": 15
+          }
+        },
+        {
+          "name": "혜화역",
+          "zone": "hyehwa_station",
+          "pos": {
+            "x": 15,
+            "y": 32,
+            "z": 460
+          }
+        }
+      ]
+    },
+    {
+      "id": "bus2",
+      "name": "마을버스 2번(가칭)",
+      "realRef": "종로07 [확인됨: 명륜새마을금고 기점 순환, 서울국제고·국민생활관·혜화동로터리·혜화역·방송통신대 경유, 2023.9.1부터 성대 교내 진입]",
+      "headwayMin": 12,
+      "hours": "06:00-22:30 (게임 설정)",
+      "stops": [
+        {
+          "name": "명륜새마을금고",
+          "zone": "myeongnyun1ga_slope",
+          "pos": {
+            "x": -560,
+            "y": 78,
+            "z": -360
+          }
+        },
+        {
+          "name": "캠퍼스 안",
+          "zone": "campus_path",
+          "pos": {
+            "x": -664,
+            "y": 65,
+            "z": -91
+          }
+        },
+        {
+          "name": "혜화동 로터리",
+          "zone": "rotary",
+          "pos": {
+            "x": 10,
+            "y": 40,
+            "z": 15
+          }
+        },
+        {
+          "name": "혜화역",
+          "zone": "hyehwa_station",
+          "pos": {
+            "x": 15,
+            "y": 32,
+            "z": 460
+          }
+        },
+        {
+          "name": "방송대 앞",
+          "zone": "marronnier",
+          "pos": {
+            "x": 60,
+            "y": 31,
+            "z": 760
+          }
+        }
+      ]
+    },
+    {
+      "id": "bus3",
+      "name": "마을버스 3번(가칭)",
+      "realRef": "종로02 [확인됨: 성균관대↔서울성곽·성대후문↔감사원↔북촌↔안국역↔종각] — 맵 밖 확장 노선",
+      "headwayMin": 15,
+      "hours": "확장 콘텐츠",
+      "stops": [
+        {
+          "name": "후문·와룡공원",
+          "zone": "waryong_entrance",
+          "pos": {
+            "x": -790,
+            "y": 95,
+            "z": -440
+          }
+        },
+        {
+          "name": "(맵 밖) 삼청동·북촌·종각",
+          "zone": null,
+          "pos": null
+        }
+      ]
+    },
+    {
+      "id": "subway4",
+      "name": "지하철 4호선",
+      "realRef": "혜화역(대학로 지하 120)·한성대입구역(419) 모두 4호선 [확인됨] / 두 역 인접 [추정(높음)]",
+      "headwayMin": 5,
+      "hours": "05:30-24:00 (게임 설정)",
+      "stops": [
+        {
+          "name": "혜화역",
+          "zone": "hyehwa_station",
+          "pos": {
+            "x": 22,
+            "y": 32,
+            "z": 473
+          }
+        },
+        {
+          "name": "한성대입구역",
+          "zone": "dongsomun_outer",
+          "pos": {
+            "x": 380,
+            "y": 38,
+            "z": -230
+          }
+        }
+      ]
+    }
+  ],
+  "deliveryRoutes": [
+    {
+      "id": "R1",
+      "name": "후문 계단 첫 배달(튜토리얼)",
+      "pickup": "bungae_delivery",
+      "dropoff": "myeongnyun3ga_alley",
+      "difficulty": 1,
+      "timeLimitMin": 12,
+      "vehicle": "도보",
+      "terrain": [
+        "계단",
+        "좁은 골목"
+      ],
+      "hazards": [
+        "화분",
+        "빨래 건조대",
+        "고양이(밟으면 감점 아님, 멈춤 연출)"
+      ],
+      "bonus": "아랫집 할머니 팁(+호감)",
+      "waypoints": [
+        {
+          "label": "번개배달 사무실",
+          "zone": "bungae_delivery",
+          "x": -750,
+          "y": 89,
+          "z": -415
+        },
+        {
+          "label": "후문 상가거리",
+          "zone": "hoomun_street",
+          "x": -740,
+          "y": 88,
+          "z": -410
+        },
+        {
+          "label": "골목 내리막 입구",
+          "zone": "myeongnyun3ga_alley",
+          "x": -690,
+          "y": 84,
+          "z": -460
+        },
+        {
+          "label": "반시우 집 앞",
+          "zone": "myeongnyun3ga_alley",
+          "x": -650,
+          "y": 86,
+          "z": -500
+        },
+        {
+          "label": "성곽 아래 꼭대기 계단",
+          "zone": "myeongnyun3ga_alley",
+          "x": -640,
+          "y": 95,
+          "z": -545
+        },
+        {
+          "label": "꼭대기 다세대 4층(고객)",
+          "zone": "myeongnyun3ga_alley",
+          "x": -630,
+          "y": 99,
+          "z": -570,
+          "note": "엘리베이터 없음 → 실내 계단 QTE"
+        }
+      ],
+      "distanceRealM": 211,
+      "elevationGainM": 15
+    },
+    {
+      "id": "R2",
+      "name": "성곽 순성 특급(로터리→성곽 밖 북정마을)",
+      "pickup": "rotary",
+      "dropoff": "bukjeong_village",
+      "difficulty": 3,
+      "timeLimitMin": 22,
+      "vehicle": "도보/자전거(계단 구간 하차)",
+      "terrain": [
+        "언덕길",
+        "성곽 골목",
+        "성곽 단절 고개",
+        "성곽 밖 비탈"
+      ],
+      "hazards": [
+        "순성객 무리",
+        "좁은 성곽 골목",
+        "성벽 등반 시 실격(문화재)"
+      ],
+      "bonus": "성곽 안→밖 전환 첫 달성 시 '성 밖 사람' 업적",
+      "waypoints": [
+        {
+          "label": "로터리 반찬가게(픽업, 가칭)",
+          "zone": "rotary",
+          "x": 0,
+          "y": 40,
+          "z": 0
+        },
+        {
+          "label": "창경궁로35길 언덕",
+          "zone": "changgyeong35_hill",
+          "x": 40,
+          "y": 55,
+          "z": -200
+        },
+        {
+          "label": "성곽 위 주택 골목",
+          "zone": "wall_houses_lane",
+          "x": 30,
+          "y": 72,
+          "z": -420
+        },
+        {
+          "label": "성곽 골목(경신고 뒷길 참고)",
+          "zone": "wall_houses_lane",
+          "x": -120,
+          "y": 82,
+          "z": -640
+        },
+        {
+          "label": "성곽 단절 고갯길(성곽 밖 진입)",
+          "zone": "wall_cut_road",
+          "x": -260,
+          "y": 88,
+          "z": -730
+        },
+        {
+          "label": "성곽 바깥 비탈",
+          "zone": "bukjeong_village",
+          "x": -380,
+          "y": 98,
+          "z": -820
+        },
+        {
+          "label": "북정마을 골목 끝 집(고객)",
+          "zone": "bukjeong_village",
+          "x": -520,
+          "y": 110,
+          "z": -880
+        }
+      ],
+      "distanceRealM": 1159,
+      "elevationGainM": 70
+    },
+    {
+      "id": "R3",
+      "name": "혜화로 다운힐(후문→유도관)",
+      "pickup": "haru_conv",
+      "dropoff": "taeo_house_judo",
+      "difficulty": 2,
+      "timeLimitMin": 14,
+      "vehicle": "자전거/전동킥보드(속도↑, 브레이크 관리)",
+      "terrain": [
+        "내리막",
+        "버스 통행로",
+        "횡단보도"
+      ],
+      "hazards": [
+        "마을버스",
+        "등교 초등학생(아침)",
+        "급커브",
+        "국물 쏟김 게이지"
+      ],
+      "bonus": "강태오가 문 열어줌(관계도 +)",
+      "waypoints": [
+        {
+          "label": "하루편의점 후문점(픽업)",
+          "zone": "haru_conv",
+          "x": -735,
+          "y": 88,
+          "z": -405
+        },
+        {
+          "label": "명륜1가 비탈",
+          "zone": "myeongnyun1ga_slope",
+          "x": -470,
+          "y": 72,
+          "z": -330
+        },
+        {
+          "label": "혜화초 앞",
+          "zone": "hyehwaro_hill",
+          "x": -130,
+          "y": 58,
+          "z": -330
+        },
+        {
+          "label": "혜화로 급경사",
+          "zone": "hyehwaro_hill",
+          "x": -60,
+          "y": 50,
+          "z": -160
+        },
+        {
+          "label": "혜화동 로터리",
+          "zone": "rotary",
+          "x": 0,
+          "y": 40,
+          "z": 0
+        },
+        {
+          "label": "혜화유도관(고객)",
+          "zone": "taeo_house_judo",
+          "x": -80,
+          "y": 46,
+          "z": -60
+        }
+      ],
+      "distanceRealM": 1070,
+      "elevationGainM": 6
+    },
+    {
+      "id": "R4",
+      "name": "대학로 커튼콜(국밥→행인극장 분장실)",
+      "pickup": "gukbap",
+      "dropoff": "haengin_theater",
+      "difficulty": 3,
+      "timeLimitMin": 18,
+      "vehicle": "도보/자전거",
+      "terrain": [
+        "캠퍼스 내리막",
+        "상권 인파",
+        "광장"
+      ],
+      "hazards": [
+        "대학생 인파",
+        "공연 전단 알바",
+        "관객 줄"
+      ],
+      "bonus": "공연 시작 30분 전 도착 시 '분장실 단골' + 극단 행인 단역 알바 해금",
+      "waypoints": [
+        {
+          "label": "성대후문 국밥(픽업)",
+          "zone": "gukbap",
+          "x": -725,
+          "y": 87,
+          "z": -400
+        },
+        {
+          "label": "후문 게이트",
+          "zone": "hoomun_street",
+          "x": -790,
+          "y": 92,
+          "z": -400
+        },
+        {
+          "label": "캠퍼스 언덕길",
+          "zone": "campus_path",
+          "x": -664,
+          "y": 65,
+          "z": -91
+        },
+        {
+          "label": "성균관 앞",
+          "zone": "seonggyungwan",
+          "x": -442,
+          "y": 45,
+          "z": 118
+        },
+        {
+          "label": "대명거리",
+          "zone": "daemyung_street",
+          "x": -200,
+          "y": 38,
+          "z": 330
+        },
+        {
+          "label": "혜화역 앞",
+          "zone": "hyehwa_station",
+          "x": 22,
+          "y": 32,
+          "z": 473
+        },
+        {
+          "label": "마로니에공원",
+          "zone": "marronnier",
+          "x": 98,
+          "y": 32,
+          "z": 655
+        },
+        {
+          "label": "행인극장 분장실 뒷문(고객)",
+          "zone": "haengin_theater",
+          "x": 190,
+          "y": 38,
+          "z": 600
+        }
+      ],
+      "distanceRealM": 1594,
+      "elevationGainM": 11
+    },
+    {
+      "id": "R5",
+      "name": "낙산 야경 계단(대학로→낙산 성곽)",
+      "pickup": "daehakro_north",
+      "dropoff": "naksan_wall",
+      "difficulty": 4,
+      "timeLimitMin": 25,
+      "vehicle": "도보(계단 전용)",
+      "terrain": [
+        "오르막",
+        "벽화마을 계단",
+        "성곽길"
+      ],
+      "hazards": [
+        "관광객",
+        "좁은 계단",
+        "주민 소음 페널티(22시 이후)",
+        "낙산 패 영역(밤엔 시비 이벤트)"
+      ],
+      "bonus": "일몰~20시 도착 시 야경 사진 퀘스트 + 팁 2배",
+      "waypoints": [
+        {
+          "label": "대학로 북쪽 가게(픽업)",
+          "zone": "daehakro_north",
+          "x": 12,
+          "y": 36,
+          "z": 230
+        },
+        {
+          "label": "혜화역 앞",
+          "zone": "hyehwa_station",
+          "x": 22,
+          "y": 32,
+          "z": 473
+        },
+        {
+          "label": "마로니에공원",
+          "zone": "marronnier",
+          "x": 98,
+          "y": 32,
+          "z": 655
+        },
+        {
+          "label": "동숭1길 오르막",
+          "zone": "ihwa_stairs",
+          "x": 300,
+          "y": 55,
+          "z": 780
+        },
+        {
+          "label": "이화마을 계단",
+          "zone": "ihwa_stairs",
+          "x": 487,
+          "y": 90,
+          "z": 915
+        },
+        {
+          "label": "이화장 옆 계단 [추정]",
+          "zone": "ihwa_stairs",
+          "x": 560,
+          "y": 105,
+          "z": 800
+        },
+        {
+          "label": "낙산 정상",
+          "zone": "naksan_wall",
+          "x": 609,
+          "y": 125,
+          "z": 655
+        },
+        {
+          "label": "낙산공원 성곽 쉼터(고객)",
+          "zone": "naksan_wall",
+          "x": 540,
+          "y": 112,
+          "z": 450
+        }
+      ],
+      "distanceRealM": 1414,
+      "elevationGainM": 93
+    }
+  ],
+  "yachaSpots": [
+    {
+      "id": "Y1",
+      "name": "와룡공원 성곽 아래 공터",
+      "zone": "waryong_entrance",
+      "pos": {
+        "x": -770,
+        "y": 106,
+        "z": -575
+      },
+      "realRef": "와룡공원(배드민턴장·운동기구 있는 생활체육 공간) [확인됨] / 공터는 [가상]",
+      "activeHours": "21:00-01:00",
+      "turf": "홈(후문·명륜3가)",
+      "difficulty": 2,
+      "flavor": "가로등 두 개 아래 원형으로 둘러선 구경꾼. 배드민턴 네트 걷힌 뒤가 링. 동네 노인들은 반쯤 농담으로 '반촌 씨름'이라 부름(스토리 바이블). 1부 첫눈의 야차·2부 채강혁 리매치 무대.",
+      "rules": [
+        "합의된 1:1",
+        "입회인 필수",
+        "탭/항복 즉시 종료",
+        "성벽 등반·훼손 시 실격"
+      ]
+    },
+    {
+      "id": "Y2",
+      "name": "성곽 전망 쉼터",
+      "zone": "wall_houses_lane",
+      "pos": {
+        "x": 40,
+        "y": 74,
+        "z": -440
+      },
+      "realRef": "혜화동 전시·안내센터(옛 서울시장 공관) 주변 성곽 쉼터 [건물 확인됨, 쉼터 형태는 가상]",
+      "activeHours": "19:00-23:00 (주민 배려로 23시 종료)",
+      "turf": "중립(로터리·혜화동)",
+      "difficulty": 3,
+      "flavor": "벤치와 난간, 아래로 지붕들. 승부 뒤 같이 야경 보는 엔딩 컷.",
+      "rules": [
+        "합의된 1:1",
+        "23시 이후 금지(주민)",
+        "탭/항복 즉시 종료",
+        "성벽 등반·훼손 시 실격"
+      ]
+    },
+    {
+      "id": "Y3",
+      "name": "낙산공원 성곽",
+      "zone": "naksan_wall",
+      "pos": {
+        "x": 560,
+        "y": 115,
+        "z": 500
+      },
+      "realRef": "낙산공원 성곽(야경 명소, 24시간) [확인됨] / 낙산 패 세력권은 [가상]",
+      "activeHours": "22:00-02:00 (관광객 빠진 뒤)",
+      "turf": "원정(낙산 패 세력권)",
+      "difficulty": 4,
+      "flavor": "조명 받은 성곽과 도시 불빛이 배경. 원정 경기라 관중이 상대 편.",
+      "rules": [
+        "합의된 1:1",
+        "원정 규칙: 상대 측 입회인",
+        "탭/항복 즉시 종료",
+        "관광객 있으면 자동 연기"
+      ]
+    },
+    {
+      "id": "Y4",
+      "name": "후문 뒷골목 주차장",
+      "zone": "hoomun_parking",
+      "pos": {
+        "x": -700,
+        "y": 84,
+        "z": -360
+      },
+      "realRef": "명륜3가 공영주차장 존재 [확인됨] 참고한 가상 주차장",
+      "activeHours": "22:00-03:00",
+      "turf": "홈/초심자",
+      "difficulty": 1,
+      "flavor": "차 빠진 빈 칸, 자판기 불빛. 튜토리얼 야차. 1부 황민재 무리 1:3 길거리 싸움도 여기서(스토리 바이블).",
+      "rules": [
+        "합의된 1:1",
+        "차량 진입 시 일시정지",
+        "탭/항복 즉시 종료"
+      ]
+    },
+    {
+      "id": "Y5",
+      "name": "성곽 단절 고개 아래 공터(성곽 밖)",
+      "zone": "wall_cut_road",
+      "pos": {
+        "x": -300,
+        "y": 92,
+        "z": -780
+      },
+      "realRef": "성곽이 끊긴 고개(과학고·경신고 사이 포장도로) [확인됨] 바깥쪽 [가상 공터]",
+      "activeHours": "이벤트 한정 23:00-02:00",
+      "turf": "경계(안 vs 밖)",
+      "difficulty": 5,
+      "flavor": "성벽이 끊긴 자리에서 안쪽 사람과 바깥 사람이 맞붙는 보스전.",
+      "rules": [
+        "합의된 1:1",
+        "양측 입회인",
+        "탭/항복 즉시 종료",
+        "성벽 등반·훼손 시 실격"
+      ]
+    }
+  ],
+  "trainingRoutes": [
+    {
+      "id": "T1",
+      "name": "와룡 오르막(와룡공원→말바위)",
+      "stat": [
+        "지구력",
+        "하체"
+      ],
+      "bestTimeMin": 9,
+      "waypoints": [
+        {
+          "label": "와룡공원 입구",
+          "zone": "waryong_entrance",
+          "x": -760,
+          "y": 106,
+          "z": -560
+        },
+        {
+          "label": "와룡 성곽길",
+          "zone": "waryong_trail",
+          "x": -979,
+          "y": 118,
+          "z": -540
+        },
+        {
+          "label": "성곽 계단 중턱",
+          "zone": "waryong_trail",
+          "x": -1150,
+          "y": 150,
+          "z": -630
+        },
+        {
+          "label": "말바위 전망대",
+          "zone": "malbawi",
+          "x": -1330,
+          "y": 190,
+          "z": -720
+        }
+      ],
+      "distanceRealM": 614,
+      "elevationGainM": 84
+    },
+    {
+      "id": "T2",
+      "name": "혜화문–낙산 성곽 계단",
+      "stat": [
+        "지구력",
+        "심폐"
+      ],
+      "bestTimeMin": 10,
+      "waypoints": [
+        {
+          "label": "혜화문",
+          "zone": "hyehwamun",
+          "x": 197,
+          "y": 55,
+          "z": -171
+        },
+        {
+          "label": "나무계단길",
+          "zone": "naksan_outer",
+          "x": 330,
+          "y": 70,
+          "z": -40
+        },
+        {
+          "label": "장수마을 바깥길",
+          "zone": "naksan_outer",
+          "x": 450,
+          "y": 88,
+          "z": 150
+        },
+        {
+          "label": "낙산 암문·놀이마당",
+          "zone": "naksan_wall",
+          "x": 540,
+          "y": 112,
+          "z": 450
+        },
+        {
+          "label": "낙산 정상",
+          "zone": "naksan_wall",
+          "x": 609,
+          "y": 125,
+          "z": 655
+        }
+      ],
+      "distanceRealM": 941,
+      "elevationGainM": 70
+    },
+    {
+      "id": "T3",
+      "name": "낙산 성곽 루프",
+      "stat": [
+        "지구력",
+        "멘탈"
+      ],
+      "bestTimeMin": 30,
+      "waypoints": [
+        {
+          "label": "낙산 정상",
+          "zone": "naksan_wall",
+          "x": 609,
+          "y": 125,
+          "z": 655
+        },
+        {
+          "label": "이화마을 계단",
+          "zone": "ihwa_stairs",
+          "x": 487,
+          "y": 90,
+          "z": 915
+        },
+        {
+          "label": "마로니에공원",
+          "zone": "marronnier",
+          "x": 98,
+          "y": 32,
+          "z": 655
+        },
+        {
+          "label": "혜화역",
+          "zone": "hyehwa_station",
+          "x": 22,
+          "y": 32,
+          "z": 473
+        },
+        {
+          "label": "혜화동 로터리",
+          "zone": "rotary",
+          "x": 0,
+          "y": 40,
+          "z": 0
+        },
+        {
+          "label": "혜화문",
+          "zone": "hyehwamun",
+          "x": 197,
+          "y": 55,
+          "z": -171
+        },
+        {
+          "label": "장수마을 바깥길",
+          "zone": "naksan_outer",
+          "x": 450,
+          "y": 88,
+          "z": 150
+        },
+        {
+          "label": "낙산 정상",
+          "zone": "naksan_wall",
+          "x": 609,
+          "y": 125,
+          "z": 655
+        }
+      ],
+      "distanceRealM": 2625,
+      "elevationGainM": 93
+    },
+    {
+      "id": "T4",
+      "name": "혜화로 언덕 스프린트",
+      "stat": [
+        "순발력",
+        "하체"
+      ],
+      "bestTimeMin": 3,
+      "waypoints": [
+        {
+          "label": "혜화동 로터리",
+          "zone": "rotary",
+          "x": 0,
+          "y": 40,
+          "z": 0
+        },
+        {
+          "label": "혜화로 중턱",
+          "zone": "hyehwaro_hill",
+          "x": -60,
+          "y": 50,
+          "z": -160
+        },
+        {
+          "label": "혜화초 앞",
+          "zone": "hyehwaro_hill",
+          "x": -130,
+          "y": 58,
+          "z": -330
+        },
+        {
+          "label": "혜성고 정문",
+          "zone": "school_front",
+          "x": -300,
+          "y": 82,
+          "z": -640
+        }
+      ],
+      "distanceRealM": 708,
+      "elevationGainM": 42
+    },
+    {
+      "id": "T5",
+      "name": "동쪽 반 순성 롱런(새벽 한정)",
+      "stat": [
+        "지구력",
+        "멘탈",
+        "지역 평판"
+      ],
+      "bestTimeMin": 28,
+      "story": "태오 루트 프롤로그: 새벽 성곽 러닝 중 배달 자전거 탄 시우와 매일 마주침(스토리 바이블)",
+      "realRef": "낙산에서 백악구간까지 이어 걷는 코스 존재 [확인됨]",
+      "waypoints": [
+        {
+          "label": "낙산 정상",
+          "zone": "naksan_wall",
+          "x": 609,
+          "y": 125,
+          "z": 655
+        },
+        {
+          "label": "장수마을 바깥길",
+          "zone": "naksan_outer",
+          "x": 450,
+          "y": 88,
+          "z": 150
+        },
+        {
+          "label": "혜화문",
+          "zone": "hyehwamun",
+          "x": 197,
+          "y": 55,
+          "z": -171
+        },
+        {
+          "label": "성곽 위 주택 골목",
+          "zone": "wall_houses_lane",
+          "x": 30,
+          "y": 72,
+          "z": -420
+        },
+        {
+          "label": "성곽 단절 고갯길",
+          "zone": "wall_cut_road",
+          "x": -260,
+          "y": 88,
+          "z": -730
+        },
+        {
+          "label": "혜성고 뒤 성곽 숲길",
+          "zone": "school_front",
+          "x": -400,
+          "y": 96,
+          "z": -690
+        },
+        {
+          "label": "와룡공원 입구",
+          "zone": "waryong_entrance",
+          "x": -760,
+          "y": 106,
+          "z": -560
+        },
+        {
+          "label": "와룡 성곽길",
+          "zone": "waryong_trail",
+          "x": -979,
+          "y": 118,
+          "z": -540
+        },
+        {
+          "label": "말바위 전망대",
+          "zone": "malbawi",
+          "x": -1330,
+          "y": 190,
+          "z": -720
+        }
+      ],
+      "distanceRealM": 2805,
+      "elevationGainM": 135
+    }
+  ],
+  "sources": {
+    "waryong_mediahub": "https://mediahub.seoul.go.kr/archives/1258239",
+    "waryong_wiki": "https://en.wikipedia.org/wiki/Waryong_Park",
+    "waryong_night": "https://www.reportera.co.kr/travel/waryong-park-seoul-night-view/?amp=1",
+    "baegak_course": "https://seoulcitywall.seoul.go.kr/wallcourse/1.do",
+    "citywall_sections": "https://news.seoul.go.kr/culture/archives/505266",
+    "baegak_photo": "https://mediahub.seoul.go.kr/archives/1503798",
+    "baegak_points": "https://mediahub.seoul.go.kr/archives/1178929",
+    "malbawi_trail": "https://seoulhiking.or.kr/theme/basic/img/center_bugaksan-eng.pdf",
+    "hyehwamun_mediahub": "https://mediahub.seoul.go.kr/archives/2003866",
+    "hyehwamun_wiki": "https://en.wikipedia.org/wiki/Hyehwamun",
+    "hyehwamun_1994": "https://mediahub.seoul.go.kr/archives/2003160",
+    "hyehwa_rotary_traffic": "https://m.go.seoul.co.kr/news/2012/06/14/20120614014008",
+    "hyehwa_overpass": "https://mediahub.seoul.go.kr/archives/160371",
+    "cg35gil": "https://mediahub.seoul.go.kr/archives/1089549",
+    "exhibit_center": "https://mediahub.seoul.go.kr/archives/2000457",
+    "exhibit_center2": "https://news.seoul.go.kr/culture/archives/505170",
+    "wall_cut": "https://moneys.mt.co.kr/news/mwView.php?no=2018070715138098718",
+    "hyehwa_alley_khan": "https://weekly.khan.co.kr/article/201908021452391",
+    "school_village": "https://mediahub.seoul.go.kr/archives/1072593",
+    "cathedral": "https://www.munhwa.com/article/11363963",
+    "hyehwa_heritage_walk": "https://mediahub.seoul.go.kr/archives/2003167",
+    "bus_jongno08": "https://info.koreacharts.com/citybus/seoul/route/100900005/contents.html",
+    "bus_jongno02": "https://info.koreacharts.com/citybus/seoul/route/100900008/contents.html",
+    "skku_location": "https://www.skku.edu/skku/about/campusInfo/location.do",
+    "bus_jongno07": "http://www.skkuw.com/news/articleView.html?idxno=30372",
+    "skku_wiki": "https://en.wikipedia.org/wiki/Sungkyunkwan_University",
+    "munmyo_wiki": "https://en.wikipedia.org/wiki/Munmyo",
+    "ginkgo": "https://mediahub.seoul.go.kr/archives/2006087",
+    "sgk_layout": "https://mediahub.seoul.go.kr/archives/2005241",
+    "banchon_encykorea": "https://encykorea.aks.ac.kr/Article/E0021564",
+    "banchon_kowiki": "https://ko.wikipedia.org/wiki/%EB%B0%98%EC%B4%8C",
+    "banin_book_khan": "https://www.khan.co.kr/article/202602192007005/",
+    "banin_book_herald": "https://www.heraldk.com/article/2026021218070520483",
+    "banchon_mediahub": "https://mediahub.seoul.go.kr/archives/1258847",
+    "daemyung_seoulco": "https://m.seoul.co.kr/news/2017/06/08/20170608016002",
+    "banin_imaeil": "https://www.imaeil.com/page/view/2004102514510231503",
+    "hyehwa_stn_wiki": "https://en.wikipedia.org/wiki/Hyehwa_station",
+    "hansung_stn_wiki": "https://en.wikipedia.org/wiki/Hansung_University_station",
+    "marronnier": "https://mediahub.seoul.go.kr/archives/2000753",
+    "marronnier_wiki": "https://en.wikipedia.org/wiki/Marronnier_Park",
+    "naksan_wiki": "https://en.wikipedia.org/wiki/Naksan",
+    "naksan_night": "https://mediahub.seoul.go.kr/archives/951303",
+    "naksan_sunset": "https://mediahub.seoul.go.kr/archives/1501905",
+    "naksan_course": "https://mediahub.seoul.go.kr/archives/1501943",
+    "naksan_view_esquire": "https://www.esquirekorea.co.kr/article/1891185",
+    "ihwa": "https://mediahub.seoul.go.kr/archives/1262791",
+    "ihwa_wiki": "https://en.wikipedia.org/wiki/Ihwa_Mural_Village",
+    "bukjeong": "https://mediahub.seoul.go.kr/archives/2002210",
+    "seonjamdan_wiki": "https://en.wikipedia.org/wiki/Seonjamdan",
+    "seonjam_museum": "https://mediahub.seoul.go.kr/archives/2002290",
+    "sukjeongmun_wiki": "https://en.wikipedia.org/wiki/Sukjeongmun",
+    "bugaksan_wiki": "https://en.wikipedia.org/wiki/Bugaksan",
+    "waryong_parking": "https://safehomes.kr/risk-map/서울특별시/종로구/명륜3가/기타/building/명륜동와룡공영주차장및문화센터/10021100210165",
+    "minsaeng_hall": "https://www.heraldk.com/article/2026031514263933217",
+    "labor_market_guro": "https://brunch.co.kr/@freeplanner/152",
+    "labor_market_news": "https://www.newsis.com/view/NISX20240108_0002584741",
+    "mr3ga_review": "https://zippoom.com/지역별-부동산/서울-종로구-명륜3가/빌라/후기",
+    "wall_village_daum": "https://v.daum.net/v/M0MgYZPx7D",
+    "height_limit": "https://m.go.seoul.co.kr/news/2015/05/15/20150515014005",
+    "school_sci": "https://academy.prompie.com/schools/high-school/detail/ul2fray/",
+    "school_gs": "https://academy.prompie.com/schools/high-school/detail/kyobq0c/",
+    "school_elem": "https://academy.prompie.com/schools/elementary-school/detail/o9bp04h/",
+    "school_ds": "https://academy.prompie.com/schools/high-school/detail/bgy8ykx/",
+    "school_intl": "https://www.dailian.co.kr/news/view/718147/",
+    "cherry": "https://mediahub.seoul.go.kr/archives/1502577",
+    "naksan_to_baegak": "https://mediahub.seoul.go.kr/archives/2000816"
+  }
+}
