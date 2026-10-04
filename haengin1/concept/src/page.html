@@ -53,6 +53,13 @@ p{margin:0}
 .stage{position:relative;border-radius:16px;overflow:hidden;background:var(--stage);aspect-ratio:16/9;max-width:100%;max-height:72vh;width:100%;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 @media (max-width:640px){.stage{aspect-ratio:4/5}}
 .stage canvas{display:block;width:100%;height:100%;cursor:grab}
+/* A film finish (FUJIMOTO_STYLE 6-4): split tone (teal into the shadows, warm into the highlights) + paper grain */
+.stage .film{position:absolute;inset:0;pointer-events:none;display:none}
+.stage[data-style="A"] .film{display:block}
+.stage .film i{position:absolute;inset:0}
+.stage .film .sh{background:#2f4a5a;mix-blend-mode:lighten;opacity:.07}
+.stage .film .hi{background:#f3d9b0;mix-blend-mode:darken;opacity:.05}
+.stage .film .gr{mix-blend-mode:multiply;opacity:.08;background-size:180px 180px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
 .stage canvas:active{cursor:grabbing}
 .plate{position:absolute;top:12px;display:grid;gap:0;padding:8px 12px;border-radius:10px;background:var(--plate);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);min-width:0;max-width:44%}
 .plate.l{left:12px;border-left:4px solid var(--red)}
@@ -155,7 +162,7 @@ p{margin:0}
     <div class="eyebrow">3D 아트 시안 · 2차 · 2026.10.05</div>
     <h1 class="logo" aria-label="행인1의 메인이벤트"><span>행인<span class="num">1</span></span><span class="tail">의 메인이벤트</span></h1>
     <p class="tag">단역으로 시작해, 메인이벤트로 끝낸다.</p>
-    <p class="lede">2차는 A(스타일리시 셀)와 A′(잉크 망가)를 레퍼런스대로 다시 만들었습니다. 캐릭터는 먹 노탄 그림체, 배경은 한옥 골목 일러스트풍입니다. B·C는 1차 그대로 비교용으로 남겼습니다. 위 탭으로 시안을 바꾸고, 기술 버튼으로 타격감을 직접 확인해 보세요. 화면을 좌우로 끌면 카메라가 돌아갑니다.</p>
+    <p class="lede">A(컬러 셀)로 확정했습니다. 캐릭터는 후지모토풍(사실적인 비율, 최소한의 얼굴 선)으로 다시 만들었고, 배경은 한옥 골목 일러스트풍입니다. A′·B·C는 비교용으로 남겼습니다. 위 탭으로 시안을 바꾸고, 기술 버튼으로 타격감을 직접 확인해 보세요. 화면을 좌우로 끌면 카메라가 돌아갑니다.</p>
   </header>
 
   <section class="stage-block" aria-label="3D 시안 스테이지">
@@ -168,6 +175,7 @@ p{margin:0}
     <div class="stage" id="stage">
       <div class="loading" id="loading">3D 스테이지 불러오는 중…</div>
       <canvas id="gl" aria-label="반시우와 강태오가 혜화동 성곽길에서 맞서는 3D 장면"></canvas>
+      <div class="film" aria-hidden="true"><i class="sh"></i><i class="hi"></i><i class="gr"></i></div>
       <div class="lines" id="fx-lines"></div>
       <div class="flash" id="fx-flash"></div>
       <div class="plate l"><span class="c">RED CORNER</span><span class="n">반시우</span><span class="m">EXTRA · 162CM 48KG</span><span class="heat" aria-hidden="true"><i id="heat-siwoo"></i></span></div>
@@ -208,7 +216,7 @@ p{margin:0}
     <div class="sec-head">
       <span class="eyebrow">Art Direction</span>
       <h2 id="h-styles">시안 비교</h2>
-      <p>캐릭터 비율, 명암, 외곽선, 타격 이펙트가 시안마다 다릅니다. 마음에 드는 시안의 알파벳만 알려주시면 그 방향으로 캐릭터와 혜화동 맵을 만듭니다. 섞어도 됩니다(예: “A 비율에 C 조명”).</p>
+      <p>A로 확정했습니다. 나머지는 비교 기록용입니다. 캐릭터 비율, 명암, 외곽선, 타격 이펙트가 시안마다 어떻게 달랐는지 볼 수 있습니다.</p>
     </div>
     <div class="cards" id="cards"></div>
   </section>

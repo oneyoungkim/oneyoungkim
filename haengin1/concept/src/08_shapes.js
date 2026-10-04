@@ -152,20 +152,30 @@ function lapelGeo({ len = .2, width = .07, notch = .02, depth = .006, peak = .3 
 }
 
 // shoe: origin = ground point under the ankle, toe toward +Z. Returns { upper, sole }.
+// The rounded end caps are pulled inside [back, toe] so the shoe is really `len` long (ankle over the back quarter).
 function shoeGeo({ kind = 'hightop', len = .27, width = .095, height = .07 } = {}) {
   const V = (x, y, z) => new THREE.Vector3(x, y, z);
   const back = -len * .24, toe = len * .76;
   const loafer = kind === 'loafer';
   const solH = loafer ? height * .16 : height * .3;
-  const body = taperTube([V(0, solH + height * .42, back), V(0, solH + height * .4, back + len * .35), V(0, solH + height * (loafer ? .22 : .3), toe - len * .1), V(0, solH + height * (loafer ? .16 : .24), toe)],
-    t => [width * .5 * (.82 + .2 * Math.sin(Math.min(1, t * 1.25) * Math.PI)) * (loafer ? 1 - .25 * Math.pow(t, 3) : 1), height * (.48 - .2 * t) * (loafer ? .85 : 1)],
-    { radial: 16, tubular: 16, up: V(0, 1, 0), capLen: .7 });
+  const rxF = t => width * .5 * (.82 + .2 * Math.sin(Math.min(1, t * 1.25) * Math.PI)) * (loafer ? 1 - .25 * Math.pow(t, 3) : 1);
+  const rzF = t => height * (loafer ? (.48 - .2 * t) * .85 : (.44 - .16 * t));
+  const capB = .7 * Math.max(rxF(0), rzF(0)), capT = .7 * Math.max(rxF(1), rzF(1));
+  const b0 = back + capB, t0 = toe - capT;
+  const body = taperTube([V(0, solH + height * (loafer ? .42 : .38), b0), V(0, solH + height * (loafer ? .4 : .44), lerp(b0, t0, .35)), V(0, solH + height * (loafer ? .22 : .3), t0 - len * .1), V(0, solH + height * (loafer ? .16 : .22), t0)],
+    t => [rxF(t), rzF(t)], { radial: 16, tubular: 16, up: V(0, 1, 0), capLen: .7 });
   let upper = body;
   if (!loafer) {
-    const collar = taperTube([V(0, solH + height * .3, back + len * .08), V(0, solH + height * 1.25, back + len * .04), V(0, solH + height * 1.75, back + len * .02)], t => [width * .5 * (.95 - .12 * t), width * .5 * (1.02 - .1 * t)], { radial: 16, tubular: 8, capLen: .5 });
-    upper = mergeGeos([body, collar]);
+    // canvas high-top: the upper rises from the instep to a padded ankle collar (most of it under the trouser hem)
+    const instep = taperTube([V(0, solH + height * .5, lerp(b0, t0, .42)), V(0, solH + height * .9, lerp(b0, t0, .22)), V(0, solH + height * 1.2, back + len * .2)],
+      t => [width * .5 * (.78 - .06 * t), width * .5 * (.6 + .2 * t)], { radial: 14, tubular: 8, capLen: .5 });
+    // padded ankle collar around the ankle (centred on it, not behind the heel)
+    const collar = taperTube([V(0, solH + height * .3, back + len * .21), V(0, solH + height * .95, back + len * .2), V(0, solH + height * 1.3, back + len * .21)], t => [width * .5 * (.94 - .08 * t), width * .5 * (.9 - .06 * t)], { radial: 16, tubular: 8, capLen: .5 });
+    upper = mergeGeos([body, instep, collar]);
   }
-  const sole = taperTube([V(0, solH * .5, back - .006), V(0, solH * .5, toe + .006)], t => [width * .5 * (loafer ? 1.0 : 1.06) * (.86 + .22 * Math.sin(Math.min(1, t * 1.2) * Math.PI)) * (loafer ? 1 - .2 * Math.pow(t, 3) : 1), solH * .5], { radial: 14, tubular: 12, up: V(0, 1, 0), capLen: .35 });
+  const srx = t => width * .5 * (loafer ? 1.0 : 1.06) * (.86 + .22 * Math.sin(Math.min(1, t * 1.2) * Math.PI)) * (loafer ? 1 - .2 * Math.pow(t, 3) : 1);
+  const sB = .35 * Math.max(srx(0), solH * .5), sT = .35 * Math.max(srx(1), solH * .5);
+  const sole = taperTube([V(0, solH * .5, back + sB - .004), V(0, solH * .5, toe - sT + .004)], t => [srx(t), solH * .5], { radial: 14, tubular: 12, up: V(0, 1, 0), capLen: .35 });
   return { upper, sole };
 }
 
@@ -183,6 +193,7 @@ function buildHand(kit, parent, { size = .17, side = 1, curl = 0, skinMat, tapeM
     const L1 = size * .27 * lf, L2 = size * .22 * lf;
     const k1 = new THREE.Group(); k1.position.set(-side * palmT * .05, -palmL + fr * .4, zf * palmW); group.add(k1);
     kit.part(k1, seg(L1, fr, fr * .92, 0), skinMat, { ow: .55 });
+    if (tapeMat) kit.part(k1, taperTube([V(0, -L1 * .04, 0), V(0, -L1 * .58, 0)], t => fr * lerp(1.17, 1.12, t), { radial: 10, tubular: 2, capLen: .3 }), tapeMat, { ow: .45 });
     const k2 = new THREE.Group(); k2.position.y = -L1; k1.add(k2);
     kit.part(k2, seg(L2, fr * .9, fr * .72, 1), skinMat, { ow: .55 });
     fingers.push([k1, k2]);
@@ -194,7 +205,7 @@ function buildHand(kit, parent, { size = .17, side = 1, curl = 0, skinMat, tapeM
   const tb2 = new THREE.Group(); tb2.position.y = -tL1; tb.add(tb2);
   kit.part(tb2, seg(tL2, fr * 1.05, fr * .8, 1), skinMat, { ow: .55 });
   if (tapeMat) {
-    kit.part(group, taperTube([V(0, -palmL * .52, 0), V(0, -palmL * .98, 0)], [palmT * .58, palmW * .53], { radial: 14, tubular: 2, capLen: .25 }), tapeMat, { ow: .7 });
+    kit.part(group, taperTube([V(0, -palmL * .8, 0), V(0, -palmL * .97, 0)], [palmT * .57, palmW * .52], { radial: 14, tubular: 2, capLen: .2 }), tapeMat, { ow: .6 });
     kit.part(group, taperTube([V(0, .03, 0), V(0, -palmL * .2, 0)], [palmT * .62, palmW * .5], { radial: 14, tubular: 2, capLen: .25 }), tapeMat, { ow: .7 });
   }
   const api = {
@@ -219,11 +230,61 @@ function buildBananaMilk(kit) {
   const prof = [[0, 0], [.021, 0], [.029, .006], [.034, .022], [.0355, .04], [.033, .058], [.026, .074], [.0185, .083], [.0165, .09], [.018, .094], [.0175, .098], [0, .098]]
     .map(([r, y]) => new THREE.Vector2(Math.max(r, 1e-4), y));
   const body = new THREE.LatheGeometry(prof, 24);
-  const yellow = kit.solid('#f2c641', { role: 'light' }), white = kit.solid('#f6f3ea', { role: 'light' });
+  const yellow = kit.solid('#f2cf55', { role: 'spot', cel: true, shadow: '#c9a63c' }), white = kit.solid('#f6f4ee', { role: 'light', cel: true });
   kit.part(g, body, yellow, { ow: .7 });
   const cap = new THREE.CylinderGeometry(.0185, .0185, .006, 20); cap.translate(0, .1, 0);
   kit.part(g, cap, white, { ow: .6 });
   const straw = taperTube([new THREE.Vector3(.004, .095, 0), new THREE.Vector3(.016, .17, -.012)], .0032, { radial: 8, tubular: 2, capLen: .3 });
   kit.part(g, straw, white, { ow: .5 });
   return g;
+}
+
+// tube from explicit ring frames: rings = [{ c, X, N, rx, rz }] (X = width axis, N = thickness axis).
+// Used for hair clumps whose flat side must stay on the scalp. capLen = end cap length × max radius
+function frameTube(rings, { radial = 12, capLen = .25, cap0 = true } = {}) {
+  const pos = [], uv = [], idx = [], n = rings.length;
+  const T = i => rings[Math.min(n - 1, i + 1)].c.clone().sub(rings[Math.max(0, i - 1)].c).normalize();
+  const ring = (r, v) => { const s = pos.length / 3; for (let j = 0; j < radial; j++) { const a = j / radial * TAU, ca = Math.cos(a), sa = Math.sin(a); pos.push(r.c.x + r.X.x * r.rx * ca + r.N.x * r.rz * sa, r.c.y + r.X.y * r.rx * ca + r.N.y * r.rz * sa, r.c.z + r.X.z * r.rx * ca + r.N.z * r.rz * sa); uv.push(j / radial, v); } return s; };
+  const pole = (p, v) => { pos.push(p.x, p.y, p.z); uv.push(.5, v); return pos.length / 3 - 1; };
+  const cap = (r, dir, t) => { const out = [], len = Math.max(r.rx, r.rz) * capLen; for (let s = 1; s <= 3; s++) { const ph = s / 4 * Math.PI / 2, f = Math.cos(ph); out.push({ c: r.c.clone().addScaledVector(t, dir * len * Math.sin(ph)), X: r.X, N: r.N, rx: r.rx * f, rz: r.rz * f }); } return { out, tip: r.c.clone().addScaledVector(t, dir * len) }; };
+  const seq = [];
+  const c0 = cap(rings[0], -1, T(0)), c1 = cap(rings[n - 1], 1, T(n - 1));
+  if (cap0) { seq.push({ p: c0.tip, v: 0 }); c0.out.reverse().forEach(r => seq.push({ r, v: 0 })); }
+  rings.forEach((r, i) => seq.push({ r, v: i / (n - 1) }));
+  c1.out.forEach(r => seq.push({ r, v: 1 })); seq.push({ p: c1.tip, v: 1 });
+  const ids = seq.map(s => s.r ? { ring: ring(s.r, s.v) } : { pole: pole(s.p, s.v) });
+  for (let i = 0; i < ids.length - 1; i++) {
+    const A = ids[i], B = ids[i + 1];
+    for (let j = 0; j < radial; j++) {
+      const j1 = (j + 1) % radial;
+      if (A.ring != null && B.ring != null) idx.push(A.ring + j, A.ring + j1, B.ring + j, A.ring + j1, B.ring + j1, B.ring + j);
+      else if (A.pole != null) idx.push(A.pole, B.ring + j1, B.ring + j);
+      else idx.push(A.ring + j, A.ring + j1, B.pole);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+
+// ear: C-shaped pinna in ear space (x = back, y = up, z = outward), height h. Returns { shell, rim, inner }
+function earGeos(h, { thick = .16, cauli = false } = {}) {
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  // outline (x back, y up), front edge attached to the head
+  const o = [[0, .82], [.07, .97], [.2, 1.0], [.33, .93], [.43, .78], [.47, .6], [.44, .42], [.36, .25], [.32, .13], [.27, .05], [.2, .01], [.13, .02], [.07, .07], [.03, .13], [0, .2]];  // rounded lobe
+  const xs = .86, sh = new THREE.Shape(); sh.moveTo(o[0][0] * h * xs, o[0][1] * h - h / 2); for (const [x, y] of o.slice(1)) sh.lineTo(x * h * xs, y * h - h / 2); sh.closePath();
+  const d = h * thick * (cauli ? 1.7 : 1);
+  const shell = new THREE.ExtrudeGeometry(sh, { depth: d * .45, bevelEnabled: true, bevelThickness: d * .28, bevelSize: h * (cauli ? .07 : .05), bevelSegments: 3, curveSegments: 6 });
+  shell.translate(0, 0, -d * .2);
+  // helix rim along the outer C (top → back → lobe), slightly proud of the shell
+  const rimPts = [[.05, .9], [.18, .99], [.32, .93], [.42, .78], [.45, .6], [.42, .43], [.34, .27], [.27, .14]].map(([x, y]) => V(x * h * .96 * xs, y * h - h / 2, d * .62));
+  const rim = taperTube(rimPts, t => [h * .045 * (cauli ? 1.5 : 1) * (1 - .4 * t), h * .04 * (cauli ? 1.5 : 1)], { radial: 8, tubular: 18, up: V(0, 0, 1), capLen: .6 });
+  // antihelix: the inner C line (Taeo's swollen ear: broken into two lumps)
+  // (cauliflower ear: the C is broken into three short swollen strokes)
+  const inner = cauli
+    ? mergeGeos([[[.15, .77], [.22, .74]], [[.28, .67], [.31, .57]], [[.29, .45], [.25, .38]]].map(seg => taperTube(seg.map(([x, y]) => V(x * h * xs, y * h - h / 2, d * .55)), t => [h * .03 * Math.sin(Math.PI * (.2 + .6 * t)), h * .026], { radial: 6, tubular: 4, up: V(0, 0, 1), capLen: .8 })))
+    : taperTube([[.14, .78], [.25, .74], [.31, .6], [.3, .44], [.24, .34]].map(([x, y]) => V(x * h * xs, y * h - h / 2, d * .5)), t => [h * .03 * Math.sin(Math.PI * (.2 + .6 * t)), h * .025], { radial: 8, tubular: 10, up: V(0, 0, 1), capLen: .8 });
+  return { shell, rim, inner };
 }

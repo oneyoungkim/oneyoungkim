@@ -49,7 +49,7 @@ function runClips(A, V, names, speed, onEach, done) {
 function knockdown(V, then) {
   V.override = { pose: P(POSE_LIE), w: 0 }; V.setExpr('ko', 2.2);
   const lift = V.headR * .9 * (app.S.face === 'chibi' ? 1.2 : 1);
-  tween(.42, u => { const e = easeIn(u); V.tiltA = -Math.PI / 2 * e; V.override.w = u; V.adj.y = lift * Math.sin(Math.PI / 2 * e); }, () => {
+  tween(.42, u => { const e = easeIn(u); V.tiltA = -Math.PI / 2 * e; V.override.w = u; V.adj.y = lift * Math.sin(Math.PI / 2 * e); app.cam.focus.copy(V.worldOf('chest')); app.cam.focusW = Math.max(app.cam.focusW, .8); }, () => {
     app.cam.add(.5); app.fx.slam(V.worldOf('chest')); Sound.slam(app.S.key);
     after(1.0, () => getUp(V, -Math.PI / 2, then));
   });
@@ -81,27 +81,30 @@ function doThrow(A, V, done) {
   const mix = (a, b, u) => { const o = new Float32Array(PLEN); for (let k = 0; k < PLEN; k++) o[k] = lerp(a[k], b[k], u); return o; };
   Sound.whoosh(app.S.key); V.setExpr('hurt', 3);
   A.override = { pose: grab, w: 0, yaw: true, root: f => f.pos.set(f._x, 0, z) }; A._x = xt;
-  tween(.22, u => { A.override.w = u; A._x = lerp(xt, xs + .42 * d, easeOut(u)); }, () => {
-    V.setPivot(V.legL); V.override = { pose: fly, w: 0, yaw: false, root: f => f.pos.set(f._cx, f._cy - f.pivot, z) };
-    V._cx = xs; V._cy = V.legL;
-    tween(.26, u => { const e = easeInOut(u); A.yaw = lerp(-Math.PI / 2, Math.PI / 2, e); A.override.pose = mix(grab, load, e); A._x = lerp(xs + .42 * d, xs + .2 * d, e); V._cx = lerp(xs, xs + .08 * d, e); V.tiltA = .45 * e; V.override.w = .6 * e; }, () => {
+  tween(.22, u => { A.override.w = u; A._x = lerp(xt, xs + .45 * d, easeOut(u)); }, () => {
+    V.setPivot(V.legL); V.override = { pose: fly, w: 0, yaw: false, root: f => f.pos.set(f._cx, f._cy - f.pivot, z + (f._dz || 0)) };
+    V._cx = xs; V._cy = V.legL; V._dz = 0;
+    // the thrower turns in with his back passing away from the camera, and the thrown fighter steps off to the camera
+    // side at once (easeOut, 44 cm), so the two heads never meet on the load
+    tween(.26, u => { const e = easeInOut(u); A.yaw = lerp(-Math.PI / 2, -Math.PI * 1.5, e); A.override.pose = mix(grab, load, e); A._x = lerp(xs + .45 * d, xs + .2 * d, e); V._cx = lerp(xs, xs + .08 * d, e); V._dz = .44 * easeOut(Math.min(1, u * 1.6)); V.tiltA = .45 * e; V.override.w = .6 * e; }, () => {
       const p0 = new THREE.Vector3(V._cx, V._cy, z), p1 = new THREE.Vector3(A._x, A.legL + A.torsoL + .5, z), p2 = new THREE.Vector3(A._x + V.def.H * .48 * (app.S.face === 'chibi' ? .8 : 1), V.headR * 1.1, z);
       Sound.whoosh(app.S.key);
       tween(.5, u => {
         const e = easeInOut(u), a = 1 - e, b = e;
         V._cx = a * a * p0.x + 2 * a * b * p1.x + b * b * p2.x; V._cy = a * a * p0.y + 2 * a * b * p1.y + b * b * p2.y;
+        V._dz = .44;   // stays off the thrower's legs (his stance is spread along z while he faces +x) until after the landing
         V.tiltA = lerp(.45, Math.PI * 1.5, e); V.override.pose = mix(fly, lie, Math.max(0, u - .6) / .4); V.override.w = .6 + .4 * u;
         A.override.pose = mix(load, kake, easeOut(u));
       }, () => {
         app.hitstop = .2; app.victim = V; app.cam.add(1); app.cam.punch = 1; app.slow = REDUCED ? 0 : .5;
-        app.fx.slam(new THREE.Vector3(V._cx, 0, z)); if (app.S.word) app.fx.word(new THREE.Vector3(V._cx, .35, z), '쿵!', 3);
+        app.fx.slam(new THREE.Vector3(V._cx, 0, z + V._dz)); if (app.S.word) app.fx.word(new THREE.Vector3(V._cx, .35, z + V._dz), '쿵!', 3);
         Sound.slam(app.S.key); V.flash(); V.setExpr('ko', 2.4); bigWord('한판!'); A.setExpr('win', 1.6);
         if (app.S.fx !== 'real') screenFlash(.4);
         tween(.55, u => { A.override.pose = mix(kake, pump, easeOut(u)); }, () => {
           after(.55, () => {
             const cy0 = V._cy;
-            tween(.5, u => { const e = easeInOut(u); V.tiltA = lerp(Math.PI * 1.5, TAU, e); V._cy = lerp(cy0, V.legL, easeOut(u)); V.override.pose = mix(lie, P(POSE_CROUCH), e); }, () => {
-              V.tiltA = 0; V.setPivot(0);
+            tween(.5, u => { const e = easeInOut(u); V.tiltA = lerp(Math.PI * 1.5, TAU, e); V._cy = lerp(cy0, V.legL, easeOut(u)); V._dz = lerp(.44, 0, e); V.override.pose = mix(lie, P(POSE_CROUCH), e); }, () => {
+              V.tiltA = 0; V.setPivot(0); V._cy = 0; V._dz = 0;   // pivot back on the ground: no float before the fade
               const el = $('fx-flash'); el.style.background = 'var(--stage)';
               el.animate([{ opacity: 0 }, { opacity: 1, offset: .45 }, { opacity: 1, offset: .55 }, { opacity: 0 }], { duration: 520 });
               after(.24, () => { A.override = null; V.override = null; A.yaw = A.facingYaw(); V.adj.set(0, 0, 0); A.kb = V.kb = 0; A.setExpr('normal'); V.setExpr('normal'); });
