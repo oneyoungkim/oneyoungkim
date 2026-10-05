@@ -1,10 +1,10 @@
 // ---------- stylish fighters (A 컬러 셀 / A′ 잉크 망가) — 후지모토풍 리빌드 (FUJIMOTO_STYLE.md) ----------
-// Realistic 7.0 / 7.5 head proportions, sculpted heads (10_faces.js), heavy clumped hair,
+// Realistic 7.4 / 7.5 head proportions, sculpted heads (10_faces.js), heavy clumped hair,
 // school uniforms that fit like real clothes, jointed hands, show poses held by IK.
 // Torso / coat tables are keyed by the fraction of torsoL (hips joint → neck joint).
 const STYLISH_DEF = {
   siwoo: {
-    heads: 7.0, legF: .52, footH: .066, sh: .15, hip: .084, upperL: .285, foreL: .25, hand: .175, neckR: .045,
+    heads: 7.4, legF: .52, footH: .066, sh: .16, hip: .088, upperL: .305, foreL: .268, hand: .18, neckR: .045,
     skin: '#be8c6a', skinSh: '#8f6252', hair: '#1a1f33', hairSh: '#121626',
     jacket: '#2b3049', jacketSh: '#1e2238', lapel: '#333955', lining: '#1c2033', inner: '#9e9fa4', innerSh: '#737480', pants: '#30323b', pantsSh: '#22232b',
     shoe: '#f2f0ea', shoeSh: '#c3c4cc', sole: '#e2582c', soleSh: '#b24324', tape: '#f4efe2',
@@ -12,7 +12,7 @@ const STYLISH_DEF = {
     torso: [[-.15, .144, .106], [-.06, .143, .105], [.1, .141, .103], [.26, .138, .1], [.45, .13, .09], [.65, .136, .09], [.82, .146, .092], [.95, .118, .072], [1.03, .05, .045]],
     // open blazer, one size up: [f, half width]
     coat: { hem: .1, depth: .64, flare: .05, w: [[-.17, .158], [0, .16], [.26, .152], [.54, .162], [.71, .172], [.86, .181], [.93, .184], [.98, .172], [1.01, .14], [1.04, .1], [1.065, .058]] },
-    pantsR: [.082, .068, .062, .064], seat: [.13, .09], shoeKind: 'hightop', shoeLen: .265, shoeW: .098, shoeH: .086,
+    pantsR: [.082, .068, .062, .064], seat: [.13, .09], shoeKind: 'hightop', shoeLen: .27, shoeW: .098, shoeH: .086,
     sleeve: [.058, .05], cuff: .056, fore: [.03, .023],
   },
   taeo: {

@@ -191,7 +191,7 @@ function renderCards() {
     </article>`).join('');
 }
 function renderTape() {
-  const rows = [['나이', '17', '17'], ['키', '162cm', '183cm'], ['몸무게', '48kg', '88kg'], ['리치', '163cm', '191cm'], ['베이스', '길거리 · 복싱', '유도 2단'], ['링네임', 'EXTRA', 'IPPON'], ['기세 액션', '행인 러시', '한판 업어치기'], ['최종 체급', '플라이급 56.7kg', '라이트헤비급 93kg']];
+  const rows = [['나이', '17', '17'], ['키', '174cm', '183cm'], ['몸무게', '61kg', '88kg'], ['리치', '176cm', '191cm'], ['베이스', '길거리 · 복싱', '유도 2단'], ['링네임', 'EXTRA', 'IPPON'], ['기세 액션', '행인 러시', '한판 업어치기'], ['최종 체급', '밴텀급 61.2kg', '라이트헤비급 93kg']];
   $('tape').innerHTML = `<div class="h lv"><div class="name">반시우</div><div class="sub">RED CORNER</div></div><div class="h mid">VS</div><div class="h rv"><div class="name">강태오</div><div class="sub">BLUE CORNER</div></div>` +
     rows.map(([k, a, b]) => `<div class="lv">${a}</div><div class="mid">${k}</div><div class="rv">${b}</div>`).join('');
 }

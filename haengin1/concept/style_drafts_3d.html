@@ -178,7 +178,7 @@ p{margin:0}
       <div class="film" aria-hidden="true"><i class="sh"></i><i class="hi"></i><i class="gr"></i></div>
       <div class="lines" id="fx-lines"></div>
       <div class="flash" id="fx-flash"></div>
-      <div class="plate l"><span class="c">RED CORNER</span><span class="n">반시우</span><span class="m">EXTRA · 162CM 48KG</span><span class="heat" aria-hidden="true"><i id="heat-siwoo"></i></span></div>
+      <div class="plate l"><span class="c">RED CORNER</span><span class="n">반시우</span><span class="m">EXTRA · 174CM 61KG</span><span class="heat" aria-hidden="true"><i id="heat-siwoo"></i></span></div>
       <div class="plate r"><span class="c">BLUE CORNER</span><span class="n">강태오</span><span class="m">IPPON · 183CM 88KG</span><span class="heat" aria-hidden="true"><i id="heat-taeo"></i></span></div>
       <div class="ncard" id="ncard" data-c="blue"><small id="ncard-s"></small><b id="ncard-n"></b></div>
       <div class="banner" id="fx-banner"><span id="fx-banner-t">기세 액션</span></div>
@@ -229,7 +229,7 @@ p{margin:0}
     </div>
     <div class="tape" id="tape"></div>
     <div class="bios">
-      <div class="bio"><span class="eyebrow" style="color:var(--red)">Red Corner</span><q>주연이 뭔데. 난 그냥 안 넘어지고 싶은 거야.</q><p>작고 마른 몸, 콧등의 반창고, 테이프 감은 주먹. 새벽엔 국밥 배달, 낮엔 학교, 밤엔 성곽 아래 야차. 중1 학예회 이후 별명은 '행인1'.</p></div>
+      <div class="bio"><span class="eyebrow" style="color:var(--red)">Red Corner</span><q>주연이 뭔데. 난 그냥 안 넘어지고 싶은 거야.</q><p>비쩍 마른 몸, 콧등의 반창고, 테이프 감은 주먹. 새벽엔 국밥 배달, 낮엔 학교, 밤엔 성곽 아래 야차. 중1 학예회 이후 별명은 '행인1'.</p></div>
       <div class="bio"><span class="eyebrow" style="color:var(--blue)">Blue Corner</span><q>주인공이 정해져 있는 판이면, 판을 바꾸면 되지.</q><p>혜화유도관 3대째, 왼쪽 만두귀, 늘 바나나우유. 학교의 주인공이었지만 대학 파벌에 올림픽 티켓을 뺏기고 MMA로 온다.</p></div>
     </div>
   </section>
@@ -257,7 +257,7 @@ const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion:
 const STYLES = {
   A: {
     key: 'A', name: '스타일리시 셀', stylish: true,
-    heads: { siwoo: 7.0, taeo: 7.5 },
+    heads: { siwoo: 7.4, taeo: 7.5 },
     body: { neck: .22, torso: 1.52, shoulder: .80, hip: .52, depth: .62, upperArm: 1.08, foreArm: .98, handR: .17, armR: .15, foreR: .13, thighR: .27, shinR: .20, footL: .95, squash: 1.08, jaw: .26, hair: 1.08 },
     shading: 'toon', ramp: [128, 255],
     outline: { w: .0075, color: '#1a1417', tint: false },
@@ -283,7 +283,7 @@ const STYLES = {
   },
   I: {
     key: 'I', name: '잉크 망가', stylish: true,
-    heads: { siwoo: 7.0, taeo: 7.5 },
+    heads: { siwoo: 7.4, taeo: 7.5 },
     body: { neck: .22, torso: 1.52, shoulder: .80, hip: .52, depth: .62, upperArm: 1.08, foreArm: .98, handR: .17, armR: .15, foreR: .13, thighR: .27, shinR: .20, footL: .95, squash: 1.08, jaw: .26, hair: 1.08 },
     shading: 'toon', ramp: [128, 255],
     outline: { w: .0075, color: '#111111', tint: false },
@@ -307,7 +307,7 @@ const STYLES = {
   },
   B: {
     key: 'B', name: 'SD 치비',
-    heads: { siwoo: 2.75, taeo: 3.05 },
+    heads: { siwoo: 2.95, taeo: 3.05 },
     body: { neck: .03, torso: .64, shoulder: .27, hip: .22, depth: .78, upperArm: .32, foreArm: .29, handR: .105, armR: .075, foreR: .07, thighR: .125, shinR: .105, footL: .32, squash: .94, jaw: 0, hair: 1.12 },
     shading: 'toon', ramp: [170, 214, 255],
     outline: { w: .014, color: null, tint: true },
@@ -330,7 +330,7 @@ const STYLES = {
   },
   C: {
     key: 'C', name: '스타일라이즈드',
-    heads: { siwoo: 6.9, taeo: 7.3 },
+    heads: { siwoo: 7.3, taeo: 7.3 },
     body: { neck: .30, torso: 1.74, shoulder: .92, hip: .56, depth: .62, upperArm: 1.22, foreArm: 1.10, handR: .24, armR: .19, foreR: .17, thighR: .32, shinR: .24, footL: 1.2, squash: 1.1, jaw: .16, hair: 1.04 },
     shading: 'pbr',
     outline: null,
@@ -356,7 +356,7 @@ const STYLES = {
 // ---------- fighters ----------
 const FIGHTERS = {
   siwoo: {
-    id: 'siwoo', name: '반시우', H: 1.62, build: .86, side: -1,
+    id: 'siwoo', name: '반시우', H: 1.74, build: .86, side: -1,   // 174cm 61kg (밴텀급), 마른 체형
     skin: '#cf9670', hair: '#1b1720', hairStyle: 'curly', iris: '#3a2416',
     blazer: '#2b3566', shirt: '#f3f1ea', pants: '#7d8494', tie: '#a72c3c', tieStripe: '#e7c55a',
     shoes: '#f1f0ec', sole: '#e8572a', tape: '#f6f2e6', blazerOn: true, bandaid: true,
@@ -3185,12 +3185,12 @@ function stylishFaceTexture(def, S, expr = 'normal', far = false) {
 
 // ===== 11_stylish.js =====
 // ---------- stylish fighters (A 컬러 셀 / A′ 잉크 망가) — 후지모토풍 리빌드 (FUJIMOTO_STYLE.md) ----------
-// Realistic 7.0 / 7.5 head proportions, sculpted heads (10_faces.js), heavy clumped hair,
+// Realistic 7.4 / 7.5 head proportions, sculpted heads (10_faces.js), heavy clumped hair,
 // school uniforms that fit like real clothes, jointed hands, show poses held by IK.
 // Torso / coat tables are keyed by the fraction of torsoL (hips joint → neck joint).
 const STYLISH_DEF = {
   siwoo: {
-    heads: 7.0, legF: .52, footH: .066, sh: .15, hip: .084, upperL: .285, foreL: .25, hand: .175, neckR: .045,
+    heads: 7.4, legF: .52, footH: .066, sh: .16, hip: .088, upperL: .305, foreL: .268, hand: .18, neckR: .045,
     skin: '#be8c6a', skinSh: '#8f6252', hair: '#1a1f33', hairSh: '#121626',
     jacket: '#2b3049', jacketSh: '#1e2238', lapel: '#333955', lining: '#1c2033', inner: '#9e9fa4', innerSh: '#737480', pants: '#30323b', pantsSh: '#22232b',
     shoe: '#f2f0ea', shoeSh: '#c3c4cc', sole: '#e2582c', soleSh: '#b24324', tape: '#f4efe2',
@@ -3198,7 +3198,7 @@ const STYLISH_DEF = {
     torso: [[-.15, .144, .106], [-.06, .143, .105], [.1, .141, .103], [.26, .138, .1], [.45, .13, .09], [.65, .136, .09], [.82, .146, .092], [.95, .118, .072], [1.03, .05, .045]],
     // open blazer, one size up: [f, half width]
     coat: { hem: .1, depth: .64, flare: .05, w: [[-.17, .158], [0, .16], [.26, .152], [.54, .162], [.71, .172], [.86, .181], [.93, .184], [.98, .172], [1.01, .14], [1.04, .1], [1.065, .058]] },
-    pantsR: [.082, .068, .062, .064], seat: [.13, .09], shoeKind: 'hightop', shoeLen: .265, shoeW: .098, shoeH: .086,
+    pantsR: [.082, .068, .062, .064], seat: [.13, .09], shoeKind: 'hightop', shoeLen: .27, shoeW: .098, shoeH: .086,
     sleeve: [.058, .05], cuff: .056, fore: [.03, .023],
   },
   taeo: {
@@ -4237,7 +4237,7 @@ function renderCards() {
     </article>`).join('');
 }
 function renderTape() {
-  const rows = [['나이', '17', '17'], ['키', '162cm', '183cm'], ['몸무게', '48kg', '88kg'], ['리치', '163cm', '191cm'], ['베이스', '길거리 · 복싱', '유도 2단'], ['링네임', 'EXTRA', 'IPPON'], ['기세 액션', '행인 러시', '한판 업어치기'], ['최종 체급', '플라이급 56.7kg', '라이트헤비급 93kg']];
+  const rows = [['나이', '17', '17'], ['키', '174cm', '183cm'], ['몸무게', '61kg', '88kg'], ['리치', '176cm', '191cm'], ['베이스', '길거리 · 복싱', '유도 2단'], ['링네임', 'EXTRA', 'IPPON'], ['기세 액션', '행인 러시', '한판 업어치기'], ['최종 체급', '밴텀급 61.2kg', '라이트헤비급 93kg']];
   $('tape').innerHTML = `<div class="h lv"><div class="name">반시우</div><div class="sub">RED CORNER</div></div><div class="h mid">VS</div><div class="h rv"><div class="name">강태오</div><div class="sub">BLUE CORNER</div></div>` +
     rows.map(([k, a, b]) => `<div class="lv">${a}</div><div class="mid">${k}</div><div class="rv">${b}</div>`).join('');
 }

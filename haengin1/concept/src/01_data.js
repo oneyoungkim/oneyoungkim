@@ -13,7 +13,7 @@ const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion:
 const STYLES = {
   A: {
     key: 'A', name: '스타일리시 셀', stylish: true,
-    heads: { siwoo: 7.0, taeo: 7.5 },
+    heads: { siwoo: 7.4, taeo: 7.5 },
     body: { neck: .22, torso: 1.52, shoulder: .80, hip: .52, depth: .62, upperArm: 1.08, foreArm: .98, handR: .17, armR: .15, foreR: .13, thighR: .27, shinR: .20, footL: .95, squash: 1.08, jaw: .26, hair: 1.08 },
     shading: 'toon', ramp: [128, 255],
     outline: { w: .0075, color: '#1a1417', tint: false },
@@ -39,7 +39,7 @@ const STYLES = {
   },
   I: {
     key: 'I', name: '잉크 망가', stylish: true,
-    heads: { siwoo: 7.0, taeo: 7.5 },
+    heads: { siwoo: 7.4, taeo: 7.5 },
     body: { neck: .22, torso: 1.52, shoulder: .80, hip: .52, depth: .62, upperArm: 1.08, foreArm: .98, handR: .17, armR: .15, foreR: .13, thighR: .27, shinR: .20, footL: .95, squash: 1.08, jaw: .26, hair: 1.08 },
     shading: 'toon', ramp: [128, 255],
     outline: { w: .0075, color: '#111111', tint: false },
@@ -63,7 +63,7 @@ const STYLES = {
   },
   B: {
     key: 'B', name: 'SD 치비',
-    heads: { siwoo: 2.75, taeo: 3.05 },
+    heads: { siwoo: 2.95, taeo: 3.05 },
     body: { neck: .03, torso: .64, shoulder: .27, hip: .22, depth: .78, upperArm: .32, foreArm: .29, handR: .105, armR: .075, foreR: .07, thighR: .125, shinR: .105, footL: .32, squash: .94, jaw: 0, hair: 1.12 },
     shading: 'toon', ramp: [170, 214, 255],
     outline: { w: .014, color: null, tint: true },
@@ -86,7 +86,7 @@ const STYLES = {
   },
   C: {
     key: 'C', name: '스타일라이즈드',
-    heads: { siwoo: 6.9, taeo: 7.3 },
+    heads: { siwoo: 7.3, taeo: 7.3 },
     body: { neck: .30, torso: 1.74, shoulder: .92, hip: .56, depth: .62, upperArm: 1.22, foreArm: 1.10, handR: .24, armR: .19, foreR: .17, thighR: .32, shinR: .24, footL: 1.2, squash: 1.1, jaw: .16, hair: 1.04 },
     shading: 'pbr',
     outline: null,
@@ -112,7 +112,7 @@ const STYLES = {
 // ---------- fighters ----------
 const FIGHTERS = {
   siwoo: {
-    id: 'siwoo', name: '반시우', H: 1.62, build: .86, side: -1,
+    id: 'siwoo', name: '반시우', H: 1.74, build: .86, side: -1,   // 174cm 61kg (밴텀급), 마른 체형
     skin: '#cf9670', hair: '#1b1720', hairStyle: 'curly', iris: '#3a2416',
     blazer: '#2b3566', shirt: '#f3f1ea', pants: '#7d8494', tie: '#a72c3c', tieStripe: '#e7c55a',
     shoes: '#f1f0ec', sole: '#e8572a', tape: '#f6f2e6', blazerOn: true, bandaid: true,
