@@ -1,0 +1,198 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8711321542165360156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: NjHug
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uAEF4\uC548\uAE30(\uB0C9\uC7A5\uACE0)"
+  State: NjHug
+  ClipId: 259
+  Startup: 24
+  Active: 6
+  Recovery: 30
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 45
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 18
+  Stagger: 0
+  Knock: 0
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 3
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uCFF5!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 1
+  DownKnock: 1.5
+  Unblockable: 1
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0.7
+  Warn: 2
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1
+--- !u!114 &-970548886636654427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: NjSwing
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD070 \uD718\uB450\uB974\uAE30(\uB0C9\uC7A5\uACE0)"
+  State: NjSwing
+  ClipId: 193
+  Startup: 22
+  Active: 4
+  Recovery: 20
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 60
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 16
+  Stagger: 40
+  Knock: 0.3
+  KnockSide: 1
+  BlockKnock: -1
+  Power: 3
+  GuardDmg: 40
+  Heat: 0
+  Word: "\uCF70\uC9C1!"
+  Flinch: 1
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0.6
+  Warn: 1
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 0.7
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a269d3be559f6746a0d0855f5c1a60e, type: 3}
+  m_Name: Enemy_Naengjanggo
+  m_EditorClassIdentifier: Haengin.Game::Haengin.EnemyDef
+  Type: 2
+  Label: "\uB0C9\uC7A5\uACE0"
+  Height: 1.84
+  Radius: 0.38
+  Hp: 160
+  ApproachSpeed: 1.2
+  ApproachRun: 0
+  StrafeSpeed: 0.8
+  AttackInSpeed: 2
+  Cooldown: 2.2
+  TauntChance: 0.1
+  GrabHold: 2
+  Blocks: 0
+  GuardMax: -1
+  Armor: 1
+  ArmorGauge: 30
+  FleeHp: 0
+  Moves:
+  - {fileID: -970548886636654427}
+  - {fileID: 8311952297363803771}
+  - {fileID: -8711321542165360156}
+  Weights:
+  - 0.4
+  - 0.3
+  - 0.3
+  Far: {fileID: 0}
+  FarChance: 0
+  Counter: {fileID: 0}
+--- !u!114 &8311952297363803771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: NjKick
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC55E\uCC28\uAE30(\uB0C9\uC7A5\uACE0)"
+  State: NjKick
+  ClipId: 206
+  Startup: 20
+  Active: 4
+  Recovery: 18
+  LinkAfter: 3
+  Range: 1.5
+  HalfAngle: 30
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 14
+  Stagger: 36
+  Knock: 1.5
+  KnockSide: 0
+  BlockKnock: 1
+  Power: 2
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uBE61!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0.5
+  Warn: 1
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1

@@ -1,0 +1,248 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8272529892447902327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: SdCounter
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uCE74\uC6B4\uD130 \uD6C5(\uC11D \uB2EC)"
+  State: SdCounter
+  ClipId: 193
+  Startup: 10
+  Active: 3
+  Recovery: 14
+  LinkAfter: 3
+  Range: 1
+  HalfAngle: 60
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 10
+  Stagger: 24
+  Knock: 0.1
+  KnockSide: 1
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uD37D!"
+  Flinch: 1
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0.2
+  Warn: 1
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1
+--- !u!114 &-8095547877782675660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: SdJab
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC7BD(\uC11D \uB2EC)"
+  State: SdJab
+  ClipId: 191
+  Startup: 9
+  Active: 3
+  Recovery: 11
+  LinkAfter: 3
+  Range: 1.1
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 5
+  Stagger: 18
+  Knock: 0.05
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 1
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uD37D!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0
+  Warn: 0
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1
+--- !u!114 &-4023526679284018378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: SdOne
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC6D0\uD22C(\uC11D \uB2EC)"
+  State: SdOne
+  ClipId: 191
+  Startup: 9
+  Active: 3
+  Recovery: 12
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 5
+  Stagger: 18
+  Knock: 0.05
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 1
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uD37D!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0
+  Warn: 0
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 5320813507992060911}
+  ClipRate: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a269d3be559f6746a0d0855f5c1a60e, type: 3}
+  m_Name: Enemy_Seokdal
+  m_EditorClassIdentifier: Haengin.Game::Haengin.EnemyDef
+  Type: 1
+  Label: "\uC11D \uB2EC"
+  Height: 1.77
+  Radius: 0.3
+  Hp: 90
+  ApproachSpeed: 1.6
+  ApproachRun: 0
+  StrafeSpeed: 1
+  AttackInSpeed: 2.5
+  Cooldown: 1.5
+  TauntChance: 0
+  GrabHold: 1.8
+  Blocks: 1
+  GuardMax: 60
+  Armor: 0
+  ArmorGauge: 30
+  FleeHp: 0
+  Moves:
+  - {fileID: -8095547877782675660}
+  - {fileID: -4023526679284018378}
+  Weights:
+  - 0.5
+  - 0.5
+  Far: {fileID: 0}
+  FarChance: 0
+  Counter: {fileID: -8272529892447902327}
+--- !u!114 &5320813507992060911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: SdTwo
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC6D0\uD22C 2\uD0C0(\uC11D \uB2EC)"
+  State: SdTwo
+  ClipId: 192
+  Startup: 10
+  Active: 3
+  Recovery: 14
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 8
+  Stagger: 24
+  Knock: 0.1
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uBE61!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0
+  Warn: 0
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1

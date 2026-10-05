@@ -1,0 +1,155 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53baab391e8290147b5e3a4ac98bba95, type: 3}
+  m_Name: ClipTable
+  m_EditorClassIdentifier: Haengin.Game::Haengin.ClipTable
+  Entries:
+  - State: Stance
+    Id: 89
+    Length: 1.6666667
+    Hit: 0
+    Reach: 0
+  - State: FwdWalk
+    Id: 21
+    Length: 1.7333335
+    Hit: 0
+    Reach: 0
+  - State: BackWalk
+    Id: 20
+    Length: 1.7333335
+    Hit: 0
+    Reach: 0
+  - State: Jab
+    Id: 191
+    Length: 1.7666668
+    Hit: 0.5152778
+    Reach: 0.7269669
+  - State: Cross
+    Id: 192
+    Length: 2
+    Hit: 0.6333333
+    Reach: 0.6927677
+  - State: Hook
+    Id: 193
+    Length: 0.99999994
+    Hit: 0.29166666
+    Reach: 0.5676499
+  - State: Upper
+    Id: 194
+    Length: 1.0333334
+    Hit: 0.6630556
+    Reach: 0.47633415
+  - State: BigHook
+    Id: 195
+    Length: 1.7666668
+    Hit: 0.7950001
+    Reach: 0.573024
+  - State: Kick
+    Id: 209
+    Length: 1.4000001
+    Hit: 0.65333337
+    Reach: 0.7761626
+  - State: FKick
+    Id: 206
+    Length: 1.4333334
+    Hit: 0.6927778
+    Reach: 0.7912248
+  - State: Knee
+    Id: 211
+    Length: 2.5000002
+    Hit: 0.9375001
+    Reach: 0.452415
+  - State: PushFwd
+    Id: 260
+    Length: 2.6000001
+    Hit: 1.95
+    Reach: 0.47639042
+  - State: Tackle
+    Id: 512
+    Length: 0.53333336
+    Hit: 0
+    Reach: 0
+  - State: Grab
+    Id: 259
+    Length: 0.70000005
+    Hit: 0.5916667
+    Reach: 0.4273535
+  - State: Push
+    Id: 259
+    Length: 4.1333337
+    Hit: 3.5105557
+    Reach: 0.4523775
+  - State: Guard
+    Id: 138
+    Length: 0.0333333
+    Hit: 1.1958334
+    Reach: 0
+  - State: Dodge
+    Id: 156
+    Length: 1.4333334
+    Hit: 0.5852778
+    Reach: 0
+  - State: HitFace
+    Id: 174
+    Length: 2.8333335
+    Hit: 0
+    Reach: 0
+  - State: HitBody
+    Id: 178
+    Length: 1.6666667
+    Hit: 0
+    Reach: 0
+  - State: Fall
+    Id: 187
+    Length: 1.1333334
+    Hit: 0.9922223
+    Reach: 0
+  - State: Lie
+    Id: 187
+    Length: 0.3000002
+    Hit: 0
+    Reach: 0
+  - State: StandUp
+    Id: 344
+    Length: 1.5
+    Hit: 0
+    Reach: 0
+  - State: Kneel
+    Id: 365
+    Length: 0.3
+    Hit: 0
+    Reach: 0
+  - State: Stumble
+    Id: 562
+    Length: 2.6000001
+    Hit: 0
+    Reach: 0
+  - State: Charge
+    Id: 510
+    Length: 0.6666667
+    Hit: 0
+    Reach: 0
+  - State: Breath
+    Id: 31
+    Length: 7.033334
+    Hit: 0
+    Reach: 0
+  - State: Victory
+    Id: 403
+    Length: 1.5333334
+    Hit: 0
+    Reach: 0
+  - State: Taunt
+    Id: 88
+    Length: 1.4000001
+    Hit: 0
+    Reach: 0

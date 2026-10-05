@@ -1,12 +1,16 @@
 # GLB(Tripo 리깅 + 클립 1개) → FBX (Unity Humanoid 용, 2026-10-06)
-# 사용: "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/glb2fbx.py -- <src.glb> <dst.fbx> <클립 이름> [메시 1|0]
+# 사용: "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/glb2fbx.py -- <src.glb> <dst.fbx> <클립 이름> [메시 1|0|p] [손 0|1]
+#   메시 p(대리, M2 전투 클립용): 원래 메시를 빼고 뼈마다 작은 삼각형 하나씩(그 뼈 가중치 1)만 넣는다 — 바인드 포즈(아바타 기준 자세)는 그대로, 파일은 작게
+#   손 1(M2, 08 문서 9장 A′): tools/hand_keys.py 로 셰이프 키 Fist_L · Fist_R · Grip_L · Grip_R 를 더해 내보낸다
 #   예) ... -- concept/art/3d/anim/siwoo_walk.glb unity/HaenginMainEvent/Assets/_Project/Art/Characters/Siwoo/SiwooWalk.fbx Walk
 # 메시는 기본 1(넣음): Unity CharSetup 이 아바타 기준 자세를 스킨 바인드 포즈에서 읽는다(메시 없는 FBX 는 기준 자세를 알 수 없음).
 # 배율 = FBX_SCALE_ALL(Unity 에서 루트 배율 1, 키 1.74m), 정면 = glTF +Z 그대로(Unity +Z). 텍스처는 넣지 않는다(GLB 의 JPEG 를 따로 꺼내 씀).
 import bpy, sys
 argv = sys.argv[sys.argv.index('--')+1:]
 src, dst, clip = argv[0], argv[1], argv[2]
-with_mesh = len(argv) < 4 or argv[3] != '0'
+mesh_mode = argv[3] if len(argv) >= 4 else '1'
+with_mesh = mesh_mode != '0'
+hands = len(argv) >= 5 and argv[4] == '1'
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
 sc.render.fps = 30
@@ -18,9 +22,39 @@ mesh = [o for o in bpy.data.objects if o.type == 'MESH' and o.parent == arm]
 for o in list(bpy.data.objects):
     if o != arm and o not in mesh:
         bpy.data.objects.remove(o, do_unlink=True)
-if not with_mesh:
+if not with_mesh or mesh_mode == 'p':
     for o in mesh: bpy.data.objects.remove(o, do_unlink=True)
     mesh = []
+if mesh_mode == 'p':
+    # 대리 메시: 뼈마다 머리 위치에 1cm 삼각형(휴지 자세, 아마추어 공간) → 그 뼈 정점 그룹 가중치 1
+    verts, faces, groups = [], [], []
+    for b in arm.data.bones:
+        h = arm.matrix_world @ b.head_local
+        k = len(verts)
+        verts += [(h.x, h.y, h.z), (h.x + 0.01, h.y, h.z), (h.x, h.y, h.z + 0.01)]
+        faces.append((k, k + 1, k + 2))
+        groups.append(b.name)
+    me = bpy.data.meshes.new('Proxy')
+    me.from_pydata(verts, [], faces)
+    pm = bpy.data.objects.new('Proxy', me)
+    bpy.context.scene.collection.objects.link(pm)
+    for i, name in enumerate(groups):
+        g = pm.vertex_groups.new(name=name)
+        g.add([3 * i, 3 * i + 1, 3 * i + 2], 1.0, 'REPLACE')
+    pm.parent = arm
+    pm.matrix_parent_inverse = arm.matrix_world.inverted()
+    mod = pm.modifiers.new('Armature', 'ARMATURE')
+    mod.object = arm
+    mesh = [pm]
+    print('PROXY', len(groups), 'bones')
+if hands and mesh:
+    import os
+    sys.dont_write_bytecode = True      # tools/__pycache__ 를 남기지 않게
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import hand_keys
+    for o in mesh:
+        if 'LeftHand' in o.vertex_groups and 'RightHand' in o.vertex_groups:
+            hand_keys.add_hand_keys(o, arm)
 
 act = arm.animation_data.action
 act.name = clip
@@ -68,7 +102,7 @@ bpy.ops.export_scene.fbx(
     filepath=dst, use_selection=True, object_types={'ARMATURE', 'MESH'},
     apply_unit_scale=True, apply_scale_options='FBX_SCALE_ALL', global_scale=1.0,
     axis_forward='-Z', axis_up='Y', bake_space_transform=False,
-    use_mesh_modifiers=True, mesh_smooth_type='FACE', use_tspace=False,
+    use_mesh_modifiers=not hands, mesh_smooth_type='FACE', use_tspace=False,
     add_leaf_bones=False, primary_bone_axis='Y', secondary_bone_axis='X', armature_nodetype='NULL',
     use_armature_deform_only=False,
     bake_anim=True, bake_anim_use_all_bones=True, bake_anim_use_nla_strips=False, bake_anim_use_all_actions=False,

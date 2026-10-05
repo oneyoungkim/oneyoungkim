@@ -48,6 +48,14 @@ namespace Haengin
         [Tooltip("맞혔을 때 슬로(실제 시간 초, 0 = 없음)")] public float Slow;
         [Range(0.05f, 1f)] public float SlowScale = 0.3f;
         [Tooltip("히트스톱 위력을 따로(0 = Power 그대로)")] public Power StopPower = Power.None;
+        [Tooltip("슈퍼아머 경직 게이지 깎는 양(음수 = 위력별 6/12/30, 스텝 무릎 20 — 08 4-1)")] public float StaggerGauge = -1f;
+
+        [Header("적 공격 — 예고·돌진·연결(08 4-1·4-4)")]
+        [Tooltip("예고 시작 → 판정 시작(초). 0 = 예고 없음. 발생보다 길면 그 차이만큼 발생 앞에 몸짓(윈드업)")] public float Lead;
+        [Tooltip("예고 표시: 0 없음 · 1 '!' · 2 '!!'(막기 불가, 몸 테두리 흰 번쩍 2번)")] public int Warn;
+        [Tooltip("돌진 거리 m · 시간 초(깐족이 달려들기 2.5m 0.45초): 예고 뒤 발생 앞에 들어간다")] public float ChargeDist, ChargeTime;
+        [Tooltip("이어지는 기술(원투의 2타) — 이 기술의 연결 창에서 바로")] public MoveDef Followup;
+        [Tooltip("클립 재생 배율(표의 '0.7배' 등) — 9단계 클립 연결에서 측정 배율에 곱함")] public float ClipRate = 1f;
 
         public const float Fps = 60f;
         public static double Sec(int f) => f / (double)Fps;
@@ -56,6 +64,8 @@ namespace Haengin
         public double LinkAt => Sec(Startup + Active + LinkAfter);
         public double Total => Sec(Startup + Active + Recovery);
         public float BlockKnockDist => BlockKnock >= 0f ? BlockKnock : Knock * 0.5f;
+        /// 발생 앞 준비 시간(초): 돌진 = 예고 + 돌진, 아니면 max(0, 예고 − 발생)
+        public double PreTime => ChargeTime > 0f ? Lead + ChargeTime : System.Math.Max(0.0, Lead - ActiveStart);
 
         public MoveDef Clone()
         {
@@ -106,7 +116,7 @@ namespace Haengin
         public static MoveDef StepKnee()
         {
             var m = M("StepKnee", "스텝 무릎", 211, 12, 4, 14, 0.8f, 40f, 12, 50, 0.10f, Power.Mid, 8, "퍽!", FlinchKind.Body);
-            m.Advance = 0.4f; m.Crouch = true;
+            m.Advance = 0.4f; m.Crouch = true; m.StaggerGauge = 20f;
             return m;
         }
         public static MoveDef BigHook()
@@ -179,6 +189,61 @@ namespace Haengin
         public static MoveDef EnemyCross()
         {
             var m = M("ECross", "크로스(적)", 192, 10, 3, 14, 1.2f, 35f, 8, 24, 0.10f, Power.Mid, 0, "빡!");
+            return m;
+        }
+
+        // ── 4-4 인카운터 3유형 공격표. 피해·경직은 시우가 받는 값
+        /// 깐족이 원투: 191 9/3/12 → 192 10/3/14, 1.1m, 6 → 8, 경직 18 → 24, 넉백 .05 → .10, 약 → 중
+        public static MoveDef KkOneTwo()
+        {
+            var a = M("KkJab", "원투(깐족이)", 191, 9, 3, 12, 1.1f, 35f, 6, 18, 0.05f, Power.Light, 0, "퍽!");
+            var b = M("KkCross", "원투 2타(깐족이)", 192, 10, 3, 14, 1.1f, 35f, 8, 24, 0.10f, Power.Mid, 0, "빡!");
+            a.Followup = b;
+            return a;
+        }
+        /// 깐족이 달려들기: '!' 0.5초(몸 낮춤) → 510 돌진 2.5m 0.45초 → 192 10/3/16, 돌진 + 1.2m, 12, 경직 30, 0.3, 중, 가드 −25
+        public static MoveDef KkCharge()
+        {
+            var m = M("KkCharge", "달려들기(깐족이)", 510, 10, 3, 16, 1.2f, 35f, 12, 30, 0.30f, Power.Mid, 0, "빡!");
+            m.Lead = 0.5f; m.Warn = 1; m.ChargeDist = 2.5f; m.ChargeTime = 0.45f; m.GuardDmg = 25f;
+            return m;
+        }
+        /// 석 달 잽: 191 9/3/11, 1.1m, 5, 18, .05, 약
+        public static MoveDef SdJab() => M("SdJab", "잽(석 달)", 191, 9, 3, 11, 1.1f, 35f, 5, 18, 0.05f, Power.Light, 0, "퍽!");
+        /// 석 달 원투: 191 9/3/12 → 192 10/3/14, 1.2m, 5 → 8, 18 → 24
+        public static MoveDef SdOneTwo()
+        {
+            var a = M("SdOne", "원투(석 달)", 191, 9, 3, 12, 1.2f, 35f, 5, 18, 0.05f, Power.Light, 0, "퍽!");
+            var b = M("SdTwo", "원투 2타(석 달)", 192, 10, 3, 14, 1.2f, 35f, 8, 24, 0.10f, Power.Mid, 0, "빡!");
+            a.Followup = b;
+            return a;
+        }
+        /// 석 달 카운터 훅: 193, '!' 0.2초, 10/3/14, 1.0m, 10, 24, .10, 중(막은 직후 0.25초 안 60%)
+        public static MoveDef SdCounter()
+        {
+            var m = M("SdCounter", "카운터 훅(석 달)", 193, 10, 3, 14, 1.0f, 60f, 10, 24, 0.10f, Power.Mid, 0, "퍽!", FlinchKind.Hook);
+            m.Lead = 0.2f; m.Warn = 1; m.KnockSide = true;
+            return m;
+        }
+        /// 냉장고 큰 휘두르기: 193(0.7배), '!' 0.6초(팔을 크게 뒤로), 22/4/20, 1.2m, 16, 40, 0.3, 강, 가드 −40
+        public static MoveDef NjSwing()
+        {
+            var m = M("NjSwing", "큰 휘두르기(냉장고)", 193, 22, 4, 20, 1.2f, 60f, 16, 40, 0.30f, Power.Heavy, 0, "콰직!", FlinchKind.Hook);
+            m.Lead = 0.6f; m.Warn = 1; m.GuardDmg = 40f; m.ClipRate = 0.7f; m.KnockSide = true;
+            return m;
+        }
+        /// 냉장고 앞차기: 206 Spartan_Kick, '!' 0.5초, 20/4/18, 1.5m, 14, 36, 1.5m(막아도 1.0m), 중
+        public static MoveDef NjKick()
+        {
+            var m = M("NjKick", "앞차기(냉장고)", 206, 20, 4, 18, 1.5f, 30f, 14, 36, 1.5f, Power.Mid, 0, "빡!", FlinchKind.Body);
+            m.Lead = 0.5f; m.Warn = 1; m.BlockKnock = 1.0f;
+            return m;
+        }
+        /// 냉장고 껴안기: 259, '!!' 0.7초 + 흰 번쩍 2번, 24/6/30(헛방), 1.2m, 18, 다운 1.5m, 강, 막기 불가
+        public static MoveDef NjHug()
+        {
+            var m = M("NjHug", "껴안기(냉장고)", 259, 24, 6, 30, 1.2f, 45f, 18, 0, 0f, Power.Heavy, 0, "쿵!", FlinchKind.Body);
+            m.Lead = 0.7f; m.Warn = 2; m.Unblockable = true; m.Down = true; m.DownKnock = 1.5f;
             return m;
         }
     }

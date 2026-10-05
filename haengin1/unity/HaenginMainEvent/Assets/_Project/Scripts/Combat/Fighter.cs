@@ -51,6 +51,8 @@ namespace Haengin
         /// 판정 안에 든 대상마다(잡기처럼 보통 피격 대신 따로 처리) — true 면 처리함
         public Func<AttackRun, Fighter, bool> OnTarget;
         public Action<AttackRun> OnEnd;
+        /// 이 기술이 이어 받은 앞 기술(원투의 2타)
+        public AttackRun FollowOf;
         // 이번 프레임 구간(실행 순서와 무관하게 '이번 프레임'을 말하려고)
         public double FrameT0, FrameT1;
         public int TickFrame = -1;
@@ -80,6 +82,8 @@ namespace Haengin
         public static readonly List<Fighter> All = new List<Fighter>();
         /// 모든 타격(테스트·HUD·디버그)
         public static event Action<HitEvent> AnyHit;
+        /// 누가 기술을 시작했다(막기형 적이 시우 공격 발생 시작을 본다 — 08 4-5)
+        public static event Action<Fighter, AttackRun> AttackStarted;
 
         [Header("몸")]
         public int Team;
@@ -89,7 +93,12 @@ namespace Haengin
         [Header("체력")]
         public int MaxHp = 100;
         public int Hp = 100;
-        [Tooltip("슈퍼아머(덩치·야차, 8단계): 약타에 경직 없음")] public bool Armor;
+        [Tooltip("슈퍼아머(덩치·야차, 08 4-1): 경직 게이지가 남아 있는 동안 기세·다운 기술이 아닌 타격에 경직 없음(젖힘 0.5배)")] public bool Armor;
+        [Tooltip("경직 게이지 최대(냉장고 30 · 스크럼 40/50). 0 이 되면 60f 경직(열림, 이때 잡힘) → 3초 뒤 가득")] public float ArmorMax = 30f;
+        [Tooltip("막을 때 받는 피해 비율(음수 = 조정값 0.2 — 시우). 적은 0(08 4-5)")] public float GuardRatio = -1f;
+        [Tooltip("가드 게이지 최대(음수 = 조정값 100). 석 달 60")] public float GuardCap = -1f;
+        [Tooltip("받는 경직 배율(도발 중 1.5 — 08 4-1)")] public float StaggerMul = 1f;
+        [Tooltip("시우에게 잡혔을 때 뿌리치기까지(초, 음수 = 조정값 2.0) — 깐족이 1.6 · 석 달 1.8")] public float GrabHoldTime = -1f;
         [Tooltip("디버그·연출: 무적")] public bool DebugInvuln;
         [Tooltip("시험용: 늘 막기(허수아비)")] public bool AlwaysGuard;
         public CombatTuning Tuning;
@@ -108,8 +117,14 @@ namespace Haengin
         public bool Down => State == Phase.Fall || State == Phase.Lie || State == Phase.GetUp;
         /// 조준·판정 대상이 되는가(서 있음 — 잡힘·다운·탈락 아님)
         public bool Targetable => isActiveAndEnabled && State != Phase.Out && !Down && State != Phase.Grabbed;
-        /// 공격 예고 중(적 AI 가 켬)
-        public bool Telegraphing;
+        /// 공격 예고 중: 예고가 있는 기술의 판정 전(소프트 조준 우선·위협 중심 무게 2·락온 다음 대상 우선)
+        public bool Telegraphing => Run != null && Run.Move.Warn > 0 && Run.T < Run.Move.ActiveStart - HitResolver.Eps;
+        /// 경직 게이지(슈퍼아머)
+        public float ArmorGauge { get; private set; } = 30f;
+        /// 경직 게이지가 깨져 열린 동안(3초 뒤 가득 회복될 때까지 — 보통 타격처럼 경직)
+        public bool ArmorBroken { get; private set; }
+        float armorIdle;
+        public float GuardMaxNow => GuardCap > 0f ? GuardCap : T.GuardMax;
         /// 회피 무적(PlayerCombat 이 줌)
         public Func<bool> IFrames;
         public bool InIFrames => IFrames != null && IFrames();
@@ -152,7 +167,8 @@ namespace Haengin
         {
             if (Body == null) Body = FindBody();
             if (React == null) React = GetComponentInChildren<HitReact>(true);
-            Guard = T.GuardMax;
+            Guard = GuardMaxNow;
+            ArmorGauge = ArmorMax;
         }
 
         IBody FindBody()
@@ -167,7 +183,7 @@ namespace Haengin
         void OnDisable() { All.Remove(this); }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { All.Clear(); AnyHit = null; }
+        static void ResetStatics() { All.Clear(); AnyHit = null; AttackStarted = null; }
 
         /// 처음 상태로(HP 가득, 자유)
         public void ResetFighter(int hp = -1)
@@ -178,7 +194,10 @@ namespace Haengin
             Run = null;
             StaggerLeft = InvulnLeft = 0f;
             Crouch = false;
-            Guard = T.GuardMax;
+            Guard = GuardMaxNow;
+            ArmorGauge = ArmorMax;
+            ArmorBroken = false;
+            StaggerMul = 1f;
             GrabbedBy = null;
             kbVel = Vector3.zero;
             shoves.Clear();
@@ -186,10 +205,11 @@ namespace Haengin
         }
 
         // ───────────────────────── 기술
-        /// 기술 시작. aim = 소프트 조준·락온 대상(몸 돌리기·자석), fixedTarget = 판정 없이 이 대상만(클린치 무릎·밀기). t0 = 연결 창에서 넘친 시간
+        /// 기술 시작. aim = 소프트 조준·락온 대상(몸 돌리기·자석), fixedTarget = 판정 없이 이 대상만(클린치 무릎·밀기).
+        /// t0 = 연결 창에서 넘친 시간(+) 또는 발생 앞 준비 시간(−, 적의 예고·돌진 — MoveDef.PreTime)
         public AttackRun StartAttack(MoveDef m, Fighter aim, double t0 = 0, Fighter fixedTarget = null, int combo = 0)
         {
-            var r = new AttackRun { Move = m, Owner = this, Aim = aim, Fixed = fixedTarget, T = Math.Max(0, t0), Combo = combo };
+            var r = new AttackRun { Move = m, Owner = this, Aim = aim, Fixed = fixedTarget, T = t0, Combo = combo };
             if (aim != null && fixedTarget == null)
             {
                 r.TurnLeft = T.AimTurnMax;
@@ -202,6 +222,7 @@ namespace Haengin
             State = Phase.Act;
             Guarding = false;
             Body?.Halt();
+            AttackStarted?.Invoke(this, r);
             return r;
         }
 
@@ -229,6 +250,31 @@ namespace Haengin
             r.FirstTick = false;
             r.TickFrame = Time.frameCount;
             r.FrameT0 = t0; r.FrameT1 = t1;
+
+            // 0) 발생 앞 준비(적: 예고 몸짓 → 돌진). 대상 쪽으로 돌고, 돌진 구간 [−ChargeTime, 0) 에는 대상 앞(사거리 − 0.15m)까지만 달려든다
+            if (t0 < 0 && Body != null)
+            {
+                double pre1 = Math.Min(t1, 0.0);
+                if (r.Aim != null)
+                {
+                    var to = HitResolver.Flat(r.Aim.Position - Position);
+                    if (to.sqrMagnitude > 1e-6f) Body.SetYaw(Mathf.MoveTowardsAngle(Yaw, HitResolver.Yaw(to), 540f * dt));
+                }
+                if (m.ChargeTime > 0f && m.ChargeDist > 0f)
+                {
+                    double ov = HitResolver.Overlap(t0, pre1, -m.ChargeTime, 0);
+                    if (ov > 0)
+                    {
+                        float step = (float)(m.ChargeDist * ov / m.ChargeTime);
+                        if (r.Aim != null)
+                        {
+                            HitResolver.Measure(Position, Yaw, r.Aim.Position, r.Aim.Radius, out _, out float surf, out _);
+                            step = Mathf.Min(step, Mathf.Max(0f, surf - (m.Range - T.MagnetMargin)));
+                        }
+                        if (step > 0f) Body.Push(Forward * step);
+                    }
+                }
+            }
 
             // 1) 소프트 조준: 처음 AimTurnFrames 동안 최대 AimTurnMax° 대상 쪽으로
             if (r.Aim != null && r.TurnLeft > 0f && Body != null)
@@ -291,6 +337,15 @@ namespace Haengin
             if (Run != r) return;     // 판정 처리 중 끊김(잡기 성공 등)
             r.T = t1;
             Pose(r);
+            // 이어지는 기술(원투의 2타): 연결 창이 열리면 넘친 시간을 넘겨 바로
+            if (m.Followup != null && r.LinkOpen)
+            {
+                var next = StartAttack(m.Followup, r.Aim, r.T - m.LinkAt, null, r.Combo + 1);
+                next.FollowOf = r;
+                r.OnEnd?.Invoke(r);
+                MoveEnded?.Invoke(r);
+                return;
+            }
             if (r.Finished) EndAttack(r);
         }
 
@@ -390,14 +445,14 @@ namespace Haengin
                 ev.Outcome = HitOutcome.GuardBroken;
                 ev.Damage = m.Damage;
                 Hp -= ev.Damage;
-                Guard = t.GuardMax;
+                Guard = GuardMaxNow;
                 Interrupt();
                 SetStagger(t.GuardBreakStagger / MoveDef.Fps);
                 Knock(knockDir, m.Knock);
             }
             else if (guarding)
             {
-                ev.Damage = HitResolver.BlockedDamage(m.Damage, t.GuardDmgRatio);
+                ev.Damage = HitResolver.BlockedDamage(m.Damage, GuardRatio >= 0f ? GuardRatio : t.GuardDmgRatio);
                 Hp -= ev.Damage;
                 Guard -= HitResolver.GuardCost(m, t);
                 guardIdle = 0f;
@@ -405,7 +460,7 @@ namespace Haengin
                 if (Guard <= 0f)
                 {
                     ev.Outcome = HitOutcome.Crushed;
-                    Guard = t.GuardMax;
+                    Guard = GuardMaxNow;
                     Interrupt();
                     SetStagger(t.CrushStagger / MoveDef.Fps);
                 }
@@ -417,11 +472,22 @@ namespace Haengin
                 ev.Damage = m.Damage;
                 Hp -= ev.Damage;
             }
-            else if (Armor && !m.IgnoreArmor && !m.Down && m.Power == Power.Light && State != Phase.Grabbed)
+            else if (Armor && !ArmorBroken && !m.IgnoreArmor && !m.Down && m.Power != Power.None && State != Phase.Grabbed && State != Phase.Stagger)
             {
-                ev.Outcome = HitOutcome.Armored;
+                // 슈퍼아머(08 4-1): 경직 게이지 약 −6 · 중 −12 · 강 −30(스텝 무릎 −20). 남아 있으면 경직 없음, 0 이면 60f 경직(열림)
                 ev.Damage = m.Damage;
                 Hp -= ev.Damage;
+                ArmorGauge -= m.StaggerGauge >= 0f ? m.StaggerGauge : t.ArmorCost[Mathf.Clamp((int)m.Power, 0, 4)];
+                armorIdle = 0f;
+                if (ArmorGauge > 1e-4f) ev.Outcome = HitOutcome.Armored;
+                else
+                {
+                    ArmorGauge = 0f;
+                    ArmorBroken = true;
+                    ev.Outcome = HitOutcome.Hit;
+                    Interrupt();
+                    if (Hp > 0) { SetStagger(t.ArmorBreakStagger / MoveDef.Fps); Crouch = true; Knock(knockDir, m.Knock); }
+                }
             }
             else
             {
@@ -429,14 +495,16 @@ namespace Haengin
                 ev.Damage = m.Damage;
                 Hp -= ev.Damage;
                 bool held = State == Phase.Grabbed && GrabbedBy == atk && m.Stagger <= 0 && !m.Down;   // 클린치 무릎: 잡힌 채
+                // 슈퍼아머가 깨져 열린 동안 강타 = 다운(08 4-4 '경직 게이지 0 + 강타')
+                bool openHeavy = Armor && ArmorBroken && State == Phase.Stagger && m.Power >= Power.Heavy;
                 if (!held)
                 {
                     if (State == Phase.Grabbed) Release(0f);
                     Interrupt();
-                    if (Hp <= 0 || m.Down) StartDown(dir, m.Down ? m.DownKnock : 0.3f);
+                    if (Hp <= 0 || m.Down || openHeavy) StartDown(dir, m.Down ? m.DownKnock : openHeavy ? 1.0f : 0.3f);
                     else
                     {
-                        SetStagger(m.Stagger / MoveDef.Fps);
+                        SetStagger(m.Stagger * StaggerMul / MoveDef.Fps);
                         Crouch = m.Crouch;
                         Knock(knockDir, m.Knock);
                     }
@@ -604,7 +672,14 @@ namespace Haengin
 
             // 가드 게이지: 0.8초 막지 않으면 30/초 회복
             guardIdle += dt;
-            if (guardIdle >= t.GuardRegenDelay && Guard < t.GuardMax) Guard = Mathf.Min(t.GuardMax, Guard + t.GuardRegen * dt);
+            float gmax = GuardMaxNow;
+            if (guardIdle >= t.GuardRegenDelay && Guard < gmax) Guard = Mathf.Min(gmax, Guard + t.GuardRegen * dt);
+            // 경직 게이지: 마지막으로 깎인 뒤 3초면 가득(깨진 것도 풀림)
+            if (Armor && (ArmorGauge < ArmorMax || ArmorBroken))
+            {
+                armorIdle += dt;
+                if (armorIdle >= t.ArmorRefill) { ArmorGauge = ArmorMax; ArmorBroken = false; }
+            }
 
             TickKnock(dt);
 

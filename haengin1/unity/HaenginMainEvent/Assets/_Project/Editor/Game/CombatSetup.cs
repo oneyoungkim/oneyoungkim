@@ -4,6 +4,7 @@
 //                                                          + Player 프리팹에 전투 부품 + Scenes/CombatLab.unity (시험장: 평지·벽·구경꾼 원·허수아비)
 //   -executeMethod Haengin.EditorGame.CombatSetup.BuildAll  위 + M1 다시 만들기(Zone1 — CM_Explore 에 흔들림 확장)
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Haengin.EditorTools;
 using UnityEditor;
@@ -33,8 +34,11 @@ namespace Haengin.EditorGame
         {
             EnsureLayers();
             EnsureAssets();
+            CharSetup.Setup();          // 시우 FBX(손 셰이프 키) 다시 가져오기
+            ClipSetup.Setup();          // 9단계: 적 모델 · 전투 클립 · 측정표 · 애니메이터
             M1Setup.EnsureTuning();
             M1Setup.BuildPlayerPrefab();
+            EnemyPrefabs();
             BuildLab();
         });
 
@@ -43,7 +47,10 @@ namespace Haengin.EditorGame
         {
             EnsureLayers();
             EnsureAssets();
+            CharSetup.Setup();
+            ClipSetup.Setup();
             M1Setup.BuildCore();
+            EnemyPrefabs();
             BuildLab();
         });
 
@@ -121,7 +128,90 @@ namespace Haengin.EditorGame
         {
             EnsureAssets();
             var pc = CombatFactory.AddPlayer(player, Tuning, Moves);
-            Debug.Log($"{Tag} 플레이어 전투 부품: Fighter(HP {pc.Me.MaxHp}) · HitReact(모델 {(pc.Me.React != null && pc.Me.React.Model != null ? pc.Me.React.Model.name : "-")}) · LockOn · PlayerCombat");
+            var anim = player.GetComponentInChildren<Animator>(true);
+            var table = AssetDatabase.LoadAssetAtPath<ClipTable>(ClipSetup.TablePath);
+            string extra = "";
+            if (anim != null && table != null)
+            {
+                var fa = anim.GetComponent<FighterAnim>() ?? anim.gameObject.AddComponent<FighterAnim>();
+                fa.Clips = table;
+                if (anim.GetComponent<HandShape>() == null) anim.gameObject.AddComponent<HandShape>();
+                extra = " · FighterAnim(전투 클립) · HandShape(주먹·잡기 손)";
+            }
+            Debug.Log($"{Tag} 플레이어 전투 부품: Fighter(HP {pc.Me.MaxHp}) · HitReact(모델 {(pc.Me.React != null && pc.Me.React.Model != null ? pc.Me.React.Model.name : "-")}) · LockOn · PlayerCombat{extra}");
+        }
+
+        // ───────────────────────── 적 정의·프리팹(9단계 — 정식 모델 + Enemy.controller)
+        public const string EnemyPrefabDir = Root + "/Prefabs";
+        public static string EnemyPrefab(string n) => $"{EnemyPrefabDir}/Enemy_{n}.prefab";
+        public static string EnemyDefPath(EnemyDef.Kind k) => $"{Root}/Settings/Enemy_{k}.asset";
+
+        /// 적 정의 에셋(없을 때만): 4-4 표, 기술은 하위 에셋
+        public static EnemyDef EnemyDefAsset(EnemyDef.Kind k)
+        {
+            var a = AssetDatabase.LoadAssetAtPath<EnemyDef>(EnemyDefPath(k));
+            if (a != null) return a;
+            var d = EnemyLib.Make(k);
+            AssetDatabase.CreateAsset(d, EnemyDefPath(k));
+            var subs = new List<MoveDef>();
+            void Add(MoveDef m) { if (m == null || subs.Contains(m)) return; subs.Add(m); AssetDatabase.AddObjectToAsset(m, d); if (m.Followup != null) Add(m.Followup); }
+            foreach (var m in d.Moves) Add(m);
+            Add(d.Far); Add(d.Counter);
+            EditorUtility.SetDirty(d);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"{Tag} 적 정의 만듦: {EnemyDefPath(k)} ({d.Label} HP {d.Hp} · 기술 {string.Join(", ", subs.Select(m => m.Label))})");
+            return d;
+        }
+
+        /// 적마다 대기(Move 블렌드 트리의 Idle)만 그 모델 자기 대기 클립으로(10-2 Override Controller). 같은 Idle_3 라도 깐족이 것을 덩치에 리타깃하면 팔이 등 뒤로 돌아감
+        static RuntimeAnimatorController EnemyOverride(string n, RuntimeAnimatorController ctrl)
+        {
+            if (ctrl == null) return null;
+            var baseIdle = CharSetup.Clip(ClipSetup.EnemyFbx(ClipSetup.Enemies[0]), "Idle");
+            var own = CharSetup.Clip(ClipSetup.EnemyFbx(n), "Idle");
+            if (baseIdle == null || own == null || baseIdle == own) return ctrl;
+            string path = $"{ClipSetup.AnimDir}/Enemy_{n}.overrideController";
+            var oc = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(path);
+            if (oc == null) { oc = new AnimatorOverrideController(ctrl); AssetDatabase.CreateAsset(oc, path); }
+            oc.runtimeAnimatorController = ctrl;
+            oc[baseIdle] = own;
+            EditorUtility.SetDirty(oc);
+            Debug.Log($"{Tag} 적 {n}: 대기 클립을 자기 Idle 로(Override {path})");
+            return oc;
+        }
+
+        public static void EnemyPrefabs()
+        {
+            var ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ClipSetup.EnemyCtrl);
+            var table = AssetDatabase.LoadAssetAtPath<ClipTable>(ClipSetup.TablePath);
+            foreach (EnemyDef.Kind k in new[] { EnemyDef.Kind.Kkanjok, EnemyDef.Kind.Seokdal, EnemyDef.Kind.Naengjanggo }) EnemyDefAsset(k);
+            foreach (var n in ClipSetup.Enemies)
+            {
+                var model = AssetDatabase.LoadAssetAtPath<GameObject>(ClipSetup.EnemyFbx(n));
+                if (model == null) continue;
+                var go = (PrefabUtility.InstantiatePrefab(model) as GameObject) ?? Object.Instantiate(model);
+                go.name = "Enemy_" + n;
+                var mat = AssetDatabase.LoadAssetAtPath<Material>(ClipSetup.EnemyMat(n));
+                foreach (var r in go.GetComponentsInChildren<Renderer>(true))
+                {
+                    if (mat != null) { var ms = r.sharedMaterials; for (int i = 0; i < ms.Length; i++) ms[i] = mat; r.sharedMaterials = ms; }
+                    r.shadowCastingMode = ShadowCastingMode.On;
+                    r.receiveShadows = true;
+                    if (r is SkinnedMeshRenderer smr) smr.updateWhenOffscreen = false;
+                }
+                var anim = go.GetComponent<Animator>() ?? go.AddComponent<Animator>();
+                anim.avatar = CharSetup.AvatarOf(ClipSetup.EnemyFbx(n));
+                anim.runtimeAnimatorController = EnemyOverride(n, ctrl);
+                anim.applyRootMotion = false;
+                anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                var fa = go.AddComponent<FighterAnim>();
+                fa.Clips = table;
+                go.AddComponent<HandShape>();
+                PrefabUtility.SaveAsPrefabAsset(go, EnemyPrefab(n), out bool ok);
+                string av = anim.avatar != null ? anim.avatar.name : "-", cn = anim.runtimeAnimatorController != null ? anim.runtimeAnimatorController.name : "-";
+                Object.DestroyImmediate(go);
+                Debug.Log($"{Tag} 적 프리팹 {EnemyPrefab(n)} {(ok ? "저장" : "실패")} · 아바타 {av} · 컨트롤러 {cn}");
+            }
         }
 
         // ───────────────────────── 전투 연습장
@@ -220,11 +310,16 @@ namespace Haengin.EditorGame
             var cam = CombatFactory.BuildCombatCam(rig, pc, ct, Tuning, actions);
             rig.Brain.CustomBlends = AssetDatabase.LoadAssetAtPath<Unity.Cinemachine.CinemachineBlenderSettings>(BlendsPath);
             var mode = CombatFactory.AddMode(rig, pc, cam, true);
-            mode.gameObject.AddComponent<CombatDebug>().Player = pc;
+            var dbg = mode.gameObject.AddComponent<CombatDebug>();
+            dbg.Player = pc;
+            dbg.Tuning = Tuning;
+            dbg.Defs = new[] { EnemyDefAsset(EnemyDef.Kind.Kkanjok), EnemyDefAsset(EnemyDef.Kind.Seokdal), EnemyDefAsset(EnemyDef.Kind.Naengjanggo) };
+            dbg.Models = new[] { "Kkanjok", "Seokdal", "Naengjanggo" }.Select(n => AssetDatabase.LoadAssetAtPath<GameObject>(EnemyPrefab(n))).ToArray();
 
-            // 허수아비: 태오 모델(회색) — 맞기만 함
-            var dummy = SpawnDummyModel();
-            var f = CombatFactory.Dummy("허수아비", CombatLab.DummyStart, CombatLab.DummyYaw, 999, dummy, 1.83f, 0.30f, Tuning);
+            // 허수아비(맞기만 함): 9단계부터 석 달 정식 모델(그 전에는 태오 모델 회색)
+            var dummyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(EnemyPrefab("Seokdal"));
+            var dummy = dummyPrefab != null ? (GameObject)PrefabUtility.InstantiatePrefab(dummyPrefab, scene) : SpawnDummyModel();
+            var f = CombatFactory.Dummy("허수아비", CombatLab.DummyStart, CombatLab.DummyYaw, 999, dummy, 1.77f, 0.30f, Tuning);
             dummy.transform.localPosition = Vector3.zero;
             dummy.transform.localRotation = Quaternion.identity;
 
@@ -240,7 +335,7 @@ namespace Haengin.EditorGame
             PrefabUtility.RecordPrefabInstancePropertyModifications(p.transform);
             EditorSceneManager.SaveScene(scene, LabScene);
             Debug.Log($"{Tag} 전투 연습장 저장: {LabScene} | 바닥 {CombatLab.Size}×{CombatLab.Size} · 벽 z {CombatLab.WallZ}(HeatSurface) · 구경꾼 원 반경 {CombatLab.RingRadius} · " +
-                      $"시우 {CombatLab.PlayerStart} · 허수아비 {CombatLab.DummyStart}(태오 모델, 회색) · CM_Explore + CM_Combat · 시작하면 바로 전투");
+                      $"시우 {CombatLab.PlayerStart} · 허수아비 {CombatLab.DummyStart}(석 달 모델) · CM_Explore + CM_Combat · 시작하면 바로 전투 · F5 1:3 소환");
         }
 
         static GameObject SpawnDummyModel()

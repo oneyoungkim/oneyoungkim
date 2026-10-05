@@ -501,7 +501,7 @@ namespace Haengin
             Me.CancelAttack();
             held = f;
             f.Grabbed(Me);
-            holdLeft = t.GrabHold;
+            holdLeft = f.GrabHoldTime > 0f ? f.GrabHoldTime : t.GrabHold;
             kneeCount = 0;
             turning = false;
             Me.SetBusy(true);

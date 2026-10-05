@@ -1,0 +1,194 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9012249115160023849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: KkJab
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC6D0\uD22C(\uAE50\uC871\uC774)"
+  State: KkJab
+  ClipId: 191
+  Startup: 9
+  Active: 3
+  Recovery: 12
+  LinkAfter: 3
+  Range: 1.1
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 6
+  Stagger: 18
+  Knock: 0.05
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 1
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uD37D!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0
+  Warn: 0
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: -7758480607212997971}
+  ClipRate: 1
+--- !u!114 &-7758480607212997971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: KkCross
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC6D0\uD22C 2\uD0C0(\uAE50\uC871\uC774)"
+  State: KkCross
+  ClipId: 192
+  Startup: 10
+  Active: 3
+  Recovery: 14
+  LinkAfter: 3
+  Range: 1.1
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 8
+  Stagger: 24
+  Knock: 0.1
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uBE61!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0
+  Warn: 0
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a269d3be559f6746a0d0855f5c1a60e, type: 3}
+  m_Name: Enemy_Kkanjok
+  m_EditorClassIdentifier: Haengin.Game::Haengin.EnemyDef
+  Type: 0
+  Label: "\uAE50\uC871\uC774"
+  Height: 1.72
+  Radius: 0.3
+  Hp: 70
+  ApproachSpeed: 3.6
+  ApproachRun: 1
+  StrafeSpeed: 1.2
+  AttackInSpeed: 2.5
+  Cooldown: 1.2
+  TauntChance: 0.25
+  GrabHold: 1.6
+  Blocks: 0
+  GuardMax: -1
+  Armor: 0
+  ArmorGauge: 30
+  FleeHp: 0.25
+  Moves:
+  - {fileID: -9012249115160023849}
+  Weights:
+  - 1
+  Far: {fileID: 2759116160624689738}
+  FarChance: 0.5
+  Counter: {fileID: 0}
+--- !u!114 &2759116160624689738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: KkCharge
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uB2EC\uB824\uB4E4\uAE30(\uAE50\uC871\uC774)"
+  State: KkCharge
+  ClipId: 510
+  Startup: 10
+  Active: 3
+  Recovery: 16
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 12
+  Stagger: 30
+  Knock: 0.3
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: 25
+  Heat: 0
+  Word: "\uBE61!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0.5
+  Warn: 1
+  ChargeDist: 2.5
+  ChargeTime: 0.45
+  Followup: {fileID: 0}
+  ClipRate: 1

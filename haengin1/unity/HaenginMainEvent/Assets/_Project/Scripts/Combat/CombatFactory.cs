@@ -115,6 +115,40 @@ namespace Haengin
             return f;
         }
 
+        /// 적 유형별 임시 캡슐 색(모델이 없을 때): 깐족이 머스터드 · 석 달 탁한 빨강 · 냉장고 회색 · 스크럼 진녹색(08 4-7 '자기 색')
+        public static Color KindColor(EnemyDef.Kind k) => k switch
+        {
+            EnemyDef.Kind.Kkanjok => new Color(0.72f, 0.59f, 0.24f),
+            EnemyDef.Kind.Seokdal => new Color(0.62f, 0.23f, 0.21f),
+            EnemyDef.Kind.Naengjanggo => new Color(0.56f, 0.56f, 0.58f),
+            _ => new Color(0.18f, 0.35f, 0.27f),
+        };
+
+        /// 공격권(4-3) — 인카운터마다 1개
+        public static AttackDirector Director(Fighter player, CombatTuning t, string name = "AttackDirector")
+        {
+            var d = new GameObject(name).AddComponent<AttackDirector>();
+            d.Player = player;
+            d.Tuning = t;
+            return d;
+        }
+
+        /// 적 하나: Fighter + FighterBody + HitReact + EnemyBrain + 예고 표시. model 이 없으면 유형 색 캡슐(키·반지름 = 정의)
+        public static EnemyBrain Enemy(EnemyDef def, Vector3 feet, float yaw, Fighter target, AttackDirector director, int index, CombatTuning t = null, GameObject model = null)
+        {
+            var go = new GameObject(def.Label);
+            go.transform.SetPositionAndRotation(feet, Quaternion.Euler(0f, yaw, 0f));
+            if (model == null) model = Capsule(def.Label, def.Height, def.Radius, KindColor(def.Type));
+            model.transform.SetParent(go.transform, false);
+            var f = AddFighter(go, def.Label, 1, def.Hp, def.Height, def.Radius, t, model.transform);
+            f.Body.SetYaw(yaw);
+            var b = go.AddComponent<EnemyBrain>();
+            b.Tuning = t;
+            b.Setup(def, target, director, index);
+            go.AddComponent<TelegraphMark>().Me = f;
+            return b;
+        }
+
         /// CM_Combat(6-1): OrbitalFollow(Sphere) + RotationComposer + Deoccluder + TraumaShake + CombatCamRig, 추적·보는 대상 = CombatPivot. 브레인 블렌드도 설정
         public static CombatCamRig BuildCombatCam(RigFactory.Rig r, PlayerCombat pc, CamTuning ct, CombatTuning t, InputActionAsset actions)
         {

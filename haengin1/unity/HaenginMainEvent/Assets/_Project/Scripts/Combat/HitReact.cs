@@ -30,8 +30,10 @@ namespace Haengin
         float hipDrop;
         bool wasActive;
 
-        /// 0 = 서 있음 … 1 = 누움(다운 임시 비주얼)
+        /// 0 = 서 있음 … 1 = 누움(다운 임시 비주얼 — 클립이 있으면 안 씀)
         public float DownAmount;
+        /// 전투 클립이 연결됨(FighterAnim): 임시 공격 자세·다운 눕힘을 끄고 젖힘·번쩍·셰이크만
+        public bool UseClips;
         /// 히트 셰이크 중인가(ImpactFx 가 마지막 피격자에게 켬)
         public bool Shaking;
         public Vector3 JitterNow { get; private set; }
@@ -163,6 +165,7 @@ namespace Haengin
         /// 0 = 대기, 1 = 끝까지 뻗음. 손: 0 왼손(잽·훅) 1 오른손(크로스·어퍼) 2 오른발(앞차기) 3 무릎(오른)
         public void Strike(int limb, float amount, bool hook = false, bool upper = false)
         {
+            if (UseClips) { strikeLimb = -1; strikeAmt = 0f; return; }
             strikeLimb = limb; strikeAmt = Mathf.Clamp01(amount); strikeHook = hook; strikeUpper = upper;
         }
         int strikeLimb = -1;
@@ -191,7 +194,7 @@ namespace Haengin
             else Shaking = false;
 
             // 아무 반응도 없으면 손대지 않는다(탐색 중 — M1 자세 그대로). 끝난 첫 프레임은 한 번 더 돌려 원래대로
-            bool active = flashLeft > 0f || JitterNow != Vector3.zero || DownAmount > 1e-4f || (strikeLimb >= 0 && strikeAmt > 1e-4f) || hipDrop > 1e-4f;
+            bool active = flashLeft > 0f || JitterNow != Vector3.zero || (!UseClips && DownAmount > 1e-4f) || (strikeLimb >= 0 && strikeAmt > 1e-4f) || hipDrop > 1e-4f;
             if (!active) for (int i = 0; i < flinch.Length && !active; i++) active = flinch[i].sqrMagnitude > 1e-4f;
             if (!active && !wasActive) return;
             wasActive = active;
@@ -205,7 +208,8 @@ namespace Haengin
                 float pitch = Humanoid ? 0f : (flinch[(int)B.Chest].x + flinch[(int)B.Spine].x + flinch[(int)B.Head].x * 0.3f) * 0.6f;
                 float yawF = Humanoid ? 0f : flinch[(int)B.Chest].y * 0.5f;
                 float roll = Humanoid ? 0f : flinch[(int)B.Head].z * 0.4f;
-                float down = DownAmount * DownAmount * (3f - 2f * DownAmount);
+                float dn = UseClips ? 0f : DownAmount;
+                float down = dn * dn * (3f - 2f * dn);
                 var rot = baseRot * Quaternion.Euler(pitch - 85f * down, yawF, -roll);
                 // 눕힐 땐 몸 두께만큼 올려 바닥에 묻히지 않게
                 var lift = Vector3.up * (0.12f * down) - Vector3.up * (Humanoid ? 0f : hipDrop);

@@ -81,7 +81,7 @@ namespace Haengin.EditorTools
             EnsureFolder(AnimDir);
             Texture(SiwooTex);
             Texture(TaeoTex);
-            Human(SiwooFbx, "Idle", -1, -1);
+            Human(SiwooFbx, "Idle", -1, -1, true, null);     // 손 셰이프 키(Fist·Grip, 08 9장 A′ — tools/hand_keys.py)
             Human(SiwooWalkFbx, "Walk", WalkFirst, WalkLast);
             Human(SiwooRunFbx, "Run", -1, -1);
             Human(TaeoFbx, "Idle", -1, -1);
@@ -124,7 +124,7 @@ namespace Haengin.EditorTools
         }
 
         // ───────────────────────── 임포트 설정
-        static void Texture(string path)
+        public static void Texture(string path)
         {
             var ti = AssetImporter.GetAtPath(path) as TextureImporter ?? throw new Exception("텍스처가 없습니다: " + path);
             bool dirty = false;
@@ -141,7 +141,7 @@ namespace Haengin.EditorTools
         /// Humanoid 로: 뼈 매핑을 표대로 직접 넣고(자동 매핑에 맡기지 않음), 클립 1개를 루프·제자리(Bake Into Pose)로.
         // ───────────────────────── 발바닥 높이(루트 높이 오프셋)
         /// 클립을 target 모델(아바타)에 재생해 메시 가장 낮은 점(전 구간 최저)을 0 으로. 오프셋 단위가 모델 배율과 다를 수 있어 할선법으로 2번까지 고친다
-        static void Ground(string clipFbx, string clipName, string targetFbx, bool stance = false)
+        public static void Ground(string clipFbx, string clipName, string targetFbx, bool stance = false, int clipIndex = 0)
         {
             var model = Load<GameObject>(targetFbx);
             var avatar = AvatarOf(targetFbx);
@@ -149,22 +149,22 @@ namespace Haengin.EditorTools
             float off = -m0, m = 0f;
             for (int it = 0; it < 3 && Mathf.Abs(m0) > 0.003f; it++)
             {
-                SetHeightOffset(clipFbx, off);
+                SetHeightOffset(clipFbx, off, clipIndex);
                 m = Sole(model, avatar, Clip(clipFbx, clipName), stance);
                 if (Mathf.Abs(m) <= 0.003f || Mathf.Abs(m - m0) < 1e-5f) break;
                 float next = off - m * (off - off0) / (m - m0);   // 할선법
                 off0 = off; m0 = m; off = next;
             }
-            var ca = (AssetImporter.GetAtPath(clipFbx) as ModelImporter).clipAnimations[0];
+            var ca = (AssetImporter.GetAtPath(clipFbx) as ModelImporter).clipAnimations[clipIndex];
             Debug.Log($"{Tag} 발바닥 맞춤 {System.IO.Path.GetFileName(clipFbx)} '{clipName}' → {System.IO.Path.GetFileName(targetFbx)}: 루트 높이 오프셋 {ca.heightOffset:+0.000;-0.000}(Unity 값 — + 가 아래) · " +
                       $"{(stance ? "디딤발 바닥 높이(중앙값)" : "클립 최저 메시 높이")} {Sole(model, avatar, Clip(clipFbx, clipName), stance):+0.000;-0.000}m · 전체 최저 {Sole(model, avatar, Clip(clipFbx, clipName)):+0.000;-0.000}m");
         }
 
-        static void SetHeightOffset(string path, float off)
+        static void SetHeightOffset(string path, float off, int clipIndex = 0)
         {
             var mi = (ModelImporter)AssetImporter.GetAtPath(path);
             var cs = mi.clipAnimations;
-            cs[0].heightOffset = off;
+            cs[clipIndex].heightOffset = off;
             mi.clipAnimations = cs;
             mi.SaveAndReimport();
         }
@@ -173,7 +173,7 @@ namespace Haengin.EditorTools
         ///   stance = false(대기·달리기): 메시 가장 낮은 점의 최저값
         ///   stance = true(걷기): 디딤발(발목이 더 낮은 쪽) 메시의 가장 낮은 점의 중앙값 — Quick_Walk 는 원본에서 디딤발이 5cm 떠 있고
         ///     뒷발 발끝만 차고 나갈 때 바닥에 닿아서, 전체 최저값으로 맞추면 디딤발이 계속 떠 보인다. 디딤발을 바닥에 붙이고 차고 나가는 발끝이 잠깐 묻히는 쪽을 고름
-        static float Sole(GameObject model, Avatar avatar, AnimationClip clip, bool stance = false)
+        public static float Sole(GameObject model, Avatar avatar, AnimationClip clip, bool stance = false)
         {
             var go = UnityEngine.Object.Instantiate(model);
             var graph = PlayableGraph.Create("CharSetup.Sole");
@@ -232,7 +232,10 @@ namespace Haengin.EditorTools
             return stanceMins[stanceMins.Count / 2];
         }
 
-        static void Human(string path, string clipName, int first, int last)
+        public static void Human(string path, string clipName, int first, int last) => Human(path, clipName, first, last, false, null);
+
+        /// subClips 가 있으면 그것으로 클립을 나눔(M2 전투 클립: 잡기 앞·뒤, 쓰러짐·누움 등). blendShapes = 셰이프 키 가져오기(손 — 08 9장)
+        public static void Human(string path, string clipName, int first, int last, bool blendShapes, ModelImporterClipAnimation[] subClips)
         {
             var mi = AssetImporter.GetAtPath(path) as ModelImporter ?? throw new Exception("FBX 가 없습니다: " + path);
             var model = Load<GameObject>(path);
@@ -258,7 +261,8 @@ namespace Haengin.EditorTools
             mi.globalScale = 1f;
             mi.useFileScale = true;
             mi.materialImportMode = ModelImporterMaterialImportMode.None;
-            mi.importBlendShapes = false;
+            mi.importBlendShapes = blendShapes;
+            if (blendShapes) mi.importBlendShapeNormals = ModelImporterNormals.Import;
             mi.importCameras = false;
             mi.importLights = false;
             mi.importVisibility = false;
@@ -286,7 +290,9 @@ namespace Haengin.EditorTools
                 lockRootPositionXZ = true, keepOriginalPositionXZ = true,
                 maskType = ClipAnimationMaskType.None,
             };
-            mi.clipAnimations = new[] { c };
+            if (subClips != null)
+                foreach (var sc in subClips) sc.takeName = take.takeName;
+            mi.clipAnimations = subClips ?? new[] { c };
             mi.SaveAndReimport();
 
             foreach (var pr in typeof(ModelImporter).GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic))
@@ -298,7 +304,7 @@ namespace Haengin.EditorTools
                 }
             var av = AvatarOf(path);
             if (av == null || !av.isValid || !av.isHuman) throw new Exception($"{path}: Humanoid 아바타를 만들지 못했습니다(valid {av?.isValid} human {av?.isHuman})");
-            var clip = Clip(path, clipName);
+            var clip = Clip(path, subClips != null ? subClips[0].name : clipName);
             Debug.Log($"{Tag} {path}: Humanoid 아바타 OK · 기준 자세 = 바인드 포즈(골반 높이 {hipsY:F3}m) · 뼈 {all.Length - 1}개(매핑 {Map.Length}) · 클립 '{clip.name}' {clip.length:F3}s 루프 {clip.isLooping} " +
                       $"(테이크 '{take.takeName}' 프레임 {c.firstFrame}~{c.lastFrame}) · 루트 {Describe(model)}");
         }
@@ -354,7 +360,7 @@ namespace Haengin.EditorTools
 
         // ───────────────────────── 재질
         /// FUJIMOTO_STYLE 6장 규칙의 UTS 재질(SandboxSetup 과 같은 값: 그림자 = 텍스처 × 모브, 외곽선 #1A1417, 스펙큘러·림 0). 외곽선 폭은 월드 두께를 예전 모델과 맞춤
-        static void Toon(GameObject model, string matPath, string texPath)
+        public static void Toon(GameObject model, string matPath, string texPath)
         {
             var tex = Load<Texture2D>(texPath);
             var name = System.IO.Path.GetFileNameWithoutExtension(matPath);
@@ -367,7 +373,7 @@ namespace Haengin.EditorTools
         }
 
         // ───────────────────────── 걸음 측정 (제자리 재생 → 디딤발이 뒤로 가는 속도 = 클립 고유 이동 속도)
-        static Gait Measure(GameObject model, Avatar avatar, AnimationClip clip, bool footIK = true)
+        public static Gait Measure(GameObject model, Avatar avatar, AnimationClip clip, bool footIK = true)
         {
             var go = UnityEngine.Object.Instantiate(model);
             var g = new Gait { Clip = clip.name, Length = clip.length };
@@ -498,7 +504,7 @@ namespace Haengin.EditorTools
             AssetDatabase.LoadAllAssetsAtPath(fbx).OfType<AnimationClip>().FirstOrDefault(c => c.name == name && !c.name.StartsWith("__preview__"))
             ?? throw new Exception($"{fbx}: 클립 '{name}' 이 없습니다");
 
-        static T Load<T>(string path) where T : UnityEngine.Object =>
+        public static T Load<T>(string path) where T : UnityEngine.Object =>
             AssetDatabase.LoadAssetAtPath<T>(path) ?? throw new Exception($"에셋이 없습니다: {path}");
 
         static float ReadFloat(ScriptableObject so, string field, float def)

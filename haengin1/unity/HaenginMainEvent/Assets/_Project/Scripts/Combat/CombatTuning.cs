@@ -79,6 +79,19 @@ namespace Haengin
         public float ShakeOffPush = 0.3f, ReleaseSep = 0.3f, PushDist = 1.8f, PushTime = 0.3f;
         public int PushStagger = 40, SlamDamage = 6, SlamStagger = 60, SlamHeat = 12, BumpDamage = 4, BumpStagger = 30;
 
+        [Header("적 4장")]
+        [Tooltip("슈퍼아머 경직 게이지 깎임: 약 6 · 중 12 · 강 30(스텝 무릎은 기술에 20)")] public float[] ArmorCost = { 0f, 6f, 12f, 30f, 30f };
+        public int ArmorBreakStagger = 60;
+        [Tooltip("경직 게이지가 마지막으로 깎인 뒤 이 시간이면 가득(초)")] public float ArmorRefill = 3f;
+        [Tooltip("적 공격권(4-3): 동시 공격 최대(보통 1 · 어려움 2) · 한 적 공격 끝 → 다음 적 시작 최소 간격 · 굶김 한도(초)")] public int MaxAttackers = 1;
+        public float AttackGap = 0.6f, StarveLimit = 15f;
+        [Tooltip("자리(4-2): 공격권 가진 적 2.0~2.6m, 나머지 3.5~5.0m, 서로 70° 이상, 카메라 정면 ±40° 우선, 서로 밀어내기 0.9m")] public float RingNear = 2.3f, RingFar = 4.2f, SlotSep = 70f, CamArc = 40f, Separate = 0.9f;
+        [Tooltip("공격권을 받으면 사거리까지 들어가는 최대 거리(m)")] public float AttackInMax = 1.5f;
+        [Tooltip("화면 밖에서 공격하면 발생 + 이만큼(초)")] public float OffscreenDelay = 0.2f;
+        [Tooltip("도발(88, 1.4초) 중 맞으면 경직 ×1.5 · 1.0초 안 맞고 버티면 시우 기세 +8")] public float TauntTime = 1.4f, TauntMul = 1.5f, TauntHold = 1.0f;
+        public int TauntHeat = 8;
+        [Tooltip("막기형(4-5): 막기 유지(마지막 공격 뒤) · 카운터 창 · 카운터 확률")] public float BlockHold = 0.4f, CounterWindow = 0.25f, CounterChance = 0.6f;
+
         [Header("난수")]
         public int Seed = 20261006;
 

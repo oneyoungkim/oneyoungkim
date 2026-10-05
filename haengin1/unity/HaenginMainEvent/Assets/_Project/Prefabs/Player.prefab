@@ -63,6 +63,7 @@ MonoBehaviour:
   Model: {fileID: 9193383898594916789}
   Owner: {fileID: 1986048395380513755}
   DownAmount: 0
+  UseClips: 0
   Shaking: 0
 --- !u!1 &2403999754716811262
 GameObject:
@@ -181,11 +182,15 @@ MonoBehaviour:
   MaxHp: 200
   Hp: 200
   Armor: 0
+  ArmorMax: 30
+  GuardRatio: -1
+  GuardCap: -1
+  StaggerMul: 1
+  GrabHoldTime: -1
   DebugInvuln: 0
   AlwaysGuard: 0
   Tuning: {fileID: 11400000, guid: a76c79ecfe284d84ea7218a63abf5857, type: 2}
   React: {fileID: 6412843476330949}
-  Telegraphing: 0
   Guarding: 0
 --- !u!114 &1473967906729586371
 MonoBehaviour:
@@ -446,6 +451,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 045ea8f43f9c3bc4780353ea2efd974d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5649200000398100643}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 045ea8f43f9c3bc4780353ea2efd974d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5297232559686891641}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 045ea8f43f9c3bc4780353ea2efd974d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1495755964507980714}
   m_SourcePrefab: {fileID: 100100000, guid: 045ea8f43f9c3bc4780353ea2efd974d, type: 3}
 --- !u!1 &8421350180355040015 stripped
 GameObject:
@@ -466,6 +477,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: Haengin.Game::Haengin.LocoAnim
   Motor: {fileID: 8214876749908705743}
   SpeedSmooth: 0.05
+--- !u!114 &5297232559686891641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8421350180355040015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb9c8bb00d125a429a9412998e90e4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.FighterAnim
+  Me: {fileID: 0}
+  Player: {fileID: 0}
+  Brain: {fileID: 0}
+  Clips: {fileID: 11400000, guid: 8dfb5256fa0139d41811e22cad71030a, type: 2}
+  Fade: 0.05
+  MaxRate: 1.6
+--- !u!114 &1495755964507980714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8421350180355040015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba6828c194e8a2a41864b5eccffd2859, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HandShape
+  Me: {fileID: 0}
+  Player: {fileID: 0}
+  Brain: {fileID: 0}
+  Blend: 0.08
+  ForceFist: -1
 --- !u!4 &9193383898594916789 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 045ea8f43f9c3bc4780353ea2efd974d, type: 3}
