@@ -1,5 +1,6 @@
 // 행인1의 메인이벤트 — 리깅 캐릭터(시우·태오) 임포트 설정 + 툰 재질 + 애니메이터 컨트롤러 (docs/07_M1_조작_설계.md 5장)
 // 재료: concept/art/3d/anim/*.glb (Tripo 자동 리깅 + 클립 1개) → tools/glb2fbx.py(Blender 헤드리스)로 FBX 변환 → 여기서 Humanoid 로 가져온다.
+// 2026-10-06 2차: 대기 = siwoo_idle246(Idle_6, 한쪽 다리에 무게) · taeo_idle243(Idle_3), 걷기 = *_walk115(Quick_Walk). 달리기 = siwoo_run(Run_02) 그대로.
 //   Siwoo.fbx(Idle) · SiwooWalk.fbx(Walk) · SiwooRun.fbx(Run) · Taeo.fbx(Idle) — 모두 메시+뼈+클립(아바타 기준 자세를 스킨 바인드 포즈에서 읽으므로 메시가 필요)
 // 클립마다 리깅을 따로 해서 뼈 휴지 자세가 조금씩 다르다 → FBX 마다 자기 아바타(Humanoid)를 만들고, 클립은 근육 공간으로 시우 아바타에 리타깃된다.
 // 걷기·달리기는 제자리 동작(루트 이동 없음, Bake Into Pose) — 이동은 PlayerMotor(CharacterController)가 한다.
@@ -24,6 +25,7 @@ namespace Haengin.EditorTools
         public const string SiwooRunFbx = Dir + "/Siwoo/SiwooRun.fbx";
         public const string SiwooTex = Dir + "/Siwoo/SiwooTex.jpg";
         public const string TaeoFbx = Dir + "/Taeo/Taeo.fbx";
+        public const string TaeoWalkFbx = Dir + "/Taeo/TaeoWalk.fbx";   // 아직 게임에 안 씀(나중 대비)
         public const string TaeoTex = Dir + "/Taeo/TaeoTex.jpg";
         public const string AnimDir = "Assets/_Project/Anim";
         public const string SiwooCtrl = AnimDir + "/Siwoo.controller";
@@ -35,9 +37,9 @@ namespace Haengin.EditorTools
         public const string PSpeed = "Speed", PBlend = "Blend", PRate = "Rate";
         public const string MoveState = "Move";
 
-        /// 걷기 한 주기만 쓴다(원본 4.2초 = 같은 걸음 3주기). 블렌드 트리가 걷기·달리기의 정규화 시간을 맞추므로 한 주기끼리여야 발이 엇갈리지 않는다.
-        /// FBX 프레임(30fps, 1부터): 이음새가 가장 매끄러운 주기 = 55~97(42프레임 = 1.4초, 처음·끝 자세 차 평균 2.2°)
-        public const int WalkFirst = 55, WalkLast = 97;
+        /// 걷기 한 주기만 쓴다(Quick_Walk 원본 3.0초 = 똑같은 걸음 3주기, 30프레임마다 자세 차 0.01°). 블렌드 트리가 걷기·달리기의 정규화 시간을 맞추므로 한 주기끼리여야 발이 엇갈리지 않는다.
+        /// FBX 프레임(30fps, 1부터) 1~31 = 30프레임 = 1.0초
+        public const int WalkFirst = 1, WalkLast = 31;
 
         /// 외곽선: 예전 정적 모델(원본 키 1.0 을 ×1.74)과 같은 월드 두께(약 4.5mm)가 되게. 새 FBX 는 배율 1 에 키 1.74m
         const float OutlineWorldMm = 2.6f * 1.74f;
@@ -52,6 +54,10 @@ namespace Haengin.EditorTools
             (HumanBodyBones.LeftUpperLeg, "LeftUpLeg"), (HumanBodyBones.LeftLowerLeg, "LeftLeg"), (HumanBodyBones.LeftFoot, "LeftFoot"), (HumanBodyBones.LeftToes, "LeftToeBase"),
             (HumanBodyBones.RightUpperLeg, "RightUpLeg"), (HumanBodyBones.RightLowerLeg, "RightLeg"), (HumanBodyBones.RightFoot, "RightFoot"), (HumanBodyBones.RightToes, "RightToeBase"),
         };
+
+        /// 디딤 판정 폭: 발목 높이가 클립 최저 + 이 값 안(발바닥이 바닥에 붙은 구간). AnimTests.T25 와 같은 1.5cm —
+        /// 3cm 로 재면 Quick_Walk 처럼 뒤꿈치 닿기·발끝 떼기 구간이 섞여 고유 속도가 낮게 나왔다(1.25 → 게임에서 디딤발이 0.19 m/s 뒤로 밀림)
+        const float StanceBand = 0.015f;
 
         /// 측정 결과(로그·문서용)
         public sealed class Gait
@@ -79,6 +85,14 @@ namespace Haengin.EditorTools
             Human(SiwooWalkFbx, "Walk", WalkFirst, WalkLast);
             Human(SiwooRunFbx, "Run", -1, -1);
             Human(TaeoFbx, "Idle", -1, -1);
+            Human(TaeoWalkFbx, "Walk", WalkFirst, WalkLast);
+            // 발바닥 높이 맞추기: 클립마다 원본의 발 높이가 달라(Quick_Walk 는 디딤발이 4~6cm 떠 있음, Idle_6 은 뒤꿈치가 3cm 묻힘)
+            // 시우(태오) 아바타에 재생했을 때 바닥(y 0)에 닿게 루트 높이 오프셋을 준다 — 대기·달리기 = 메시 최저점, 걷기 = 디딤발 바닥(Sole 주석)
+            Ground(SiwooFbx, "Idle", SiwooFbx);
+            Ground(SiwooWalkFbx, "Walk", SiwooFbx, true);
+            Ground(SiwooRunFbx, "Run", SiwooFbx);
+            Ground(TaeoFbx, "Idle", TaeoFbx);
+            Ground(TaeoWalkFbx, "Walk", TaeoFbx, true);
 
             var siwoo = Load<GameObject>(SiwooFbx);
             var taeo = Load<GameObject>(TaeoFbx);
@@ -98,7 +112,7 @@ namespace Haengin.EditorTools
 
             // 재생 속도 = 게임 속도 ÷ 클립 고유 속도(디딤발이 땅에 붙어 있게). 달리기 주기를 걷기 주기에 맞춤(왼발 앞 끝 = 같은 정규화 시간)
             var mt = AssetDatabase.LoadAssetAtPath<ScriptableObject>("Assets/_Project/Settings/MoveTuning.asset");
-            float walkSpeed = ReadFloat(mt, "walkSpeed", 1.6f), runSpeed = ReadFloat(mt, "runSpeed", 4.5f);
+            float walkSpeed = ReadFloat(mt, "walkSpeed", 1.4f), runSpeed = ReadFloat(mt, "runSpeed", 4.5f);
             float kw = walkSpeed / Mathf.Max(0.1f, gw.NaturalSpeed);
             float kr = runSpeed / Mathf.Max(0.1f, gr.NaturalSpeed);
             float offR = Mathf.Repeat(gr.PhaseL - gw.PhaseL, 1f);
@@ -125,6 +139,99 @@ namespace Haengin.EditorTools
         }
 
         /// Humanoid 로: 뼈 매핑을 표대로 직접 넣고(자동 매핑에 맡기지 않음), 클립 1개를 루프·제자리(Bake Into Pose)로.
+        // ───────────────────────── 발바닥 높이(루트 높이 오프셋)
+        /// 클립을 target 모델(아바타)에 재생해 메시 가장 낮은 점(전 구간 최저)을 0 으로. 오프셋 단위가 모델 배율과 다를 수 있어 할선법으로 2번까지 고친다
+        static void Ground(string clipFbx, string clipName, string targetFbx, bool stance = false)
+        {
+            var model = Load<GameObject>(targetFbx);
+            var avatar = AvatarOf(targetFbx);
+            float off0 = 0f, m0 = Sole(model, avatar, Clip(clipFbx, clipName), stance);
+            float off = -m0, m = 0f;
+            for (int it = 0; it < 3 && Mathf.Abs(m0) > 0.003f; it++)
+            {
+                SetHeightOffset(clipFbx, off);
+                m = Sole(model, avatar, Clip(clipFbx, clipName), stance);
+                if (Mathf.Abs(m) <= 0.003f || Mathf.Abs(m - m0) < 1e-5f) break;
+                float next = off - m * (off - off0) / (m - m0);   // 할선법
+                off0 = off; m0 = m; off = next;
+            }
+            var ca = (AssetImporter.GetAtPath(clipFbx) as ModelImporter).clipAnimations[0];
+            Debug.Log($"{Tag} 발바닥 맞춤 {System.IO.Path.GetFileName(clipFbx)} '{clipName}' → {System.IO.Path.GetFileName(targetFbx)}: 루트 높이 오프셋 {ca.heightOffset:+0.000;-0.000}(Unity 값 — + 가 아래) · " +
+                      $"{(stance ? "디딤발 바닥 높이(중앙값)" : "클립 최저 메시 높이")} {Sole(model, avatar, Clip(clipFbx, clipName), stance):+0.000;-0.000}m · 전체 최저 {Sole(model, avatar, Clip(clipFbx, clipName)):+0.000;-0.000}m");
+        }
+
+        static void SetHeightOffset(string path, float off)
+        {
+            var mi = (ModelImporter)AssetImporter.GetAtPath(path);
+            var cs = mi.clipAnimations;
+            cs[0].heightOffset = off;
+            mi.clipAnimations = cs;
+            mi.SaveAndReimport();
+        }
+
+        /// 발바닥 높이(모델 루트 기준 m). 클립 전 구간 48점에서
+        ///   stance = false(대기·달리기): 메시 가장 낮은 점의 최저값
+        ///   stance = true(걷기): 디딤발(발목이 더 낮은 쪽) 메시의 가장 낮은 점의 중앙값 — Quick_Walk 는 원본에서 디딤발이 5cm 떠 있고
+        ///     뒷발 발끝만 차고 나갈 때 바닥에 닿아서, 전체 최저값으로 맞추면 디딤발이 계속 떠 보인다. 디딤발을 바닥에 붙이고 차고 나가는 발끝이 잠깐 묻히는 쪽을 고름
+        static float Sole(GameObject model, Avatar avatar, AnimationClip clip, bool stance = false)
+        {
+            var go = UnityEngine.Object.Instantiate(model);
+            var graph = PlayableGraph.Create("CharSetup.Sole");
+            bool started = false;
+            var baked = new Mesh();
+            float min = float.MaxValue;
+            var stanceMins = new List<float>();
+            try
+            {
+                var anim = go.GetComponent<Animator>() ?? go.AddComponent<Animator>();
+                anim.avatar = avatar;
+                anim.applyRootMotion = false;
+                anim.runtimeAnimatorController = null;
+                anim.Rebind();
+                graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
+                var output = AnimationPlayableOutput.Create(graph, "out", anim);
+                var cp = AnimationClipPlayable.Create(graph, clip);
+                cp.SetApplyFootIK(true);
+                output.SetSourcePlayable(cp);
+                if (!AnimationMode.InAnimationMode()) { AnimationMode.StartAnimationMode(); started = true; }
+                var smr = go.GetComponentInChildren<SkinnedMeshRenderer>(true);
+                var root = go.transform;
+                var lf = anim.GetBoneTransform(HumanBodyBones.LeftFoot);
+                var rf = anim.GetBoneTransform(HumanBodyBones.RightFoot);
+                var hips = anim.GetBoneTransform(HumanBodyBones.Hips);
+                const int N = 48;
+                for (int i = 0; i < N; i++)
+                {
+                    AnimationMode.BeginSampling();
+                    AnimationMode.SamplePlayableGraph(graph, 0, clip.length * i / N);
+                    AnimationMode.EndSampling();
+                    smr.BakeMesh(baked, true);
+                    var m = root.worldToLocalMatrix * smr.transform.localToWorldMatrix;
+                    float hx = root.InverseTransformPoint(hips.position).x;
+                    bool leftDown = root.InverseTransformPoint(lf.position).y < root.InverseTransformPoint(rf.position).y;
+                    float fmin = float.MaxValue, smin = float.MaxValue;
+                    foreach (var v in baked.vertices)
+                    {
+                        var q = m.MultiplyPoint3x4(v);
+                        if (q.y < fmin) fmin = q.y;
+                        if (q.y < 0.35f && (q.x < hx) == leftDown && q.y < smin) smin = q.y;   // 캐릭터 왼쪽 = −X
+                    }
+                    if (fmin < min) min = fmin;
+                    if (smin < float.MaxValue) stanceMins.Add(smin);
+                }
+            }
+            finally
+            {
+                if (started) AnimationMode.StopAnimationMode();
+                graph.Destroy();
+                UnityEngine.Object.DestroyImmediate(baked);
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+            if (!stance || stanceMins.Count == 0) return min;
+            stanceMins.Sort();
+            return stanceMins[stanceMins.Count / 2];
+        }
+
         static void Human(string path, string clipName, int first, int last)
         {
             var mi = AssetImporter.GetAtPath(path) as ModelImporter ?? throw new Exception("FBX 가 없습니다: " + path);
@@ -303,7 +410,7 @@ namespace Haengin.EditorTools
                 foreach (var P in new[] { L, R })
                     for (int i = 1; i < N; i++)
                     {
-                        if (P[i].y > minY + 0.03f) continue;
+                        if (P[i].y > minY + StanceBand) continue;
                         stance++;
                         speeds.Add(-(P[i + 1].z - P[i - 1].z) / (2f * dt));
                     }

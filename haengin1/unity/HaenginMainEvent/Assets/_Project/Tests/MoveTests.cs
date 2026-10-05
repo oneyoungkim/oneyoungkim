@@ -52,12 +52,12 @@ namespace Haengin.Tests
                 m.SetMoveInput(Vector3.forward, 1f, false);
                 yield return null;
                 t += Dt;
-                if (t95 < 0f && m.PlanarSpeed >= 0.95f * 1.6f) t95 = t;
+                if (t95 < 0f && m.PlanarSpeed >= 0.95f * m.T.walkSpeed) t95 = t;
                 if (i == n - 61) mark = m.Position;
             }
             float avg = Lab.Flat(m.Position - mark).magnitude / (60 * Dt);
             Debug.Log($"[M1Test] T02 걷기 평균 {avg:F3} m/s, 95% 도달 {t95:F3}s");
-            Assert.That(avg, Is.EqualTo(1.6f).Within(0.02f), "걷기 속도 1.60 ± 0.02");
+            Assert.That(avg, Is.EqualTo(m.T.walkSpeed).Within(0.02f), $"걷기 속도 {m.T.walkSpeed:F2} ± 0.02");
             Assert.That(t95, Is.InRange(0f, 0.15f), "0 → 걷기 95% ≤ 0.15초");
         }
 
@@ -237,9 +237,9 @@ namespace Haengin.Tests
                 if (Mathf.Abs(t - 3f) < Dt / 2f) z0 = m.Position.z;
             });
             float along = (m.Position.z - z0) / 2f;   // 마지막 2초 벽 따라 평균 속도
-            Debug.Log($"[M1Test] T07 벽 따라 걷기: 벽에 닿음 {touchAt:F2}s · 마지막 2초 벽 따라 {along:F2} m/s(걷기의 {along / 1.6f * 100f:F0}%) · 벽 관통 {through}프레임 · 최대 x+반지름 {maxX + m.Controller.radius:F3}(벽 면 {Face})");
+            Debug.Log($"[M1Test] T07 벽 따라 걷기: 벽에 닿음 {touchAt:F2}s · 마지막 2초 벽 따라 {along:F2} m/s(걷기의 {along / m.T.walkSpeed * 100f:F0}%) · 벽 관통 {through}프레임 · 최대 x+반지름 {maxX + m.Controller.radius:F3}(벽 면 {Face})");
             Assert.That(touchAt, Is.InRange(0f, 2.9f), "3초 안에 벽에 닿음");
-            Assert.That(along, Is.GreaterThanOrEqualTo(0.6f * 1.6f), "벽 따라 속도 ≥ 걷기의 0.6배");
+            Assert.That(along, Is.GreaterThanOrEqualTo(0.6f * m.T.walkSpeed), "벽 따라 속도 ≥ 걷기의 0.6배");
             Assert.AreEqual(0, through, "벽 관통 0");
         }
 

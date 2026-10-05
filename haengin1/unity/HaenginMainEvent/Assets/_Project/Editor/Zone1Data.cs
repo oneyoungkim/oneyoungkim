@@ -84,7 +84,7 @@ namespace Haengin.EditorTools
                 var ctl = Obj(meta, "controller");
                 if (ctl != null) { z.SlopeLimit = Num(ctl, "slopeLimitDeg", 35f); z.StepOffset = Num(ctl, "stepOffset", 0.3f); }
                 var sp = Obj(meta, "speeds");
-                if (sp != null) { z.Walk = Num(sp, "walk", 1.6f); z.Run = Num(sp, "run", 4.5f); }
+                if (sp != null) { z.Walk = Num(sp, "walk", 1.4f); z.Run = Num(sp, "run", 4.5f); }
                 var ph = Obj(meta, "playerHeights");
                 if (ph != null) z.SiwooHeight = Num(ph, "siwoo", 1.74f);
             }

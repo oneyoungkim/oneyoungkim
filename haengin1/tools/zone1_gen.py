@@ -1071,7 +1071,7 @@ data = {
         "pointsY": "roads/stairs/pads/route/spawn 의 y = 그 위를 걷는 면 높이. walls 의 y = 성벽 기초(지면) 높이. blocks 의 center 는 상자 가운데",
         "controller": {"slopeLimitDeg": 35, "stepOffset": 0.3, "stairRiserMax": 0.18,
                        "note": "경사 35° 이하는 경사로, 그보다 가파르면 계단. 계단 단 높이 0.18m 이하"},
-        "speeds": {"walk": 1.6, "run": 4.5, "sprint": 6.0},
+        "speeds": {"walk": 1.4, "run": 4.5, "sprint": 6.0},
         "playerHeights": {"siwoo": 1.74, "taeo": 1.83},
     },
     "bounds": {"min": P(X0, 15.0, Z0), "max": P(-130.0, 62.0, 174.0),

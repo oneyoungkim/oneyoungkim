@@ -31,20 +31,31 @@ def fcurves(a):
                 for fc in cb.fcurves: yield fc
 fcs = list(fcurves(act))
 f0, f1 = (round(x) for x in act.frame_range)
-# 루프 이음새: 마지막 다음 프레임(f1+1)에 첫 프레임 값을 넣는다 → Unity 에서 길이가 정확히 한 주기(마지막→처음 한 칸이 빠지지 않음)
+# 루프 이음새: 클립 끝 프레임이 첫 프레임과 같으면(Meshy/Tripo 새 클립 — 끝이 처음과 같은 '닫힌 루프') 그대로 둔다.
+# 다르면(예전 Casual_Walk·Run_02: 마지막 → 처음이 한 프레임 움직임) 마지막 다음 프레임(f1+1)에 첫 프레임 값을 넣는다
+# → 어느 쪽이든 Unity 에서 길이가 정확히 한 주기(이음새에서 한 칸이 빠지거나 한 칸 멈추지 않음)
 quat = {}
 for fc in fcs:
     if fc.data_path.endswith('rotation_quaternion'):
         quat.setdefault(fc.data_path, {})[fc.array_index] = fc
-for fc in fcs:
-    v = fc.evaluate(f0)
+def same(fc):
+    a, b = fc.evaluate(f0), fc.evaluate(f1)
     if fc.data_path.endswith('rotation_quaternion'):
         g = quat[fc.data_path]
-        dot = sum(g[i].evaluate(f0) * g[i].evaluate(f1) for i in range(4))
-        if dot < 0: v = -v
-    fc.keyframe_points.insert(f1 + 1, v, options={'FAST'})
-for fc in fcs: fc.update()
-sc.frame_start, sc.frame_end = int(f0), int(f1) + 1
+        if sum(g[i].evaluate(f0) * g[i].evaluate(f1) for i in range(4)) < 0: b = -b
+        return abs(a - b) < 2e-3
+    return abs(a - b) < 2e-3 * max(1.0, abs(a))
+closed = all(same(fc) for fc in fcs)
+if not closed:
+    for fc in fcs:
+        v = fc.evaluate(f0)
+        if fc.data_path.endswith('rotation_quaternion'):
+            g = quat[fc.data_path]
+            if sum(g[i].evaluate(f0) * g[i].evaluate(f1) for i in range(4)) < 0: v = -v
+        fc.keyframe_points.insert(f1 + 1, v, options={'FAST'})
+    for fc in fcs: fc.update()
+sc.frame_start, sc.frame_end = int(f0), int(f1) + (0 if closed else 1)
+print('LOOP', 'closed(끝 = 처음, 그대로)' if closed else 'open(이음새 프레임 추가)')
 print('CLIP', clip, 'range', tuple(act.frame_range), 'frames', sc.frame_start, sc.frame_end, 'fcurves', len(fcs))
 
 # 참고: FBX 뼈 노드의 기본 자세(Lcl 값)는 내보낼 때의 '현재 자세'(클립 한 프레임)다(액션을 떼고 휴지 자세로 돌려도 바뀌지 않음 — 2026-10-06 확인).

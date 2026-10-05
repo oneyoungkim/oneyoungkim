@@ -67,10 +67,11 @@ namespace Haengin.Tests
             asset.Disable();
             Time.captureDeltaTime = 0f;
             Debug.Log($"[M1Test] T16 입력: 패드 걷기 {padWalk:F2} · R2 달리기 {padRun:F2} · 오른스틱 yaw {yaw0:F1}→{yaw1:F1} · 키보드 W {kbWalk:F2} · W+Shift {kbRun:F2}");
-            Assert.That(padWalk, Is.GreaterThan(1.5f), "패드 왼스틱 걷기");
+            float walk = r.Motor.T.walkSpeed;
+            Assert.That(padWalk, Is.GreaterThan(0.94f * walk), "패드 왼스틱 걷기");
             Assert.That(padRun, Is.GreaterThan(4.0f), "패드 R2 달리기");
             Assert.That(Mathf.DeltaAngle(yaw0, yaw1), Is.GreaterThan(20f), "패드 오른스틱 카메라 회전");
-            Assert.That(kbWalk, Is.GreaterThan(1.5f), "키보드 W 걷기");
+            Assert.That(kbWalk, Is.GreaterThan(0.94f * walk), "키보드 W 걷기");
             Assert.That(kbRun, Is.GreaterThan(4.0f), "키보드 Shift 달리기");
         }
 

@@ -12,7 +12,7 @@
     "yaw": "Unity Y축 회전(도). 0 = size[0] 이 +X, size[2] 가 +Z. 양수 = 위에서 볼 때 시계 방향",
     "pointsY": "roads/stairs/pads/route/spawn 의 y = 그 위를 걷는 면 높이. walls 의 y = 성벽 기초(지면) 높이. blocks 의 center 는 상자 가운데",
     "controller": {"slopeLimitDeg": 35, "stepOffset": 0.3, "stairRiserMax": 0.18, "note": "경사 35° 이하는 경사로, 그보다 가파르면 계단. 계단 단 높이 0.18m 이하"},
-    "speeds": {"walk": 1.6, "run": 4.5, "sprint": 6.0},
+    "speeds": {"walk": 1.4, "run": 4.5, "sprint": 6.0},
     "playerHeights": {"siwoo": 1.74, "taeo": 1.83}
   },
   "bounds": {"min": [-274.0, 15.0, 70.0], "max": [-130.0, 62.0, 174.0], "note": "보이지 않는 경계벽(높이 20m)을 이 사각형 둘레에 세운다. 북쪽은 성벽이 1차 경계"},

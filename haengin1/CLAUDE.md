@@ -31,6 +31,7 @@
 - **3D 캐릭터 파이프라인 시험**: A포즈 4방향 설정화 → Tripo 멀티뷰 3D → 자동 리깅. 시우 모델 모양은 설정화와 잘 맞음(`concept/art/3d/`, 시험 페이지 https://claude.ai/artifact/Mab3mDahjjWeNvFxaPYfkz). 리깅은 팔이 몸에 붙은 입력 탓에 실패 → 팔 뗀 A포즈로 재생성 필요. 캐릭터당 약 18~27크레딧, 힉스필드 잔액 12.22라 충전 필요(대표에게 보고함). 이후 유니티 Humanoid로 가져가는 게 본 경로
 - Windows 설치 스크립트 `tools/install_windows.ps1`로 **2026-10-05 대표 PC 설치 완료**: Unity 6000.3.25f1(+IL2CPP·Visual Studio·한국어), Unity Hub 3.22.2(MSIX), VRoid Studio, GitHub Desktop. 대표 Unity 로그인 완료
 - **Unity 프로젝트** `unity/HaenginMainEvent` (2026-10-05): URP 17.3, Cinemachine 3.1.7, Input System, Timeline, ProBuilder, glTFast(GLB), UniVRM VRM 1.0 v0.131.3, Unity Toon Shader 0.15.1-preview. Sandbox 장면에 시우 GLB 1.74m + 툰 재질·외곽선. 화면 없이 촬영·빌드하는 배치 도구와 명령은 `unity/README.md`. **이 PC 주의: Unity 띄우기 전 `$env:TMPDIR=$env:TEMP`(2026-10-05 이스트소프트 삭제·TMPDIR 제거했지만 이전에 뜬 프로세스는 옛 값을 물려받음), 프로젝트 경로 53자 이하 유지(경로 길이 한계), Unity는 batchmode로만**
+- **캐릭터 3D·동작(2026-10-05~06)**: 시우·태오 리깅 모델(Tripo 멀티뷰 → Blender로 정면 돌리기 → 힉스필드 3D Rigging, 손가락 뼈 없음) + 동작(Meshy 라이브러리: 시우 대기 Idle_6(246)·태오 Idle_3(243), 걷기 Quick_Walk(115), 달리기 Run_02(14)). 원본 GLB `concept/art/3d/anim/`, Unity FBX 변환 `tools/glb2fbx.py`, Humanoid + 속도 블렌드 트리. **걷기 속도 1.4m/s(1.6에서 낮춤)**, 달리기 4.5. M1 빌드 `C:\클로드\haengin1-builds\M1`(시우가 걷고 뜀), 테스트 27/27
 - 사용자 결정 대기: 코너맨 세계관 공유 범위, 시우 다문화 설정, UFC 실명 여부, 시우 3·4화 새 설정(곽반장=아빠 15년 동료, 미성년 하루 7시간 노동 규칙의 시스템화, 성인 흡연 묘사도 뺄지)
 
 ## 규칙

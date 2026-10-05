@@ -7,7 +7,8 @@ namespace Haengin
     public sealed class MoveTuning : ScriptableObject
     {
         [Header("속도 m/s")]
-        public float walkSpeed = 1.6f;
+        [Tooltip("걷기(m/s). 2026-10-06 1.6 → 1.4: 걷기 클립 Quick_Walk 의 고유 속도(약 1.3 m/s)에 가깝게 — 걸음이 종종걸음처럼 빨라지지 않게")]
+        public float walkSpeed = 1.4f;
         public float runSpeed = 4.5f;
         [Tooltip("패드를 조금 기울였을 때 가장 느린 걷기")] public float minWalkSpeed = 0.5f;
         [Tooltip("이 기울기 이상이면 걷기 최고 속도")] public float stickFull = 0.9f;

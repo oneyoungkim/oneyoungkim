@@ -379,15 +379,19 @@ namespace Haengin.Tests
             yield return WalkUntil(route.Points[1], 1.0f, true, s5, () => (t5 += Dt) > 3.0f);
             notes.Add(Shot(camera, Path.Combine(dir, "m1_game_5_run.png"), "상가거리 달리기"));
 
-            // (7) 대기 앞 3/4(리깅 모델 얼굴·옷·툰 외곽선 확인): 시작 지점에서 카메라를 앞쪽 145°로
+            // (7) 대기 정면·앞 3/4(리깅 모델 얼굴·옷·툰 외곽선 확인): 시작 지점에서 카메라를 앞쪽(180°)과 3/4(145°)로
             Target(1);
             motor.Teleport(route.SpawnPos, route.SpawnYaw);
             camRig.SnapBehind();
             camRig.SetAutoMode(CamTuning.Auto.Off, false);
-            camRig.Orbit.HorizontalAxis.Value = Mathf.DeltaAngle(0f, route.SpawnYaw + 145f);
+            camRig.Orbit.HorizontalAxis.Value = Mathf.DeltaAngle(0f, route.SpawnYaw + 180f);
             camRig.Cam.PreviousStateIsValid = false;
             yield return Lab.Seconds(1.5f);
-            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_7_idle_front.png"), "대기 앞 3/4"));
+            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_7_idle_front.png"), "대기 정면"));
+            camRig.Orbit.HorizontalAxis.Value = Mathf.DeltaAngle(0f, route.SpawnYaw + 145f);
+            camRig.Cam.PreviousStateIsValid = false;
+            yield return Lab.Seconds(0.5f);
+            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_11_idle_34.png"), "대기 앞 3/4"));
 
             // (8) 걷기 옆모습(게임 카메라): 상가거리 쪽으로 곧게 걸으며 카메라를 시우 오른쪽 옆(몸 방향 − 90°)에
             var toCp2 = Lab.Flat(route.Points[1] - route.SpawnPos).normalized;
