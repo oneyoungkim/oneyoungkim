@@ -17,6 +17,7 @@ namespace Haengin
         public EnemyBrain Brain;
         public ClipTable Clips;
         [Tooltip("상태 바꿀 때 섞는 시간(10-2: 0.05초)")] public float Fade = 0.05f;
+        [Tooltip("덩치: 재생 뒤 위팔을 몸 바깥으로 벌리는 각(°) — 시우 리그 클립의 팔이 굵은 몸통을 파고들지 않게(08 4-8 · 11-4, Editor ArmProbe 로 정함)")] public float ArmSpread;
 
         public static readonly int HRate = Animator.StringToHash("AtkRate"), HCX = Animator.StringToHash("CX"), HCY = Animator.StringToHash("CY"),
                                    HBlend = Animator.StringToHash("Blend"), HLocoRate = Animator.StringToHash("Rate"), HSpeed = Animator.StringToHash("Speed");
@@ -125,7 +126,13 @@ namespace Haengin
                     st = "Kneel"; key = "kneel" + hurtCount; r = 1f; return;     // 벽 러시 마무리: 벽에 기대 한쪽 무릎(365 앞부분)
                 case Fighter.Phase.Fall:
                     st = big && HasState("FallBig") ? "FallBig" : "Fall"; key = "down" + hurtCount;
-                    r = Clips != null && Clips.TryGet(st, out var fe) && fe.Hit > 0f ? Mathf.Clamp(fe.Hit / t.DownFall, 0.3f, 6f) : 1f;
+                    if (Clips != null && Clips.TryGet(st, out var fe) && fe.Hit > 0f)
+                    {
+                        // 보통 다운(366): 배속 대신 앞부분(무릎이 꺾이기 전 서 있는 부분)을 건너뛰어 바닥 닿음 = 표의 0.42초(11-4).
+                        // 크게 날아가는 다운(187)은 공중 부분을 살리려 배속으로
+                        if (st == "Fall") { r = 1f; offset = Mathf.Max(0f, fe.Hit - (float)t.DownFall); }
+                        else r = Mathf.Clamp(fe.Hit / t.DownFall, 0.3f, 6f);
+                    }
                     return;
                 case Fighter.Phase.Lie:
                     st = big && HasState("LieBig") ? "LieBig" : "Lie"; key = "lie" + st; return;
@@ -151,7 +158,7 @@ namespace Haengin
             if (Player != null && Player.Held != null) { Hold(out st, out r, out offset, out key); return; }
             // 도발: 88 가슴 치기. 냉장고는 껌 풍선(4-4 — 클립 없이 전투 대기 그대로, 풍선은 11단계 이펙트)
             if (Brain != null && Brain.State == EnemyBrain.S.Taunt && (Brain.Def == null || Brain.Def.Type != EnemyDef.Kind.Naengjanggo)) { st = "Taunt"; key = "taunt"; r = FitRate("Taunt", t.TauntTime); return; }
-            bool loco = !InCombat || (Brain != null && (Brain.State == EnemyBrain.S.Approach || Brain.State == EnemyBrain.S.Flee) && Speed() > 1.7f);
+            bool loco = !InCombat || (Brain != null && (Brain.State == EnemyBrain.S.Approach || Brain.State == EnemyBrain.S.Flee || Brain.State == EnemyBrain.S.Leave) && Speed() > 1.7f);
             st = loco ? "Move" : "CombatMove";
             key = st;
             r = 1f;
@@ -184,6 +191,15 @@ namespace Haengin
                 st = "Charge";
                 key = run.T < -m.ChargeTime ? (object)("lead" + run.GetHashCode()) : "charge" + run.GetHashCode();
                 r = run.T < -m.ChargeTime ? 0f : FitRate("Charge", m.ChargeTime);
+                return;
+            }
+            if (m.ActiveAdvance > 0f)
+            {
+                // 태클(512): '!!' 동안 몸 낮춘 돌진 첫 자세(510 첫 프레임) → 판정(돌진) 동안 태클 클립을 그 길이에 맞춰
+                if (run.T < m.ActiveStart - 1e-4) { st = "Charge"; r = 0f; key = "tlead" + run.GetHashCode(); return; }
+                st = HasState("Tackle") ? "Tackle" : "Charge";
+                r = FitRate(st, (float)(m.ActiveEnd - m.ActiveStart));
+                key = "tackle" + run.GetHashCode();
                 return;
             }
             st = ClipTable.StateFor(m);
@@ -254,6 +270,30 @@ namespace Haengin
                     anim.SetFloat(HSpeed, loco);
                 }
             }
+        }
+
+        // 애니메이터가 자세를 쓴 뒤(HitReact 젖힘보다 먼저 — 실행 순서 18 < 100)
+        void LateUpdate()
+        {
+            if (ArmSpread > 0f && anim != null && anim.isHuman) SpreadArms(anim, ArmSpread);
+        }
+
+        /// 위팔을 몸 바깥쪽으로 deg 만큼 벌린다(이미 옆으로 뻗은 팔일수록 덜). 아래팔·손은 따라감.
+        public static void SpreadArms(Animator a, float deg)
+        {
+            var right = a.transform.right;
+            Spread(a.GetBoneTransform(HumanBodyBones.LeftUpperArm), a.GetBoneTransform(HumanBodyBones.LeftLowerArm), -right, deg);
+            Spread(a.GetBoneTransform(HumanBodyBones.RightUpperArm), a.GetBoneTransform(HumanBodyBones.RightLowerArm), right, deg);
+        }
+
+        static void Spread(Transform up, Transform low, Vector3 outward, float deg)
+        {
+            if (up == null || low == null) return;
+            var dir = (low.position - up.position).normalized;
+            var axis = Vector3.Cross(dir, outward);
+            if (axis.sqrMagnitude < 1e-4f) return;
+            float k = 1f - Mathf.Clamp01(Vector3.Dot(dir, outward));
+            up.rotation = Quaternion.AngleAxis(deg * k, axis.normalized) * up.rotation;
         }
     }
 }

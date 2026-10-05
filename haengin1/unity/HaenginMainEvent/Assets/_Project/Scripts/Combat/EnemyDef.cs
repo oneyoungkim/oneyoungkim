@@ -37,6 +37,15 @@ namespace Haengin
         [Tooltip("멀리서(표면 > 2m) 쓰는 기술(깐족이 달려들기)과 그 확률")] public MoveDef Far;
         public float FarChance;
         [Tooltip("막은 직후 카운터(석 달 카운터 훅)")] public MoveDef Counter;
+
+        [Header("야차 상대(스크럼 — 4-6)")]
+        [Tooltip("태클(멀리서) — 있으면 야차 상대 고르기: 거리 > 3m 태클 / 다가감, ≤ 1.5m 밀기·휘두르기·물러나기")] public MoveDef Tackle;
+        [Tooltip("거리 > 3m 에서 태클 확률(페이즈 1 · 2)")] public float TackleChance = 0.5f, TackleChance2 = 0.8f;
+        [Tooltip("태클 헛방 뒤 비틀(초, 등 노출 — 맞으면 경직 ×1.5): 페이즈 1 · 2")] public float Stumble = 1.2f, Stumble2 = 0.9f;
+        [Tooltip("가까이(≤ 1.5m) 물러나기 확률")] public float BackOff = 0.2f;
+        [Tooltip("페이즈 2 = HP 이 비율 이하: 도발 없음 · 쿨다운 · 경직 게이지 · 기술 바꿈")] public float Phase2Hp;
+        public float Cooldown2 = 1.3f, ArmorGauge2 = 50f;
+        [Tooltip("페이즈 2 기술(같은 순서·확률 — 밀기 → 휘두르기 연결)")] public MoveDef[] Moves2 = new MoveDef[0];
     }
 
     /// 08 문서 4-4 표의 기본값
@@ -47,6 +56,7 @@ namespace Haengin
             EnemyDef.Kind.Kkanjok => Kkanjok(),
             EnemyDef.Kind.Seokdal => Seokdal(),
             EnemyDef.Kind.Naengjanggo => Naengjanggo(),
+            EnemyDef.Kind.Scrum => Scrum(),
             _ => Kkanjok(),
         };
 
@@ -91,6 +101,24 @@ namespace Haengin
             d.Cooldown = 2.2f; d.TauntChance = 0.10f; d.GrabHold = 2.0f;
             d.Armor = true; d.ArmorGauge = 30f;
             d.Moves = new[] { MoveLib.NjSwing(), MoveLib.NjKick(), MoveLib.NjHug() }; d.Weights = new[] { 0.4f, 0.3f, 0.3f };
+            return d;
+        }
+
+        /// '스크럼' 육중현(야차 Y1 — 4-6): 188cm·102kg, HP 260, 반지름 0.40, 간보기 1.0·들어갈 때 2.4·태클 5.5, 쿨다운 1.8(페이즈 2 1.3),
+        /// 슈퍼아머 40(페이즈 2 50), 도발 20%(페이즈 1), 가까이 밀기 40 · 휘두르기 40 · 물러나기 20, 멀리 태클
+        public static EnemyDef Scrum()
+        {
+            var d = ScriptableObject.CreateInstance<EnemyDef>();
+            d.name = "Enemy_Scrum";
+            d.Type = EnemyDef.Kind.Scrum; d.Label = "'스크럼' 육중현";
+            d.Height = 1.88f; d.Radius = 0.40f; d.Hp = 260;
+            d.ApproachSpeed = 1.6f; d.StrafeSpeed = 1.0f; d.AttackInSpeed = 2.4f;
+            d.Cooldown = 1.8f; d.TauntChance = 0.20f; d.GrabHold = 2.0f;
+            d.Armor = true; d.ArmorGauge = 40f;
+            d.Moves = new[] { MoveLib.ScPush(), MoveLib.ScSwing() }; d.Weights = new[] { 0.5f, 0.5f };
+            d.Moves2 = new[] { MoveLib.ScPushChain(), MoveLib.ScSwing() };
+            d.Tackle = MoveLib.ScTackle();
+            d.Phase2Hp = 0.5f; d.Cooldown2 = 1.3f; d.ArmorGauge2 = 50f;
             return d;
         }
     }

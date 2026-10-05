@@ -39,6 +39,7 @@ namespace Haengin.EditorGame
             M1Setup.EnsureTuning();
             M1Setup.BuildPlayerPrefab();
             EnemyPrefabs();
+            StageSetup.CrowdPrefabs();
             BuildLab();
         });
 
@@ -49,8 +50,11 @@ namespace Haengin.EditorGame
             EnsureAssets();
             CharSetup.Setup();
             ClipSetup.Setup();
-            M1Setup.BuildCore();
+            M1Setup.EnsureTuning();
+            M1Setup.BuildPlayerPrefab();
             EnemyPrefabs();
+            StageSetup.CrowdPrefabs();
+            M1Setup.BuildCore();        // Zone1 다시 만들기 → AttachRig → StageSetup.AddCombatToZone1(인카운터·야차)
             BuildLab();
         });
 
@@ -160,7 +164,8 @@ namespace Haengin.EditorGame
             var subs = new List<MoveDef>();
             void Add(MoveDef m) { if (m == null || subs.Contains(m)) return; subs.Add(m); AssetDatabase.AddObjectToAsset(m, d); if (m.Followup != null) Add(m.Followup); }
             foreach (var m in d.Moves) Add(m);
-            Add(d.Far); Add(d.Counter);
+            if (d.Moves2 != null) foreach (var m in d.Moves2) Add(m);
+            Add(d.Far); Add(d.Counter); Add(d.Tackle);
             EditorUtility.SetDirty(d);
             AssetDatabase.SaveAssets();
             Debug.Log($"{Tag} 적 정의 만듦: {EnemyDefPath(k)} ({d.Label} HP {d.Hp} · 기술 {string.Join(", ", subs.Select(m => m.Label))})");
@@ -207,7 +212,7 @@ namespace Haengin.EditorGame
         {
             var ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ClipSetup.EnemyCtrl);
             var table = AssetDatabase.LoadAssetAtPath<ClipTable>(ClipSetup.TablePath);
-            foreach (EnemyDef.Kind k in new[] { EnemyDef.Kind.Kkanjok, EnemyDef.Kind.Seokdal, EnemyDef.Kind.Naengjanggo }) EnemyDefAsset(k);
+            foreach (EnemyDef.Kind k in new[] { EnemyDef.Kind.Kkanjok, EnemyDef.Kind.Seokdal, EnemyDef.Kind.Naengjanggo, EnemyDef.Kind.Scrum }) EnemyDefAsset(k);
             foreach (var n in ClipSetup.Enemies)
             {
                 var model = AssetDatabase.LoadAssetAtPath<GameObject>(ClipSetup.EnemyFbx(n));
@@ -229,6 +234,8 @@ namespace Haengin.EditorGame
                 anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 var fa = go.AddComponent<FighterAnim>();
                 fa.Clips = table;
+                // 덩치: 시우 리그 클립의 팔이 굵은 몸통을 파고들지 않게 위팔을 벌림(11-4 — ArmProbe 실측으로 정함)
+                if (n == "Naengjanggo" || n == "Scrum") fa.ArmSpread = ClipSetup.BulkyArmSpread;
                 go.AddComponent<HandShape>();
                 PrefabUtility.SaveAsPrefabAsset(go, EnemyPrefab(n), out bool ok);
                 string av = anim.avatar != null ? anim.avatar.name : "-", cn = anim.runtimeAnimatorController != null ? anim.runtimeAnimatorController.name : "-";
@@ -306,7 +313,8 @@ namespace Haengin.EditorGame
                 vol.sharedProfile = profile;
             }
 
-            CombatLab.Build(LabMat("M_Lab_Floor", CombatLab.FloorColor), LabMat("M_Lab_Wall", CombatLab.WallColor), LabMat("M_Lab_Crowd", CombatLab.CrowdColor));
+            var labRoot = CombatLab.Build(LabMat("M_Lab_Floor", CombatLab.FloorColor), LabMat("M_Lab_Wall", CombatLab.WallColor), LabMat("M_Lab_Crowd", CombatLab.CrowdColor));
+            StageSetup.ReplaceLabCrowd(labRoot);
 
             // 시우(실제 Player 프리팹) + 카메라 + 전투 카메라 + 전환
             var mt = AssetDatabase.LoadAssetAtPath<MoveTuning>(M1Setup.MoveTuningPath);

@@ -56,6 +56,7 @@ namespace Haengin
         [Tooltip("돌진 거리 m · 시간 초(깐족이 달려들기 2.5m 0.45초): 예고 뒤 발생 앞에 들어간다")] public float ChargeDist, ChargeTime;
         [Tooltip("이어지는 기술(원투의 2타) — 이 기술의 연결 창에서 바로")] public MoveDef Followup;
         [Tooltip("클립 재생 배율(표의 '0.7배' 등) — 9단계 클립 연결에서 측정 배율에 곱함")] public float ClipRate = 1f;
+        [Tooltip("판정 동안 앞으로 달리는 거리 m(스크럼 태클 4.0m — 판정 내내 검사, 맞히면 멈춤)")] public float ActiveAdvance;
 
         public const float Fps = 60f;
         public static double Sec(int f) => f / (double)Fps;
@@ -240,6 +241,38 @@ namespace Haengin
             m.Lead = 0.5f; m.Warn = 1; m.BlockKnock = 1.0f;
             return m;
         }
+        // ── 4-6 야차 상대 스크럼(188cm·102kg)
+        /// 스크럼 밀기: 260, 12/4/16, 1.2m, 6, 넉백 1.2m(막아도 0.8m), 중
+        public static MoveDef ScPush()
+        {
+            var m = M("ScPush", "밀기(스크럼)", 260, 12, 4, 16, 1.2f, 40f, 6, 24, 1.2f, Power.Mid, 0, "퍽!", FlinchKind.Body);
+            m.BlockKnock = 0.8f;
+            return m;
+        }
+        /// 페이즈 2: 밀기 → 휘두르기 연결
+        public static MoveDef ScPushChain()
+        {
+            var m = ScPush();
+            m.name = "ScPush2"; m.Label = "밀기 → 휘두르기(스크럼)";
+            m.Followup = ScSwing();
+            return m;
+        }
+        /// 스크럼 휘두르기: 128 양손 내려찍기(문서 193 0.75배 → 2차 클립), '!' 0.5초, 20/4/18, 1.2m, 15, 경직 40, 강, 가드 −40
+        public static MoveDef ScSwing()
+        {
+            var m = M("ScSwing", "휘두르기(스크럼)", 128, 20, 4, 18, 1.2f, 60f, 15, 40, 0.30f, Power.Heavy, 0, "콰직!", FlinchKind.Head);
+            m.Lead = 0.5f; m.Warn = 1; m.GuardDmg = 40f;
+            return m;
+        }
+        /// 스크럼 태클: 512, '!!' 0.6초(몸 낮추고 발 구름) + 흰 번쩍, 판정 = 돌진 4.0m(0.73초) 내내 몸 앞 0.8m, 22, 다운, 막기 불가
+        public static MoveDef ScTackle()
+        {
+            var m = M("ScTackle", "태클(스크럼)", 512, 1, 44, 12, 0.8f, 50f, 22, 0, 0f, Power.Heavy, 0, "쿵!", FlinchKind.Body);
+            m.Lead = 0.6f; m.Warn = 2; m.Unblockable = true; m.Down = true; m.DownKnock = 1.5f;
+            m.ActiveAdvance = 4.0f; m.Magnet = 0f; m.LinkAfter = 0;
+            return m;
+        }
+
         /// 냉장고 껴안기: 259, '!!' 0.7초 + 흰 번쩍 2번, 24/6/30(헛방), 1.2m, 18, 다운 1.5m, 강, 막기 불가
         public static MoveDef NjHug()
         {

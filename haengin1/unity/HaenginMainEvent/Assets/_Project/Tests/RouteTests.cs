@@ -27,6 +27,7 @@ namespace Haengin.Tests
         [UnitySetUp]
         public IEnumerator SetUp()
         {
+            Encounter.Suppress = true;      // M2: 주차장(체크포인트 3) 인카운터가 경로 걷기를 막지 않게
             Time.captureDeltaTime = Lab.Dt;
             GameState.SetPaused(false);
             yield return Lab.UnloadOurs(default);

@@ -169,7 +169,13 @@ namespace Haengin
             else PlanCrowd(target);
 
             if (Cam == null) Cam = FindAnyObjectByType<HeatCam>();
-            if (Cam != null) Cam.Begin(me, target);
+            if (Cam != null)
+            {
+                // 되받기: 대상 뒤 구경꾼도 화면에(떠미는 동작이 보이게)
+                Vector3? also = null;
+                if (kind == HeatKind.CrowdReturn) also = target.Position + HitResolver.Flat(target.Position - me.Position).normalized * (CrowdBehind + target.Radius);
+                Cam.Begin(me, target, also);
+            }
             Started?.Invoke(this);
             Debug.Log($"[HeatAction] {(kind == HeatKind.WallRush ? "벽 러시" : "구경꾼 되받기")} 시작 · 대상 {target.Label} · 멈춘 적 {frozen.Count - (tb != null ? 1 : 0)}");
         }
@@ -325,12 +331,18 @@ namespace Haengin
                     var near = new List<(Transform, float)>();
                     foreach (Transform ch in ring.transform)
                     {
-                        if (ch.GetComponent<Renderer>() == null) continue;
+                        if (ch.GetComponentInChildren<Renderer>() == null) continue;
                         float d = HitResolver.Flat(ch.position - tg.Position).magnitude;
                         if (d < 2.0f) near.Add((ch, d));
                     }
                     near.Sort((a, b) => a.Item2.CompareTo(b.Item2));
-                    for (int i = 0; i < near.Count && i < 3; i++) shovers.Add((near[i].Item1, near[i].Item1.position, near[i].Item1.rotation));
+                    for (int i = 0; i < near.Count && i < 3; i++)
+                    {
+                        var t = near[i].Item1;
+                        var cf = t.GetComponent<CrowdFigure>();
+                        if (cf != null) { cf.Shove(tg.Position); continue; }     // 사람 모델: 떠미는 동작(260) + 숙이며 0.2m
+                        shovers.Add((t, t.position, t.rotation));
+                    }
                 }
                 CrowdShove?.Invoke(tg.Position);
             }

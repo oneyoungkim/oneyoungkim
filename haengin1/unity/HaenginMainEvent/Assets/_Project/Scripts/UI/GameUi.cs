@@ -27,13 +27,21 @@ namespace Haengin
         /// 조작 안내 줄을 바꿔 쓴다(전투 중 CombatHud 가 전투 조작으로 — 08 7-5). null = 탐색 안내
         public static string HintOverride;
 
-        public enum Item { Resume = 0, AutoAlign = 1, Quit = 2 }
-        public const int ItemCount = 3;
+        /// 메뉴 항목. M1 의 셋(계속·카메라 자동 정렬·끝내기)은 순서 그대로 두고 M2 항목을 뒤에 붙인다(08 7-5·8-1·8-2):
+        /// 흔들림 줄이기(늘) · 전투 다시(인카운터를 이긴 뒤 그 근처에서) · 항복(야차 중에만)
+        public enum Item { Resume = 0, AutoAlign = 1, Quit = 2, Reduce = 3, Retry = 4, Surrender = 5 }
+        public const int MaxItems = 6;
+        /// 지금 보이는 항목 수
+        public int ItemCount => visible.Count;
+        /// '전투 다시'(인카운터가 넣음, null 이면 안 보임) · '항복'(야차가 넣음)
+        public static Action RetryHook, SurrenderHook;
+        readonly System.Collections.Generic.List<Item> visible = new System.Collections.Generic.List<Item> { Item.Resume, Item.AutoAlign, Item.Quit, Item.Reduce };
+        public Item ItemAt(int i) => i >= 0 && i < visible.Count ? visible[i] : Item.Resume;
 
         /// 지금 고른 항목(0 = 계속)
         public int Selected { get; private set; }
         public bool MenuVisible => menuRoot != null && menuRoot.activeSelf;
-        public string Label(int i) => rows != null && i >= 0 && i < rows.Length ? rows[i].Label.text : "";
+        public string Label(int i) => rows != null && i >= 0 && i < visible.Count ? rows[i].Label.text : "";
         public string HintText => hint != null ? hint.text : "";
 
         static readonly Color Ink = new Color(0.102f, 0.078f, 0.090f);          // #1A1417
@@ -50,14 +58,14 @@ namespace Haengin
         float repeatAt;
         Vector2 lastMouse;
         GameObject menuRoot, toastPlate;
-        TextMeshProUGUI hint, toastText;
+        TextMeshProUGUI hint, toastText, menuHint;
         Row[] rows;
 
         void OnEnable() { Instance = this; }
         void OnDisable() { if (Instance == this) Instance = null; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; }
+        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; RetryHook = null; SurrenderHook = null; }
 
         System.Collections.IEnumerator Start()
         {
@@ -67,7 +75,7 @@ namespace Haengin
             // 실행 확인 한 줄(Player.log): 메뉴·안내 글자가 한글 글꼴에 다 있는지(기호 ↑↓×○◀▶ 포함)
             yield return new WaitForSecondsRealtime(3.4f);
             var f = hint != null ? hint.font : null;
-            string all = Hint + MenuHint + "일시정지계속끝내기카메라 자동 정렬◀▶걷기·달리기달리기만끔";
+            string all = Hint + MenuHint + "일시정지계속끝내기카메라 자동 정렬◀▶걷기·달리기달리기만끔흔들림 줄이기켬전투 다시항복";
             uint[] missing = null;
             bool ok = f != null && f.HasCharacters(all, out missing, false, true);
             Debug.Log($"[M1] 화면 UI 확인: 글꼴 {(f != null ? f.name : "없음")} · 글꼴에 없는 글자 {(ok ? 0 : missing?.Length ?? -1)} · 메뉴 입력 {(nav != null ? "Menu 맵" : "없음")} · 카메라 자동 정렬 {(Cam != null ? AutoName(Cam.AutoMode) : "-")}");
@@ -131,7 +139,12 @@ namespace Haengin
             if (dir == 0) heldDir = 0;
             else if (dir != heldDir) { Move(dir); heldDir = dir; repeatAt = now + 0.40f; }
             else if (now >= repeatAt) { Move(dir); repeatAt = now + 0.15f; }   // 누르고 있으면 반복
-            if (side != heldSide) { heldSide = side; if (side != 0 && Selected == (int)Item.AutoAlign) CycleAuto(side); }
+            if (side != heldSide)
+            {
+                heldSide = side;
+                if (side != 0 && ItemAt(Selected) == Item.AutoAlign) CycleAuto(side);
+                else if (side != 0 && ItemAt(Selected) == Item.Reduce) { Accessibility.Reduced = !Accessibility.Reduced; Refresh(); }
+            }
 
             // 마우스: 움직였을 때만 올린 항목을 고른다(패드로 고른 것을 가만히 있는 커서가 빼앗지 않게), 누르면 선택
             var mouse = Mouse.current;
@@ -145,12 +158,12 @@ namespace Haengin
             }
 
             if (can) { GameState.SetPaused(false); return; }
-            if (sub) Activate((Item)Selected);
+            if (sub) Activate(ItemAt(Selected));
         }
 
         void Move(int d)
         {
-            Selected = (Selected + d + ItemCount) % ItemCount;
+            Selected = (Selected + d + ItemCount) % Mathf.Max(1, ItemCount);
             Refresh();
         }
 
@@ -160,6 +173,13 @@ namespace Haengin
             {
                 case Item.Resume: GameState.SetPaused(false); break;
                 case Item.AutoAlign: CycleAuto(1); break;
+                case Item.Reduce:
+                    Accessibility.Reduced = !Accessibility.Reduced;
+                    Debug.Log($"[M2] 흔들림 줄이기: {(Accessibility.Reduced ? "켬" : "끔")}");
+                    Refresh();
+                    break;
+                case Item.Retry: { var h = RetryHook; GameState.SetPaused(false); h?.Invoke(); break; }
+                case Item.Surrender: { var h = SurrenderHook; GameState.SetPaused(false); h?.Invoke(); break; }
                 case Item.Quit:
                     Debug.Log("[M1] 끝내기");
                     if (QuitHook != null) { QuitHook(); break; }
@@ -195,9 +215,29 @@ namespace Haengin
         void Refresh()
         {
             if (rows == null) return;
-            rows[0].Label.text = "계속";
-            rows[1].Label.text = "카메라 자동 정렬 ◀ " + AutoName(Cam != null ? Cam.AutoMode : CamTuning.Auto.Always) + " ▶";
-            rows[2].Label.text = "끝내기";
+            visible.Clear();
+            visible.Add(Item.Resume); visible.Add(Item.AutoAlign); visible.Add(Item.Quit); visible.Add(Item.Reduce);
+            if (RetryHook != null) visible.Add(Item.Retry);
+            if (SurrenderHook != null) visible.Add(Item.Surrender);
+            if (Selected >= visible.Count) Selected = 0;
+            for (int i = 0; i < rows.Length; i++)
+            {
+                bool on = i < visible.Count;
+                if (rows[i].Rt.gameObject.activeSelf != on) rows[i].Rt.gameObject.SetActive(on);
+                if (!on) continue;
+                rows[i].Label.text = visible[i] switch
+                {
+                    Item.Resume => "계속",
+                    Item.AutoAlign => "카메라 자동 정렬 ◀ " + AutoName(Cam != null ? Cam.AutoMode : CamTuning.Auto.Always) + " ▶",
+                    Item.Quit => "끝내기",
+                    Item.Reduce => "흔들림 줄이기 ◀ " + (Accessibility.Reduced ? "켬" : "끔") + " ▶",
+                    Item.Retry => "전투 다시",
+                    Item.Surrender => "항복",
+                    _ => "",
+                };
+                rows[i].Rt.anchoredPosition = new Vector2(0f, 60f - i * 68f);
+            }
+            if (menuHint != null) menuHint.rectTransform.anchoredPosition = new Vector2(0f, 60f - visible.Count * 68f - 26f);
             for (int i = 0; i < rows.Length; i++)
             {
                 bool sel = i == Selected;
@@ -212,7 +252,7 @@ namespace Haengin
         int RowAt(Vector2 screen)
         {
             if (rows == null) return -1;
-            for (int i = 0; i < rows.Length; i++)
+            for (int i = 0; i < rows.Length && i < visible.Count; i++)
                 if (RectTransformUtility.RectangleContainsScreenPoint(rows[i].Rt, screen, null)) return i;
             return -1;
         }
@@ -259,8 +299,8 @@ namespace Haengin
             Place(title.rectTransform, new Vector2(0f, 150f), new Vector2(600f, 64f));
             title.text = "일시정지";
 
-            rows = new Row[ItemCount];
-            for (int i = 0; i < ItemCount; i++)
+            rows = new Row[MaxItems];
+            for (int i = 0; i < MaxItems; i++)
             {
                 var c5 = new Vector2(0.5f, 0.5f);
                 var plate = Panel("항목 " + (i + 1), menuRoot.transform, c5, c5, c5, new Vector2(0f, 60f - i * 68f), new Vector2(560f, 56f), Ink);
@@ -272,6 +312,7 @@ namespace Haengin
             var mh = Text("조작", menuRoot.transform, font, 20f, Paper, TextAlignmentOptions.Center);
             Place(mh.rectTransform, new Vector2(0f, -170f), new Vector2(900f, 34f));
             mh.text = MenuHint;
+            menuHint = mh;
             menuRoot.SetActive(false);
             Refresh();
         }

@@ -37,6 +37,7 @@ namespace Haengin.Tests
         [UnitySetUp]
         public IEnumerator SetUp()
         {
+            Encounter.Suppress = true;      // M2: 주차장(체크포인트 3) 인카운터가 경로 걷기를 막지 않게
             Time.captureDeltaTime = Dt;
             GameState.SetPaused(false);
             // 테스트 실행기가 든 처음 장면은 남겨야 하므로 Single 이 아니라 Additive 로 열고 활성 장면으로 바꾼다

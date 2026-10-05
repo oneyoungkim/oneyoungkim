@@ -20,7 +20,8 @@ namespace Haengin
 
         public static CombatFx Instance { get; private set; }
         /// 테스트·녹화용 기록
-        public static int Hits, Words, Flashes, Shocks, Slams, Plays;
+        public static int Hits, Words, WordsCut, Flashes, Shocks, Slams, Plays;
+        Item lastWordItem;
         public static string LastWord = "", LastSound = "";
         public int Live => live.Count;
 
@@ -61,7 +62,7 @@ namespace Haengin
         PlayerCombat pc;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Instance = null; Hits = Words = Flashes = Shocks = Slams = Plays = 0; LastWord = LastSound = ""; }
+        static void ResetStatics() { Instance = null; Hits = Words = WordsCut = Flashes = Shocks = Slams = Plays = 0; LastWord = LastSound = ""; }
 
         void Awake()
         {
@@ -160,7 +161,7 @@ namespace Haengin
             bool bulky = e.Victim.Armor || e.Victim.Height >= 1.83f;
             Play(Kit.Hit != null && p < Kit.Hit.Length ? Kit.Hit[p] : null, bulky ? 1.3f : 1f, bulky ? 0.85f : 1f);
             if (e.Move != null && e.Move.Label == "벽꽝") { Play(Kit.Slam, 1f, 1f); Slams++; }
-            bool reduced = T.Reduced;
+            bool reduced = T.ReducedNow;
             if (!reduced)
             {
                 if (p >= 4) Flash(0.40f);
@@ -274,14 +275,19 @@ namespace Haengin
             var cam = Camera.main;
             var right = cam != null ? cam.transform.right : Vector3.right;
             var at = pos + Vector3.up * 0.32f + right * ((R() - 0.5f) * 0.2f);
-            Spawn(tex, at, 0.2f * scale, (0.55f + 0.12f * p) * scale, 0.55f, Color.white, vel: Vector3.up * 0.35f, aspect: 2f,
+            // 앞 글자가 아직 떠 있으면 지운다(연타·마무리에서 '퍽!' 위에 '콰직!' 이 겹치던 것 — 11-4)
+            if (lastWordItem != null && lastWordItem.Busy && live.Contains(lastWordItem)) { live.Remove(lastWordItem); Free(lastWordItem); WordsCut++; }
+            lastWordItem = Spawn(tex, at, 0.2f * scale, (0.55f + 0.12f * p) * scale, 0.55f, Color.white, vel: Vector3.up * 0.35f, aspect: 2f,
                   rot: (R() - 0.5f) * 2f * 8f * Mathf.Deg2Rad, top: true, pop: true, keepVel: true);
         }
 
         // ───────────────────────── 화면
+        /// 전투 시작: 화면 가장자리 먹 붓 테두리가 0.3초에 들어옴(2-5)
+        public void EdgeFlash() { if (Kit != null) edgeT = 0f; }
+
         public void Flash(float a)
         {
-            if (T.Reduced) return;
+            if (T.ReducedNow) return;
             Ui();
             flashA = Mathf.Max(flashA * (1f - flashT / 0.16f), a);
             flashT = 0f;
@@ -290,7 +296,7 @@ namespace Haengin
 
         public void Shock()
         {
-            if (T.Reduced) return;
+            if (T.ReducedNow) return;
             shockUntil = Time.frameCount + 2;     // 이 프레임과 다음 프레임(2프레임)
             Shocks++;
             Shader.SetGlobalFloat(IdShock, 1f);
@@ -345,12 +351,12 @@ namespace Haengin
         }
 
         // ───────────────────────── 빌보드 풀
-        void Spawn(Texture tex, Vector3 pos, float s0, float s1, float life, Color col, Vector3 vel = default, float aspect = 1f, float rot = 0f,
+        Item Spawn(Texture tex, Vector3 pos, float s0, float s1, float life, Color col, Vector3 vel = default, float aspect = 1f, float rot = 0f,
                    float grav = 0f, bool top = false, bool pop = false, float opacity = 1f, Quaternion? flat = null, bool crack = false, bool keepVel = false)
         {
-            if (tex == null || Kit == null || Kit.Normal == null) return;
+            if (tex == null || Kit == null || Kit.Normal == null) return null;
             var it = Get();
-            if (it == null) return;
+            if (it == null) return null;
             it.Life = 0f; it.Max = life; it.S0 = s0; it.S1 = s1; it.Aspect = aspect; it.O0 = opacity; it.Rot = rot; it.Grav = grav;
             it.Vel = vel; it.Pop = pop; it.Top = top; it.Col = col; it.Tex = tex;
             it.Flat = flat.HasValue; it.Plane = flat ?? Quaternion.identity;
@@ -360,6 +366,7 @@ namespace Haengin
             it.Tr.gameObject.SetActive(true);
             live.Add(it);
             Apply(it, 0f);
+            return it;
         }
 
         Item Get()

@@ -68,6 +68,11 @@ namespace Haengin
             hud.Kit = kit;
             hud.Font = kit != null ? kit.Font : null;
             hud.Player = player.GetComponent<PlayerCombat>();
+            var stage = Get<StageHud>(go);
+            stage.Kit = kit;
+            stage.Font = kit != null ? kit.Font : null;
+            var pi = player.GetComponent<PInput>();
+            stage.Actions = pi != null ? pi.Actions : null;
             return go;
         }
 

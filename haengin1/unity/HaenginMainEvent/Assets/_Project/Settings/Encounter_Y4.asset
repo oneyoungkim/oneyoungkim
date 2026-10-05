@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da440b0d1f4eae548b021cf21c9681e9, type: 3}
+  m_Name: Encounter_Y4
+  m_EditorClassIdentifier: Haengin.Game::Haengin.EncounterDef
+  Title: "Y4 \uD6C4\uBB38 \uB4B7\uACE8\uBAA9 \uC8FC\uCC28\uC7A5"
+  Center: {x: -172.49, y: 27.2, z: 84.38}
+  Yaw: 17.05
+  Size: {x: 18, y: 12}
+  TriggerInset: 1
+  TriggerEnemyDist: 9
+  Foes:
+  - Def: {fileID: 11400000, guid: 38929b174133bb0449ada5dd93223582, type: 2}
+    Model: {fileID: 6590369811733361660, guid: 89c544325e68a474c8da755b41f1fcc9, type: 3}
+    Local: {x: 3.6, y: -3.4}
+  - Def: {fileID: 11400000, guid: d02255080b6c3df4494269f75ddcfc77, type: 2}
+    Model: {fileID: 2258567304354345455, guid: ef67fc43ecae59341b1efd8135815b2e, type: 3}
+    Local: {x: 5.2, y: -3}
+  - Def: {fileID: 11400000, guid: e4d36c6ed28e6154fa97e90eb7554355, type: 2}
+    Model: {fileID: 265482475415469578, guid: 7acea3c567a9a2d4898d127200c3391b, type: 3}
+    Local: {x: 6.4, y: -4.2}
+  Crowd:
+  - {x: -2.3, y: 7}
+  - {x: 2.4, y: 7.2}
+  - {x: -1, y: 8.4}
+  - {x: -6, y: 7.6}
+  - {x: -4.6, y: 8}
+  - {x: 5.2, y: 7.7}
+  CrowdModels:
+  - {fileID: 5254607255497054021, guid: 9fde2ac0d463ea14488fc43f0e1c9489, type: 3}
+  - {fileID: 1120603330228567057, guid: 4c3fab6627a36744e8a53eb1bef05691, type: 3}
+  - {fileID: 385153083004889942, guid: 3b3a6725c2e57bc4ca22e045bd3fac8f, type: 3}
+  - {fileID: 5507026429480425850, guid: 9188471b981cf1844bfff799fe270cd5, type: 3}
+  CrowdLineA: {x: -3, y: 6.6}
+  CrowdLineB: {x: 3, y: 6.6}
+  Walls:
+  - Local: {x: 0, y: 6.25}
+    Size: {x: 6.6, y: 0.4}
+    LocalYaw: 0
+  - Local: {x: -9.25, y: 0}
+    Size: {x: 0.4, y: 3.4}
+    LocalYaw: 0
+  Line1Who: "\uAE50\uC871\uC774"
+  Line1: "\uC5B4? \uC57C, \uAC70\uAE30. \uB108 \uC9C0\uAE08 \uC6B0\uB9AC \uBCF4\uACE0
+    \uC6C3\uC5C8\uB0D0?"
+  Line2Who: "\uB0C9\uC7A5\uACE0"
+  Line2: "(\uB9D0\uC5C6\uC774 \uAECC \uD48D\uC120)"
+  ResultText: "\uC815\uB9AC \uC644\uB8CC \u2014 \uB540 +30 \xB7 \uD3C9\uD310 +1"
+  RetryLocal: {x: 0.6, y: 7}
+  RetryYaw: 180

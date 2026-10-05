@@ -20,6 +20,7 @@ namespace Haengin
         public int Cuts { get; private set; }
         Fighter me, tg;
         float yaw, focus, dist;
+        Vector3? alsoPt;
 
         void Awake()
         {
@@ -30,18 +31,21 @@ namespace Haengin
         void OnEnable() { ImpactFx.Fired += OnHit; }
         void OnDisable() { ImpactFx.Fired -= OnHit; }
 
-        public void Begin(Fighter siwoo, Fighter target)
+        /// also = 같이 찍을 자리(구경꾼 되받기: 대상 뒤 구경꾼) — 그쪽으로 보는 점 40% · 반지름 +0.7m · 옆 각 115°(시우 쪽으로 돌아 구경꾼이 화면 안에, 11-4)
+        public void Begin(Fighter siwoo, Fighter target, Vector3? also = null)
         {
             me = siwoo; tg = target;
+            alsoPt = also;
             Live = true;
             focus = 0f;
             Cuts = 0;
             var line = HitResolver.Flat(target.Position - siwoo.Position);
             float baseYaw = HitResolver.Yaw(line);
             // 옆 둘 중 덜 막힌 쪽
-            float a = Free(baseYaw + 90f), b = Free(baseYaw - 90f);
+            float side = also.HasValue ? 115f : 90f;
+            float a = Free(baseYaw + side), b = Free(baseYaw - side);
             Side = a >= b ? 1f : -1f;
-            yaw = baseYaw + 90f * Side;
+            yaw = baseYaw + side * Side;
             dist = Radius;
             if (Cam != null)
             {
@@ -56,6 +60,7 @@ namespace Haengin
         public void End()
         {
             Live = false;
+            alsoPt = null;
             if (Cam != null) Cam.Priority = 0;
         }
 
@@ -66,8 +71,9 @@ namespace Haengin
         {
             var c = Center;
             var dir = Quaternion.Euler(-Pitch, y, 0f) * Vector3.forward;   // 대상 → 카메라(수평 yaw 쪽, 피치만큼 위)
-            if (Physics.SphereCast(c, 0.15f, dir, out var hit, Radius, Block, QueryTriggerInteraction.Ignore)) return hit.distance;
-            return Radius;
+            float r = Radius + (alsoPt.HasValue ? 0.7f : 0f);
+            if (Physics.SphereCast(c, 0.15f, dir, out var hit, r, Block, QueryTriggerInteraction.Ignore)) return hit.distance;
+            return r;
         }
 
         void OnHit(HitEvent e, float stop)
@@ -96,12 +102,14 @@ namespace Haengin
                 Cuts++;
                 snap = true;
             }
-            float want = Mathf.Min(Radius, free - 0.1f) * (1f - 0.22f * focus);
+            float extra = alsoPt.HasValue ? 0.7f : 0f;
+            float want = Mathf.Min(Radius + extra, free - 0.1f) * (1f - 0.22f * focus);
             dist = snap ? want : Mathf.Lerp(dist, want, 1f - Mathf.Exp(-rdt * 12f));
             var c = Center;
             var rot = Quaternion.Euler(Pitch, yaw + 180f, 0f);
             var pos = c - rot * Vector3.forward * dist;
             var look = Vector3.Lerp(me.Chest, tg.Chest, 0.6f);
+            if (alsoPt.HasValue) look = Vector3.Lerp(look, alsoPt.Value + Vector3.up * 1.1f, 0.4f * (1f - focus));
             look = Vector3.Lerp(look, tg.Chest, 0.6f * focus);
             transform.SetPositionAndRotation(pos, Quaternion.LookRotation(look - pos));
         }

@@ -99,6 +99,8 @@ namespace Haengin
 
         [Header("접근성")]
         [Tooltip("흔들림 줄이기: 트라우마 ×0.3, 슬로 끔(히트스톱은 둠)")] public bool Reduced;
+        /// 지금 흔들림 줄이기인가 = 조정값 또는 일시정지 메뉴 접근성 설정(PlayerPrefs — 08 7-5·16단계)
+        public bool ReducedNow => Reduced || Accessibility.Reduced;
 
         static CombatTuning fallback;
         /// 에셋이 없을 때 쓰는 기본값(테스트·시험장)

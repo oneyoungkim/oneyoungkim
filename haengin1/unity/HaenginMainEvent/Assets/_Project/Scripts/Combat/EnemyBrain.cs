@@ -10,7 +10,7 @@ namespace Haengin
     [DefaultExecutionOrder(-20), DisallowMultipleComponent]
     public sealed class EnemyBrain : MonoBehaviour
     {
-        public enum S { Idle, Approach, Strafe, Taunt, AttackIn, Attack, Block, Hurt, Down, Out, Flee }
+        public enum S { Idle, Approach, Strafe, Taunt, AttackIn, Attack, Block, Hurt, Down, Out, Flee, Stumble, BackOff, Leave }
 
         public EnemyDef Def;
         public Fighter Me;
@@ -47,7 +47,12 @@ namespace Haengin
         float cooldown, repick, tauntRoll, stateT;
         double clock, blockUntil, counterBefore = -1;
         MoveDef pending;
+        AttackRun lastRun;
+        float stumbleLeft, backLeft;
         Vector3 inStart;
+        /// 페이즈 2(스크럼 HP ≤ 50%)
+        public bool Phase2 { get; private set; }
+        public int Tackles, TackleWhiffs;
         bool tauntHit, tauntPaid, counterArmed;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -98,6 +103,36 @@ namespace Haengin
 
         public void ForceBlock(float seconds) { Go(S.Block); blockUntil = clock + seconds; }
 
+        /// 인카운터 다시(패배 뒤 '다시' · '전투 다시'): 처음 상태로 — 대기 자리에서 HP 가득, 공격권·도주·페이즈 지움
+        public void ResetBrain(Vector3 feet, float yaw)
+        {
+            gameObject.SetActive(true);
+            Release();
+            HasToken = false;
+            Fled = false;
+            Phase2 = false;
+            pending = null; lastRun = null;
+            counterArmed = false;
+            cooldown = 0f; stumbleLeft = backLeft = 0f;
+            if (Def != null) Me.ArmorMax = Def.ArmorGauge;
+            Me.ResetFighter();
+            Me.Body?.Place(feet, yaw);
+            if (Body != null) Body.WalkVelocity = Vector3.zero;
+            State = S.Idle;
+            stateT = 0f;
+        }
+
+        /// 이긴 뒤: 탈락한 적이 일어나 달아남(3초 뒤 사라짐)
+        public void Leave()
+        {
+            Release();
+            if (Me.State == Fighter.Phase.Out || Me.Down) Me.ResetFighter();
+            Me.ScriptAnim = null;
+            Me.Leaving = true;
+            Fled = true;
+            Go(S.Leave);
+        }
+
         /// 기세 액션 시작: 하던 공격을 거두고 공격권을 돌려준 뒤 멈춤(끝나면 Frozen = false 로 간보기부터)
         public void Freeze(bool on)
         {
@@ -125,12 +160,31 @@ namespace Haengin
             HasToken = true;
             pending = Choose();
             inStart = Me.Position;
+            if (pending == null)
+            {
+                // 물러나기(1.0초 뒤로) — 공격권은 돌려줌
+                Release();
+                cooldown = 0.6f;
+                backLeft = 1.0f;
+                Go(S.BackOff);
+                return;
+            }
             Attacks++;
+            if (pending == Def.Tackle) Tackles++;
             Go(S.AttackIn);
         }
 
         MoveDef Choose()
         {
+            if (Def.Tackle != null && Target != null)
+            {
+                // 야차 상대(4-6): 거리 > 3m → 태클(페이즈 1 50% · 2 80%) / 다가가서 가까운 기술, ≤ 1.5m → 밀기·휘두르기 40·40 · 물러나기 20
+                HitResolver.Measure(Me.Position, Me.Yaw, Target.Position, Target.Radius, out _, out float s2, out _);
+                if (s2 > 3.0f && rng.NextDouble() < (Phase2 ? Def.TackleChance2 : Def.TackleChance)) return Def.Tackle;
+                if (s2 <= 1.5f && rng.NextDouble() < Def.BackOff) return null;      // 물러나기
+                var ms = Phase2 && Def.Moves2 != null && Def.Moves2.Length > 0 ? Def.Moves2 : Def.Moves;
+                return ms[rng.NextDouble() < 0.5 ? 0 : Mathf.Min(1, ms.Length - 1)];
+            }
             if (Def.Far != null && Target != null)
             {
                 HitResolver.Measure(Me.Position, Me.Yaw, Target.Position, Target.Radius, out _, out float surf, out _);
@@ -151,7 +205,7 @@ namespace Haengin
         void StartMove(MoveDef m)
         {
             double pre = m.PreTime + (AttackDirector.OnScreen(Camera.main, Me) ? 0.0 : T.OffscreenDelay);
-            Me.StartAttack(m, Target, -pre);
+            lastRun = Me.StartAttack(m, Target, -pre);
             Go(S.Attack);
             AttackBegan?.Invoke(this, m);
         }
@@ -189,6 +243,21 @@ namespace Haengin
                     break;
             }
             if ((State == S.Hurt || State == S.Down) && Me.State == Fighter.Phase.Free) Go(S.Strafe);
+            if (!Phase2 && Def != null && Def.Phase2Hp > 0f && Me.Hp > 0 && Me.Hp <= Me.MaxHp * Def.Phase2Hp)
+            {
+                Phase2 = true;
+                Me.ArmorMax = Def.ArmorGauge2;
+                if (State == S.Taunt) Go(S.Strafe);
+            }
+            if (State == S.Leave)
+            {
+                // 이긴 뒤 탈락한 적이 일어나 달아남(2-5 '결과' — 14 Run_02)
+                var away = Target != null ? HitResolver.Flat(Me.Position - Target.Position) : Me.Forward;
+                var v = (away.sqrMagnitude > 1e-4f ? away.normalized : Me.Forward) * 4.5f;
+                if (Body != null) { Body.WalkVelocity = v; Body.SetYaw(Mathf.MoveTowardsAngle(Me.Yaw, HitResolver.Yaw(v), 540f * dt)); }
+                if (stateT > 3f) gameObject.SetActive(false);
+                return;
+            }
             if (Frozen)
             {
                 // 기세 액션: 멈춰 서서 본다(공격권·막기·도발 시계도 멈춤)
@@ -201,6 +270,14 @@ namespace Haengin
                 return;
             }
             if (cooldown > 0f) cooldown -= dt;
+            if (State == S.Stumble)
+            {
+                // 태클 헛방(4-6): 비틀걸음 — 등 노출, 맞으면 경직 ×1.5. 끝나면 간보기
+                stumbleLeft -= dt;
+                if (Body != null) Body.WalkVelocity = Vector3.zero;
+                if (stumbleLeft <= 0f || Me.State != Fighter.Phase.Free) { Me.ScriptAnim = null; Me.StaggerMul = 1f; Go(S.Strafe); }
+                return;
+            }
 
             // 도주(깐족이: HP ≤ 25% + 동료 모두 탈락)
             if (!Fled && Def != null && Def.FleeHp > 0f && Me.Hp > 0 && Me.Hp <= Me.MaxHp * Def.FleeHp && AlliesGone() && Me.State == Fighter.Phase.Free
@@ -216,7 +293,17 @@ namespace Haengin
             switch (State)
             {
                 case S.Idle:
-                    face = Target != null && Me.State == Fighter.Phase.Free;
+                    // 대기(인카운터 시작 전): 12m 안에 오면 본다
+                    face = Target != null && Me.State == Fighter.Phase.Free && HitResolver.Flat(Target.Position - Me.Position).magnitude < 12f;
+                    break;
+                case S.BackOff:
+                    if (Target != null)
+                    {
+                        var away = HitResolver.Flat(Me.Position - Target.Position);
+                        vel = (away.sqrMagnitude > 1e-4f ? away.normalized : -Me.Forward) * Def.StrafeSpeed;
+                    }
+                    backLeft -= dt;
+                    if (backLeft <= 0f) Go(S.Strafe);
                     break;
                 case S.Approach:
                     vel = Steer(Slot, Def.ApproachSpeed);
@@ -237,7 +324,7 @@ namespace Haengin
                     if (tauntRoll <= 0f)
                     {
                         tauntRoll = 2f;
-                        if (!HasToken && Def.TauntChance > 0f && rng.NextDouble() < Def.TauntChance) { Taunts++; tauntHit = tauntPaid = false; Me.StaggerMul = t.TauntMul; Go(S.Taunt); }
+                        if (!HasToken && !Phase2 && Def.TauntChance > 0f && rng.NextDouble() < Def.TauntChance) { Taunts++; tauntHit = tauntPaid = false; Me.StaggerMul = t.TauntMul; Go(S.Taunt); }
                     }
                     break;
                 case S.Taunt:
@@ -253,7 +340,7 @@ namespace Haengin
                     if (pending == null || Target == null) { Release(); Go(S.Strafe); break; }
                     {
                         HitResolver.Measure(Me.Position, Me.Yaw, Target.Position, Target.Radius, out _, out float surf, out _);
-                        bool far = pending.ChargeTime > 0f;
+                        bool far = pending.ChargeTime > 0f || pending.ActiveAdvance > 0f;
                         float moved = HitResolver.Flat(Me.Position - inStart).magnitude;
                         if (far || surf <= pending.Range - 0.05f || moved >= t.AttackInMax || stateT > 1.2f)
                         {
@@ -268,10 +355,20 @@ namespace Haengin
                     face = false;
                     if (Me.Run == null && Me.State == Fighter.Phase.Free)
                     {
-                        cooldown = Def.Cooldown;
+                        cooldown = Phase2 ? Def.Cooldown2 : Def.Cooldown;
                         Release();
                         WaitSince = clock;
-                        Go(S.Strafe);
+                        if (lastRun != null && lastRun.Move == Def.Tackle && lastRun.Hits == 0)
+                        {
+                            // 헛방 → 비틀(562) 1.2초(페이즈 2 0.9)
+                            TackleWhiffs++;
+                            stumbleLeft = Phase2 ? Def.Stumble2 : Def.Stumble;
+                            Me.ScriptAnim = "Stumble";
+                            Me.ScriptRate = 1f;
+                            Me.StaggerMul = 1.5f;
+                            Go(S.Stumble);
+                        }
+                        else Go(S.Strafe);
                     }
                     break;
                 case S.Block:

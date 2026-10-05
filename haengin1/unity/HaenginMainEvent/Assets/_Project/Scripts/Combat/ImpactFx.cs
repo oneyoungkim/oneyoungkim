@@ -30,7 +30,7 @@ namespace Haengin
             float trauma = blocked ? t.Tr(Power.Light) * t.BlockFx : t.Tr(p);
             Shake.Decay = t.TraumaDecay;
             Shake.PunchDecay = t.PunchDecay;
-            Shake.Reduced = t.Reduced;
+            Shake.Reduced = t.ReducedNow;
             Shake.PunchAmount = t.PunchAmount;
 
             TimeFx.HitStop(stop);
@@ -53,7 +53,7 @@ namespace Haengin
                 if (LastVictim != null && LastVictim != e.Victim && LastVictim.React != null) LastVictim.React.Shaking = false;
                 r.Shaking = true;
             }
-            if (!blocked && e.Move != null && e.Move.Slow > 0f && !t.Reduced) TimeFx.Slow(e.Move.Slow, e.Move.SlowScale);
+            if (!blocked && e.Move != null && e.Move.Slow > 0f && !t.ReducedNow) TimeFx.Slow(e.Move.Slow, e.Move.SlowScale);
 
             LastVictim = e.Victim;
             Last = e;

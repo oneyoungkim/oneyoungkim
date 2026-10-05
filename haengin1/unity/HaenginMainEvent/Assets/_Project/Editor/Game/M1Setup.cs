@@ -244,6 +244,9 @@ namespace Haengin.EditorGame
             }
             else Debug.LogWarning($"{Tag} Zone1/Route 가 없어 RouteData 를 붙이지 못했습니다");
 
+            // M2(08 8장): CM_Combat · CM_Heat · CombatMode · 인카운터 Y4 · 야차 Y1
+            StageSetup.AddCombatToZone1(rig, d, zoneRoot);
+
             EditorSceneManager.MarkSceneDirty(scene);
             Debug.Log($"{Tag} 리그 붙임: Player @ ({feet.x:F2}, {feet.y:F2}, {feet.z:F2}) yaw {d.SpawnYaw}° (데이터 y {d.SpawnPos.y:F2}) · " +
                       $"카메라 {(cam != null ? cam.name + "(장면 것 재사용)" : "새로 만듦")} + CM_Explore · KillY {rig.Motor.KillY:F1} · 체크포인트 {d.Route.Count}개");

@@ -1,0 +1,370 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4659646706864642668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: ScTackle
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD0DC\uD074(\uC2A4\uD06C\uB7FC)"
+  State: ScTackle
+  ClipId: 512
+  Startup: 1
+  Active: 44
+  Recovery: 12
+  LinkAfter: 0
+  Range: 0.8
+  HalfAngle: 50
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 22
+  Stagger: 0
+  Knock: 0
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 3
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uCFF5!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 1
+  DownKnock: 1.5
+  Unblockable: 1
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0.6
+  Warn: 2
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1
+  ActiveAdvance: 4
+--- !u!114 &-1086992462752032868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: ScSwing
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD718\uB450\uB974\uAE30(\uC2A4\uD06C\uB7FC)"
+  State: ScSwing
+  ClipId: 128
+  Startup: 20
+  Active: 4
+  Recovery: 18
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 60
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 15
+  Stagger: 40
+  Knock: 0.3
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 3
+  GuardDmg: 40
+  Heat: 0
+  Word: "\uCF70\uC9C1!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0.5
+  Warn: 1
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1
+  ActiveAdvance: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a269d3be559f6746a0d0855f5c1a60e, type: 3}
+  m_Name: Enemy_Scrum
+  m_EditorClassIdentifier: Haengin.Game::Haengin.EnemyDef
+  Type: 3
+  Label: "'\uC2A4\uD06C\uB7FC' \uC721\uC911\uD604"
+  Height: 1.88
+  Radius: 0.4
+  Hp: 260
+  ApproachSpeed: 1.6
+  ApproachRun: 0
+  StrafeSpeed: 1
+  AttackInSpeed: 2.4
+  Cooldown: 1.8
+  TauntChance: 0.2
+  GrabHold: 2
+  Blocks: 0
+  GuardMax: -1
+  Armor: 1
+  ArmorGauge: 40
+  FleeHp: 0
+  Moves:
+  - {fileID: 7263515223098876301}
+  - {fileID: 5333338528716713262}
+  Weights:
+  - 0.5
+  - 0.5
+  Far: {fileID: 0}
+  FarChance: 0
+  Counter: {fileID: 0}
+  Tackle: {fileID: -4659646706864642668}
+  TackleChance: 0.5
+  TackleChance2: 0.8
+  Stumble: 1.2
+  Stumble2: 0.9
+  BackOff: 0.2
+  Phase2Hp: 0.5
+  Cooldown2: 1.3
+  ArmorGauge2: 50
+  Moves2:
+  - {fileID: 2139228669818718258}
+  - {fileID: -1086992462752032868}
+--- !u!114 &1359353492147294410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: ScSwing
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD718\uB450\uB974\uAE30(\uC2A4\uD06C\uB7FC)"
+  State: ScSwing
+  ClipId: 128
+  Startup: 20
+  Active: 4
+  Recovery: 18
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 60
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 15
+  Stagger: 40
+  Knock: 0.3
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 3
+  GuardDmg: 40
+  Heat: 0
+  Word: "\uCF70\uC9C1!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0.5
+  Warn: 1
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1
+  ActiveAdvance: 0
+--- !u!114 &2139228669818718258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: ScPush2
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uBC00\uAE30 \u2192 \uD718\uB450\uB974\uAE30(\uC2A4\uD06C\uB7FC)"
+  State: ScPush
+  ClipId: 260
+  Startup: 12
+  Active: 4
+  Recovery: 16
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 40
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 6
+  Stagger: 24
+  Knock: 1.2
+  KnockSide: 0
+  BlockKnock: 0.8
+  Power: 2
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uD37D!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0
+  Warn: 0
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 1359353492147294410}
+  ClipRate: 1
+  ActiveAdvance: 0
+--- !u!114 &5333338528716713262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: ScSwing
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD718\uB450\uB974\uAE30(\uC2A4\uD06C\uB7FC)"
+  State: ScSwing
+  ClipId: 128
+  Startup: 20
+  Active: 4
+  Recovery: 18
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 60
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 15
+  Stagger: 40
+  Knock: 0.3
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 3
+  GuardDmg: 40
+  Heat: 0
+  Word: "\uCF70\uC9C1!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0.5
+  Warn: 1
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1
+  ActiveAdvance: 0
+--- !u!114 &7263515223098876301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: ScPush
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uBC00\uAE30(\uC2A4\uD06C\uB7FC)"
+  State: ScPush
+  ClipId: 260
+  Startup: 12
+  Active: 4
+  Recovery: 16
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 40
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 6
+  Stagger: 24
+  Knock: 1.2
+  KnockSide: 0
+  BlockKnock: 0.8
+  Power: 2
+  GuardDmg: -1
+  Heat: 0
+  Word: "\uD37D!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+  StaggerGauge: -1
+  Lead: 0
+  Warn: 0
+  ChargeDist: 0
+  ChargeTime: 0
+  Followup: {fileID: 0}
+  ClipRate: 1
+  ActiveAdvance: 0

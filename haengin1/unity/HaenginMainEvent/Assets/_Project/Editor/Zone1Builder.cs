@@ -184,13 +184,18 @@ namespace Haengin.EditorTools
                     var it = so.GetIterator();
                     while (it.Next(true))
                         if (it.propertyType == SerializedPropertyType.ObjectReference && it.objectReferenceValue == null && it.objectReferenceInstanceIDValue != 0)
+                        {
                             broken++;
+                            Debug.LogWarning($"{Tag} 깨진 참조: {PathOf(c.transform)} · {c.GetType().Name}.{it.propertyPath}");
+                        }
                 }
             foreach (var m in AssetDatabase.LoadAllAssetRepresentationsAtPath(MeshPath)) if (m == null) broken++;
             Notes.Add($"결정적 저장: 장면 fileID {changed}개를 계층 경로 기준으로(그대로 둔 것 {kept}) · 메시 서브 에셋 {nMesh}개를 이름 기준으로 · " +
                       $"다시 읽은 컴포넌트 {objs}개 중 깨진 참조 {broken} · 빠진 스크립트 {missing}");
             if (broken > 0 || missing > 0) throw new Exception($"fileID 를 바꾼 뒤 참조가 깨졌습니다(깨진 참조 {broken}, 빠진 스크립트 {missing})");
         }
+
+        static string PathOf(Transform t) => t.parent == null ? t.name : PathOf(t.parent) + "/" + t.name;
 
         const long MeshMainId = 4300000; // .asset 의 주 오브젝트(Mesh) fileID — 메시 목록용 빈 메시
 

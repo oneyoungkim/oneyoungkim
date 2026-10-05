@@ -10,11 +10,20 @@ namespace Haengin
         [Tooltip("구경꾼이 선 반경 m(원 중심 = 이 오브젝트)")] public float Radius = 6.0f;
         [Tooltip("구간 시작·끝 각도(°, 북 = 0, 시계 방향). 둘 다 0 이면 원 전체")] public float FromDeg, ToDeg;
 
-        public bool Full => Mathf.Approximately(FromDeg, ToDeg);
+        [Tooltip("직선 구간(인카운터 진입로 6m — 08 8-1): 켜면 원 대신 LineA–LineB 선분(월드)")] public bool IsLine;
+        public Vector3 LineA, LineB;
+
+        public bool Full => !IsLine && Mathf.Approximately(FromDeg, ToDeg);
 
         /// 점이 구경꾼 줄에서 dist 안인가(수평)
         public bool Near(Vector3 p, float dist)
         {
+            if (IsLine)
+            {
+                Vector3 ab = new Vector3(LineB.x - LineA.x, 0f, LineB.z - LineA.z), ap = new Vector3(p.x - LineA.x, 0f, p.z - LineA.z);
+                float u = ab.sqrMagnitude > 1e-6f ? Mathf.Clamp01(Vector3.Dot(ap, ab) / ab.sqrMagnitude) : 0f;
+                return (ap - ab * u).magnitude <= dist;
+            }
             var d = p - transform.position;
             d.y = 0f;
             float r = d.magnitude;

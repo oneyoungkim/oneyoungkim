@@ -128,7 +128,9 @@ namespace Haengin
         public bool KO => Hp <= 0;
         public bool Down => State == Phase.Fall || State == Phase.Lie || State == Phase.GetUp;
         /// 조준·판정 대상이 되는가(서 있음 — 잡힘·다운·탈락 아님)
-        public bool Targetable => isActiveAndEnabled && State != Phase.Out && !Down && State != Phase.Grabbed;
+        public bool Targetable => isActiveAndEnabled && State != Phase.Out && !Down && State != Phase.Grabbed && !Leaving;
+        /// 싸움이 끝나 달아나는 중(인카운터 결과) — 락온·조준·봇 대상에서 뺀다
+        public bool Leaving;
         /// 공격 예고 중: 예고가 있는 기술의 판정 전(소프트 조준 우선·위협 중심 무게 2·락온 다음 대상 우선)
         public bool Telegraphing => Run != null && Run.Move.Warn > 0 && Run.T < Run.Move.ActiveStart - HitResolver.Eps;
         /// 경직 게이지(슈퍼아머)
@@ -202,6 +204,7 @@ namespace Haengin
         /// 처음 상태로(HP 가득, 자유)
         public void ResetFighter(int hp = -1)
         {
+            Leaving = false;
             if (hp > 0) MaxHp = hp;
             Hp = MaxHp;
             State = Phase.Free;
@@ -348,6 +351,14 @@ namespace Haengin
                     if (m.Advance > 0f) d += Forward * (m.Advance * (float)(ov / su));
                     if (d.sqrMagnitude > 0f) Body.Push(d);
                 }
+            }
+
+            // 2b) 판정 동안 달려듦(스크럼 태클 4.0m/0.73초) — 맞히면 멈춤
+            if (m.ActiveAdvance > 0f && Body != null && r.Hits == 0)
+            {
+                double ad = Math.Max(1e-4, m.ActiveEnd - m.ActiveStart);
+                double ov = HitResolver.Overlap(t0, t1, m.ActiveStart, m.ActiveEnd);
+                if (ov > 0) Body.Push(Forward * (float)(m.ActiveAdvance * ov / ad));
             }
 
             // 3) 판정: 이번 프레임 구간이 판정 구간과 겹치면(한 프레임에 다 지나가도 한 번)

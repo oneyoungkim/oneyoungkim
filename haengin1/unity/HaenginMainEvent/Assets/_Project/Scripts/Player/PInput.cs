@@ -85,7 +85,7 @@ namespace Haengin
             if (CombatInput) { CombatUpdate(); return; }
             if (GameUi.Edge(pause, ref prevPause)) GameState.TogglePause();   // Esc·Options: 열고 닫기(메뉴 안 고르기는 GameUi)
             if (debugHud.WasPressedThisFrame()) DebugHud.Toggle();
-            if (GameState.Paused) { Motor.ClearMoveInput(); return; }
+            if (GameState.Paused || GameState.InputLocked || GameState.Modal) { Motor.ClearMoveInput(); return; }
 
             // 창을 다시 클릭하면 커서를 다시 잡는다(Alt+Tab 뒤)
             if (!GameState.CursorLocked && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) GameState.LockCursor(true);
@@ -99,7 +99,11 @@ namespace Haengin
             bool running = run.IsPressed() || toggled;
             Motor.SetMoveInput(dir, m.magnitude, running);
 
-            if (interact.WasPressedThisFrame()) DebugHud.Toast("상호작용은 M1 에서 자리만 있어요");
+            if (interact.WasPressedThisFrame())
+            {
+                // 가까운 상호작용(야차 심판 형 등 — Interactable)이 받는다. 없으면 M1 안내
+                if (!Interactable.TryUse(Motor.Position)) DebugHud.Toast("상호작용할 것이 근처에 없어요");
+            }
             if (lockOn.WasPressedThisFrame() && Cam != null) Cam.RecenterBehind();     // 탐색: 카메라 등 뒤 정렬(전투 중 L1 = 락온, CombatUpdate)
         }
 
@@ -110,7 +114,7 @@ namespace Haengin
             if (cDebug != null && cDebug.WasPressedThisFrame()) DebugHud.Toggle();
             if (Combat == null) Combat = GetComponent<PlayerCombat>();
             if (Combat == null) return;
-            if (GameState.Paused) { Combat.SetStick(Vector2.zero, false); Combat.SetGuard(false); return; }
+            if (GameState.Paused || GameState.InputLocked || GameState.Modal) { Combat.SetStick(Vector2.zero, false); Combat.SetGuard(false); return; }
             if (!GameState.CursorLocked && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) GameState.LockCursor(true);
 
             Vector2 m = cMove != null ? Vector2.ClampMagnitude(cMove.ReadValue<Vector2>(), 1f) : Vector2.zero;

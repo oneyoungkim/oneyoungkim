@@ -6,7 +6,7 @@
 #   잡기 손(옷깃을 쥔 손): 55° · 60° · 40°, 엄지 25° · 30°
 # 네 손가락은 손가락마다 나누지 않고 '벙어리장갑'처럼 손 넓이 방향 관절선 3개로 굽힌다(손가락별로 나누면 따로 모델링된 손가락 조각·테이프가
 # 찢어져 가시가 생겼다 — 2026-10-06 시험). 관절 위치는 손끝 길이 윤곽에 비례.
-# 모델별 값(PROFILES, 2026-10-06 덩치 손 수정): 원본 GLB 파일 이름 앞부분(naengjanggo·scrum)으로 고른다. 프로필이 없는 모델(시우·깐족이·석 달)은
+# 모델별 값(PROFILES, 2026-10-06 손 수정): 원본 GLB 파일 이름 앞부분(naengjanggo·scrum·kkanjok·seokdal)으로 고른다. 프로필이 없는 모델(시우·태오)은
 #   위 기본값 그대로 — 계산 경로도 예전과 한 비트도 다르지 않다(프로필 키가 없으면 기본 상수·기본 판정을 씀).
 #   덩치 둘이 갈퀴 손이 된 까닭: 손가락이 벌어진 넓은 손이라 엄지 쪽 판정(손바닥 가운데 높이에서 더 튀어나온 쪽)이 새끼 쪽 손날을 엄지로 잡았다
 #   → 진짜 엄지는 '새끼' 묶음으로 들어가 밑동만 조금 굽고 옆으로 뻗은 채, 새끼·손날은 엄지처럼 40°·50° 만 접힘, 손끝 윤곽도 엄지 정점에 끌려
@@ -14,7 +14,8 @@
 #   비스듬한 약지 끝을 새끼 칸에 넣어 새끼 끝마디가 안 굽었다(갈고리).
 #   프로필: 엄지 쪽 = 가장 멀리 뻗은 쪽, 손바닥 쪽 = 왼손·오른손 해부학, 엄지 경계 = 검지 가장자리를 지나는 엄지 축 나란한 비스듬한 선,
 #   손끝 = 손가락별(물갈퀴 위 조각 묶음) 중심선에서, 손가락 조금 모으기, 엄지는 맞은편(손바닥 앞)으로 돌려 검지·중지 위로 감싼다.
-#   이 판정 문제(엄지 쪽 반대)는 깐족이 양손·석 달 왼손에도 있지만 엄지가 짧고 손가락이 붙어 있어 티가 덜 난다 — 기본값은 건드리지 않음.
+#   같은 판정 문제(엄지 쪽 반대)가 깐족이 양손·석 달 왼손에도 있어(석 달 오른손은 엄지 쪽은 맞지만 엄지 묶음에 검지 가장자리가 섞임) 두 모델도
+#   프로필을 붙였다(_SLIM_HAND). 기본값 경로는 그대로.
 # 쓰는 곳: glb2fbx.py 의 5번째 인자 hands=1(이 파일을 불러 씀, 원본 경로를 src 로 넘김). 단독 점검: blender -b --python tools/hand_keys.py -- <src.glb> <out_dir>
 #   → 손 정점 묶음·주먹 모양을 위에서·옆에서 본 점 그림(PNG, PIL 없이 Blender 이미지로) 을 out_dir 에 남긴다.
 import bpy, sys, math, os
@@ -34,12 +35,22 @@ RAMP = 0.015                   # 밑 마디: 손가락 시작에서 이만큼 �
 #   thumb_side 'reach': 엄지 쪽 = 손 넓이 방향으로 가장 멀리 뻗은 쪽, palm 'anatomy': 손바닥 쪽 = 왼손·오른손과 엄지 쪽에서 정함
 #   thumb_cut 'line': 엄지 경계 = 비스듬한 선(edge_u: 검지 가장자리를 재는 높이 비율, web_du: 선이 지나는 높이 = u_k + web_du)
 #   thumb_across(°): 엄지 마디 굽힘을 손바닥 쪽에서 새끼 쪽으로 기울임, tip_mode 'finger': 손가락별 손끝, fan(1/m): 손가락 모으기 세기
+#   thumb_deg_min(°): 엄지 경계선 최소 각도, thumb_wmin(m): 검지 가장자리 + 이 값보다 안쪽은 엄지 아님, thumb_u0: 엄지 묶음 시작 높이(× L, 기본 0.22)
 _BIG_HAND = dict(thumb_side='reach', palm='anatomy', thumb_cut='line', tip_mode='finger', fan=3.0,
                  fist=(85.0, 100.0, 80.0), grip=(55.0, 60.0, 40.0),
                  thumb_fist=(75.0, 5.0, 50.0, 40.0), thumb_grip=(45.0, 5.0, 30.0, 25.0), thumb_across=80.0)
+# 깐족이·석 달(2026-10-06 추가): 손가락이 붙어 있고 엄지가 짧은 좁은 손 — 같은 판정(엄지 쪽·손바닥 쪽·엄지 경계·손가락별 손끝)을 쓰되
+# 손가락 각도는 기본값, 손가락 모으기 없음(이미 붙어 있음), 엄지는 덩치보다 덜 돌림(45°). 좁은 손은 엄지 축이 손 길이 쪽으로 서서(24~26°)
+# 경계선이 손바닥 가운데까지 파고들었다 → 선 각도 최소 40°(thumb_deg_min), 검지 가장자리보다 안쪽은 엄지에서 뺌(thumb_wmin 0),
+# 엄지 묶음 시작 높이를 올림(thumb_u0 — 손목 쪽 손바닥 덩어리가 엄지와 같이 돌며 구겨지지 않게)
+_SLIM_HAND = dict(thumb_side='reach', palm='anatomy', thumb_cut='line', tip_mode='finger',
+                  thumb_deg_min=40.0, thumb_wmin=0.0,
+                  thumb_fist=(45.0, 10.0, 35.0, 30.0), thumb_grip=(30.0, 5.0, 25.0, 20.0), thumb_across=80.0)
 PROFILES = {
     'naengjanggo': dict(_BIG_HAND),      # 냉장고 1.84m — 큰 손, 엄지 38° 벌어짐, 새끼 짧고 바깥으로 기욺
     'scrum': dict(_BIG_HAND),            # 스크럼 1.88m — 손가락 사이가 1~2cm 벌어진 손
+    'kkanjok': dict(_SLIM_HAND, thumb_u0=0.35),   # 깐족이 1.72m — 엄지가 손바닥 가운데에서 시작
+    'seokdal': dict(_SLIM_HAND, thumb_u0=0.30),   # 석 달 1.77m — 손 테이프, 엄지가 길게 벌어짐
 }
 
 
@@ -128,12 +139,23 @@ def analyze(mesh, arm, side, prof=None):
         up = u > P.get('edge_u', 0.66) * L
         w0 = np.quantile(wn[up], 0.995) + 0.004
         core = (wn > w0 + 0.01) & (u > 0.2 * L) & (u < 0.9 * L)
-        X2 = np.c_[u[core], wn[core]]
-        _, _, v2 = np.linalg.svd(X2 - X2.mean(0), full_matrices=False)
-        d2 = v2[0] if v2[0][0] > 0 else -v2[0]
+        if core.sum() >= 8:
+            X2 = np.c_[u[core], wn[core]]
+            _, _, v2 = np.linalg.svd(X2 - X2.mean(0), full_matrices=False)
+            d2 = v2[0] if v2[0][0] > 0 else -v2[0]
+        else:
+            d2 = np.array([1.0, 0.0])            # 엄지 정점이 너무 적으면 손 길이 축과 나란한 선
+        if 'thumb_deg_min' in P and math.atan2(d2[1], d2[0]) < math.radians(P['thumb_deg_min']):
+            # 엄지 밑동이 넓게 잡혀 축이 손 길이 쪽으로 서면 선이 손바닥 가운데까지 파고든다 → 최소 각도로 눕힘
+            d2 = np.array([math.cos(math.radians(P['thumb_deg_min'])), math.sin(math.radians(P['thumb_deg_min']))])
         u0 = u_k + P.get('web_du', -0.015)
         ts = -(u - u0) * d2[1] + (wn - w0) * d2[0]
-        thumb = (ts > 0) & (u > 0.22 * L) & (u < 0.9 * L)
+        if 'thumb_wmin' in P:
+            # 손가락이 붙은 좁은 손: 비스듬한 선이 손목 쪽에서 손바닥 가운데까지 파고들어 손바닥 덩어리가 엄지와 같이 돌며 구겨졌다
+            # → 검지 가장자리(w0) + thumb_wmin 보다 안쪽은 엄지에서 뺀다
+            ts = np.minimum(ts, wn - (w0 + P['thumb_wmin']))
+        tu0 = P.get('thumb_u0', 0.22)
+        thumb = (ts > 0) & (u > tu0 * L) & (u < 0.9 * L)
         info_thumb = 'w0 %.3f u0 %.3f deg %.1f' % (w0, u0, math.degrees(math.atan2(d2[1], d2[0])))
     else:
         thumb = (wn > wthr) & (u > 0.22 * L) & (u < 0.9 * L)
@@ -151,7 +173,10 @@ def analyze(mesh, arm, side, prof=None):
     else:
         tw = np.clip((wn - (wthr - 0.006)) / 0.012, 0.0, 1.0)
     tw = tw * tw * (3 - 2 * tw)
-    tw *= np.clip((u - 0.12 * L) / (0.1 * L), 0.0, 1.0) * np.clip((0.98 * L - u) / (0.08 * L), 0.0, 1.0)
+    if 'thumb_u0' in P:
+        tw *= np.clip((u - (P['thumb_u0'] - 0.1) * L) / (0.1 * L), 0.0, 1.0) * np.clip((0.98 * L - u) / (0.08 * L), 0.0, 1.0)
+    else:
+        tw *= np.clip((u - 0.12 * L) / (0.1 * L), 0.0, 1.0) * np.clip((0.98 * L - u) / (0.08 * L), 0.0, 1.0)
     frame = dict(wrist=wrist, a=a, w=w, n=n, L=L, u_k=u_k, thumb_sign=thumb_sign, near=near, thumb_w=tw)
     if P.get('thumb_cut') == 'line':
         frame['info'] = ['thumb_line ' + info_thumb]

@@ -315,6 +315,9 @@ namespace Haengin.EditorTools
             Directory.CreateDirectory(Path.GetDirectoryName(dst));
             File.Copy(src, dst, true);
             Debug.Log($"{Tag} 글꼴 라이선스 동봉: {dst} ({new FileInfo(dst).Length} bytes)");
+            // M2: 의성어 그림을 Black Han Sans 로 구웠다(글꼴 파일 자체는 빌드에 안 들어가지만 출처 표시로 같이 둔다)
+            string bhs = FullPath("Assets/_Project/Fonts/OFL-BlackHanSans.txt");
+            if (File.Exists(bhs)) { string d2 = Path.Combine(outDir, "licenses/BlackHanSans-OFL.txt"); File.Copy(bhs, d2, true); Debug.Log($"{Tag} 글꼴 라이선스 동봉: {d2}"); }
             foreach (var d in Directory.GetDirectories(outDir, "*_DoNotShip"))
             {
                 Directory.Delete(d, true);

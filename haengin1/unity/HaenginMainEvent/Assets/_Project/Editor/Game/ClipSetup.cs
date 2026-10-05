@@ -67,12 +67,40 @@ namespace Haengin.EditorGame
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(EnemyFbx(n)) == null) { Debug.LogWarning($"{Tag} 적 모델 없음: {EnemyFbx(n)}"); continue; }
                 CharSetup.Texture(EnemyTex(n));
                 CharSetup.Human(EnemyFbx(n), "Idle", -1, -1, true, null);
+                if (n == "Naengjanggo" || n == "Scrum") DefaultArmLimits(EnemyFbx(n));
                 CharSetup.Ground(EnemyFbx(n), "Idle", EnemyFbx(n));
                 CharSetup.Toon(CharSetup.Load<GameObject>(EnemyFbx(n)), EnemyMat(n), EnemyTex(n));
                 var mesh = CharSetup.Load<GameObject>(EnemyFbx(n)).GetComponentInChildren<SkinnedMeshRenderer>(true)?.sharedMesh;
                 var b = mesh != null ? mesh.bounds.size : Vector3.zero;
                 Debug.Log($"{Tag} 적 모델 {n}: Humanoid · 툰 재질 {EnemyMat(n)} · 셰이프 키 {(mesh != null ? mesh.blendShapeCount : -1)}개({(mesh != null ? string.Join(",", Enumerable.Range(0, mesh.blendShapeCount).Select(mesh.GetBlendShapeName)) : "")}) · 메시 경계 {b}");
             }
+        }
+
+        /// 덩치(냉장고·스크럼) 팔(08 4-8 · 11장 15단계 · 11-4): 처음엔 근육 범위(Arm Down-Up 아래 −38 · Front-Back 앞 75)를 줄였으나
+        /// Editor/Game/ArmProbe 실측에서 Down-Up 은 효과 0, Front-Back 은 팔을 몸 쪽으로 당겨 오히려 더 닿았다(스크럼 15.1 → 17.7%).
+        /// → 범위는 기본값으로 되돌리고, 재생 뒤 위팔을 몸 바깥으로 벌린다(FighterAnim.ArmSpread — 적 프리팹에 넣음).
+        public const float BulkyArmSpread = 12f;
+
+        static void DefaultArmLimits(string path)
+        {
+            var mi = (ModelImporter)AssetImporter.GetAtPath(path);
+            var hd = mi.humanDescription;
+            var hb = hd.human;
+            bool changed = false;
+            for (int i = 0; i < hb.Length; i++)
+            {
+                if (hb[i].humanName != "LeftUpperArm" && hb[i].humanName != "RightUpperArm") continue;
+                var lim = hb[i].limit;
+                if (lim.useDefaultValues) continue;
+                lim.useDefaultValues = true;
+                hb[i].limit = lim;
+                changed = true;
+            }
+            if (!changed) return;
+            hd.human = hb;
+            mi.humanDescription = hd;
+            mi.SaveAndReimport();
+            Debug.Log($"{Tag} 덩치 팔 근육 범위 {System.IO.Path.GetFileName(path)}: 기본값으로 되돌림(벌림 {BulkyArmSpread}° 로 대신)");
         }
 
         // ───────────────────────── ② 클립 + ③ 측정
@@ -238,6 +266,13 @@ namespace Haengin.EditorGame
                         subs.Add((Make("Dodge", f0, f1, false), a, 0f, $"가장 멀리 피한 때 {a:F2}초"));
                         break;
                     }
+                    case "Smash":
+                    {
+                        // 양손 내려찍기: '정면으로 가장 멀리'는 손이 머리 높이일 때라 이르다 → 손이 꼭대기를 지나 가슴 높이로 내려온 때(11-4)
+                        var s = SmashHit(p);
+                        subs.Add((Make(file, f0, f1, loop), s.hit, s.reach, $"내려찍기(손이 꼭대기 {s.top:F2}초 → 가슴 높이 {s.hit:F2}초)"));
+                        break;
+                    }
                     default:
                     {
                         (float hit, float reach, string limb) s = strike ? Strike(p) : (0f, 0f, "");
@@ -299,6 +334,17 @@ namespace Haengin.EditorGame
                 System.IO.File.WriteAllText(System.IO.Path.Combine(dir, file + ".csv"), sb.ToString());
             }
             catch (Exception e) { Debug.LogWarning($"{Tag} 곡선 저장 실패 {file}: {e.Message}"); }
+        }
+
+        static (float hit, float reach, float top) SmashHit(Probe p)
+        {
+            int n = p.T.Length, iTop = 0;
+            float best = float.MinValue;
+            for (int i = 0; i < n; i++) { float y = Mathf.Max(p.LH[i].y, p.RH[i].y); if (y > best) { best = y; iTop = i; } }
+            for (int i = iTop; i < n; i++)
+                if (Mathf.Max(p.LH[i].y, p.RH[i].y) <= p.Chest[i].y)
+                    return (p.T[i], Mathf.Max(p.LH[i].z, p.RH[i].z), p.T[iTop]);
+            return (p.T[n - 1], 0f, p.T[iTop]);
         }
 
         /// 두 손이 가슴에서 가장 멀리 나간 때와 그때 손이 루트에서 나간 거리

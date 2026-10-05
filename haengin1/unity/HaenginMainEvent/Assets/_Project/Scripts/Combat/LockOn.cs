@@ -182,7 +182,7 @@ namespace Haengin
             float dt = TimeFx.Dt;
             double now = TimeFx.Real;
             // 탈락·사라짐 → 0.4초 뒤 다음 적
-            if (target.KO || target.State == Fighter.Phase.Out || !target.isActiveAndEnabled)
+            if (target.KO || target.State == Fighter.Phase.Out || target.Leaving || !target.isActiveAndEnabled)
             {
                 if (nextAt < 0) nextAt = now + t.LockNextDelay;
                 if (now + 1e-6 >= nextAt) AutoNext();

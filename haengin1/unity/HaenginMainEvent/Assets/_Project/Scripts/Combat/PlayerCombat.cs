@@ -464,7 +464,7 @@ namespace Haengin
             if (!InIFrames()) return false;
             var t = T;
             ReadCount++;
-            if (!t.Reduced) TimeFx.Slow(t.ReadSlow, t.ReadScale);
+            if (!t.ReducedNow) TimeFx.Slow(t.ReadSlow, t.ReadScale);
             Heat.Add(t.ReadHeat);
             readUntil = TimeFx.Real + t.ReadWindow;
             readTarget = atk;

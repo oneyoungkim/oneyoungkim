@@ -912,6 +912,7 @@ GameObject:
   - component: {fileID: 138456322}
   - component: {fileID: 138456323}
   - component: {fileID: 138456324}
+  - component: {fileID: 138456325}
   m_Layer: 7
   m_Name: "\uC8FC\uCC28\uC7A5 \uC639\uBCBD(\uB0A8)"
   m_TagString: Untagged
@@ -1012,6 +1013,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &138456325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138456320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c5f5544808034bbe9cdd7fcded06c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatSurface
+  Type: 0
 --- !u!1 &139862592
 GameObject:
   m_ObjectHideFlags: 0
@@ -5712,6 +5726,7 @@ GameObject:
   - component: {fileID: 406143042}
   - component: {fileID: 406143043}
   - component: {fileID: 406143044}
+  - component: {fileID: 406143045}
   m_Layer: 9
   m_Name: "\uC8FC\uCC28\uC7A5 \uC790\uD310\uAE30"
   m_TagString: Untagged
@@ -5812,6 +5827,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &406143045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406143040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c5f5544808034bbe9cdd7fcded06c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatSurface
+  Type: 0
 --- !u!1 &413259584
 GameObject:
   m_ObjectHideFlags: 0
@@ -9851,6 +9879,7 @@ GameObject:
   - component: {fileID: 576144514}
   - component: {fileID: 576144515}
   - component: {fileID: 576144516}
+  - component: {fileID: 576144517}
   m_Layer: 7
   m_Name: "\uC8FC\uCC28\uC7A5 \uC639\uBCBD(\uB0A8)"
   m_TagString: Untagged
@@ -9951,6 +9980,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &576144517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576144512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c5f5544808034bbe9cdd7fcded06c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatSurface
+  Type: 0
 --- !u!1 &585905280
 GameObject:
   m_ObjectHideFlags: 0
@@ -10230,6 +10272,7 @@ GameObject:
   - component: {fileID: 594532930}
   - component: {fileID: 594532931}
   - component: {fileID: 594532932}
+  - component: {fileID: 594532933}
   m_Layer: 9
   m_Name: "\uC8FC\uCC28\uC7A5 \uB09C\uAC04"
   m_TagString: Untagged
@@ -10330,6 +10373,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &594532933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 594532928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c5f5544808034bbe9cdd7fcded06c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatSurface
+  Type: 0
 --- !u!1 &613836992
 GameObject:
   m_ObjectHideFlags: 0
@@ -11075,6 +11131,116 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &653519936
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 653519937}
+  - component: {fileID: 653519938}
+  - component: {fileID: 653519939}
+  - component: {fileID: 653519940}
+  m_Layer: 0
+  m_Name: CM_Heat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &653519937
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653519936}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &653519938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653519936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
+  Priority:
+    Enabled: 1
+    m_Value: 0
+  OutputChannel: 1
+  StandbyUpdate: 2
+  m_StreamingVersion: 0
+  m_LegacyPriority: 0
+  Target:
+    TrackingTarget: {fileID: 0}
+    LookAtTarget: {fileID: 0}
+    CustomLookAtTarget: 0
+  Lens:
+    FieldOfView: 40
+    OrthographicSize: 10
+    NearClipPlane: 0.08
+    FarClipPlane: 600
+    Dutch: 0
+    ModeOverride: 0
+    PhysicalProperties:
+      GateFit: 2
+      SensorSize: {x: 21.946, y: 16.002}
+      LensShift: {x: 0, y: 0}
+      FocusDistance: 10
+      Iso: 200
+      ShutterSpeed: 0.005
+      Aperture: 16
+      BladeCount: 5
+      Curvature: {x: 2, y: 11}
+      BarrelClipping: 0.25
+      Anamorphism: 0
+  BlendHint: 0
+--- !u!114 &653519939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653519936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70c42abf3edf48148a857bd2e1e2b606, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.TraumaShake
+--- !u!114 &653519940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653519936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5abaa020c63eb24ebe23b200f510d2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatCam
+  Cam: {fileID: 653519938}
+  Radius: 2.6
+  Fov: 40
+  Pitch: 6
+  Spin: 8
+  Priority: 30
+  Block:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &653702080
 GameObject:
   m_ObjectHideFlags: 0
@@ -12368,6 +12534,54 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &747924096
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 747924097}
+  - component: {fileID: 747924098}
+  m_Layer: 0
+  m_Name: Yacha_Y1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &747924097
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747924096}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 983838785}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &747924098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747924096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 918821712dab6a94495932cb3368ae6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.Yacha
+  Def: {fileID: 11400000, guid: e9fac225061331046b3a88ce669ec008, type: 2}
+  Player: {fileID: 1935390210}
+  Mode: {fileID: 1142400770}
+  Tuning: {fileID: 11400000, guid: a76c79ecfe284d84ea7218a63abf5857, type: 2}
 --- !u!1 &749561920
 GameObject:
   m_ObjectHideFlags: 0
@@ -12748,6 +12962,7 @@ GameObject:
   - component: {fileID: 781088194}
   - component: {fileID: 781088195}
   - component: {fileID: 781088196}
+  - component: {fileID: 781088197}
   m_Layer: 7
   m_Name: "\uC8FC\uCC28\uC7A5 \uC639\uBCBD(\uB3D9)"
   m_TagString: Untagged
@@ -12848,6 +13063,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &781088197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781088192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c5f5544808034bbe9cdd7fcded06c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatSurface
+  Type: 0
 --- !u!1 &781620544
 GameObject:
   m_ObjectHideFlags: 0
@@ -16564,6 +16792,7 @@ GameObject:
   - component: {fileID: 966846914}
   - component: {fileID: 966846915}
   - component: {fileID: 966846916}
+  - component: {fileID: 966846917}
   m_Layer: 7
   m_Name: "\uC8FC\uCC28\uC7A5 \uC639\uBCBD(\uB0A8)"
   m_TagString: Untagged
@@ -16664,6 +16893,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &966846917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966846912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c5f5544808034bbe9cdd7fcded06c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatSurface
+  Type: 0
 --- !u!1 &968913856
 GameObject:
   m_ObjectHideFlags: 0
@@ -17276,6 +17518,313 @@ Transform:
   - {fileID: 1905327745}
   m_Father: {fileID: 809985217}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &983838784
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 983838785}
+  m_Layer: 0
+  m_Name: Stages
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &983838785
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 983838784}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2125180545}
+  - {fileID: 747924097}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &985498432
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 985498433}
+  - component: {fileID: 985498434}
+  - component: {fileID: 985498435}
+  - component: {fileID: 985498436}
+  - component: {fileID: 985498437}
+  - component: {fileID: 985498438}
+  - component: {fileID: 985498439}
+  m_Layer: 0
+  m_Name: CM_Combat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &985498433
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985498432}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.11654424, y: 0.2901924, z: -0.035631146, w: 0.9491766}
+  m_LocalPosition: {x: -200.1629, y: 33.285145, z: 93.32794}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &985498434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985498432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
+  Priority:
+    Enabled: 1
+    m_Value: 0
+  OutputChannel: 1
+  StandbyUpdate: 2
+  m_StreamingVersion: 0
+  m_LegacyPriority: 0
+  Target:
+    TrackingTarget: {fileID: 1553811969}
+    LookAtTarget: {fileID: 0}
+    CustomLookAtTarget: 0
+  Lens:
+    FieldOfView: 47
+    OrthographicSize: 10
+    NearClipPlane: 0.08
+    FarClipPlane: 600
+    Dutch: 0
+    ModeOverride: 0
+    PhysicalProperties:
+      GateFit: 2
+      SensorSize: {x: 21.946, y: 16.002}
+      LensShift: {x: 0, y: 0}
+      FocusDistance: 10
+      Iso: 200
+      ShutterSpeed: 0.005
+      Aperture: 16
+      BladeCount: 5
+      Curvature: {x: 2, y: 11}
+      BarrelClipping: 0.25
+      Anamorphism: 0
+  BlendHint: 0
+--- !u!114 &985498435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985498432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b5d7c088409d9a40b7b09aa707777f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineOrbitalFollow
+  TargetOffset: {x: 0, y: 0, z: 0}
+  TrackerSettings:
+    BindingMode: 4
+    PositionDamping: {x: 0.15, y: 0.4, z: 0.25}
+    AngularDampingMode: 0
+    RotationDamping: {x: 0, y: 0, z: 0}
+    QuaternionDamping: 0
+  OrbitStyle: 0
+  Radius: 5
+  Orbits:
+    Top:
+      Radius: 2
+      Height: 5
+    Center:
+      Radius: 4
+      Height: 2.25
+    Bottom:
+      Radius: 2.5
+      Height: 0.1
+    SplineCurvature: 0.5
+  RecenteringTarget: 2
+  HorizontalAxis:
+    Value: 34
+    Center: 34
+    Range: {x: -180, y: 180}
+    Wrap: 1
+    Recentering:
+      Enabled: 0
+      Wait: 9999
+      Time: 1
+    Restrictions: 0
+  VerticalAxis:
+    Value: 14
+    Center: 14
+    Range: {x: -10, y: 50}
+    Wrap: 0
+    Recentering:
+      Enabled: 0
+      Wait: 9999
+      Time: 1
+    Restrictions: 0
+  RadialAxis:
+    Value: 1
+    Center: 1
+    Range: {x: 1, y: 1}
+    Wrap: 0
+    Recentering:
+      Enabled: 0
+      Wait: 1
+      Time: 2
+    Restrictions: 0
+--- !u!114 &985498436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985498432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f38bda98361e1de48a4ca2bd86ea3c17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineRotationComposer
+  Composition:
+    ScreenPosition: {x: 0, y: 0}
+    DeadZone:
+      Enabled: 0
+      Size: {x: 0, y: 0}
+    HardLimits:
+      Enabled: 1
+      Size: {x: 0.8, y: 0.8}
+      Offset: {x: 0, y: 0}
+  CenterOnActivate: 1
+  TargetOffset: {x: 0, y: 0, z: 0}
+  Damping: {x: 0.1, y: 0.2}
+  Lookahead:
+    Enabled: 0
+    Time: 0
+    Smoothing: 0
+    IgnoreY: 0
+--- !u!114 &985498437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985498432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDeoccluder
+  CollideAgainst:
+    serializedVersion: 2
+    m_Bits: 2241
+  IgnoreTag: Player
+  TransparentLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  MinimumDistanceFromTarget: 0.01
+  AvoidObstacles:
+    Enabled: 1
+    DistanceLimit: 0
+    MinimumOcclusionTime: 0
+    CameraRadius: 0.1
+    UseFollowTarget:
+      Enabled: 0
+      YOffset: 0
+    Strategy: 0
+    MaximumEffort: 4
+    SmoothingTime: 0.25
+    Damping: 0.5
+    DampingWhenOccluded: 0
+  ShotQualityEvaluation:
+    Enabled: 0
+    OptimalDistance: 10
+    NearLimit: 5
+    FarLimit: 30
+    MaxQualityBoost: 0.2
+--- !u!114 &985498438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985498432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70c42abf3edf48148a857bd2e1e2b606, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.TraumaShake
+--- !u!114 &985498439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985498432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01b532897f3d9e84899647da1e5420b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.CombatCamRig
+  Cam: {fileID: 985498434}
+  Orbit: {fileID: 985498435}
+  Occ: {fileID: 985498437}
+  Pivot: {fileID: 1553811969}
+  Motor: {fileID: 1935390213}
+  CamTarget: {fileID: 1935390212}
+  Lock: {fileID: 1935390209}
+  CamT: {fileID: 11400000, guid: ae8438c327d118d459d5f8aaa6932cd3, type: 2}
+  Tuning: {fileID: 11400000, guid: a76c79ecfe284d84ea7218a63abf5857, type: 2}
+  Actions: {fileID: -944628639613478452, guid: c9c5d66d44396ab47b73b8057ae4d9b7, type: 3}
+  PivotToTarget: 0.35
+  SideDeg: 18
+  LockPitch: 10
+  LockFov: 45
+  RadiusBase: 3.6
+  RadiusPerM: 0.6
+  RadiusMin: 4.2
+  RadiusMax: 6.5
+  YawMaxSpeed: 150
+  YawAccel: 400
+  YawDelay: 0.25
+  TargetChest: 1.25
+  PivotDrop: 0.25
+  FreeRadius: 5
+  FreePitch: 14
+  FreeFov: 47
+  AlignWait: 1.5
+  AlignSpeed: 40
+  PullRatio: 0.65
+  PullHold: 0.4
+  SideTime: 0.5
+  SideLock: 1.5
+  SideExtra:
+  - 0
+  - 22
+  - 47
+  - 72
+  SwapGain: 40
+  NarrowAfter: 2
 --- !u!1 &989664192
 GameObject:
   m_ObjectHideFlags: 0
@@ -20717,7 +21266,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  CustomBlends: {fileID: 0}
+  CustomBlends: {fileID: 11400000, guid: 11ad1d7b45c12734dadda730a55b6e84, type: 2}
 --- !u!114 &1109825414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20730,7 +21279,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6b162e624f08ae4188f0822e0574d77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Haengin.Game::Haengin.DebugHud
-  Motor: {fileID: 1935390210}
+  Motor: {fileID: 1935390213}
   Cam: {fileID: 1341643400}
 --- !u!1 &1112734272
 GameObject:
@@ -21574,6 +22123,56 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1142400768
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1142400769}
+  - component: {fileID: 1142400770}
+  m_Layer: 0
+  m_Name: Combat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1142400769
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142400768}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1142400770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142400768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 274ba493af871f84b800caea67d9dc09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.CombatMode
+  Input: {fileID: 1935390211}
+  Player: {fileID: 1935390210}
+  CombatCam: {fileID: 985498439}
+  ExploreCam: {fileID: 1341643400}
+  StartInCombat: 0
+  InputDelay: 0.4
 --- !u!1 &1149445184
 GameObject:
   m_ObjectHideFlags: 0
@@ -26693,7 +27292,7 @@ MonoBehaviour:
   m_StreamingVersion: 0
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 1935390209}
+    TrackingTarget: {fileID: 1935390212}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
@@ -26887,8 +27486,8 @@ MonoBehaviour:
   Cam: {fileID: 1341643394}
   Orbit: {fileID: 1341643395}
   Occ: {fileID: 1341643397}
-  Motor: {fileID: 1935390210}
-  CamTarget: {fileID: 1935390209}
+  Motor: {fileID: 1935390213}
+  CamTarget: {fileID: 1935390212}
   Tuning: {fileID: 11400000, guid: ae8438c327d118d459d5f8aaa6932cd3, type: 2}
   Clearance: {fileID: 1341643399}
 --- !u!114 &1341643401
@@ -31014,6 +31613,7 @@ GameObject:
   - component: {fileID: 1532199362}
   - component: {fileID: 1532199363}
   - component: {fileID: 1532199364}
+  - component: {fileID: 1532199365}
   m_Layer: 7
   m_Name: "\uB0A8\uCABD \uC0C1\uAC00 2(\uBD84\uC2DD)"
   m_TagString: Untagged
@@ -31114,6 +31714,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1532199365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532199360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c5f5544808034bbe9cdd7fcded06c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatSurface
+  Type: 0
 --- !u!1 &1533136512
 GameObject:
   m_ObjectHideFlags: 0
@@ -31587,6 +32200,37 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -2040464183842095064, guid: ef31c12d05faecc46a81178ce19bf3d6, type: 2}
+--- !u!1 &1553811968
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1553811969}
+  m_Layer: 0
+  m_Name: CombatPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1553811969
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553811968}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -197.45, y: 32.075535, z: 97.35}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1559946112
 GameObject:
   m_ObjectHideFlags: 0
@@ -32749,6 +33393,7 @@ GameObject:
   - component: {fileID: 1609478786}
   - component: {fileID: 1609478787}
   - component: {fileID: 1609478788}
+  - component: {fileID: 1609478789}
   m_Layer: 7
   m_Name: "\uC8FC\uCC28\uC7A5 \uC639\uBCBD(\uB3D9)"
   m_TagString: Untagged
@@ -32849,6 +33494,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1609478789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609478784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c5f5544808034bbe9cdd7fcded06c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatSurface
+  Type: 0
 --- !u!1 &1613457152
 GameObject:
   m_ObjectHideFlags: 0
@@ -37660,6 +38318,7 @@ GameObject:
   - component: {fileID: 1813625922}
   - component: {fileID: 1813625923}
   - component: {fileID: 1813625924}
+  - component: {fileID: 1813625925}
   m_Layer: 9
   m_Name: "\uC8FC\uCC28\uC7A5 \uB09C\uAC04"
   m_TagString: Untagged
@@ -37760,6 +38419,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1813625925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1813625920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c5f5544808034bbe9cdd7fcded06c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatSurface
+  Type: 0
 --- !u!1 &1817943872
 GameObject:
   m_ObjectHideFlags: 0
@@ -39427,6 +40099,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1691137736475577592, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
+      propertyPath: CombatCam
+      value: 
+      objectReference: {fileID: 985498439}
+    - target: {fileID: 1768074099850562308, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
+      propertyPath: Cam
+      value: 
+      objectReference: {fileID: 653519940}
     - target: {fileID: 1805354444406302035, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -197.45
@@ -39488,12 +40168,45 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
---- !u!4 &1935390209 stripped
+--- !u!114 &1935390209 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1473967906729586371, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
+  m_PrefabInstance: {fileID: 1935390208}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc5cde952576ec4fab15075ff2e72e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.LockOn
+--- !u!114 &1935390210 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1691137736475577592, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
+  m_PrefabInstance: {fileID: 1935390208}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fabe6f3e8f661df499c440aca245aa04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.PlayerCombat
+--- !u!114 &1935390211 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3866782560663018707, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
+  m_PrefabInstance: {fileID: 1935390208}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82a5b536229a01d489a2d11cb77795a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.PInput
+--- !u!4 &1935390212 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4928111037785458280, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
   m_PrefabInstance: {fileID: 1935390208}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1935390210 stripped
+--- !u!114 &1935390213 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8214876749908705743, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
   m_PrefabInstance: {fileID: 1935390208}
@@ -43731,6 +44444,58 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2125180544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2125180545}
+  - component: {fileID: 2125180546}
+  m_Layer: 0
+  m_Name: Encounter_Y4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2125180545
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125180544}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 983838785}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2125180546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125180544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8be4a036d08aa264cb83419d5c252d68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.Encounter
+  Def: {fileID: 11400000, guid: 5410473a55452464cb0cd0cb243c4598, type: 2}
+  Player: {fileID: 1935390210}
+  Mode: {fileID: 1142400770}
+  Tuning: {fileID: 11400000, guid: a76c79ecfe284d84ea7218a63abf5857, type: 2}
+  Starts: 0
+  Wins: 0
+  Losses: 0
+  Retries: 0
 --- !u!1 &2136140032
 GameObject:
   m_ObjectHideFlags: 0
@@ -44090,3 +44855,8 @@ SceneRoots:
   - {fileID: 1935390208}
   - {fileID: 1341643393}
   - {fileID: 1570960065}
+  - {fileID: 1553811969}
+  - {fileID: 985498433}
+  - {fileID: 653519937}
+  - {fileID: 1142400769}
+  - {fileID: 983838785}

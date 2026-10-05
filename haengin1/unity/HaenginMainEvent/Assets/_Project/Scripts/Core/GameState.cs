@@ -8,7 +8,12 @@ namespace Haengin
         public static bool Paused { get; private set; }
         public static bool CursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
-        public static void TogglePause() => SetPaused(!Paused);
+        /// 화면을 덮는 창(패배 화면·대화)이 떠 있음: 일시정지 토글을 막는다(Esc 가 그 창의 '그만'·'다음에')
+        public static bool Modal;
+        /// 연출 중 조작 막음(야차 입장 6초 등): PInput 이 이동·버튼을 넣지 않는다
+        public static bool InputLocked;
+
+        public static void TogglePause() { if (Modal && !Paused) return; SetPaused(!Paused); }
 
         public static void SetPaused(bool p)
         {
@@ -34,6 +39,7 @@ namespace Haengin
         static void ResetStatics()
         {
             Paused = false;
+            Modal = InputLocked = false;
         }
     }
 }
