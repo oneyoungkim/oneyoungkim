@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52f426a239a3a594f943e5491109e0f6, type: 3}
+  m_Name: CamTuning
+  m_EditorClassIdentifier: Haengin.Game::Haengin.CamTuning
+  fov: 45
+  fovRun: 49
+  fovUpTime: 0.6
+  fovDownTime: 0.4
+  near: 0.08
+  far: 600
+  radius: 4
+  radiusRun: 4.3
+  targetHeight: 1.4
+  pitchDefault: 8
+  pitchMin: -10
+  pitchMax: 50
+  screen: {x: -0.06, y: 0}
+  posDamping: {x: 0.15, y: 0.4, z: 0.25}
+  aimDamping: {x: 0.1, y: 0.2}
+  mouseYaw: 0.08
+  mousePitch: 0.07
+  mouseScale: 1
+  padYawSpeed: 150
+  padPitchSpeed: 95
+  padExponent: 1.6
+  padScale: 1
+  invertMouseY: 0
+  invertPadY: 0
+  autoRecenter: 1
+  recenterWait: 1.2
+  recenterTime: 2
+  pitchRecenterWait: 3
+  snapTime: 0.3
+  camRadius: 0.1
+  occludedDamping: 0
+  releaseDamping: 0.5
+  holdTime: 0.25
+  hideDist: 0.55
+  showDist: 0.7
+  bodyMargin: -0.005
+  bodyMinRadius: 0.3
+  legCheck: 1
+  legHeight: 0.5
+  legMinRadius: 1.2

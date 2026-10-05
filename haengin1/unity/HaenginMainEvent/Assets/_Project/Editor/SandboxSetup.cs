@@ -175,7 +175,7 @@ namespace Haengin.EditorTools
                 Debug.Log($"{Tag}   텍스처 '{t.name}' {t.width}x{t.height}");
         }
 
-        static GameObject Spawn(GameObject model, Transform parent, float yaw)
+        internal static GameObject Spawn(GameObject model, Transform parent, float yaw)
         {
             var go = PrefabUtility.InstantiatePrefab(model) as GameObject;
             if (go == null) go = UnityEngine.Object.Instantiate(model);
@@ -187,7 +187,7 @@ namespace Haengin.EditorTools
         }
 
         /// 키를 맞추고(targetHeight>0 일 때) 발이 y=0 에 닿고 수평 중심이 부모 원점에 오게 한다.
-        static Bounds FitToGround(Transform root, Transform model, float targetHeight, bool center)
+        internal static Bounds FitToGround(Transform root, Transform model, float targetHeight, bool center)
         {
             var b = WorldBounds(model);
             if (targetHeight > 0f && b.size.y > 1e-4f)
@@ -336,12 +336,13 @@ namespace Haengin.EditorTools
         }
 
         /// 6-4 필름 후처리: 채도 .85, 대비 약간 억제, 스플릿 톤(그림자 청록·밝은 쪽 따뜻하게), 블룸·톤매핑 없음
-        static VolumeProfile MakeFilmVolume()
+        /// Zone1Builder 도 같은 레시피를 자기 경로(Zone1_FilmVolume.asset)에 만든다.
+        internal static VolumeProfile MakeFilmVolume(string path = VolumePath)
         {
-            var old = AssetDatabase.LoadAssetAtPath<VolumeProfile>(VolumePath);
-            if (old != null) AssetDatabase.DeleteAsset(VolumePath);
+            var old = AssetDatabase.LoadAssetAtPath<VolumeProfile>(path);
+            if (old != null) AssetDatabase.DeleteAsset(path);
             var profile = ScriptableObject.CreateInstance<VolumeProfile>();
-            AssetDatabase.CreateAsset(profile, VolumePath);
+            AssetDatabase.CreateAsset(profile, path);
 
             var ca = profile.Add<ColorAdjustments>(true);
             ca.saturation.Override(-15f);

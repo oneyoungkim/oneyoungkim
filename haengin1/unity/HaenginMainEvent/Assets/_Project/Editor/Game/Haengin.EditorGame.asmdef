@@ -1,0 +1,21 @@
+{
+    "name": "Haengin.EditorGame",
+    "rootNamespace": "Haengin.EditorGame",
+    "references": [
+        "Haengin.Game",
+        "Haengin.EditorTools",
+        "Unity.Cinemachine",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

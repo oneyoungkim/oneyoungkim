@@ -1,6 +1,7 @@
 // 행인1의 메인이벤트 — batchmode 전용 도구 모음
 // 사용 예는 haengin1/unity/README.md 참고. GUI 없이 -batchmode 로만 부른다.
 //   스크린샷 : -executeMethod Haengin.EditorTools.BatchTools.Screenshot   (-nographics 없이! GPU 렌더 필요)
+//              [-view 오브젝트 경로] [-fov 도] [-nofog] [-topdown [-area x0,z0,x1,z1] [-shadows]] — Zone1 촬영용
 //   윈도 빌드: -executeMethod Haengin.EditorTools.BatchTools.BuildWindows
 //   임포트 점검: -executeMethod Haengin.EditorTools.BatchTools.ImportCheck
 using System;
@@ -17,6 +18,7 @@ using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Haengin.EditorTools
 {
@@ -40,6 +42,9 @@ namespace Haengin.EditorTools
         static float ArgFloat(string name, float def) =>
             float.TryParse(Arg(name), NumberStyles.Float, CultureInfo.InvariantCulture, out var v) ? v : def;
 
+        static bool HasFlag(string name) =>
+            Environment.GetCommandLineArgs().Any(a => string.Equals(a, name, StringComparison.OrdinalIgnoreCase));
+
         static string FullPath(string p) =>
             Path.IsPathRooted(p) ? p : Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), p));
 
@@ -48,6 +53,10 @@ namespace Haengin.EditorTools
         /// -scene &lt;장면 경로&gt; -out &lt;png&gt; [-width 1920] [-height 1080] [-yaw 0] [-camera 이름] [-pivot Siwoo] [-supersample 2] [-show 이름,..] [-hide 이름,..]
         /// 메인 카메라를 RenderTexture 에 렌더해 PNG 로 저장. Cinemachine 카메라가 있으면 그 자세·렌즈를 메인 카메라에 옮긴 뒤 찍는다.
         /// -yaw 는 피사체(-pivot 오브젝트) 둘레로 카메라를 돌리는 각도(도). 3/4 컷 = 35 정도.
+        /// -view 이름 : 그 오브젝트(예: Zone1/Shots/Shot_Start)의 위치·방향으로 찍는다. 꺼진 Camera 가 붙어 있으면 그 화각도 쓴다.
+        /// -fov 도 : 화각 덮어쓰기. -nofog : 안개 끄고 찍기.
+        /// -topdown : 위에서 똑바로 내려다보는 직교 투영(북쪽 = 위). -area x0,z0,x1,z1 로 찍을 범위(없으면 모든 렌더러 범위).
+        ///            찍는 동안만 안개와 그림자를 끈다(-shadows 면 그림자 거리를 늘려 넣음). 장면·설정 파일은 저장하지 않는다.
         /// </summary>
         public static void Screenshot()
         {
@@ -84,10 +93,26 @@ namespace Haengin.EditorTools
                     cam.transform.RotateAround(pivot, Vector3.up, yaw);
                 }
 
+                string viewName = Arg("-view");
+                if (!string.IsNullOrEmpty(viewName))
+                {
+                    var v = GameObject.Find(viewName) ?? throw new Exception($"-view 오브젝트 '{viewName}' 를 찾지 못했습니다");
+                    cam.transform.SetPositionAndRotation(v.transform.position, v.transform.rotation);
+                    var vc = v.GetComponent<Camera>();
+                    if (vc != null) { cam.fieldOfView = vc.fieldOfView; cam.nearClipPlane = vc.nearClipPlane; cam.farClipPlane = vc.farClipPlane; }
+                }
+                float fov = ArgFloat("-fov", -1f);
+                if (fov > 0f) cam.fieldOfView = fov;
+                if (HasFlag("-nofog")) RenderSettings.fog = false;
+
+                Action restore = null;
+                if (HasFlag("-topdown")) restore = SetupTopDown(cam, Arg("-area"), (float)w / h);
                 Directory.CreateDirectory(Path.GetDirectoryName(FullPath(outPath)));
-                RenderToPng(cam, w, h, ss, FullPath(outPath));
+                try { RenderToPng(cam, w, h, ss, FullPath(outPath)); }
+                finally { restore?.Invoke(); }
                 Debug.Log($"{Tag} 스크린샷 저장 완료: {FullPath(outPath)} ({w}x{h}, 슈퍼샘플 {ss}x) 장면={scenePath} 카메라={cam.name} CM={vcamUsed ?? "없음"} yaw={yaw} " +
-                          $"위치={cam.transform.position} 회전={cam.transform.eulerAngles} FOV={cam.fieldOfView}");
+                          $"view={viewName ?? "없음"} 위치={cam.transform.position} 회전={cam.transform.eulerAngles} " +
+                          (cam.orthographic ? $"직교 크기={cam.orthographicSize:F1}" : $"FOV={cam.fieldOfView}"));
             }
             catch (Exception e)
             {
@@ -95,6 +120,41 @@ namespace Haengin.EditorTools
                 code = 1;
             }
             EditorApplication.Exit(code);
+        }
+
+        /// 위에서 내려다보는 직교 카메라. 화면 위 = 북(+Z), 오른쪽 = 동(+X). 되돌리기 함수를 돌려준다.
+        static Action SetupTopDown(Camera cam, string area, float aspect)
+        {
+            var rs = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None).Where(r => r.enabled && r.gameObject.activeInHierarchy).ToList();
+            if (rs.Count == 0) throw new Exception("장면에 렌더러가 없습니다");
+            var all = rs[0].bounds;
+            foreach (var r in rs) all.Encapsulate(r.bounds);
+            float x0 = all.min.x, x1 = all.max.x, z0 = all.min.z, z1 = all.max.z;
+            if (!string.IsNullOrEmpty(area))
+            {
+                var v = area.Split(',').Select(t => float.Parse(t.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture)).ToArray();
+                if (v.Length != 4) throw new ArgumentException("-area 는 x0,z0,x1,z1 네 수입니다");
+                x0 = Mathf.Min(v[0], v[2]); x1 = Mathf.Max(v[0], v[2]); z0 = Mathf.Min(v[1], v[3]); z1 = Mathf.Max(v[1], v[3]);
+            }
+            float top = all.max.y + 50f;
+            cam.orthographic = true;
+            cam.orthographicSize = Mathf.Max((z1 - z0) / 2f, (x1 - x0) / 2f / aspect) * 1.03f;
+            cam.transform.SetPositionAndRotation(new Vector3((x0 + x1) / 2f, top, (z0 + z1) / 2f), Quaternion.Euler(90f, 0f, 0f));
+            cam.nearClipPlane = 1f;
+            cam.farClipPlane = top - all.min.y + 10f;
+
+            bool fog = RenderSettings.fog;
+            RenderSettings.fog = false;
+            // 평면도는 그림자 없이(그림자 거리를 0 으로). -shadows 를 주면 그림자 거리를 카메라 깊이만큼 늘려 그림자를 넣는다
+            var urp = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            float shadowDist = urp != null ? urp.shadowDistance : 0f;
+            if (urp != null) urp.shadowDistance = HasFlag("-shadows") ? cam.farClipPlane : 0f;
+            Debug.Log($"{Tag} 위에서 보기: x {x0:F0}~{x1:F0}, z {z0:F0}~{z1:F0}, 카메라 높이 {top:F0}, 직교 크기 {cam.orthographicSize:F1}");
+            return () =>
+            {
+                RenderSettings.fog = fog;
+                if (urp != null) urp.shadowDistance = shadowDist;
+            };
         }
 
         static void SetRootsActive(string names, bool active)
@@ -175,7 +235,7 @@ namespace Haengin.EditorTools
 
         // ───────────────────────── 2) Windows 빌드
         /// <summary>
-        /// -out &lt;폴더&gt; : Sandbox 장면을 Windows 64비트(Mono, 개발 빌드 아님)로 빌드. 실패하면 exit code 1.
+        /// -out &lt;폴더&gt; : 빌드 목록의 장면(M1: Zone1 첫 장면, Sandbox 두 번째)을 Windows 64비트(Mono, 개발 빌드 아님)로 빌드. 실패하면 exit code 1.
         /// </summary>
         public static void BuildWindows()
         {
@@ -186,7 +246,12 @@ namespace Haengin.EditorTools
                 Directory.CreateDirectory(outDir);
                 string exe = Path.Combine(outDir, "HaenginMainEvent.exe");
 
-                if (!File.Exists(FullPath(SandboxScene))) throw new FileNotFoundException("Sandbox 장면이 없습니다: " + SandboxScene);
+                // 빌드 목록(EditorBuildSettings)의 켜진 장면을 순서대로. 비어 있으면 Sandbox 하나(예전 동작)
+                var scenes = EditorBuildSettings.scenes.Where(sc => sc.enabled && File.Exists(FullPath(sc.path))).Select(sc => sc.path).ToArray();
+                if (scenes.Length == 0) scenes = new[] { SandboxScene };
+                foreach (var sc in scenes)
+                    if (!File.Exists(FullPath(sc))) throw new FileNotFoundException("장면이 없습니다: " + sc);
+                Debug.Log($"{Tag} 빌드 장면: {string.Join(", ", scenes)}");
                 if (!TempPathGuard.Ensure(true))
                     throw new Exception("임시 폴더(TMPDIR)를 쓸 수 없어 빌드를 시작하지 않습니다(Burst AOT 단계가 반드시 실패). " + TempPathGuard.Guide);
 
@@ -197,7 +262,7 @@ namespace Haengin.EditorTools
 
                 var opts = new BuildPlayerOptions
                 {
-                    scenes = new[] { SandboxScene },
+                    scenes = scenes,
                     locationPathName = exe,
                     target = BuildTarget.StandaloneWindows64,
                     targetGroup = BuildTargetGroup.Standalone,

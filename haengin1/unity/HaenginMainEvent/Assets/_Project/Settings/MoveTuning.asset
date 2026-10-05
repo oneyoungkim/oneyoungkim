@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c592820dbf33c3448abc3c0eab9b924, type: 3}
+  m_Name: MoveTuning
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveTuning
+  walkSpeed: 1.6
+  runSpeed: 4.5
+  minWalkSpeed: 0.5
+  stickFull: 0.9
+  walkAccelTime: 0.12
+  runAccelTime: 0.4
+  decel: 18
+  turnRateWalk: 720
+  turnRateRun: 540
+  gravity: 20
+  maxFall: 20
+  groundStick: 1
+  snapDistance: 0.35
+  slideSpeed: 4
+  height: 1.74
+  radius: 0.25
+  skinWidth: 0.025
+  stepOffset: 0.3
+  slopeLimit: 40
+  leanBase: 5
+  leanPerAccel: 0.3
+  leanMaxFwd: 8
+  leanMaxBack: 4
+  bankK: 0.006
+  bankMax: 8
+  leanSmooth: 0.12
+  bankSmooth: 0.1
+  stepSmooth: 0.08
+  stepThreshold: 0.05
+  safeInterval: 0.5
