@@ -64,8 +64,8 @@ namespace Haengin
             if (!GameState.CursorLocked && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) GameState.LockCursor(true);
 
             Vector2 m = Vector2.ClampMagnitude(move.ReadValue<Vector2>(), 1f);
-            var basis = Cam != null ? Cam.MoveBasis : Quaternion.identity;            // 07 4-4: 궤도 정면 기준
-            var dir = basis * new Vector3(m.x, 0f, m.y);
+            // 07 4-4: 궤도 정면 기준 + 4-10: 누르는 동안 자동 정렬이 돌린 만큼은 빼서 고정(대각선으로 걸을 때 빙글 돌지 않게)
+            var dir = Cam != null ? Cam.StickToWorld(m) : new Vector3(m.x, 0f, m.y);
 
             if (UseRunToggle && runToggle.WasPressedThisFrame()) toggled = !toggled;
             if (toggled && Motor.CommandSpeed < 0.5f && m.sqrMagnitude < 0.01f) toggled = false;

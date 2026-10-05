@@ -1,4 +1,4 @@
-// 행인1의 메인이벤트 — 이동·카메라 기본 테스트(코드로 만든 시험장, docs/07_M1_조작_설계.md 9-2 의 T01~T13 + T19)
+// 행인1의 메인이벤트 — 이동·카메라 기본 테스트(코드로 만든 시험장, docs/07_M1_조작_설계.md 9-2 의 T01~T13 + T19 + T22)
 // 번호·합격 기준은 07 문서 9-2 표 그대로(2차에서 문서 번호로 맞추고, 1차 구현이 말없이 늘린 허용치를 되돌림).
 // 시간은 1/60초 고정(Time.captureDeltaTime) → 결과가 매번 같다. 입력은 PlayerMotor.SetMoveInput 으로 주입.
 using System.Collections;
@@ -482,6 +482,95 @@ namespace Haengin.Tests
             Assert.That(off.End, Is.EqualTo(90f).Within(0.5f), "끔: 카메라를 그대로 둠");
             Assert.That(idleYaw, Is.EqualTo(60f).Within(0.5f), "서 있을 때는 돌리지 않음");
             Assert.That(back.End, Is.EqualTo(180f).Within(0.5f), "카메라 쪽으로 걸어올 때는 돌리지 않음");
+        }
+
+        // ───────────────────────── T22 대각선 + 자동 정렬 (3차 검수: W+D 를 누르고 있으면 3초 뒤 45° → 119° 로 계속 돎)
+        // PInput 과 같은 경로(CamRig.StickToWorld)로 스틱 입력을 넣고, 이동 방향(실제 속도의 수평 방향)이 처음 방향에서 얼마나 도는지 잰다.
+        [UnityTest]
+        public IEnumerator T22_Diagonal_AutoAlign_NoSpiral()
+        {
+            Lab.Floor(0f, 400f);
+            var r = Lab.Rig(new Vector3(0f, 0f, -150f), 0f);
+            var m = r.Motor;
+            yield return Lab.Seconds(0.5f);
+            var diag = new Vector2(0.7071f, 0.7071f);   // W + D
+
+            // (1) 걷기 대각선 3초: 고친 길(이동 기준 고정)
+            var walk = new Heading();
+            float cam0 = r.CamRig.Yaw;
+            yield return Stick(r, diag, false, 3f, walk, true);
+            float camTurn = Mathf.Abs(Mathf.DeltaAngle(cam0, r.CamRig.Yaw));
+            // (2) 같은 입력, 예전 길(이동 기준 = 지금 궤도 yaw) — 테스트가 문제를 잡는지 보여 주는 비교(기록만)
+            m.Teleport(new Vector3(20f, 0f, -150f), 0f);
+            r.CamRig.SnapBehind();
+            yield return Lab.Seconds(0.3f);
+            var old = new Heading();
+            yield return Stick(r, diag, false, 3f, old, false);
+            // (3) 달리기 대각선 3초
+            m.Teleport(new Vector3(-20f, 0f, -150f), 0f);
+            r.CamRig.SnapBehind();
+            yield return Lab.Seconds(0.3f);
+            var run = new Heading();
+            float camR0 = r.CamRig.Yaw;
+            yield return Stick(r, diag, true, 3f, run, true);
+            float camRunTurn = Mathf.Abs(Mathf.DeltaAngle(camR0, r.CamRig.Yaw));
+            // (4) W+D 2초 뒤 D 만 떼기(W): 카메라가 따라온 만큼 '화면 앞 = 지금 걷던 방향' → 휙 꺾이지 않고 거의 그대로
+            m.Teleport(new Vector3(40f, 0f, -150f), 0f);
+            r.CamRig.SnapBehind();
+            yield return Lab.Seconds(0.3f);
+            var a = new Heading();
+            yield return Stick(r, diag, false, 2f, a, true, keepLatch: true);
+            float before = a.Last;
+            var b = new Heading();
+            yield return Stick(r, new Vector2(0f, 1f), false, 1.0f, b, true, keepLatch: true);
+            float release = Mathf.Abs(Mathf.DeltaAngle(before, b.Last));
+            float releaseMax = Mathf.Max(Mathf.Abs(Mathf.DeltaAngle(before, b.Min)), Mathf.Abs(Mathf.DeltaAngle(before, b.Max)));
+            // (5) 오른쪽(D)만 3초: 옆으로 걷는 방향도 그대로
+            m.Teleport(new Vector3(60f, 0f, -150f), 0f);
+            r.CamRig.SnapBehind();
+            yield return Lab.Seconds(0.3f);
+            var side = new Heading();
+            yield return Stick(r, new Vector2(1f, 0f), false, 3f, side, true);
+
+            Debug.Log($"[M1Test] T22 대각선(W+D)·자동 정렬 — 걷기 3초: 이동 방향 {walk.First:F1}° → 최대 변화 {walk.Drift:F1}° (카메라는 {camTurn:F1}° 따라옴) | " +
+                      $"예전 길(기준 = 궤도 yaw): {old.First:F1}° → {old.Last:F1}°, 변화 {old.Drift:F1}° | 달리기 3초: 변화 {run.Drift:F1}° (카메라 {camRunTurn:F1}°) | " +
+                      $"W+D 2초 → W: 방향 {before:F1}° → {b.Last:F1}° (변화 {release:F1}°, 도중 최대 {releaseMax:F1}°) | D 만 3초: 변화 {side.Drift:F1}°");
+            Assert.That(camTurn, Is.GreaterThanOrEqualTo(20f), "걷기: 자동 정렬이 실제로 카메라를 돌림(시험 조건)");
+            Assert.That(walk.Drift, Is.LessThanOrEqualTo(15f), "걷기 대각선 3초: 이동 방향이 처음에서 15° 넘게 돌지 않음");
+            Assert.That(run.Drift, Is.LessThanOrEqualTo(15f), "달리기 대각선 3초: 이동 방향이 처음에서 15° 넘게 돌지 않음");
+            Assert.That(releaseMax, Is.LessThanOrEqualTo(15f), "W+D → W: 휙 꺾이지 않음");
+            Assert.That(side.Drift, Is.LessThanOrEqualTo(15f), "D 만: 이동 방향 그대로");
+        }
+
+        sealed class Heading
+        {
+            public float First = float.NaN, Last, Min = float.MaxValue, Max = float.MinValue, Drift;
+            public void Add(float h)
+            {
+                if (float.IsNaN(First)) First = h;
+                float d = Mathf.DeltaAngle(First, h);
+                Drift = Mathf.Max(Drift, Mathf.Abs(d));
+                Min = Mathf.Min(Min, First + d);
+                Max = Mathf.Max(Max, First + d);
+                Last = h;
+            }
+        }
+
+        /// 스틱(화면 기준)을 seconds 동안 누른다. viaBasis = PInput 과 같은 CamRig.StickToWorld, 아니면 예전 계산(궤도 yaw 그대로).
+        /// 실제 이동 방향(속도 1.0 m/s 넘을 때)을 기록. keepLatch = 앞 구간에서 이어서 누르는 중(스틱을 놓지 않음)
+        static IEnumerator Stick(RigFactory.Rig r, Vector2 stick, bool run, float seconds, Heading h, bool viaBasis, bool keepLatch = false)
+        {
+            var m = r.Motor;
+            int n = Mathf.RoundToInt(seconds / Dt);
+            for (int i = 0; i < n; i++)
+            {
+                var dir = viaBasis ? r.CamRig.StickToWorld(stick) : Quaternion.Euler(0f, r.CamRig.Yaw, 0f) * new Vector3(stick.x, 0f, stick.y);
+                m.SetMoveInput(dir, stick.magnitude, run);
+                yield return null;
+                var v = m.Velocity;
+                if (new Vector2(v.x, v.z).magnitude > 1.0f) h.Add(Mathf.Atan2(v.x, v.z) * Mathf.Rad2Deg);
+            }
+            if (!keepLatch) { r.CamRig.StickToWorld(Vector2.zero); m.ClearMoveInput(); }
         }
 
         sealed class Track { public float Start = -1f, MaxRate, MaxAcc, Over, End, Done = -1f; }

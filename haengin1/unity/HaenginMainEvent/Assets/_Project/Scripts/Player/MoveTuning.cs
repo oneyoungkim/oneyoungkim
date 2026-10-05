@@ -35,13 +35,13 @@ namespace Haengin
         public float stepOffset = 0.30f;
         public float slopeLimit = 40f;
 
-        [Header("몸 기울기 (BodyLean)")]
-        public float leanBase = 5f;
-        public float leanPerAccel = 0.3f;
+        [Header("몸 기울기 (BodyLean) — 2026-10-06 리깅 모델: 달리기 클립이 이미 앞으로 숙이므로 속도 기울기는 끄고 가속·회전 기울기만 줄여서 남김")]
+        [Tooltip("달리기 속도에서 앞으로 기울기(°). 정적 모델 때 5 → 애니메이션과 겹쳐 0")] public float leanBase = 0f;
+        [Tooltip("가속 1 m/s² 당 기울기(°). 정적 모델 때 0.3 → 0.15")] public float leanPerAccel = 0.15f;
         public float leanMaxFwd = 8f;
         public float leanMaxBack = 4f;
         public float bankK = 0.006f;
-        public float bankMax = 8f;
+        [Tooltip("회전 쪽 기울기 최대(°). 정적 모델 때 8 → 6")] public float bankMax = 6f;
         public float leanSmooth = 0.12f;
         public float bankSmooth = 0.10f;
         public float stepSmooth = 0.08f;

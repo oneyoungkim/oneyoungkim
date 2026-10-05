@@ -2,6 +2,7 @@
 // T17: Zone1 을 열고 시우를 체크포인트마다 순간 이동시켜, 길잡이가 순서대로만 넘어가는지(건너뛴 목표는 안 켜짐),
 //      지금 목표만 기둥·깃발·빛 기둥·이름표가 켜지고 지난 것은 원판만 옅게 남는지, HUD 글이 맞는지 본다.
 // T18: 이름표 — 지금 목표 이름표는 보이고, 먼 출입문 이름표는 숨고, 화면에 보이는 이름표끼리 겹치지 않는다.
+// T26: 목표가 화면 밖·등 뒤면 가장자리 방향 화살표, 목표 이름표는 길잡이 판에 가리지 않고 화면 안(3차 검수).
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -169,6 +170,76 @@ namespace Haengin.Tests
                 checkedViews++;
             }
             Debug.Log($"[M1Test] 이름표: 전체 {tags.Tags.Length} · 검사한 자리 {checkedViews} · 한 화면 최대 {maxShown}개 보임 · 겹침 0");
+        }
+
+        /// T26 (3차 검수): 다음 목표가 등 뒤·옆(화면 밖)이면 화면 가장자리에 방향 화살표, 보이면 숨김. 목표 이름표는 길잡이 판에 가리지 않고 화면 안
+        [UnityTest]
+        public IEnumerator T26_Target_Arrow_And_Tag_Clear_Of_Hud()
+        {
+            var route = Object.FindAnyObjectByType<RouteData>();
+            var rig = Object.FindAnyObjectByType<CamRig>();
+            var cam = Camera.main;
+            Assert.IsNotNull(cam, "Main Camera");
+            var t = guide.CurrentTarget;
+            var to = t.Pos - route.SpawnPos;
+            float face = Mathf.Atan2(to.x, to.z) * Mathf.Rad2Deg;
+            var log = new List<string>();
+
+            IEnumerator Look(float yaw)
+            {
+                motor.Teleport(route.SpawnPos, yaw);
+                if (rig != null) rig.SnapBehind();
+                yield return Frames(15);
+                Canvas.ForceUpdateCanvases();
+                yield return Frames(2);
+            }
+
+            // (1) 목표를 바라봄 → 화살표 없음
+            yield return Look(face);
+            log.Add($"목표 쪽: 화살표 {hud.ArrowShown}");
+            Assert.IsFalse(hud.ArrowShown, "목표가 화면 안이면 화살표 숨김");
+            // (2) 등 뒤 → 화면 아래 가장자리, 아래를 가리킴
+            yield return Look(face + 180f);
+            log.Add($"등 뒤: 화살표 {hud.ArrowShown} 자리 ({hud.ArrowScreen.x:F0},{hud.ArrowScreen.y:F0}) / 화면 {cam.pixelWidth}x{cam.pixelHeight} · 각도 {hud.ArrowAngle:F0}°");
+            Assert.IsTrue(hud.ArrowShown, "목표가 등 뒤면 화살표");
+            Assert.That(Mathf.Abs(hud.ArrowAngle), Is.GreaterThan(150f), "등 뒤: 아래를 가리킴");
+            Assert.That(hud.ArrowScreen.y, Is.LessThan(cam.pixelHeight * 0.2f), "등 뒤: 화면 아래 가장자리");
+            // (3) 목표가 오른쪽 90° → 오른쪽 가장자리
+            yield return Look(face - 90f);
+            log.Add($"오른쪽: 화살표 {hud.ArrowShown} 자리 ({hud.ArrowScreen.x:F0},{hud.ArrowScreen.y:F0}) · 각도 {hud.ArrowAngle:F0}°");
+            Assert.IsTrue(hud.ArrowShown, "목표가 오른쪽 화면 밖이면 화살표");
+            Assert.That(hud.ArrowAngle, Is.InRange(45f, 135f), "오른쪽을 가리킴");
+            Assert.That(hud.ArrowScreen.x, Is.GreaterThan(cam.pixelWidth * 0.8f), "오른쪽 가장자리");
+
+            // (4) 목표 이름표가 길잡이 판에 가리지 않음: 목표 기둥 가까이에서(이름표가 화면 위쪽으로 올라감) 거리를 바꿔 가며
+            var tag = t.Tag.GetComponent<TextMeshPro>();
+            int moved = 0, views = 0;
+            foreach (float extra in new[] { 0.6f, 1.2f, 2f, 3f, 4.5f })
+            {
+                float d = t.Radius + extra;   // 도착 반경 밖(안이면 다음 목표로 넘어감)
+                var flat = new Vector3(to.x, 0f, to.z).normalized;
+                var feet = t.Pos - flat * d;
+                if (Physics.Raycast(feet + Vector3.up * 3f, Vector3.down, out var hit, 8f, 1 << Layers.Ground)) feet.y = hit.point.y;
+                motor.Teleport(feet, face);
+                if (rig != null) rig.SnapBehind();
+                yield return Frames(15);
+                Canvas.ForceUpdateCanvases();
+                tags.Apply(cam);
+                Assert.AreSame(t, guide.CurrentTarget, $"목표 {d:F1}m 앞: 목표가 그대로(도착 안 함)");
+                bool hasHud = hud.TryGetPlateRect(out var plate);
+                Assert.IsTrue(hasHud, "길잡이 판 사각형");
+                if (!NameTags.IsShown(tag) || !tags.TryGetRect(tag, out var rr)) { log.Add($"목표 {d}m 앞: 이름표 안 보임(가림·화면 밖)"); continue; }
+                views++;
+                if (tags.TargetShift.sqrMagnitude > 1f) moved++;
+                log.Add($"목표 {d}m 앞: 이름표 ({rr.xMin:F0}~{rr.xMax:F0}, {rr.yMin:F0}~{rr.yMax:F0}) · 판 ({plate.xMin:F0}~{plate.xMax:F0}, {plate.yMin:F0}~{plate.yMax:F0}) · 옮김 {tags.TargetShift}");
+                Assert.IsFalse(rr.Overlaps(plate), $"목표 {d}m 앞: 이름표가 길잡이 판과 겹침");
+                Assert.That(rr.yMax, Is.LessThanOrEqualTo(cam.pixelHeight + 0.5f), $"목표 {d}m 앞: 이름표 위가 화면 안");
+                Assert.That(rr.xMin, Is.GreaterThanOrEqualTo(-0.5f), $"목표 {d}m 앞: 이름표 왼쪽이 화면 안");
+                Assert.That(rr.xMax, Is.LessThanOrEqualTo(cam.pixelWidth + 0.5f), $"목표 {d}m 앞: 이름표 오른쪽이 화면 안");
+            }
+            Debug.Log("[M1Test] T26 방향 화살표·목표 이름표\n  " + string.Join("\n  ", log) + $"\n  이름표 보인 자리 {views} · 판·가장자리 때문에 옮긴 자리 {moved}");
+            Assert.That(views, Is.GreaterThanOrEqualTo(3), "목표 이름표가 보인 자리 3곳 이상");
+            Assert.That(moved, Is.GreaterThanOrEqualTo(1), "판·가장자리와 겹칠 자리가 실제로 있었음(시험 조건)");
         }
 
         /// 화면 사각형(NameTags 와 같은 셈, 여유 없이)

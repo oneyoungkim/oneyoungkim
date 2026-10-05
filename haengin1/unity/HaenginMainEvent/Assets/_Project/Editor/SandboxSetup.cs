@@ -51,6 +51,15 @@ namespace Haengin.EditorTools
         [MenuItem("Haengin/Sandbox 장면 다시 만들기")]
         public static void Build()
         {
+            int code = 0;
+            try { BuildScene(); }
+            catch (Exception e) { Debug.LogError($"{Tag} 실패: {e}"); code = 1; }
+            if (Application.isBatchMode) EditorApplication.Exit(code);
+        }
+
+        /// 장면만 만든다(종료하지 않음 — M1Setup.BuildAll 이 이어서 부름)
+        public static void BuildScene()
+        {
             // Tripo GLB 는 모델 정면이 glTF +X. glTFast 가 오른손→왼손 변환(X 반전)을 하므로 Unity 에선 정면이 -X → Y +90° 로 +Z 를 보게 한다.
             float modelYaw = ArgFloat("-modelYaw", 90f);
 
@@ -104,11 +113,19 @@ namespace Haengin.EditorTools
             vol.isGlobal = true;
             vol.sharedProfile = profile;
 
-            // 시우(리깅 없음): 원점, +Z 를 바라봄, 키 1.74m, 발이 바닥에
-            var siwoo = new GameObject("Siwoo");
-            var siwooModel = Spawn(staticModel, siwoo.transform, modelYaw);
+            // 2026-10-06: 시우·태오 리깅 모델(Humanoid, 대기 동작)을 나란히. 키 = 시우 1.74 · 태오 1.83(FBX 그대로, 배율 1)
+            if (AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(CharSetup.SiwooCtrl) == null) CharSetup.Setup();
+            var siwoo = SpawnRigged("Siwoo", CharSetup.SiwooFbx, CharSetup.SiwooMat, CharSetup.SiwooCtrl, new Vector3(-0.55f, 0f, 0f));
+            var taeo = SpawnRigged("Taeo", CharSetup.TaeoFbx, CharSetup.TaeoMat, CharSetup.TaeoCtrl, new Vector3(0.65f, 0f, 0f));
+            var bSiwoo = WorldBounds(siwoo.transform);
+            var bTaeo = WorldBounds(taeo.transform);
+
+            // 예전 정적 시우(리깅 없음, Tripo GLB): 원점에 비활성(참고용)
+            var siwooStatic = new GameObject("Siwoo_Static (비활성, 예전 정적 모델)");
+            var siwooModel = Spawn(staticModel, siwooStatic.transform, modelYaw);
             var toonStatic = ApplyToon(siwooModel, "M_Siwoo_Toon");
-            var bStatic = FitToGround(siwoo.transform, siwooModel.transform, SiwooHeight, true);
+            var bStatic = FitToGround(siwooStatic.transform, siwooModel.transform, SiwooHeight, true);
+            siwooStatic.SetActive(false);
 
             // 리깅 버전: 옆에 비활성으로 (팔 스키닝 깨짐 — 재생성 예정)
             var rigged = new GameObject("Siwoo_Rigged (비활성, 팔 스키닝 깨짐)");
@@ -140,20 +157,45 @@ namespace Haengin.EditorTools
             lens.FieldOfView = 30f; lens.NearClipPlane = 0.1f; lens.FarClipPlane = 200f;
             cmc.Lens = lens;
             cmc.Priority = 10;
-            // 전신이 들어오게: 시선 높이 = 키의 절반 남짓, 거리는 세로 화각 30°에서 키+여백이 들어오는 값
-            float h = bStatic.size.y;
-            var look = new Vector3(0f, h * 0.5f + 0.02f, 0f);
+            // 두 사람 전신이 들어오게: 시선 높이 = 큰 쪽 키의 절반 남짓, 거리는 세로 화각 30°에서 키+여백이 들어오는 값
+            float h = Mathf.Max(bSiwoo.size.y, bTaeo.size.y);
+            float cx = (bSiwoo.min.x + bTaeo.max.x) * 0.5f;
+            var look = new Vector3(cx, h * 0.5f + 0.02f, 0f);
             float dist = (h * 1.3f) * 0.5f / Mathf.Tan(15f * Mathf.Deg2Rad);
-            cmGo.transform.position = new Vector3(0f, h * 0.6f, dist);
+            cmGo.transform.position = new Vector3(cx, h * 0.6f, dist);
             cmGo.transform.LookAt(look);
             camGo.transform.SetPositionAndRotation(cmGo.transform.position, cmGo.transform.rotation);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
-            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
+            // 빌드 목록은 비어 있을 때만 Sandbox 하나로(M1 빌드 목록 Zone1 → Sandbox 를 덮어쓰지 않게)
+            if (EditorBuildSettings.scenes.Length == 0)
+                EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
             AssetDatabase.SaveAssets();
 
-            Debug.Log($"{Tag} 완료: {ScenePath} | 시우 경계 중심={bStatic.center} 크기={bStatic.size} (키 {bStatic.size.y:F3}m, 발 y={bStatic.min.y:F3}) | " +
-                      $"리깅판 크기={bRigged.size} 발 y={bRigged.min.y:F3} | 툰 재질 {toonStatic.Count}개 | 카메라 거리 {dist:F2}m | modelYaw={modelYaw}");
+            Debug.Log($"{Tag} 완료: {ScenePath} | 시우(리깅) 키 {bSiwoo.size.y:F3}m 발 y={bSiwoo.min.y:F3} · 태오(리깅) 키 {bTaeo.size.y:F3}m 발 y={bTaeo.min.y:F3} (바인드 자세 기준) | " +
+                      $"예전 정적 시우 키 {bStatic.size.y:F3}m · 리깅 GLB 크기={bRigged.size} (둘 다 비활성) | 툰 재질 {toonStatic.Count}개 | 카메라 거리 {dist:F2}m | modelYaw={modelYaw}");
+        }
+
+        /// 리깅 FBX(Humanoid) 를 세우고 툰 재질·애니메이터(대기)를 붙인다. 정면 +Z, 배율 1(FBX 키 그대로), 발 y = 0
+        static GameObject SpawnRigged(string name, string fbx, string matPath, string ctrlPath, Vector3 pos)
+        {
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(fbx) ?? throw new Exception("모델이 없습니다: " + fbx);
+            var go = PrefabUtility.InstantiatePrefab(model) as GameObject ?? UnityEngine.Object.Instantiate(model);
+            go.name = name;
+            go.transform.SetPositionAndRotation(pos, Quaternion.identity);
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+            foreach (var r in go.GetComponentsInChildren<Renderer>(true))
+            {
+                if (mat != null) { var ms = r.sharedMaterials; for (int i = 0; i < ms.Length; i++) ms[i] = mat; r.sharedMaterials = ms; }
+                r.shadowCastingMode = ShadowCastingMode.On;
+                r.receiveShadows = true;
+            }
+            var anim = go.GetComponent<Animator>() ?? go.AddComponent<Animator>();
+            anim.avatar = CharSetup.AvatarOf(fbx);
+            anim.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ctrlPath);
+            anim.applyRootMotion = false;
+            anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+            return go;
         }
 
         static void EnsureFolder(string path)
@@ -268,7 +310,7 @@ namespace Haengin.EditorTools
             return map.Values.ToList();
         }
 
-        static Material MakeToonMaterial(string name, Texture baseTex, Color baseFactor)
+        internal static Material MakeToonMaterial(string name, Texture baseTex, Color baseFactor)
         {
             var shader = Shader.Find("Toon/Toon") ?? throw new Exception("Unity Toon Shader(Toon/Toon) 를 찾지 못했습니다");
             string path = $"{MatDir}/{name}.mat";

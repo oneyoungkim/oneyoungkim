@@ -56,7 +56,7 @@ namespace Haengin
         public void Rotate(float dYaw, float dPitch)
         {
             if (rig == null) rig = GetComponent<CamRig>();
-            if (rig != null) rig.NoteManualLook();
+            if (rig != null) rig.NoteManualLook(dYaw);
             Orbit.HorizontalAxis.Value = Mathf.DeltaAngle(0f, Orbit.HorizontalAxis.Value + dYaw);
             Orbit.VerticalAxis.Value = Mathf.Clamp(Orbit.VerticalAxis.Value + dPitch, Orbit.VerticalAxis.Range.x, Orbit.VerticalAxis.Range.y);
         }

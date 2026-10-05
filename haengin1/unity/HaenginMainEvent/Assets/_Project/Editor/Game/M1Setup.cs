@@ -1,6 +1,7 @@
 // 행인1의 메인이벤트 — M1 리그 설정 (docs/07_M1_조작_설계.md 7-9). '설정 파일 → 에디터 스크립트 → 장면' 패턴.
 // batchmode:
-//   -executeMethod Haengin.EditorGame.M1Setup.Build          조정값 + Player 프리팹 + Zone1 다시 만들기(리그 포함) + 빌드 목록   (-nographics 가능)
+//   -executeMethod Haengin.EditorGame.M1Setup.Build          캐릭터 임포트·애니메이터(CharSetup) + 조정값 + Player 프리팹 + Zone1 다시 만들기(리그 포함) + 빌드 목록   (-nographics 가능)
+//   -executeMethod Haengin.EditorGame.M1Setup.BuildAll       위 + Sandbox 다시 만들기(시우·태오 리깅 모델)
 //   -executeMethod Haengin.EditorGame.M1Setup.AddRigToZone1  이미 있는 Zone1.unity 에 리그만 다시 붙이기
 // Zone1Builder.Build 만 돌려도 BeforeSave 확장 지점으로 리그가 다시 붙는다(이 클래스가 [InitializeOnLoad] 로 등록).
 using System;
@@ -25,11 +26,12 @@ namespace Haengin.EditorGame
         public const string CamTuningPath = Root + "/Settings/CamTuning.asset";
         public const string PrefabDir = Root + "/Prefabs";
         public const string PrefabPath = PrefabDir + "/Player.prefab";
-        public const string GlbStatic = Root + "/Art/Characters/Siwoo/siwoo_tripo_v1.glb";
-        public const string ToonMat = Root + "/Materials/M_Siwoo_Toon.mat";
+        // 시우 = 리깅 FBX(Humanoid, 대기·걷기·달리기) — 2026-10-06 정적 GLB(siwoo_tripo_v1.glb, Y +90°) 대체
+        public const string SiwooModel = CharSetup.SiwooFbx;
+        public const string ToonMat = CharSetup.SiwooMat;
         public const string Zone1Scene = Root + "/Scenes/Zone1.unity";
         public const string SandboxScene = Root + "/Scenes/Sandbox.unity";
-        const float ModelYaw = 90f;   // Tripo GLB 정면이 Unity −X → +90° 로 +Z 를 보게(SandboxSetup 과 같음)
+        const float ModelYaw = 0f;    // 리깅 FBX 는 정면이 이미 Unity +Z(Humanoid 아바타 측정: 왼다리 −X) — 예전 정적 GLB 는 +90° 였음
         public const string UiName = "UI 화면";
 
         static M1Setup()
@@ -42,9 +44,21 @@ namespace Haengin.EditorGame
         [MenuItem("Haengin/M1 다시 만들기(Zone1 + 플레이어)")]
         public static void Build() => Run(() =>
         {
+            CharSetup.Setup();
             EnsureTuning();
             BuildPlayerPrefab();
             Zone1Builder.Rebuild();          // BeforeSave → OnZone1Built 가 리그를 붙인다
+            SetBuildScenes();
+        });
+
+        [MenuItem("Haengin/M1 + Sandbox 모두 다시 만들기")]
+        public static void BuildAll() => Run(() =>
+        {
+            CharSetup.Setup();
+            SandboxSetup.BuildScene();
+            EnsureTuning();
+            BuildPlayerPrefab();
+            Zone1Builder.Rebuild();
             SetBuildScenes();
         });
 
@@ -107,11 +121,13 @@ namespace Haengin.EditorGame
             AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputPath) ?? throw new Exception("입력 에셋이 없습니다: " + InputPath);
 
         // ───────────────────────── 프리팹
-        /// Prefabs/Player.prefab: 시우 정적 GLB(툰 재질, 키 1.74) + CharacterController·PlayerMotor·PInput + Visual(BodyLean) + CamTarget. 매번 다시 저장(GUID 유지).
+        /// Prefabs/Player.prefab: 시우 리깅 FBX(툰 재질, 키 1.74, Animator + LocoAnim) + CharacterController·PlayerMotor·PInput + Visual(BodyLean) + CamTarget. 매번 다시 저장(GUID 유지).
         public static void BuildPlayerPrefab()
         {
             EnsureFolder(PrefabDir);
-            var model = AssetDatabase.LoadAssetAtPath<GameObject>(GlbStatic) ?? throw new Exception("시우 GLB 가 없습니다: " + GlbStatic);
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(SiwooModel) ?? throw new Exception("시우 모델이 없습니다: " + SiwooModel);
+            var ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(CharSetup.SiwooCtrl) ?? throw new Exception("애니메이터 컨트롤러가 없습니다: " + CharSetup.SiwooCtrl);
+            var avatar = CharSetup.AvatarOf(SiwooModel) ?? throw new Exception("시우 아바타가 없습니다(CharSetup)");
             var toon = AssetDatabase.LoadAssetAtPath<Material>(ToonMat);
             var inst = (PrefabUtility.InstantiatePrefab(model) as GameObject) ?? Object.Instantiate(model);
             inst.name = "Siwoo_Model";
@@ -126,13 +142,31 @@ namespace Haengin.EditorGame
                 }
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                 r.receiveShadows = true;
+                if (r is SkinnedMeshRenderer smr) smr.updateWhenOffscreen = false;
             }
+            var anim = inst.GetComponent<Animator>() ?? inst.AddComponent<Animator>();
+            anim.avatar = avatar;
+            anim.runtimeAnimatorController = ctrl;
+            anim.applyRootMotion = false;                              // 이동은 PlayerMotor, 클립은 제자리
+            anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;      // 카메라가 붙어 인물을 숨겨도(그림자만) 자세는 계속
+            anim.updateMode = AnimatorUpdateMode.Normal;
             var rig = RigFactory.BuildPlayer(Vector3.zero, 0f, MT, CT, inst, Actions);
+            // ModelFit(경계 상자로 키 맞추기)는 정적 모델용 — 스킨 메시의 편집 모드 경계는 클립 첫 프레임 자세(대기 = 웅크린 1.66m)라 키가 5% 커진다.
+            // FBX 는 이미 미터 단위 실제 크기(바인드 자세 키 1.74m, 원점 = 두 발 사이 바닥)라 그대로 둔다.
+            inst.transform.localPosition = Vector3.zero;
+            inst.transform.localRotation = Quaternion.Euler(0f, ModelYaw, 0f);
+            inst.transform.localScale = Vector3.one;
+            var skin = inst.GetComponentInChildren<SkinnedMeshRenderer>(true);
+            float bindH = skin != null ? skin.sharedMesh.bounds.size.z * skin.transform.lossyScale.x : -1f;   // Blender Z-up 메시: z = 키
+            var loco = inst.AddComponent<LocoAnim>();
+            loco.Motor = rig.Motor;
             var b = ModelFit.WorldBounds(inst.transform);
+            string fit = $"배율 {inst.transform.localScale.x:F4} · 자리 {inst.transform.localPosition}";
             PrefabUtility.SaveAsPrefabAsset(rig.Player, PrefabPath, out bool ok);
             Object.DestroyImmediate(rig.Player);
             if (!ok) throw new Exception("프리팹 저장 실패: " + PrefabPath);
-            Debug.Log($"{Tag} 프리팹 저장: {PrefabPath} | 모델 키 {b.size.y:F3}m · 발 y {b.min.y:F3} · 폭 {b.size.x:F2}×{b.size.z:F2} | 툰 재질 {(toon != null ? "있음" : "없음")}");
+            Debug.Log($"{Tag} 프리팹 저장: {PrefabPath} | 모델 {SiwooModel} 바인드 자세 키 {bindH:F3}m · 편집 모드 경계(첫 프레임 자세) 높이 {b.size.y:F3}m 발 y {b.min.y:F3} · {fit} | " +
+                      $"툰 재질 {(toon != null ? toon.name : "없음")} · 애니메이터 {ctrl.name}(아바타 {avatar.name}, 루트 모션 끔) + LocoAnim");
         }
 
         // ───────────────────────── 장면에 붙이기

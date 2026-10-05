@@ -22,7 +22,10 @@ namespace Haengin
         public CamTuning T => Tuning != null ? Tuning : (fallback != null ? fallback : fallback = ScriptableObject.CreateInstance<CamTuning>());
 
         /// 이동 기준 방향 = 궤도 정면(카메라 정면이 아님 — 화면 구도 오프셋 때문에 빙글 도는 되먹임 방지, 07 4-4)
-        public Quaternion MoveBasis => Quaternion.Euler(0f, Orbit != null ? Orbit.HorizontalAxis.Value : 0f, 0f);
+        /// 스틱을 누르고 있는 동안은 자동 정렬·Q/L1 정렬이 돌린 만큼을 빼서 고정한다(StickToWorld, 07 4-10)
+        public Quaternion MoveBasis => Quaternion.Euler(0f, BasisYaw, 0f);
+        /// 지금 이동 기준 yaw(°) = 궤도 yaw − 고정분
+        public float BasisYaw => (Orbit != null ? Orbit.HorizontalAxis.Value : 0f) - (latched ? basisOffset : 0f);
         public float Yaw => Orbit != null ? Orbit.HorizontalAxis.Value : 0f;
         public float Pitch => Orbit != null ? Orbit.VerticalAxis.Value : 0f;
         /// 카메라 최종 위치 ↔ 따라가는 점 거리(지난 프레임)
@@ -69,6 +72,8 @@ namespace Haengin
             yawVel = pitchVel = 0f;
             sinceManual = 999f;
             movingFor = 0f;
+            latched = false;
+            basisOffset = manualSum = 0f;
             var lens = Cam.Lens;
             lens.FieldOfView = T.fov;
             Cam.Lens = lens;
@@ -130,10 +135,62 @@ namespace Haengin
         }
 
         /// 마우스·오른스틱으로 시점을 돌렸다(CamInput 이 부름). 자동 정렬은 이때부터 다시 기다린다.
-        public void NoteManualLook()
+        /// dYaw = 이번에 손으로 돌린 가로 각도 — 이동 기준도 같이 돈다(카메라를 돌려 방향 잡기는 그대로)
+        public void NoteManualLook(float dYaw = 0f)
         {
             sinceManual = 0f;
             yawVel = pitchVel = 0f;
+            manualSum += dYaw;
+        }
+
+        // ───────────────────────── 이동 기준 고정 (07 4-10, 3차 검수: W+D 를 누르고 있으면 자동 정렬과 이동 기준이 서로 따라 돌아 3초 뒤 45°→119°)
+        // 스틱을 누르는 동안 이동 기준 = '누르기 시작할 때의 궤도 yaw + 손으로 돌린 양'. 자동 정렬·Q/L1 정렬이 카메라를 돌려도 걷는 방향은 그대로다
+        // (「용과 같이」처럼 카메라는 조용히 등 뒤로 따라오고, 플레이어가 누른 방향은 바뀌지 않음).
+        // 고정은 스틱을 놓으면 풀리고, 스틱 방향을 바꾸면 '바꾼 각도만큼만' 풀린다 → 화면 기준으로 돌아오되 한 번에 휙 꺾이지 않는다.
+        //   예) W+D 로 걷다가 카메라가 등 뒤로 45° 따라온 뒤 D 를 떼면(스틱 45° 변화) 고정 45°가 모두 풀려 '화면 앞 = 지금 걷던 방향' → 그대로 직진.
+        bool latched;
+        float basisOffset, manualSum, lastYaw, stickRef;
+
+        /// 이동 기준이 고정돼 있는가(스틱을 누르는 중)
+        public bool BasisLatched => latched;
+        /// 고정분(°) = 궤도 yaw − 이동 기준 yaw
+        public float BasisOffset => latched ? basisOffset : 0f;
+
+        /// 스틱(−1..1, 화면 기준) → 월드 이동 방향(길이 = 스틱 기울기). PInput 이 프레임마다 한 번 부른다(테스트도 같은 경로).
+        public Vector3 StickToWorld(Vector2 stick)
+        {
+            float yaw = Orbit != null ? Orbit.HorizontalAxis.Value : 0f;
+            float mag = stick.magnitude;
+            if (mag < T.basisRelease)
+            {
+                latched = false;
+                basisOffset = 0f;
+            }
+            else
+            {
+                float ang = Mathf.Atan2(stick.x, stick.y) * Mathf.Rad2Deg;
+                if (!latched)
+                {
+                    latched = true;
+                    basisOffset = 0f;
+                    stickRef = ang;
+                }
+                else
+                {
+                    // 지난 호출 뒤 궤도가 돈 양에서 손으로 돌린 양을 뺀 것(자동 정렬·Q/L1) = 이동 기준에 넣지 않는다
+                    basisOffset = Mathf.DeltaAngle(0f, basisOffset + Mathf.DeltaAngle(lastYaw, yaw) - manualSum);
+                    // 스틱 방향을 바꾸면 바꾼 각도만큼 고정을 푼다(스틱 잡음은 basisStickDeadband 안에서 무시)
+                    float d = Mathf.DeltaAngle(stickRef, ang);
+                    if (mag >= 0.2f && Mathf.Abs(d) > T.basisStickDeadband)
+                    {
+                        basisOffset = Mathf.MoveTowards(basisOffset, 0f, Mathf.Abs(d));
+                        stickRef = ang;
+                    }
+                }
+            }
+            lastYaw = yaw;
+            manualSum = 0f;
+            return Quaternion.Euler(0f, yaw - (latched ? basisOffset : 0f), 0f) * new Vector3(stick.x, 0f, stick.y);
         }
 
         /// 마지막 수동 시점 조작 뒤 지난 시간(초)

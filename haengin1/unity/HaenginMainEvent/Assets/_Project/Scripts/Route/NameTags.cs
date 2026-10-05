@@ -3,6 +3,8 @@
 // 글자는 깊이 검사 없이 맨 위에 그린다(벽에 반쯤 묻혀 잘리지 않게). 대신
 //   ① 카메라 → 이름표 자리 사이를 땅·벽이 막으면 숨기고(Always = 체크포인트는 예외: 건물 너머 목표도 보여 줌)
 //   ② 화면에서 겹치면 중요한 것(Priority 작은 것)·가까운 것만 남긴다 — 상가 앞처럼 이름표가 몰린 곳에서 글이 포개지지 않게.
+//   ③ (2026-10-06, 3차 검수) 위 가운데 길잡이 판(RouteHud)과 겹치지 않게: 지금 목표 이름표(Always)는 화면 안으로 당기고 판과 겹치면 판 밑으로 내린다.
+//      나머지 이름표는 판과 겹치면 숨긴다. 옮긴 자리는 매 프레임 원래 자리에서 다시 계산한다(이름표 오브젝트는 그대로).
 // 목록은 RouteSetup(에디터)이 장면을 만들 때 채운다. 체크포인트 이름표를 켜고 끄는 일은 RouteGuide 몫(여기서는 켜진 것만 다룸).
 using System;
 using System.Collections.Generic;
@@ -33,6 +35,10 @@ namespace Haengin
         public float Margin = 6f;
         [Tooltip("비워 두면 Camera.main")]
         public Camera Cam;
+        [Tooltip("길잡이 HUD(판과 겹치지 않게). 비워 두면 장면에서 찾음")]
+        public RouteHud Hud;
+        [Tooltip("지금 목표 이름표를 화면 가장자리·길잡이 판에서 띄우는 거리(1080p 기준 픽셀)")]
+        public float EdgeMargin = 14f;
 
         /// 가림 검사 대상: 땅·벽·카메라 전용 벽(07 3-5)
         public static readonly int OccluderMask = Layers.Mask(Layers.Ground, Layers.Wall, Layers.CamBlock);
@@ -42,6 +48,23 @@ namespace Haengin
         public int HiddenByOcclusion { get; private set; }
 
         struct Cand { public int I; public Rect R; public float D; public float A; }
+        Vector3[] basePos;
+        Rect[] lastRect;
+        bool hudSearched;
+
+        /// 지금 화면에서 길잡이 판 사각형(픽셀, 없으면 크기 0) — 테스트·디버그
+        public Rect HudRect { get; private set; }
+        /// 이번 프레임에 옮긴 지금 목표 이름표의 이동량(픽셀)
+        public Vector2 TargetShift { get; private set; }
+
+        /// 이 이름표의 이번 프레임 화면 사각형(픽셀, 여유 없이). 안 보이면 false
+        public bool TryGetRect(TextMeshPro t, out Rect r)
+        {
+            r = default;
+            if (lastRect == null || !IsShown(t)) return false;
+            for (int i = 0; i < Tags.Length; i++) if (Tags[i].Text == t) { r = lastRect[i]; return r.width > 0f; }
+            return false;
+        }
         readonly List<Cand> cands = new List<Cand>();
         readonly List<Rect> placed = new List<Rect>();
 
@@ -57,6 +80,19 @@ namespace Haengin
             var cp = cam.transform.position;
             var rot = cam.transform.rotation;
             float pxPerM = cam.pixelHeight / (2f * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad)); // 거리 1m 에서 1m 의 화면 픽셀
+            if (basePos == null || basePos.Length != Tags.Length)
+            {
+                basePos = new Vector3[Tags.Length];
+                lastRect = new Rect[Tags.Length];
+                for (int i = 0; i < Tags.Length; i++) basePos[i] = Tags[i].Text != null ? Tags[i].Text.transform.position : Vector3.zero;
+            }
+            if (Hud == null && !hudSearched) { Hud = FindAnyObjectByType<RouteHud>(); hudSearched = true; }
+            Rect hud = default;
+            bool hasHud = Hud != null && Hud.TryGetPlateRect(out hud);
+            float ui = cam.pixelHeight / 1080f, edge = EdgeMargin * ui;
+            if (hasHud) hud = new Rect(hud.x - edge, hud.y - edge, hud.width + 2f * edge, hud.height + 2f * edge);
+            HudRect = hasHud ? hud : default;
+            TargetShift = Vector2.zero;
             cands.Clear();
             int occl = 0;
             for (int i = 0; i < Tags.Length; i++)
@@ -65,6 +101,8 @@ namespace Haengin
                 if (t == null) continue;
                 if (!t.gameObject.activeInHierarchy) continue;
                 var tr = t.transform;
+                lastRect[i] = default;
+                if (tr.position != basePos[i]) tr.position = basePos[i];
                 var pos = tr.position;
                 float d = Vector3.Distance(cp, pos);
                 float max = Tags[i].MaxDist > 0f ? Tags[i].MaxDist : 40f;
@@ -84,6 +122,23 @@ namespace Haengin
                 float h = (b.size.y > 0.01f ? b.size.y : t.fontSize * 0.12f) * s;
                 float k = pxPerM / Mathf.Max(0.1f, vp.z);
                 var sp = new Vector2(vp.x * cam.pixelWidth, vp.y * cam.pixelHeight);
+                if (Tags[i].Always && vp.x >= 0f && vp.x <= 1f && vp.y >= 0f && vp.y <= 1f)
+                {
+                    // 지금 목표(기준점이 화면 안일 때만): 글이 화면 밖으로 삐져나가면 안으로, 길잡이 판과 겹치면 판 밑으로.
+                    // 기준점이 화면 밖이면 옮기지 않는다(옆 멀리 있는 목표를 끌어오면 깊이가 얕아 글이 커짐 — 그때는 방향 화살표가 맡음)
+                    float wpx = w * k, hpx = h * k;
+                    var want = sp;
+                    want.x = Mathf.Clamp(want.x, edge + wpx / 2f, cam.pixelWidth - edge - wpx / 2f);
+                    if (want.y + hpx > cam.pixelHeight - edge) want.y = cam.pixelHeight - edge - hpx;
+                    if (hasHud && new Rect(want.x - wpx / 2f - Margin, want.y - Margin, wpx + 2f * Margin, hpx + 2f * Margin).Overlaps(hud)) want.y = hud.yMin - hpx - Margin - 1f;
+                    var shift = want - sp;
+                    if (shift.sqrMagnitude > 0.25f)
+                    {
+                        tr.position = pos + (rot * Vector3.right) * (shift.x / k) + (rot * Vector3.up) * (shift.y / k);
+                        sp = want;
+                        TargetShift = shift;
+                    }
+                }
                 cands.Add(new Cand
                 {
                     I = i, D = d, A = 1f - Mathf.InverseLerp(max * 0.8f, max, d),
@@ -99,6 +154,7 @@ namespace Haengin
                 return p != 0 ? p : a.D.CompareTo(c.D);
             });
             placed.Clear();
+            if (hasHud) placed.Add(hud);   // 길잡이 판 자리를 먼저 차지 — 겹치는 다른 이름표는 숨김(지금 목표는 위에서 이미 비켜 둠)
             int vis = 0, over = 0;
             foreach (var c in cands)
             {
@@ -107,6 +163,7 @@ namespace Haengin
                 foreach (var r in placed) if (r.Overlaps(c.R)) { ok = false; break; }
                 if (!ok) { SetVisible(t, false); over++; continue; }
                 placed.Add(c.R);
+                lastRect[c.I] = new Rect(c.R.x + Margin, c.R.y + Margin, c.R.width - 2f * Margin, c.R.height - 2f * Margin);
                 SetVisible(t, true);
                 if (Mathf.Abs(t.alpha - c.A) > 0.03f || (c.A >= 1f && t.alpha < 1f)) t.alpha = c.A;
                 vis++;

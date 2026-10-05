@@ -43,7 +43,7 @@ namespace Haengin
             {
                 var p = Motor.Position;
                 Debug.Log($"[M1] 실행 확인: 장면 {SceneManager.GetActiveScene().name} · 시우 ({p.x:F1}, {p.y:F2}, {p.z:F1}) 접지 {Motor.Grounded} 상태 {Motor.State} · " +
-                          $"카메라 거리 {(Cam != null ? Cam.Distance : 0f):F2}m · {fps:F0} fps · 화면 {Screen.width}x{Screen.height}");
+                          $"카메라 거리 {(Cam != null ? Cam.Distance : 0f):F2}m · {fps:F0} fps(vSync {QualitySettings.vSyncCount} · 품질 {QualitySettings.names[QualitySettings.GetQualityLevel()]}) · 화면 {Screen.width}x{Screen.height}");
             }
             else Debug.LogWarning("[M1] 실행 확인: 장면에 PlayerMotor 가 없음");
         }
@@ -84,7 +84,7 @@ namespace Haengin
             {
                 string cam = Cam != null
                     ? $"카메라 yaw {Cam.Yaw:F0}° pitch {Cam.Pitch:F0}° 거리 {Cam.Distance:F2}m FOV {Cam.Cam.Lens.FieldOfView:F1}° 당김 {Cam.Pull:F2}m\n" +
-                      $"자동 정렬 {Cam.AutoMode} · 정렬 속도 {Cam.AlignRate:F0}°/s · 수동 조작 뒤 {Mathf.Min(Cam.SinceManualLook, 99f):F1}초"
+                      $"자동 정렬 {Cam.AutoMode} · 정렬 속도 {Cam.AlignRate:F0}°/s · 수동 조작 뒤 {Mathf.Min(Cam.SinceManualLook, 99f):F1}초 · 이동 기준 고정 {Cam.BasisOffset:F0}°"
                     : "카메라 없음";
                 var p = Motor.Position;
                 GUI.Box(new Rect(16, 16, 600, 150),

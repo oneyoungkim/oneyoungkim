@@ -1,4 +1,4 @@
-// 행인1의 메인이벤트 — 입력 연기 시험 (docs/07_M1_조작_설계.md 9-2 T16·T20)
+// 행인1의 메인이벤트 — 입력 연기 시험 (docs/07_M1_조작_설계.md 9-2 T16·T20·T23)
 // 가짜 패드·키보드(InputTestFixture) → 실제 HInput 에셋 → PInput·CamInput → 모터·카메라까지 한 번 통과하는지(T16),
 // 일시정지 메뉴를 패드·키보드만으로 열고·고르고·닫는지(T20)를 본다.
 using System.Collections;
@@ -72,6 +72,51 @@ namespace Haengin.Tests
             Assert.That(Mathf.DeltaAngle(yaw0, yaw1), Is.GreaterThan(20f), "패드 오른스틱 카메라 회전");
             Assert.That(kbWalk, Is.GreaterThan(1.5f), "키보드 W 걷기");
             Assert.That(kbRun, Is.GreaterThan(4.0f), "키보드 Shift 달리기");
+        }
+
+        /// T23 (3차 검수 재현): 키보드 W+D 를 3초 누르고 있기 — 실제 HInput → PInput → CamRig.StickToWorld → 모터. 자동 정렬이 카메라를 돌려도 이동 방향은 그대로
+        [UnityTest]
+        public IEnumerator T23_Keys_WD_NoSpiral()
+        {
+            Time.captureDeltaTime = Lab.Dt;
+            yield return Lab.FreshScene();
+            InputActionAsset asset = null;
+#if UNITY_EDITOR
+            asset = UnityEditor.AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputPath);
+#endif
+            if (asset == null) { Assert.Ignore("입력 에셋을 에디터에서만 읽을 수 있음"); yield break; }
+            asset.Disable();
+            var kb = InputSystem.AddDevice<Keyboard>();
+            InputSystem.AddDevice<Mouse>();
+            Lab.Floor(0f, 200f);
+            var cap = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            Object.DestroyImmediate(cap.GetComponent<Collider>());
+            var r = RigFactory.Build(new Vector3(0f, 0f, -60f), 0f, ScriptableObject.CreateInstance<MoveTuning>(),
+                                     ScriptableObject.CreateInstance<CamTuning>(), cap, asset);
+            yield return Lab.Frames(5);
+            float cam0 = r.CamRig.Yaw;
+            Press(kb.wKey);
+            Press(kb.dKey);
+            float first = float.NaN, last = 0f, drift = 0f;
+            for (int i = 0; i < Mathf.RoundToInt(3f / Lab.Dt); i++)
+            {
+                yield return null;
+                var v = r.Motor.Velocity;
+                if (new Vector2(v.x, v.z).magnitude < 1.0f) continue;
+                float h = Mathf.Atan2(v.x, v.z) * Mathf.Rad2Deg;
+                if (float.IsNaN(first)) first = h;
+                drift = Mathf.Max(drift, Mathf.Abs(Mathf.DeltaAngle(first, h)));
+                last = h;
+            }
+            Release(kb.dKey);
+            Release(kb.wKey);
+            yield return null;
+            float camTurn = Mathf.Abs(Mathf.DeltaAngle(cam0, r.CamRig.Yaw));
+            asset.Disable();
+            Time.captureDeltaTime = 0f;
+            Debug.Log($"[M1Test] T23 키보드 W+D 3초: 이동 방향 {first:F1}° → {last:F1}° · 최대 변화 {drift:F1}° · 카메라 자동 정렬 {camTurn:F1}°");
+            Assert.That(camTurn, Is.GreaterThanOrEqualTo(20f), "자동 정렬이 카메라를 돌림(시험 조건)");
+            Assert.That(drift, Is.LessThanOrEqualTo(15f), "W+D 3초: 이동 방향이 처음에서 15° 넘게 돌지 않음(예전: 45° → 119°)");
         }
 
         [UnityTest]

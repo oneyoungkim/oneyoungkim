@@ -1,4 +1,4 @@
-// 행인1의 메인이벤트 — 1구역 자동 걷기·달리기 (docs/07_M1_조작_설계.md 9-2 T14) + 시작 구도(T21) + 게임 화면 촬영
+// 행인1의 메인이벤트 — 1구역 자동 걷기·달리기 (docs/07_M1_조작_설계.md 9-2 T14) + 시작 구도(T21) + 게임 화면 촬영(+ 2026-10-06 대기 앞모습·걷기 옆모습·발 미끄러짐 띠)
 // Zone1.unity 를 열고, 테스트가 NavMesh 를 임시로 구워(저장 안 함) 체크포인트 1→10 사이 경로 모서리를 따라
 // PlayerMotor.SetMoveInput 으로 걷게(또는 달리게) 한다. 합격(07 9-2): 구간마다 1.3 × 경로 ÷ 속도 안 도착 · 땅 아래로 떨어지지 않음(y > 지면 − 1) ·
 // 끼어서 멈추지 않음(3초 동안 이동 < 0.2m 면 실패) · 리스폰 0 · 10프레임마다 카메라가 벽·땅 안에 들어가거나 인물이 가린 프레임 0(T09 와 같은 검사).
@@ -379,6 +379,36 @@ namespace Haengin.Tests
             yield return WalkUntil(route.Points[1], 1.0f, true, s5, () => (t5 += Dt) > 3.0f);
             notes.Add(Shot(camera, Path.Combine(dir, "m1_game_5_run.png"), "상가거리 달리기"));
 
+            // (7) 대기 앞 3/4(리깅 모델 얼굴·옷·툰 외곽선 확인): 시작 지점에서 카메라를 앞쪽 145°로
+            Target(1);
+            motor.Teleport(route.SpawnPos, route.SpawnYaw);
+            camRig.SnapBehind();
+            camRig.SetAutoMode(CamTuning.Auto.Off, false);
+            camRig.Orbit.HorizontalAxis.Value = Mathf.DeltaAngle(0f, route.SpawnYaw + 145f);
+            camRig.Cam.PreviousStateIsValid = false;
+            yield return Lab.Seconds(1.5f);
+            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_7_idle_front.png"), "대기 앞 3/4"));
+
+            // (8) 걷기 옆모습(게임 카메라): 상가거리 쪽으로 곧게 걸으며 카메라를 시우 오른쪽 옆(몸 방향 − 90°)에
+            var toCp2 = Lab.Flat(route.Points[1] - route.SpawnPos).normalized;
+            float yaw2 = Yaw(toCp2);
+            motor.Teleport(route.SpawnPos, yaw2);
+            camRig.SnapBehind();
+            camRig.Orbit.HorizontalAxis.Value = Mathf.DeltaAngle(0f, yaw2 - 90f);
+            camRig.Cam.PreviousStateIsValid = false;
+            for (int i = 0; i < Mathf.RoundToInt(1.6f / Dt); i++) { motor.SetMoveInput(toCp2, 1f, false); yield return null; }
+            motor.SetMoveInput(toCp2, 1f, false);
+            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_8_walk_side.png"), "걷기 옆모습"));
+            motor.ClearMoveInput();
+            camRig.SetAutoMode(CamTuning.Auto.Always, false);
+
+            // (9)(10) 발 미끄러짐 확인 띠: 체크무늬 바닥(구역 밖 촬영장)에서 고정 카메라로 옆에서 8컷 — 디딤발이 바닥 칸 위 같은 자리에 머무는지
+            yield return Strip(Path.Combine(dir, "m1_game_9_walk_strip.png"), false, 4, notes);
+            yield return Strip(Path.Combine(dir, "m1_game_10_run_strip.png"), true, 2, notes);
+            motor.Teleport(route.SpawnPos, route.SpawnYaw);
+            camRig.SnapBehind();
+            yield return Lab.Seconds(0.5f);
+
             // (6) 일시정지 메뉴(패드로 '카메라 자동 정렬' 항목을 고른 상태)
             var ui = UnityEngine.Object.FindAnyObjectByType<GameUi>();
             if (ui != null)
@@ -419,6 +449,96 @@ namespace Haengin.Tests
             motor.ClearMoveInput();
         }
 
+        /// 발 미끄러짐 확인 띠: 구역 밖(x 1000, 높이 100) 체크무늬 바닥(0.25m 칸)에서 +Z 로 걷거나 달리게 하고, 옆 고정 카메라로 every 프레임마다 8컷을 2×4 로 붙인다.
+        /// 고정 카메라라서 디딤발은 컷이 바뀌어도 같은 칸 위에 있어야 한다(미끄러지면 칸을 따라 밀림). 세로 보조선 50px 마다.
+        IEnumerator Strip(string path, bool run, int every, List<string> notes)
+        {
+            const int cols = 4, rows = 2, tw = 720, th = 540;
+            var origin = new Vector3(1000f, 100f, 0f);
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.name = "SlipStudio";
+            floor.layer = Layers.Ground;
+            floor.transform.SetPositionAndRotation(origin + new Vector3(0f, -0.5f, 20f), Quaternion.identity);
+            floor.transform.localScale = new Vector3(12f, 1f, 80f);
+            var tex = new Texture2D(8, 8, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Repeat };
+            for (int y = 0; y < 8; y++) for (int x = 0; x < 8; x++)
+                tex.SetPixel(x, y, ((x / 4) + (y / 4)) % 2 == 0 ? new Color(0.93f, 0.90f, 0.84f) : new Color(0.62f, 0.58f, 0.52f));
+            tex.Apply();
+            var sh = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Texture");
+            var mat = new Material(sh);
+            mat.mainTexture = tex;
+            if (mat.HasProperty("_BaseMap")) mat.SetTexture("_BaseMap", tex);
+            mat.mainTextureScale = new Vector2(12f / 0.5f, 80f / 0.5f);   // 8px 텍스처 = 2×2 칸 = 0.5m → 칸 0.25m
+            if (mat.HasProperty("_BaseMap")) mat.SetTextureScale("_BaseMap", mat.mainTextureScale);
+            floor.GetComponent<Renderer>().sharedMaterial = mat;
+            Physics.SyncTransforms();
+
+            float speed = run ? motor.T.runSpeed : motor.T.walkSpeed;
+            float warm = run ? 1.2f : 0.8f;
+            int frames = cols * rows;
+            float span = frames * every * Dt;
+            motor.Teleport(origin + new Vector3(0f, 0f, -2f), 0f);
+            camRig.SnapBehind();
+            yield return Lab.Seconds(0.3f);
+            var mid = origin + new Vector3(0f, 0f, -2f + speed * (warm + span * 0.5f));
+            var go = new GameObject("StripCam");
+            var c = go.AddComponent<Camera>();
+            c.enabled = false;
+            c.fieldOfView = run ? 32f : 30f;
+            c.nearClipPlane = 0.1f;
+            c.farClipPlane = 200f;
+            c.clearFlags = CameraClearFlags.SolidColor;
+            c.backgroundColor = new Color(0.93f, 0.89f, 0.82f);
+            go.transform.SetPositionAndRotation(new Vector3(origin.x + (run ? 6.0f : 4.5f), origin.y + 0.95f, mid.z), Quaternion.Euler(0f, -90f, 0f));
+
+            var atlas = new Texture2D(tw * cols, th * rows, TextureFormat.RGBA32, false);
+            var rt = new RenderTexture(new RenderTextureDescriptor(tw * 2, th * 2, RenderTextureFormat.ARGB32, 24) { sRGB = true, msaaSamples = 1 });
+            var small = new RenderTexture(new RenderTextureDescriptor(tw, th, RenderTextureFormat.ARGB32, 0) { sRGB = true });
+            rt.Create(); small.Create();
+            var tile = new Texture2D(tw, th, TextureFormat.RGBA32, false);
+            var feet = new List<string>();
+            var loco = motor.GetComponentInChildren<LocoAnim>();
+            var an = loco != null ? loco.Animator : null;
+            int shot = 0, f = 0;
+            int warmFrames = Mathf.RoundToInt(warm / Dt);
+            while (shot < frames && f < warmFrames + frames * every + 10)
+            {
+                motor.SetMoveInput(Vector3.forward, 1f, run);
+                yield return null;
+                f++;
+                if (f < warmFrames || (f - warmFrames) % every != 0) continue;
+                var prevA = RenderTexture.active;
+                c.targetTexture = rt;
+                c.Render();
+                Graphics.Blit(rt, small);
+                RenderTexture.active = small;
+                tile.ReadPixels(new Rect(0, 0, tw, th), 0, 0);
+                tile.Apply();
+                RenderTexture.active = prevA;
+                c.targetTexture = null;
+                var px = tile.GetPixels();
+                for (int x = 0; x < tw; x += 50)
+                    for (int y = 0; y < th; y++) px[y * tw + x] = Color.Lerp(px[y * tw + x], new Color(0.10f, 0.08f, 0.09f), 0.35f);
+                int cx = shot % cols, cy = rows - 1 - shot / cols;
+                atlas.SetPixels(cx * tw, cy * th, tw, th, px);
+                if (an != null)
+                {
+                    var l = an.GetBoneTransform(HumanBodyBones.LeftFoot).position;
+                    var r = an.GetBoneTransform(HumanBodyBones.RightFoot).position;
+                    feet.Add($"{shot + 1}: 왼발 z {l.z:F2} y {l.y - origin.y:F2} · 오른발 z {r.z:F2} y {r.y - origin.y:F2}");
+                }
+                shot++;
+            }
+            motor.ClearMoveInput();
+            atlas.Apply();
+            File.WriteAllBytes(path, atlas.EncodeToPNG());
+            rt.Release(); small.Release();
+            UnityEngine.Object.Destroy(rt); UnityEngine.Object.Destroy(small);
+            UnityEngine.Object.Destroy(tile); UnityEngine.Object.Destroy(atlas);
+            UnityEngine.Object.Destroy(go); UnityEngine.Object.Destroy(floor); UnityEngine.Object.Destroy(mat); UnityEngine.Object.Destroy(tex);
+            notes.Add($"{(run ? "달리기" : "걷기")} 발 띠: {path} | {every}프레임({every * Dt:F3}s) 간격 8컷 · 속도 {motor.PlanarSpeed:F2} m/s | 발목(월드): {string.Join(" / ", feet)}");
+        }
+
         string Shot(Camera cam, string path, string what)
         {
             const int w = 1920, h = 1080, ss = 2;
@@ -433,6 +553,10 @@ namespace Haengin.Tests
             {
                 cam.targetTexture = big;
                 foreach (var c in overlays) { c.renderMode = RenderMode.ScreenSpaceCamera; c.worldCamera = cam; c.planeDistance = 0.5f; }
+                Canvas.ForceUpdateCanvases();
+                // 촬영 해상도(16:9)로 이름표·방향 화살표를 다시 계산(배치 실행의 화면 크기는 다를 수 있음)
+                UnityEngine.Object.FindAnyObjectByType<NameTags>()?.Apply(cam);
+                UnityEngine.Object.FindAnyObjectByType<RouteHud>()?.RefreshArrow();
                 Canvas.ForceUpdateCanvases();
                 cam.Render();
                 Canvas.ForceUpdateCanvases();

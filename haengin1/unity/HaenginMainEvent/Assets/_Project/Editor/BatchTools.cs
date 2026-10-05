@@ -17,6 +17,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
@@ -107,6 +108,8 @@ namespace Haengin.EditorTools
 
                 Action restore = null;
                 if (HasFlag("-topdown")) restore = SetupTopDown(cam, Arg("-area"), (float)w / h);
+                var unpose = PoseAnimators(ArgFloat("-animTime", 1.0f));
+                if (unpose != null) { var r0 = restore; restore = () => { unpose(); r0?.Invoke(); }; }
                 Directory.CreateDirectory(Path.GetDirectoryName(FullPath(outPath)));
                 try { RenderToPng(cam, w, h, ss, FullPath(outPath)); }
                 finally { restore?.Invoke(); }
@@ -290,6 +293,7 @@ namespace Haengin.EditorTools
                             Debug.LogError($"{Tag} 빌드 에러 [{step.name}] {m.content}");
                 }
                 code = s.result == BuildResult.Succeeded ? 0 : 1;
+                if (code == 0) Finish(outDir);
             }
             catch (Exception e)
             {
@@ -297,6 +301,58 @@ namespace Haengin.EditorTools
                 code = 1;
             }
             EditorApplication.Exit(code);
+        }
+
+        public const string OflSource = "Assets/_Project/Fonts/OFL.txt";
+        public const string OflTarget = "licenses/NotoSansKR-OFL.txt";
+
+        /// 빌드 뒤 정리: 글꼴 라이선스(OFL 1.1 은 글꼴과 함께 배포할 때 라이선스 동봉 의무) 복사, 배포 금지 디버그 폴더(…_DoNotShip) 삭제
+        static void Finish(string outDir)
+        {
+            string src = FullPath(OflSource);
+            if (!File.Exists(src)) throw new FileNotFoundException("글꼴 라이선스가 없습니다: " + OflSource);
+            string dst = Path.Combine(outDir, OflTarget);
+            Directory.CreateDirectory(Path.GetDirectoryName(dst));
+            File.Copy(src, dst, true);
+            Debug.Log($"{Tag} 글꼴 라이선스 동봉: {dst} ({new FileInfo(dst).Length} bytes)");
+            foreach (var d in Directory.GetDirectories(outDir, "*_DoNotShip"))
+            {
+                Directory.Delete(d, true);
+                Debug.Log($"{Tag} 배포 금지 폴더 삭제: {d}");
+            }
+        }
+
+        /// 편집 모드 촬영(-batchmode, 플레이 아님)에서는 Animator 가 돌지 않아 스킨 메시가 바인드 자세(A포즈)로 찍힌다
+        /// → 장면의 Humanoid Animator 마다 첫 클립(대기)을 t 초 자세로 샘플링해 둔다. 되돌리기 함수를 돌려준다.
+        internal static Action PoseAnimators(float t)
+        {
+            var anims = UnityEngine.Object.FindObjectsByType<Animator>(FindObjectsSortMode.None)
+                .Where(a => a.isActiveAndEnabled && a.runtimeAnimatorController != null && a.avatar != null).ToList();
+            if (anims.Count == 0) return null;
+            var graphs = new List<UnityEngine.Playables.PlayableGraph>();
+            bool started = false;
+            if (!AnimationMode.InAnimationMode()) { AnimationMode.StartAnimationMode(); started = true; }
+            AnimationMode.BeginSampling();
+            foreach (var a in anims)
+            {
+                var clips = a.runtimeAnimatorController.animationClips;
+                var clip = clips.FirstOrDefault(c => c.name == "Idle") ?? clips.FirstOrDefault();
+                if (clip == null) continue;
+                a.Rebind();
+                var g = UnityEngine.Playables.PlayableGraph.Create("BatchTools.Pose");
+                g.SetTimeUpdateMode(UnityEngine.Playables.DirectorUpdateMode.Manual);
+                var o = UnityEngine.Animations.AnimationPlayableOutput.Create(g, "out", a);
+                o.SetSourcePlayable(UnityEngine.Animations.AnimationClipPlayable.Create(g, clip));
+                AnimationMode.SamplePlayableGraph(g, 0, t);
+                graphs.Add(g);
+                Debug.Log($"{Tag} 자세: {a.name} ← {clip.name} {t:F2}s");
+            }
+            AnimationMode.EndSampling();
+            return () =>
+            {
+                foreach (var g in graphs) g.Destroy();
+                if (started) AnimationMode.StopAnimationMode();
+            };
         }
 
         // ───────────────────────── 3) 임포트·컴파일 점검

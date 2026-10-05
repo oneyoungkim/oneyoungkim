@@ -54,6 +54,10 @@ namespace Haengin
         [Tooltip("세로 정렬 최대 각속도 °/s")] public float pitchAlignSpeed = 12f;
         [Tooltip("Q / L1 등 뒤 정렬 시간")] public float snapTime = 0.30f;
 
+        [Header("이동 기준 고정 (07 4-10) — 스틱을 누르는 동안 자동 정렬이 걷는 방향을 돌리지 않게")]
+        [Tooltip("스틱 기울기가 이보다 작으면 놓은 것으로 보고 고정을 푼다")] public float basisRelease = 0.1f;
+        [Tooltip("스틱 방향이 이 각도(°)보다 많이 바뀌어야 고정을 푼다(스틱 잡음 무시)")] public float basisStickDeadband = 4f;
+
         [Header("가림·벽")]
         public float camRadius = 0.10f;
         public float occludedDamping = 0f;

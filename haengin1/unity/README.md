@@ -47,18 +47,20 @@ git URL (UniVRM 공식 README 방식, 태그 고정):
 HaenginMainEvent/
 ├─ Assets/
 │  ├─ _Project/                     ← 우리 것은 전부 여기
-│  │  ├─ Art/Characters/Siwoo/      siwoo_tripo_v1.glb (리깅 없음) · siwoo_tripo_v1_rigged.glb (뼈 24개, 팔 스키닝 깨짐 — 재생성 예정)
+│  │  ├─ Art/Characters/Siwoo/      Siwoo.fbx(대기) · SiwooWalk.fbx · SiwooRun.fbx (Humanoid, tools/glb2fbx.py 로 만든 리깅 모델) · SiwooTex.jpg · 예전 siwoo_tripo_v1.glb(정적) · siwoo_tripo_v1_rigged.glb(팔 스키닝 깨짐)
+│  │  ├─ Art/Characters/Taeo/       Taeo.fbx(대기, Humanoid) · TaeoTex.jpg — Sandbox 에만
+│  │  ├─ Anim/                      Siwoo.controller(대기·걷기·달리기 블렌드 트리) · Taeo.controller(대기) — CharSetup 이 만듦
 │  │  ├─ Data/                      zone1.json (1구역 배치도, tools/zone1_gen.py 가 만듦 — 손으로 고치지 말 것)
-│  │  ├─ Materials/                 M_Siwoo_Toon(UTS) · M_SiwooRigged_Toon · M_Floor_Sand(URP Lit)
+│  │  ├─ Materials/                 M_SiwooAnim_Toon · M_Taeo_Toon(리깅 모델, UTS) · M_Siwoo_Toon(예전 정적) · M_SiwooRigged_Toon · M_Floor_Sand(URP Lit)
 │  │  │  └─ Zone1/                  M_Z1_<종류>.mat — 그레이박스 단색 재질 + T_Z1_Stone·Paving·Beam.png 생성 텍스처(Zone1Builder 가 만듦)
 │  │  ├─ Fonts/                     NotoSansKR-Bold.ttf + OFL.txt(OFL 1.1, 게임 동봉 가능) · KR_Bold_SDF.asset(TMP 동적 한글 글꼴) · KR_Label.mat(이름표, 오버레이)
 │  │  ├─ Scenes/                    Sandbox.unity · Zone1.unity + Zone1_Mesh.asset(생성 메시 73개)
 │  │  ├─ Input/                     HInput.inputactions — M1 입력(Explore 맵 + Menu 맵(일시정지 메뉴), 키보드·마우스·패드)
-│  │  ├─ Prefabs/                   Player.prefab — 시우 정적 GLB(툰) + CharacterController·PlayerMotor·PInput + Visual(BodyLean) + CamTarget (M1Setup 이 만듦)
-│  │  ├─ Scripts/                   런타임 코드(어셈블리 Haengin.Game): Player/ PlayerMotor·PInput·BodyLean·MoveTuning · Cam/ CamRig·CamInput·CamTuning·CamClearance · Core/ RigFactory·Layers·GameState·ModelFit·RouteData · Route/ RouteGuide·RouteHud·NameTags · UI/ GameUi(조작 안내·알림·일시정지 메뉴) · Dev/ DebugHud(F1)
-│  │  ├─ Editor/                    BatchTools.cs · SandboxSetup.cs · TempPathGuard.cs · Zone1Builder.cs · Zone1Data.cs · MiniJson.cs · StableIds.cs(결정적 fileID) · KoreanFont.cs (어셈블리 Haengin.EditorTools)
+│  │  ├─ Prefabs/                   Player.prefab — 시우 리깅 FBX(툰, Animator + LocoAnim) + CharacterController·PlayerMotor·PInput + Visual(BodyLean) + CamTarget (M1Setup 이 만듦)
+│  │  ├─ Scripts/                   런타임 코드(어셈블리 Haengin.Game): Player/ PlayerMotor·PInput·BodyLean·LocoAnim·MoveTuning · Cam/ CamRig·CamInput·CamTuning·CamClearance · Core/ RigFactory·Layers·GameState·ModelFit·RouteData · Route/ RouteGuide·RouteHud·NameTags · UI/ GameUi(조작 안내·알림·일시정지 메뉴) · Dev/ DebugHud(F1)
+│  │  ├─ Editor/                    BatchTools.cs · CharSetup.cs(리깅 캐릭터 임포트·재질·애니메이터) · SandboxSetup.cs · TempPathGuard.cs · Zone1Builder.cs · Zone1Data.cs · MiniJson.cs · StableIds.cs(결정적 fileID) · KoreanFont.cs (어셈블리 Haengin.EditorTools)
 │  │  │  └─ Game/                   M1Setup.cs · RouteSetup.cs (어셈블리 Haengin.EditorGame — 게임 코드를 참조하는 장면 설정)
-│  │  ├─ Tests/                     PlayMode 테스트(어셈블리 Haengin.Tests): MoveTests · ZoneTests · InputTests · RouteTests · Lab
+│  │  ├─ Tests/                     PlayMode 테스트(어셈블리 Haengin.Tests): MoveTests · ZoneTests · InputTests · RouteTests · AnimTests · Lab
 │  │  └─ Settings/                  Sandbox_FilmVolume.asset · Zone1_FilmVolume.asset (필름 후처리, 같은 레시피) · MoveTuning.asset · CamTuning.asset (조정값, 없을 때만 만듦)
 │  ├─ _Template/                    URP 템플릿 샘플(Readme, TutorialInfo, SampleScene) — 지우지 않고 격리
 │  ├─ TextMesh Pro/                 TMP 기본 리소스(TMP Settings·셰이더·LiberationSans) — com.unity.ugui 2.0 의 Essential Resources. 한글은 _Project/Fonts
@@ -73,9 +75,10 @@ HaenginMainEvent/
 ### Sandbox 장면 구성 (`SandboxSetup.Build` 가 만든 것)
 - 배경 = 종이색 **#F4EFE6**(카메라 단색), 바닥 = 모래 베이지 **#E9E0CC** 300m 평면, 선형 안개 #E9E0CC 30~140m
 - Directional Light: 따뜻한 흰빛, 앞-왼쪽 위(48°, 150°), 부드러운 그림자(강도 .7)
-- **Siwoo**(원점): Tripo GLB 는 정면이 glTF +X → glTFast 가 X 를 뒤집어 Unity 에선 -X → **Y +90°** 로 돌려 +Z(Unity 표준 앞)를 보게 함. 키 **1.74m** 로 스케일(2026-10-05 대표 결정: 시우 174cm 61kg), 발 y=0. 모델 자체는 162cm 기준 설정화로 만든 것이라 비율이 조금 작은 사람 체형 — A포즈 재생성 때 174cm로 다시 만든다
-- **Siwoo_Rigged**: x=1.6 에 **비활성**(재생성 전까지 참고용)
-- Main Camera(+CinemachineBrain, SMAA, 후처리 켬) + **CM_FullBody**(FOV 30°, 거리 3.93m, 높이 0.97m, 전신이 들어옴)
+- **Siwoo**(x −0.55) · **Taeo**(x +0.65) — 2026-10-06 리깅 모델(Humanoid FBX, 정면 +Z, 배율 1: 시우 1.74m · 태오 1.83m) + 툰 재질 + 애니메이터(대기 동작). 편집 모드 촬영(`BatchTools.Screenshot`)은 대기 클립 1초 자세로 찍는다(`-animTime` 초)
+- **Siwoo_Static**(원점, **비활성**): 예전 정적 Tripo GLB(Y +90°, 키 1.74 로 스케일) · **Siwoo_Rigged**(x=1.6, **비활성**, 팔 스키닝 깨진 예전 리깅 GLB) — 참고용
+- Main Camera(+CinemachineBrain, SMAA, 후처리 켬) + **CM_FullBody**(FOV 30°, 두 사람 전신이 들어오게 거리 4.19m)
+- `SandboxSetup.Build` 는 이제 빌드 목록이 비어 있을 때만 Sandbox 하나로 정한다(예전엔 M1 빌드 목록을 덮어썼음)
 - Global Volume: 채도 -15(=×.85), 대비 -6, 스플릿 톤(그림자 #2F4A5A 쪽 / 밝은 쪽 #F3D9B0 쪽), 톤매핑 없음, 블룸 끔
 - 툰 재질(M_Siwoo_Toon): 기본 텍스처 그대로, 1단 그림자 = 텍스처 × (.78,.71,.74) 모브, 2단 = 1단 × (.84,.80,.80), 경계 feather .02, 스펙큘러·림 0, 외곽선 #1A1417 폭 2.6(오브젝트 공간 ×0.001, 1080p 전신 컷에서 실루엣 2~3px). 텍스처 한 장에 피부·옷·머리가 섞여 있어 부위별 곱셈값은 아직 못 나눔(부위 마스크 또는 재질 분리 필요).
 
@@ -108,11 +111,13 @@ HaenginMainEvent/
 ### M1 플레이어·카메라 (`M1Setup` 이 Zone1 에 붙이는 리그, 2026-10-05)
 설계 = `docs/07_M1_조작_설계.md`. 숫자는 `Settings/MoveTuning.asset`·`CamTuning.asset`(없을 때만 만들어서 손으로 고친 값이 남음).
 - **장면 루트**: `Player`(프리팹 `Prefabs/Player.prefab` 인스턴스, spawn 위치·yaw, 발 = 그 아래 Ground 면) · `Main Camera`(Zone1Builder 것을 그대로 쓰고 `CinemachineBrain`·`DebugHud` 를 붙임) · `CM_Explore` · `Zone1/Route` 에 `RouteData`(체크포인트 위치·반경·시작 지점 — 테스트와 나중의 체크포인트 진행 코드용).
-- **Player**: 태그·레이어 Player. `CharacterController`(높이 1.74·반지름 0.25·skin 0.025·중심 0.895·턱 0.30·경사 40°·minMoveDistance 0) + `PlayerMotor` + `PInput` · 자식 `Visual`(`BodyLean`) › `Siwoo_Model`(시우 정적 GLB, Y +90°, 키 1.74, `M_Siwoo_Toon`) · `CamTarget`(높이 1.40).
+- **Player**: 태그·레이어 Player. `CharacterController`(높이 1.74·반지름 0.25·skin 0.025·중심 0.895·턱 0.30·경사 40°·minMoveDistance 0) + `PlayerMotor` + `PInput` · 자식 `Visual`(`BodyLean`) › `Siwoo_Model`(**시우 리깅 FBX**, 회전 0·배율 1·바인드 자세 키 1.74, `M_SiwooAnim_Toon`, `Animator`(Siwoo.controller, 루트 모션 끔, 늘 계산) + `LocoAnim`) · `CamTarget`(높이 1.40).
+- **애니메이션(3차, 2026-10-06, 07 문서 5-4·5-5)**: 블렌드 트리 대기(0)·걷기(1, ×2.353)·달리기(2, ×1.113) — `LocoAnim` 이 실제 수평 속도로 `Blend`·`Rate` 를 넣는다(0.5~1.6 m/s 는 걷기만 느리게, 1.6~4.5 는 걷기→달리기). 재생 배율 = 게임 속도 ÷ 클립 고유 속도(걷기 0.68·달리기 4.04 m/s, `CharSetup` 이 디딤발 속도를 재서 넣음) → 디딤발 계통 미끄러짐 걷기 −0.003·달리기 +0.078 m/s(T25). 클립은 제자리(Bake Into Pose), 이동은 그대로 `PlayerMotor`.
 - **이동**(`PlayerMotor`): 걷기 1.6 / 달리기 4.5 m/s(버튼을 누르는 동안), 0→걷기 0.12초 · 걷기→달리기 0.4초 · 감속 18 m/s², 몸 회전 720°/s(달리기 540°/s), 중력 20 m/s², 땅 붙이기 0.35m, 경사에서도 수평 속도 유지, 40° 넘는 면은 미끄러져 내려옴, 맵 아래(`bounds.min.y − 10`)로 떨어지면 마지막 안전 지점으로. 점프 없음.
   공개 API: `SetMoveInput(Vector3 worldDir, float amount01, bool run)` / `SetMoveInput(Vector2 worldDirXZ, bool run = false)`(한 프레임만 유효 — 매 프레임 넣는다) · `ClearMoveInput()` · `Teleport(feet, yaw)` · `Position` `Grounded` `State`(Idle/Walk/Run/Fall) `PlanarSpeed` `Velocity` `LastSafePos` `Respawns`.
-- **몸 기울기**(`BodyLean`, 애니메이션 없음): 속도·가속으로 앞뒤 −4~+8°, 도는 쪽으로 ±8°, 턱을 오를 때 비주얼 높이를 0.08초에 걸쳐 따라감, 카메라가 0.55m 안으로 오면 인물 숨김(그림자만).
+- **몸 기울기**(`BodyLean`, 3차에 애니메이션과 겹치지 않게 줄임): 속도 기울기 0(달리기 클립이 이미 숙임) · 가속 1 m/s² 당 0.15°(앞뒤 −4~+8°) · 도는 쪽으로 ±6°, 턱을 오를 때 비주얼 높이를 0.08초에 걸쳐 따라감, 카메라가 0.55m 안으로 오면 인물 숨김(그림자만).
 - **카메라** `CM_Explore` = `CinemachineOrbitalFollow`(Sphere, 4.0m, 피치 8°·범위 −10~50°) + `CinemachineRotationComposer`(인물 화면 가로 −0.06) + `CinemachineDeoccluder`(반지름 0.10, 즉시 당김·0.5초 복귀, 얇은 PlayerOnly 는 통과) + 우리 `CamClearance`·`CamRig`·`CamInput`. FOV 45°(달리면 49°·4.3m, 실제 속도에 묶음), Q/L1 = 0.3초에 등 뒤로. 이동 기준 = 궤도 정면(카메라 정면 아님, 07 4-4).
+  - **이동 기준 고정(3차, 07 4-10)**: 스틱을 누르는 동안 자동 정렬·Q/L1 정렬이 카메라를 돌린 만큼은 이동 기준에서 뺀다(`CamRig.StickToWorld`). 3차 검수의 'W+D 를 누르고 있으면 3초 뒤 45° → 119° 로 계속 돎'이 0° 로(T22·T23). 손으로 돌린 시점은 그대로 이동 방향을 돌리고, 스틱을 놓거나 방향을 바꾼 만큼 고정이 풀린다.
   - **자동 정렬(2차, 07 4-8)**: 걷기·달리기 모두. 마지막 수동 시점 조작(마우스·오른스틱) 뒤 걷기 1.8초·달리기 1.2초 기다리고, 움직인 지 0.3초 뒤부터 인물 등 뒤로 — `CamRig` 가 직접 최대 각속도 걷기 30°/s·달리기 60°/s, 각가속도 60/120°/s², 남은 각도 × 1.2/s 로 돌린다(Cinemachine 정렬은 골목에서 출렁여서 Q/L1 에만). 서 있을 때·카메라 쪽으로 걸어올 때(차 ≥ 150°)는 안 돌림. 세로는 3초 뒤 8° 로 최대 12°/s. 일시정지 메뉴에서 '걷기·달리기(기본) / 달리기만 / 끔' — 빌드에서는 `PlayerPrefs` `haengin.cam.autoAlign` 에 남는다. 수치는 `CamTuning`(새 필드 walkRecenterWait·walkAlignSpeed·runAlignSpeed·alignGain·alignAccel·alignBackAngle·pitchAlignSpeed).
   - **턱 보정(2차)**: `BodyLean` 이 비주얼과 함께 따라가는 점(`CamTarget`)도 같은 만큼 내렸다 올린다(실행 순서 −10, 브레인보다 먼저). 턱 문턱값 `MoveTuning.stepThreshold` 0.05 → 0.01(캡슐이 연석을 넘을 때 프레임당 0.01~0.04m 라 0.05 로는 한 번도 안 잡혔다). → 0.15m 턱에서 비주얼 0.024m·카메라 0.011m/프레임(T11).
   - **구현에서 더한 것 — `CamClearance`(Cinemachine 확장, Deoccluder 다음 Finalize 단계)**: Deoccluder 는 '머리와 카메라 사이를 막는 벽'만 처리해서, 골목 시험에서 카메라가 옆으로 스치는 벽에 0.05m 까지 붙었다(699프레임 중 84). 그래서 머리→카메라 선을 따라 0.05m 씩 당기며 ① 카메라 구(0.095m)가 Default·Ground·Wall·CamBlock 에 안 닿고 ② 무릎(0.5m)→카메라 선이 Wall·CamBlock 에 안 막히는(1.2m 까지만) 거리를 찾는다. 당길 땐 즉시, 풀릴 땐 0.5초. 처음엔 `Orbit.Radius` 를 줄이는 방식으로 했다가 Deoccluder 의 감쇠와 엇갈려 등 뒤 벽에서 8프레임 벽 안에 들어가서 확장 방식으로 바꿨다.
@@ -133,7 +138,8 @@ HaenginMainEvent/
   | 카메라 자동 정렬 바꾸기(메뉴 2번째 항목) | 선택 또는 ← → | × 또는 십자키 ← → |
   | 디버그 정보(속도·접지·카메라 거리·fps) | F1 | — |
 
-  화면 왼쪽 아래에 조작 안내 한 줄이 늘 뜬다(2차부터 `GameUi` — TMP 한글 글꼴 UGUI, 장면 루트 `UI 화면`). 일시정지 메뉴 = 계속 · 카메라 자동 정렬 ◀ 걷기·달리기 ▶ · 끝내기(07 문서 6-1). F1 디버그 정보(IMGUI)에 자동 정렬 상태·각속도·수동 조작 뒤 시간이 함께 나온다. 빌드는 마우스 커서를 창에 잡아 둔다(일시정지하면 풀림, 창을 다시 클릭하면 다시 잡음). 실행 인자 `-nocursorlock` 이면 잡지 않는다(자동 점검용). 시작 3초 뒤 Player.log 에 `[M1] 실행 확인: 장면 … 시우 위치 · 접지 … · 카메라 거리 …` · `[M1] 길잡이 확인: HUD …` · `[M1] 화면 UI 확인: 글꼴 … 없는 글자 0 · 메뉴 입력 Menu 맵 …` 세 줄.
+  길잡이(3차): 다음 목표가 화면 밖·등 뒤면 화면 가장자리에 주황 방향 화살표(`RouteHud`, 화면 둘레 타원 위·카메라 기준 수평 각도), 목표 이름표는 위 가운데 길잡이 판과 겹치면 판 밑으로 내리고 화면 밖으로 삐져나가지 않게(`NameTags`). 프레임 제한: 품질 단계 모두 **vSync 1**(검수 408fps → 화면 주사율).
+  화면 왼쪽 아래에 조작 안내 한 줄이 늘 뜬다(2차부터 `GameUi` — TMP 한글 글꼴 UGUI, 장면 루트 `UI 화면`). 일시정지 메뉴 = 계속 · 카메라 자동 정렬 ◀ 걷기·달리기 ▶ · 끝내기(07 문서 6-1). F1 디버그 정보(IMGUI)에 자동 정렬 상태·각속도·수동 조작 뒤 시간이 함께 나온다. 빌드는 마우스 커서를 창에 잡아 둔다(일시정지하면 풀림, 창을 다시 클릭하면 다시 잡음). 실행 인자 `-nocursorlock` 이면 잡지 않는다(자동 점검용). 시작 3초 뒤 Player.log 에 `[M1] 실행 확인: 장면 … 시우 위치 · 접지 … · 카메라 거리 … · fps(vSync · 품질)` · `[M1] 길잡이 확인: HUD …` · `[M1] 화면 UI 확인: 글꼴 … 없는 글자 0 · 메뉴 입력 Menu 맵 …` 세 줄.
 - **빌드 목록**: `Zone1.unity`(첫 장면) → `Sandbox.unity`. `BatchTools.BuildWindows` 는 이제 빌드 목록의 켜진 장면을 순서대로 넣는다(비어 있으면 예전처럼 Sandbox 하나).
 - 물리 충돌 행렬: Player × CamBlock 끔(07 3-5, `M1Setup.EnsureTuning`).
 
@@ -146,11 +152,16 @@ HaenginMainEvent/
 |---|---|
 | `MoveTests` T01~T13 · T19 | 코드로 만든 시험장: 발 높이 ≤0.01 · 걷기 1.60±0.02(95% ≤0.15초) · 달리기 4.50±0.05(≤0.60초, 정지 ≤0.30초·≤0.65m) · 180° 돌기 · 경사 30/35° 꼭대기·45/50° 막힘·**30° 내리막 달리기 접지 98%↑·뜬 프레임 0** · 턱 0.15/0.30 오름·0.45 막힘 · **T07 벽 45° 비스듬히: 벽 따라 ≥ 걷기 0.6배·관통 0** · 낙하→리스폰 · T09 폭 2.4m 골목 카메라 모든 프레임 벽 안·가림 0(+자동 정렬로 끝까지 걷기) · **T10 전봇대가 카메라–인물 사이를 지날 때 거리 변화 ≤0.05m** · T11 턱 오르내리기 카메라 y ≤0.02m/프레임·비주얼 ≤0.03m · T12 구도 (0.44, 0.50)±0.01·FOV 49/45±0.3 · T13 6초 달리기 방향 흐름 없음 · **T19 걷기 자동 정렬**(기다림 1.8초·≤30°/s·각가속도 ≤60°/s²·넘침 없음 / 달리기 1.2초·≤60°/s / 끔·서 있기·카메라 쪽으로 걷기 = 안 돌림) |
 | `ZoneTests` T14 Walk / Run · T21 | **1구역 자동 걷기 / 달리기**: Zone1 을 열고 NavMesh 를 임시로 구워(반지름 0.35, 맨땅 비용 4, 저장 안 함) 체크포인트 1→10 의 아홉 구간을 경로 모서리를 따라 `SetMoveInput` 으로 간다(실제 게임 카메라·자동 정렬 켬). 구간마다 **1.3 × 경로 ÷ 속도** 안 도착 · 발이 지면 −1m 아래로 안 떨어짐 · 3초 동안 0.2m 미만 이동이면 '끼임' 실패 · 리스폰 0 · 10프레임마다 카메라 벽 안·가림 **0 (Assert)**. **T21 시작 구도**: 시작 지점에서 당김 ≤0.05m·거리 4.0±0.1·인물 50±4%·발 10±3%, 3초 달린 뒤 당김 없음·등 뒤 ≤15°·인물 38~48% |
-| `ZoneTests` Z_GameShots | `-m1shots <폴더>` 를 줄 때만(그래픽 필요, `-nographics` 빼기): 실제 게임 카메라 화면 6장 `m1_game_1_start / 2_alley / 3_reveal / 4_waryong / 5_run / 6_pause.png`(1920×1080, 2배 슈퍼샘플). 화면 UI(길잡이 HUD·조작 안내·일시정지 메뉴)도 찍히게 찍는 동안만 오버레이 캔버스를 카메라 공간으로 바꾼다 |
+| `ZoneTests` Z_GameShots | `-m1shots <폴더>` 를 줄 때만(그래픽 필요, `-nographics` 빼기): 실제 게임 카메라 화면 `m1_game_1_start / 2_alley / 3_reveal / 4_waryong / 5_run / 6_pause / 7_idle_front / 8_walk_side.png`(1920×1080, 2배 슈퍼샘플) + 발 미끄러짐 띠 `9_walk_strip / 10_run_strip.png`(구역 밖 체크무늬 바닥, 옆 고정 카메라 8컷). 화면 UI(길잡이 HUD·조작 안내·일시정지 메뉴)도 찍히게 찍는 동안만 오버레이 캔버스를 카메라 공간으로 바꾸고 이름표·방향 화살표를 촬영 해상도로 다시 계산한다(배치 실행의 화면은 640×480) |
 | `InputTests` T16 · T20 | T16: 가짜 패드 왼스틱·R2·오른스틱, 키보드 W·Shift → HInput → PInput·CamInput → 모터·카메라. **T20 일시정지 메뉴**: 패드 Options 열기 → 십자키·왼스틱 고르기 → ×로 자동 정렬 바꾸기·끝내기 → ○로 닫기 / 키보드 Esc·↓↑·Enter·S·Space 로 같은 것 / 메뉴의 ×가 상호작용으로 새지 않음 |
+| `MoveTests` T22 · `InputTests` T23 (3차) | **대각선 + 자동 정렬**: `CamRig.StickToWorld` 로 W+D 3초 걷기·달리기, D 만, W+D → W(T22) · 가짜 키보드 W+D 3초(T23) → 자동 정렬이 카메라를 20° 넘게 돌리는 중에도 이동 방향 변화 ≤ 15°. 결과 0.0°(카메라 42°), 비교로 넣은 예전 계산은 73.2° |
+| `AnimTests` T24 · T25 (3차) | 실제 `Player.prefab`: **애니메이터 상태** 정지 → Idle · 걷기 1.6 → Walk · 달리기 4.5 → Run · 다시 정지 → Idle · 느린 걷기 0.8 → Walk(Rate 0.5) — 클립 무게 ≥ 0.9 / **발 미끄러짐**: 디딤발(발목 높이 최저 + 1.5cm) 진행 방향 성분 ≤ 속도의 5%, 절대값 ≤ 15%, 발목 최저 0.09~0.17m |
+| `RouteTests` T26 (3차) | **방향 화살표·목표 이름표**: 목표가 보이면 화살표 없음 · 등 뒤 = 아래 가장자리 · 오른쪽 = 오른쪽 가장자리 / 목표 앞 다섯 자리에서 목표 이름표가 길잡이 판과 겹치지 않고 화면 안(옮긴 자리 ≥ 1) |
 | `RouteTests` T17 / T18 | **길잡이**: 시우를 체크포인트마다 순간 이동 → 순서대로만 넘어감(건너뛴 4번에 가도 그대로), 지금 목표만 기둥·빛 기둥·깃발·이름표, 지난 것은 옅은 원판만, HUD "다음: … · NNm" → "도착: …" → 다음, 완주 이벤트 1번 / **이름표**: 지금 목표 이름표 보임, 먼 출입문 숨김, 체크포인트 다섯 곳에서 화면에 보이는 이름표끼리 겹침 0 |
 
 - 07 문서 T15(상호작용 고르기)는 `Interactor` 가 아직 없어 미구현(07 11장 12).
+
+2026-10-06 4차(리깅 모델·애니메이터·대각선 이동·HUD): **27/27 통과**(그래픽 켜고 게임 화면 10장 포함, 로그 `a_17_tests`, 실제 실행 50초). T14 걷기 9/9 122.5초 · 달리기 9/9 46.3초 · 리스폰 0(모델을 바꿔도 이동은 같음).
 
 2026-10-05 3차(카메라·조작 다듬기): **22/22 통과**(그래픽 켜고 게임 화면 6장 포함, 로그 `p_27_tests`). 걷기 9/9 게임 시간 **122.5초**(경로 221.2m), 달리기 9/9 **46.3초**(220.2m), 리스폰 0, 카메라 벽 안·가림 0(걷기 703·달리기 247 검사) — 자동 정렬로 카메라가 등 뒤를 따라와 걷기 최소 카메라 거리 1.22 → **3.17m**. 시작 구도 거리 4.00m·당김 0·인물 50%·발 10%, 3초 달리기 4.58m·당김 0·인물 40%. 실제 실행 약 1분(Unity 띄우기·컴파일 포함).
 
@@ -177,17 +188,19 @@ function Run-Unity([string]$log, [string[]]$more) {
 | 하는 일 | 명령 | 비고 |
 |---|---|---|
 | 임포트·컴파일 점검 | `Run-Unity "$env:TEMP\u_check.log" @('-nographics','-executeMethod','Haengin.EditorTools.BatchTools.ImportCheck')` | 로그에 `[BatchTools] 임포트 점검 결과 | 컴파일 에러(CS) N건 | 임포트 에러 M건`. 하나라도 있으면 exit 1. `-reimport Assets/_Project/Art/Characters/Siwoo` 를 붙이면 그 폴더를 강제 재임포트한 뒤 센다 |
-| Sandbox 다시 만들기 | `Run-Unity "$env:TEMP\u_setup.log" @('-nographics','-executeMethod','Haengin.EditorTools.SandboxSetup.Build')` | 재질·볼륨·장면을 같은 경로에 덮어씀. `-modelYaw 90` 으로 모델 방향 조정 |
+| 캐릭터 임포트·재질·애니메이터 | `Run-Unity "$env:TEMP\u_char.log" @('-nographics','-executeMethod','Haengin.EditorTools.CharSetup.Build')` | FBX 4개 Humanoid 설정(뼈 매핑·바인드 포즈 기준 자세·클립 루프·제자리) → 툰 재질 2개 → 걸음 측정 → `Anim/Siwoo.controller`·`Taeo.controller`. 로그 `[CharSetup] 걸음 측정 …` · `컨트롤러 … Walk ×2.353 …`. GLB 를 새로 받았으면 먼저 `blender -b --factory-startup --python tools/glb2fbx.py -- <glb> <fbx> <클립 이름>`(파일 머리 주석) |
+| Sandbox 다시 만들기 | `Run-Unity "$env:TEMP\u_setup.log" @('-nographics','-executeMethod','Haengin.EditorTools.SandboxSetup.Build')` | 재질·볼륨·장면을 같은 경로에 덮어씀(이제 스스로 종료). `-modelYaw 90` 은 예전 정적 GLB 방향 |
 | 스크린샷(정면) | `Run-Unity "$env:TEMP\u_shot.log" @('-executeMethod','Haengin.EditorTools.BatchTools.Screenshot','-scene','Assets/_Project/Scenes/Sandbox.unity','-out','C:\temp\front.png','-width','1920','-height','1080')` | **`-nographics` 를 빼야** GPU 로 렌더된다(창은 안 뜸). 가장 우선순위 높은 CM 카메라 자세를 메인 카메라에 옮겨 2배 슈퍼샘플로 찍음 |
-| 스크린샷(3/4) | 위와 같고 `'-yaw','35'` 추가 | `-yaw` = `-pivot`(기본 `Siwoo`) 둘레로 카메라를 돈 각도. 그 밖에 `-camera <CM 이름>`, `-supersample 1~4`, `-show Siwoo_Rigged`(비활성 루트를 찍을 때만 켬), `-hide 이름` |
+| 스크린샷(3/4) | 위와 같고 `'-yaw','35'` 추가 | `-yaw` = `-pivot`(기본 `Siwoo`) 둘레로 카메라를 돈 각도. 그 밖에 `-camera <CM 이름>`, `-supersample 1~4`, `-show Siwoo_Rigged`(비활성 루트를 찍을 때만 켬), `-hide 이름`, `-animTime 초`(장면의 Humanoid Animator 를 대기 클립 그 시각 자세로 — 기본 1초. 편집 모드에선 Animator 가 돌지 않아 안 하면 A포즈) |
 | Zone1 다시 만들기 | `Run-Unity "$env:TEMP\u_zone1.log" @('-nographics','-executeMethod','Haengin.EditorTools.Zone1Builder.Build')` | `Data/zone1.json` → `Scenes/Zone1.unity` + `Zone1_Mesh.asset` 를 덮어씀(재질은 같은 경로에서 값만 갱신, 결과는 결정적). `-nographics` 를 빼고 `'-shots','<폴더>'` 를 붙이면 같은 실행에서 점검 컷 7장(`z1_1_top` 평면 · `2_alley` 골목 눈높이 · `3_reveal` 계단참 성곽 · `4_waryong` · `5_target` 체크포인트·이름표·HUD · `6_startcam` · `7_uphill`)을 찍는다. 로그 `[Zone1Builder] 완료: … 길 가운데선 막힘 N곳 · NavMesh 길만 완주 9/9 …` 와 점검 메모. 실패하면 exit 1. 에디터 메뉴 **Haengin › Zone1 장면 다시 만들기** 도 같다. 데이터를 바꾸려면 먼저 `python tools/zone1_gen.py && python tools/zone1_check.py` |
 | Zone1 평면도(위에서) | `Run-Unity "$env:TEMP\u_z1top.log" @('-executeMethod','Haengin.EditorTools.BatchTools.Screenshot','-scene','Assets/_Project/Scenes/Zone1.unity','-out','C:\temp\z1_top.png','-width','1800','-height','1300','-topdown','-area','-274,70,-130,174')` | 직교 투영, 화면 위 = 북. 찍는 동안만 안개·그림자 끔(`-shadows` 면 그림자 넣음). `-area` 없으면 모든 렌더러 범위 |
 | Zone1 장면 컷 | 위와 같고 `-topdown -area …` 대신 `'-view','Zone1/Shots/Shot_Start'`(또는 Shot_StartCam · Shot_Uphill · Shot_Waryong · Shot_Reveal), `-width 1920 -height 1080` | `-view` = 그 오브젝트의 위치·방향·화각(꺼진 Camera)으로 찍음. `-fov 도` 로 화각 덮어쓰기, `-nofog` 로 안개 끄기 |
-| M1 다시 만들기 | `Run-Unity "$env:TEMP\u_m1.log" @('-nographics','-executeMethod','Haengin.EditorGame.M1Setup.Build')` | 조정값(없을 때만) + `Prefabs/Player.prefab` + Zone1 다시 만들기(리그 포함) + 빌드 목록(Zone1, Sandbox). `Zone1Builder.Build` 만 돌려도 리그가 다시 붙는다(BeforeSave 확장 지점). 리그만: `M1Setup.AddRigToZone1`. 로그 `[M1Setup]` |
+| M1 다시 만들기 | `Run-Unity "$env:TEMP\u_m1.log" @('-nographics','-executeMethod','Haengin.EditorGame.M1Setup.Build')` | 캐릭터(CharSetup) + 조정값(없을 때만) + `Prefabs/Player.prefab` + Zone1 다시 만들기(리그 포함) + 빌드 목록(Zone1, Sandbox). Sandbox 까지 한 번에: `M1Setup.BuildAll`(2026-10-06 실행 14초). `Zone1Builder.Build` 만 돌려도 리그가 다시 붙는다(BeforeSave 확장 지점). 리그만: `M1Setup.AddRigToZone1`. 로그 `[M1Setup]` |
 | PlayMode 테스트 | 아래 '테스트 실행' | `-runTests` 에는 **`-quit` 를 붙이지 않는다**(끝나면 스스로 닫힘). 종료 코드 0 = 전부 통과, 2 = 실패 있음 |
-| Windows 빌드 | `Run-Unity "$env:TEMP\u_build.log" @('-nographics','-executeMethod','Haengin.EditorTools.BatchTools.BuildWindows','-out','C:\클로드\haengin1-builds\M1')` | 빌드 목록 장면(**Zone1 첫 장면** → Sandbox), Windows 64비트, **Mono**, 개발 빌드 아님. M1 결과물 위치 = 레포 밖 `C:\클로드\haengin1-builds\M1\HaenginMainEvent.exe`(약 148MB). 빌드 뒤 생기는 `행인1의 메인이벤트_BurstDebugInformation_DoNotShip` 폴더는 **배포 금지**(디버그 정보) — 대표용 폴더에서는 지운다. 결과 `<out>\HaenginMainEvent.exe`. 로그에 `[BatchTools] 빌드 결과: Succeeded | 크기 | 시간 | 에러 | 경고`. 실패하면 exit 1. 임시 폴더를 못 쓰면 시작 전에 바로 실패 처리 |
+| Windows 빌드 | `Run-Unity "$env:TEMP\u_build.log" @('-nographics','-executeMethod','Haengin.EditorTools.BatchTools.BuildWindows','-out','C:\클로드\haengin1-builds\M1')` | 빌드 목록 장면(**Zone1 첫 장면** → Sandbox), Windows 64비트, **Mono**, 개발 빌드 아님. M1 결과물 위치 = 레포 밖 `C:\클로드\haengin1-builds\M1\HaenginMainEvent.exe`(약 167MB). 빌드가 끝나면 `Fonts/OFL.txt` 를 `<out>\licenses\NotoSansKR-OFL.txt` 로 복사하고(OFL 1.1 은 글꼴과 함께 배포할 때 라이선스 동봉 의무), **배포 금지** 디버그 폴더 `…_BurstDebugInformation_DoNotShip` 을 지운다(2026-10-06부터 자동, 로그 `글꼴 라이선스 동봉` · `배포 금지 폴더 삭제`). 결과 `<out>\HaenginMainEvent.exe`. 로그에 `[BatchTools] 빌드 결과: Succeeded | 크기 | 시간 | 에러 | 경고`. 실패하면 exit 1. 임시 폴더를 못 쓰면 시작 전에 바로 실패 처리 |
 
 실제로 돌려 본 결과(2026-10-05): ImportCheck 컴파일 에러 0 · 임포트 에러 0, 스크린샷 정면·3/4 정상, 빌드 Succeeded(138MB, 52초, 에러 0·경고 0), 빌드한 exe 를 창 모드로 10초 띄워 살아 있음 확인.
+M1 4차(2026-10-06, 리깅 모델·애니메이터): 빌드 Succeeded(167.0MB, 14초, 에러 0·경고 0) → `C:\클로드\haengin1-builds\M1` 덮어씀 · OFL 동봉 · DoNotShip 자동 삭제. exe 를 창 모드 1280×720·최소화·`-nocursorlock` 으로 띄워 15초 안에 `[M1] 실행 확인: 장면 Zone1 · 시우 (-197.5, 30.68, 97.4) 접지 True 상태 Idle · 카메라 거리 4.00m · 6 fps(vSync 1 · 품질 PC) · 화면 1280x720`(최소화라 6fps — `runInBackground` 꺼짐) · 길잡이 · 화면 UI 세 줄, 예외 0, 그 PID 만 종료.
 M1 3차(2026-10-05, 카메라·조작 다듬기): 빌드 Succeeded(148.3MB, 13초, 에러 0·경고 0) → `C:\클로드\haengin1-builds\M1` 덮어씀, DoNotShip 폴더 지움. exe 를 창 모드 1280×720·최소화·`-nocursorlock` 으로 띄워 8초 만에 `[M1] 실행 확인: 장면 Zone1 · 시우 (-197.5, 30.68, 97.4) 접지 True 상태 Idle · 카메라 거리 4.00m` · `[M1] 길잡이 확인: HUD "다음: 후문 상가거리 · 19m" · 글꼴에 없는 글자 0` · `[M1] 화면 UI 확인: 글꼴 KR_Bold_SDF · 글꼴에 없는 글자 0 · 메뉴 입력 Menu 맵 · 카메라 자동 정렬 걷기·달리기` 확인, 예외 0, 그 PID 만 종료.
 M1(2026-10-05): 빌드 Succeeded(Zone1 + Sandbox, 139.6MB, 에러 0·경고 0). exe 를 창 모드(1280×720)·최소화·`-nocursorlock` 으로 15초 띄워 응답 중 확인, Player.log 예외 0, `[M1] 실행 확인: 장면 Zone1 · 시우 (-197.4, 30.85, 94.7) 접지 True 상태 Idle · 카메라 거리 2.16m` 확인 후 그 PID 만 종료.
 

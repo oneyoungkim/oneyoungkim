@@ -20878,6 +20878,10 @@ MonoBehaviour:
   Guide: {fileID: 455738243}
   ArriveFlash: 1.6
   FinishHold: 4
+  ArrowSize: 46
+  ArrowMargin: 64
+  ArrowAimHeight: 1.5
+  ArrowInset: 0.04
 --- !u!1 &1114771904
 GameObject:
   m_ObjectHideFlags: 0
@@ -30351,6 +30355,8 @@ MonoBehaviour:
   MaxScale: 3.2
   Margin: 6
   Cam: {fileID: 0}
+  Hud: {fileID: 0}
+  EdgeMargin: 14
 --- !u!1 &1507037376
 GameObject:
   m_ObjectHideFlags: 0

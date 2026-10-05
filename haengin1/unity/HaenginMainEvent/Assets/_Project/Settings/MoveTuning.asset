@@ -31,12 +31,12 @@ MonoBehaviour:
   skinWidth: 0.025
   stepOffset: 0.3
   slopeLimit: 40
-  leanBase: 5
-  leanPerAccel: 0.3
+  leanBase: 0
+  leanPerAccel: 0.15
   leanMaxFwd: 8
   leanMaxBack: 4
   bankK: 0.006
-  bankMax: 8
+  bankMax: 6
   leanSmooth: 0.12
   bankSmooth: 0.1
   stepSmooth: 0.08
