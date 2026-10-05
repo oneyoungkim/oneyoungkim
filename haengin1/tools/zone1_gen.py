@@ -318,10 +318,10 @@ GONGTEO = pad("와룡공원 성곽 아래 공터(Y1)", "circle", (-192.0, 38.0, 
               "M2 전투 후보 ② — 야차 1:1(1부 첫눈의 야차, 2부 채강혁 리매치). 흙바닥 원형, 가로등 2·벤치 2. 새벽엔 배드민턴 네트")
 
 # 1-10 와룡공원 성곽길(공터 → 서쪽 전망 쉼터)
-TRAIL = road("와룡공원 성곽길", "trail", 3.0,
+TRAIL = road("와룡공원 성곽길", "wallpath", 3.0,
              [(-198.4, 38.0, 142.3), (-210.0, 39.4, 143.0), (-225.0, 41.2, 140.5), (-244.75, 44.0, 136.5),
               (-250.5, 45.1, 135.4), (-255.6, 46.0, 136.2)],
-             "성벽 안쪽을 따라 걷는 길(성벽 접촉·등반 불가). 2023 정비 안전난간 느낌")
+             "성벽 안쪽을 따라 걷는 길(성벽 접촉·등반 불가). 바닥 = 화강암 판석 포장(wallpath). 2023 정비 안전난간 느낌")
 VIEW = pad("와룡공원 전망 쉼터", "rect", (-258.6, 46.0, 136.3), (6.0, 5.0), 0.0, "deck",
            "구역 서쪽 끝. 정자 1, 벤치, 말바위 방향 능선 조망. 서쪽은 '말바위 방면 출입 통제'로 막음")
 
@@ -623,7 +623,192 @@ end_barrier("명륜3가 골목 동쪽 경계", [r for r in ROADS if r["name"].st
             "명륜1가 주택가(구역 밖)")
 end_barrier("성곽 안쪽 숲길 동쪽 경계", FOREST_E["points"], 2.5, "혜성고 방면(구역 밖)")
 
-# 4-8 나무·풀숲 (결정적 배치: 후보 격자에서 길·건물과 겹치지 않는 곳만)
+# 4-8 명륜3가 골목 벽(체크포인트 3→4→5→6, 2026-10-05 2차): 양옆이 트인 맨땅 비탈이라 골목으로 안 읽혀서
+#     골목 가운데선에서 ALLEY_SET 떨어진 선에 낮은 단독주택·담장을 촘촘히 세운다(골목 폭 = 2 × SET).
+ALLEY_SET = 1.8    # 골목(걷는 면 3.0m) → 집·담 앞면까지. 골목 폭 3.6m(걷는 면 + 양쪽 0.3m 배수로 자리)
+STAIR_SET = 1.4    # 꼭대기 계단(걷는 면 2.0m) → 담 앞면. 계단 골목 폭 2.8m
+POLE_SET = 1.65    # 골목 전봇대·보안등은 걷는 면 가장자리와 담 사이(지름 0.3m 가 걷는 면 밖에 들게)
+
+
+def pl_len(pts):
+    return sum(math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][2] - pts[i][2]) for i in range(len(pts) - 1))
+
+
+def pl_at(pts, s):
+    """폴리라인 위 호 길이 s 의 (x, y, z, 진행 방향 hx, hz). 끝을 넘으면 마지막 방향으로 연장(앞은 첫 방향)."""
+    if s <= 0:
+        (ax, ay, az), (bx, by, bz) = pts[0], pts[1]
+        L = math.hypot(bx - ax, bz - az)
+        hx, hz = (bx - ax) / L, (bz - az) / L
+        return ax + hx * s, ay, az + hz * s, hx, hz
+    acc = 0.0
+    for i in range(len(pts) - 1):
+        (ax, ay, az), (bx, by, bz) = pts[i], pts[i + 1]
+        L = math.hypot(bx - ax, bz - az)
+        if s <= acc + L or i == len(pts) - 2:
+            t = (s - acc) / L
+            hx, hz = (bx - ax) / L, (bz - az) / L
+            tc = min(1.0, t)
+            return ax + (bx - ax) * t, ay + (by - ay) * tc, az + (bz - az) * t, hx, hz
+        acc += L
+
+
+def side_point(pts, s, side, off):
+    """side +1 = 진행 방향 왼쪽, -1 = 오른쪽. 가운데선에서 off 떨어진 점 (x, y, z)."""
+    x, y, z, hx, hz = pl_at(pts, s)
+    nx, nz = (-hz, hx) if side > 0 else (hz, -hx)
+    return x + nx * off, y, z + nz * off
+
+
+def walk_dist(x, z):
+    """(x,z) 에서 걷는 면(길·계단·패드) 가장자리까지 수평 거리(안쪽이면 음수)."""
+    best = 1e9
+    for r in ROADS:
+        d, *_ = poly_project(r["points"], x, z)
+        best = min(best, d - r["width"] / 2)
+    for s_ in STAIRS:
+        d, *_ = seg_project(s_["from"], s_["to"], x, z)
+        best = min(best, d - s_["width"] / 2)
+    for p in PADS:
+        cx, cy, cz = p["center"]
+        w, d = p["size"]
+        if p["shape"] == "circle":
+            best = min(best, math.hypot(x - cx, z - cz) - w / 2)
+        else:
+            ux_, uz_ = local_axes(p["yaw"])
+            lx, lz = (x - cx) * ux_[0] + (z - cz) * ux_[1], (x - cx) * uz_[0] + (z - cz) * uz_[1]
+            ex, ez = abs(lx) - w / 2, abs(lz) - d / 2
+            best = min(best, max(ex, ez) if ex <= 0 and ez <= 0 else math.hypot(max(ex, 0), max(ez, 0)))
+    return best
+
+
+def footprint(cx, cz, w, d, yaw, step=0.4):
+    ux_, uz_ = local_axes(yaw)
+    nx_, nz_ = max(2, int(math.ceil(w / step)) + 1), max(2, int(math.ceil(d / step)) + 1)
+    for i in range(nx_):
+        for j in range(nz_):
+            lx, lz = -w / 2 + w * i / (nx_ - 1), -d / 2 + d * j / (nz_ - 1)
+            yield cx + ux_[0] * lx + uz_[0] * lz, cz + ux_[1] * lx + uz_[1] * lz
+
+
+def block_fits(cx, cz, w, d, yaw, m_walk=0.25, m_blk=0.05, solid=None):
+    """걷는 면에서 m_walk 이상 떨어지고, solid(기본 = 지금까지의 건물·담, 나무·풀숲 제외)와 겹치지 않으면 True."""
+    if solid is None:
+        solid = [b for b in BLOCKS if b["kind"] not in ("tree", "bush")]
+    for x, z in footprint(cx, cz, w, d, yaw):
+        if walk_dist(x, z) < m_walk:
+            return False
+        for b in solid:
+            if in_rect(x, z, b["center"][0], b["center"][2], b["size"][0], b["size"][2], b["yaw"], m_blk):
+                return False
+    return True
+
+
+ALLEY_LOG = []
+
+
+def offset_line(pts, side, off):
+    """가운데선 pts 를 side 쪽으로 off 만큼 평행 이동한 선(꺾이는 점은 마이터). 점의 y 는 가운데선 높이 그대로."""
+    out = []
+    n = len(pts)
+    for i in range(n):
+        ns = []
+        for j in (i - 1, i):
+            if 0 <= j < n - 1:
+                (ax, _, az), (bx, _, bz) = pts[j], pts[j + 1]
+                L = math.hypot(bx - ax, bz - az)
+                hx, hz = (bx - ax) / L, (bz - az) / L
+                ns.append((-hz, hx) if side > 0 else (hz, -hx))
+        mx, mz = sum(v[0] for v in ns), sum(v[1] for v in ns)
+        L = math.hypot(mx, mz)
+        mx, mz = mx / L, mz / L
+        k = off / max(0.5, mx * ns[0][0] + mz * ns[0][1])
+        x, y, z = pts[i]
+        out.append((x + mx * k, y, z + mz * k))
+    return out
+
+
+def fill_wall(tag, line, side, s0, s1, pattern, gap=0.3):
+    """벽 선 line(offset_line 결과)의 호 길이 s0~s1 에 pattern(길이, 깊이, 종류, 바닥 위 높이, 이름, 층)을 차례로 세운다.
+    조각은 꺾이는 점을 넘지 않는다. 앞면은 벽 선에 고정, 뒤가 걷는 면·기존 건물(골목 벽 이전 것)에 닿으면 깊이를 줄이고(최소 0.3m),
+    그래도 안 되면 0.5m 앞으로 가서 다시 해 본다(기존 건물이 이미 벽인 곳은 비워 둠 — 결정적). 2m 보다 짧은 집 조각은 담으로."""
+    placed = 0
+    k = 0
+    acc = 0.0
+    for i in range(len(line) - 1):
+        (ax, ay, az), (bx, by, bz) = line[i], line[i + 1]
+        L = math.hypot(bx - ax, bz - az)
+        hx, hz = (bx - ax) / L, (bz - az) / L
+        nx_, nz_ = (-hz, hx) if side > 0 else (hz, -hx)
+        yaw = yaw_from_dir(hx, hz)
+        t = max(0.0, s0 - acc)
+        end = min(L, s1 - acc)
+        while end - t >= 1.0:
+            L0, d0, kind, h, name, floors = pattern[k % len(pattern)]
+            LL = min(L0, end - t)
+            if end - t - LL < 1.0:      # 남는 토막이 1m 안 되면 이 조각을 늘려 끝까지
+                LL = end - t
+            if kind == "house" and LL < 2.0:
+                L0, d0, kind, h, name, floors = WALL_
+            mid = t + LL / 2
+            fx, fz = ax + hx * mid, az + hz * mid
+            y = ay + (by - ay) * mid / L
+            done = None
+            depths = [d0]
+            while depths[-1] - 0.5 >= 0.8:
+                depths.append(round(depths[-1] - 0.5, 2))
+            if d0 > 0.3:
+                depths.append(0.3)
+            for dd in depths:
+                cx, cz = fx + nx_ * dd / 2, fz + nz_ * dd / 2
+                if block_fits(cx, cz, LL, dd, yaw, solid=BASE_SOLID):
+                    done = (cx, cz, dd)
+                    break
+            if not done:
+                t += 0.5
+                continue
+            cx, cz, dd = done
+            if dd < 1.0 and kind == "house":   # 깊이가 1m 안 되면 집 대신 담
+                kind, h, name, floors = "fence", WALL_[3], WALL_[4], 0
+            ms = h if kind in ("fence", "railing") else (0.9 if kind == "retaining" else min(h, 2.5))
+            block(name, kind, cx, cz, LL, dd, yaw, h, ref_y=y, min_show=ms,
+                  use="%s 골목 벽(%s)" % (tag, "왼쪽" if side > 0 else "오른쪽"), extra={"floors": floors} if floors else None)
+            placed += 1
+            k += 1
+            t += LL + gap
+        acc += L
+    ALLEY_LOG.append((tag, "왼쪽" if side > 0 else "오른쪽", placed))
+
+
+BASE_SOLID = [b for b in BLOCKS if b["kind"] not in ("tree", "bush")]   # 골목 벽을 세우기 전 건물·담
+ALLEY_E = [r for r in ROADS if r["name"] == "명륜3가 골목 입구"][0]["points"]
+ALLEY_A = [r for r in ROADS if r["name"] == "명륜3가 골목(시우네 골목)"][0]["points"]
+_st = [s_ for s_ in STAIRS if s_["name"].startswith("성곽 아래 꼭대기 계단")][0]
+STAIR_A = [_st["from"], _st["to"]]
+ALLEY_EA = ALLEY_E + ALLEY_A[1:]          # 계단 아래 → 체크포인트 4 → 시우네 집 앞 → 꼭대기 계단 밑
+H1, H2 = 3.6, 6.6   # 단층(3.0 + 지붕 턱 0.6) / 2층
+HOUSE1 = (6.0, 6.0, "house", H1, "골목 단독주택(단층)", 1)
+HOUSE2 = (5.5, 6.5, "house", H2, "골목 단독주택(2층)", 2)
+WALL_ = (3.0, 0.35, "fence", 2.1, "골목 담장", 0)
+_L = offset_line(ALLEY_EA, +1, ALLEY_SET)
+_R = offset_line(ALLEY_EA, -1, ALLEY_SET)
+# 왼쪽(서·북서): 후문상가 B동이 벽인 곳은 건너뛰고, 모퉁이 → 시우네 앞집까지 집이 줄지어
+fill_wall("명륜3가", _L, +1, 0.6, pl_len(_L), [HOUSE1, HOUSE2, WALL_, HOUSE1, HOUSE2, HOUSE1])
+# 오른쪽(동·남동): 담 + 집, 동쪽 갈림길(명륜1가 방면) 앞에서 끝(그 뒤는 반시우네 다세대 벽)
+_jx, _jz = -164.5, 121.5
+_d, _y, _i, _t, _qx, _qz = poly_project(_R, _jx, _jz)
+_sj = sum(math.hypot(_R[k + 1][0] - _R[k][0], _R[k + 1][2] - _R[k][2]) for k in range(_i)) + _t * math.hypot(
+    _R[_i + 1][0] - _R[_i][0], _R[_i + 1][2] - _R[_i][2])
+fill_wall("명륜3가", _R, -1, 0.6, _sj - 1.6, [WALL_, HOUSE1, WALL_, HOUSE2, WALL_, HOUSE1])
+# 꼭대기 계단(체크포인트 5 → 6): 서쪽(오르막 쪽) = 단층집 + 낮은 축대(계단참에서 공터 쪽 시선을 막지 않게 1.4m). 동쪽 위 = 담
+_SL = offset_line(STAIR_A, +1, STAIR_SET)
+_SR = offset_line(STAIR_A, -1, STAIR_SET)
+fill_wall("꼭대기 계단", _SL, +1, 1.3, 4.7, [(3.4, 4.5, "house", H1, "계단 옆 단층집", 1)])
+fill_wall("꼭대기 계단", _SL, +1, 5.0, pl_len(_SL) - 0.9, [(3.5, 0.7, "retaining", 1.4, "계단 축대", 0)])
+fill_wall("꼭대기 계단", _SR, -1, 4.6, pl_len(_SR) - 0.9, [(3.0, 0.35, "fence", 1.9, "골목 담장", 0)])
+
+
+# 4-9 나무·풀숲 (결정적 배치: 후보 격자에서 길·건물과 겹치지 않는 곳만)
 def clear_of_walk(x, z, rad):
     for r in ROADS:
         d, *_ = poly_project(r["points"], x, z)
@@ -758,13 +943,16 @@ lm("전봇대 전단지 퀘스트 보드", "board", cp[0], cp[1], cp[2], zone="h
 for i, xs in enumerate((-196.0, -170.0, -150.0, -138.0)):
     pe = curb_point(xs, +1)
     lm("전봇대 %d(성균관로)" % (i + 1), "pole", pe[0], pe[1], pe[2], height=9.0, note="전선 = 후지모토식 로우앵글 하늘")
-for i, (x, z) in enumerate(((-175.6, 113.0), (-166.0, 123.6), (-162.8, 130.5))):
+# 골목 전봇대·보안등: 골목 벽(4-8)과 걷는 면 사이 띠에 세운다
+for i, (pts_, s_, off_) in enumerate(((ALLEY_E, 6.1, POLE_SET), (ALLEY_A, 11.6, POLE_SET), (STAIR_A, 3.3, 1.2))):
+    x, _, z = side_point(pts_, s_, +1, off_)
     lm("전봇대 %d(명륜3가 골목)" % (i + 1), "pole", x, ground_y(x, z), z, height=8.0)
 lm("공터 가로등(서)", "lamp", -198.2, 38.0, 145.4, zone="waryong_entrance", height=4.5, note="야차 링 조명 2개 중 하나")
 lm("공터 가로등(동)", "lamp", -185.6, 38.0, 145.6, zone="waryong_entrance", height=4.5)
 for i, (x, z) in enumerate(((-216.0, 144.6), (-236.0, 141.0), (-250.5, 133.4))):
     lm("성곽길 가로등 %d" % (i + 1), "lamp", x, ground_y(x, z), z, height=4.0, note="밤에 서쪽 끝까지 점선처럼 이어져 길 안내")
-for i, (x, z) in enumerate(((-171.4, 119.6), (-159.6, 134.0), (-161.0, 141.6))):
+_lamps = [side_point(ALLEY_A, 5.4, +1, POLE_SET), side_point(STAIR_A, 6.8, -1, 1.2), (-161.0, 0.0, 141.6)]
+for i, (x, _, z) in enumerate(_lamps):
     lm("골목 보안등 %d" % (i + 1), "lamp", x, ground_y(x, z), z, height=3.6, note="나트륨 주황")
 lm("암문(닫힘, 북정마을 방면)", "wall_gate", -215.0, wall_base_y(-215.0, 147.0), 147.0, zone="waryong_trail",
    note="03_맵 '성곽 틈 계단'. M1 은 닫힌 문, 북정마을(성곽 밖)은 이후 마일스톤")
@@ -782,9 +970,18 @@ lm("Y1 와룡공원 성곽 아래 공터", "arena", -192.0, 38.0, 142.0, radius=
 LANDMARKS.extend(DOORS)
 
 # ================================================================ 6. 시작 지점·체크포인트
-spawn_pt = sidewalk_mid(-197.8, -1)
-SPAWN = {"pos": P(spawn_pt[0], spawn_pt[1] + 0.05, spawn_pt[2] + 0.4), "yaw": 32.0,
-         "note": "성대 후문 앞 남쪽 인도. 화면 왼쪽 = 공원 계단·공터 가로등·성곽, 오른쪽 = 상가거리·하루편의점 간판"}
+# 2차(카메라): 1차 자리(남쪽 인도, 닫힌 후문 펜스 앞 2m)는 등 뒤 4m 카메라가 펜스 너머에 놓여 다리 가림 검사가 카메라를 2.2m 로
+# 당겼다(인물이 화면 2/3, 무릎 아래 잘림). 차도 남쪽 차선(연석에서 2m)으로 2.5m 앞에 세워 카메라(뒤 4m·높이 1.96m)가
+# 펜스·기둥 앞 인도 위(펜스에서 약 1.2m)에 오게 했다 → 07 4-3 구도(인물 화면 높이 50%, 발 아래 10%) 그대로.
+def road_pt(x, off):
+    """성균관로 중심선에서 진행 방향 왼쪽(+북)으로 off m 떨어진 차도 위 점."""
+    y, z, hx, hz = main_at(x)
+    return (x + (-hz) * off, y, z + hx * off)
+
+
+spawn_pt = road_pt(-197.6, -1.5)
+SPAWN = {"pos": P(spawn_pt[0], spawn_pt[1] + 0.05, spawn_pt[2]), "yaw": 34.0,
+         "note": "성대 후문 앞 차도 남쪽 차선(2차: 카메라가 펜스 앞에 오게). 화면 왼쪽 = 공원 오르막·와룡공원, 오른쪽 = 상가거리·다음 체크포인트 빛 기둥"}
 cp2 = sidewalk_mid(-180.5, +1)
 ROUTE = [
     {"name": "1. 성대 후문", "pos": SPAWN["pos"], "radius": 2.5, "zone": "hoomun_street"},
@@ -803,18 +1000,23 @@ d_, y8, *_ = poly_project(TRAIL["points"], -215.0, 142.2)
 ROUTE[7]["pos"][1] = r2(y8)
 
 # ================================================================ 7. 색 규칙(그레이박스 단색)
-COLORS = {  # 출처 팔레트(FUJIMOTO_STYLE 6·8장, REFERENCES 2장)에서 채도를 낮춘 단색. 캐릭터 강조색(#E2582C, #F2CF55)은 배경에 쓰지 않음
-    "ground": "#C9C1A6", "road": "#7A7570", "driveway": "#86817B", "sidewalk": "#DCD4C3",
-    "alley": "#C2B9A7", "path": "#B5AA92", "trail": "#ABA088",
-    "pad_asphalt": "#86817B", "pad_dirt": "#C3B89E", "pad_stone": "#BDB6AA", "pad_deck": "#A88C72",
+COLORS = {  # 2026-10-05 2차: 명도 사다리(06 문서 10장, zone1_check 검증 8 이 화면 L* 로 계산해 확인).
+    # 기준: 화면에서 맞붙는 넓은 면끼리 L* 8 이상 · 하늘과 건물·성곽의 가장 밝은 면 10 이상 · 하늘과 안개 6 이상
+    # 화면 L*(윗면): 하늘 88 > 인도 83 > 골목 78 ≈ 성곽길 돌 포장 77 > 상가 76 > 성곽 73(안쪽 면 69) ≈ 주택 72 ≈ 흙 마당 71 > 땅 60 > 숲길·흙길 51 > 차도 49
+    "ground": "#9C947C", "road": "#7A7570", "driveway": "#86817B", "sidewalk": "#DFD7CD",
+    "alley": "#C5CACF", "path": "#8B7660", "trail": "#897A65", "wallpath": "#D5D1CA",
+    "pad_asphalt": "#86817B", "pad_dirt": "#C3B198", "pad_stone": "#D5D1CA", "pad_deck": "#AA846B",
     "stairs": "#A9725F",
-    "shop": "#DED5C5", "house": "#E3DFD7", "hanok": "#4B4845", "campus": "#CDC8BF", "pavilion": "#9B5A4B",
-    "wall": "#A6A097", "fence": "#8B857E", "railing": "#8B857E", "retaining": "#A09B93",
-    "tree": "#7F8A72", "bush": "#959D86",
+    "shop": "#CDBFAF", "house": "#C3B3AD", "hanok": "#4B4845", "campus": "#BBB9B1", "pavilion": "#9B5A4B",
+    "wall": "#C8C3BC", "wallcap": "#6B6863", "fence": "#7F7873", "railing": "#7F7873", "retaining": "#B9B6AF",
+    "tree": "#697059", "bush": "#7B7E68",
     "gate": "#9B5A4B", "barrier": "#4C4346", "prop": "#6F7680",
     "sign": "#3F5E6B", "board": "#3F5E6B", "pole": "#5B5552", "lamp": "#5B5552", "bus_stop": "#3F5E6B",
     "door": "#9A5446", "wall_gate": "#5E4A44", "viewpoint": "#3F5E6B", "npc_spot": "#B5A68A",
-    "arena": "#3B5360", "checkpoint": "#3B5360", "sky": "#E9E0CC", "fog": "#E9E0CC",
+    # 체크포인트 = 길잡이 UI 색(시우 강조 주황 계열, 배경 소품에는 안 씀) · 전투 무대 표시는 디버그 청록
+    "arena": "#3B5360", "checkpoint": "#E2582C",
+    # 하늘 = 종이 크림, 안개 = 그보다 L* 7 낮은 회색 아지랑이(먼 건물·산이 하늘로 녹지 않고 실루엣이 남게)
+    "sky": "#EEE3D1", "fog": "#D4CEC3",
 }
 
 # ================================================================ 8. 출력
@@ -857,7 +1059,7 @@ allx = [q[0] for r in ROADS for q in r["points"]]
 data = {
     "meta": {
         "name": "혜화동 1구역 — 성대 후문~와룡공원 (M1 그레이박스)",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "updated": "2026-10-05",
         "doc": "haengin1/docs/06_M1_그레이박스_설계.md",
         "generator": "haengin1/tools/zone1_gen.py",
@@ -879,7 +1081,14 @@ data = {
     "blocks": BLOCKS,
     "walls": [{"name": "한양도성 성곽(와룡공원 구간)", "points": [P(*q) for q in WALL_PTS],
                "height": WALL_H, "thickness": WALL_T,
-               "note": "오르기·부수기 불가(문화재). 카메라 충돌 대상. 기초 높이는 안쪽 성곽길 + 0.8m 로 맞춤(map_zones wallLine y 는 추정치라 0.5~2.8m 낮춤). 바깥(북)은 지형이 3m 낮아 더 높아 보임"}],
+               # 한양도성 단면(안쪽에서 본 모양): 체성(돌 줄눈 면) 위에 미석(눈썹돌 띠) → 바깥쪽 가장자리에 여장(타구가 있는 낮은 담) → 옥개석(지붕돌 띠)
+               "body": {"course": 0.5, "stone": [0.5, 0.98],
+                        "note": "체성 = 화강암 다듬은 돌 켜쌓기(줄눈 무늬는 Zone1Builder 생성 텍스처 T_Z1_Stone — 한 켜 0.5m, 돌 길이 0.5~0.98m. 빌더 상수와 같은 값을 적어 둠)"},
+               "brow": {"height": 0.16, "overhang": 0.14, "color": "wallcap", "note": "미석 — 체성과 여장 사이 튀어나온 돌 띠"},
+               "parapet": {"height": 1.15, "thickness": 0.8, "merlon": 3.4, "crenel": 0.45, "embrasure": [0.22, 0.3],
+                           "note": "여장 — 성 바깥(북) 쪽 가장자리. 한 타(3.4m)마다 타구(틈 0.45m), 타마다 총안(작은 구멍) 하나"},
+               "cap": {"height": 0.2, "overhang": 0.08, "color": "wallcap", "note": "옥개석 — 여장 윗면 지붕돌 띠(하늘 앞 어두운 선)"},
+               "note": "오르기·부수기 불가(문화재). 카메라 충돌 대상. 기초 높이는 안쪽 성곽길 + 0.8m 로 맞춤(map_zones wallLine y 는 추정치라 0.5~2.8m 낮춤). 바깥(북)은 지형이 3m 낮아 더 높아 보임. 충돌은 체성 위로 +10m(여장 모양과 상관없이 넘을 수 없음)"}],
     "stairs": stairs_out,
     "landmarks": LANDMARKS,
     "spawn": SPAWN,

@@ -38,11 +38,20 @@ namespace Haengin
         public bool invertMouseY;
         public bool invertPadY;
 
-        [Header("자동 정렬")]
-        public Auto autoRecenter = Auto.RunOnly;
-        public float recenterWait = 1.2f;
-        public float recenterTime = 2.0f;
-        public float pitchRecenterWait = 3.0f;
+        [Header("자동 정렬 (07 4-8) — 우리 CamRig 가 각속도 제한으로 돌린다. Cinemachine 정렬은 Q/L1 에만 씀")]
+        [Tooltip("Always = 걸을 때도(기본, 2차) · RunOnly = 달릴 때만 · Off = 끔. 일시정지 메뉴에서 바꿀 수 있음")]
+        public Auto autoRecenter = Auto.Always;
+        [Tooltip("달리기: 마지막 수동 시점 조작 뒤 기다리는 시간(초)")] public float recenterWait = 1.2f;
+        [Tooltip("걷기: 마지막 수동 시점 조작 뒤 기다리는 시간(초)")] public float walkRecenterWait = 1.8f;
+        [Tooltip("움직이기 시작해서 이만큼 지나야 정렬 시작(제자리 방향 바꾸기·짧은 톡 입력에 안 움직이게)")] public float alignStartDelay = 0.3f;
+        [Tooltip("걷기 최대 각속도 °/s")] public float walkAlignSpeed = 30f;
+        [Tooltip("달리기 최대 각속도 °/s")] public float runAlignSpeed = 60f;
+        [Tooltip("각도 차 × 이 값 = 원하는 각속도(1/s). 가까워질수록 느려짐(끝에서 툭 멈추지 않게)")] public float alignGain = 1.2f;
+        [Tooltip("각가속도 °/s² (걷기). 달리기는 2배. 시작·방향 바뀜이 부드럽게")] public float alignAccel = 60f;
+        [Tooltip("인물이 카메라 쪽으로 걸어오면(궤도와 인물 방향 차가 이 각도 이상) 돌리지 않는다 — 180° 휙 돌기 방지")] public float alignBackAngle = 150f;
+        [Tooltip("(Cinemachine 정렬 시간 기본값 — 지금은 Q/L1 뒤 복귀값으로만 씀)")] public float recenterTime = 2.0f;
+        [Tooltip("세로: 움직이는 중 수동 조작 없이 이 시간이 지나면 기본 피치로")] public float pitchRecenterWait = 3.0f;
+        [Tooltip("세로 정렬 최대 각속도 °/s")] public float pitchAlignSpeed = 12f;
         [Tooltip("Q / L1 등 뒤 정렬 시간")] public float snapTime = 0.30f;
 
         [Header("가림·벽")]

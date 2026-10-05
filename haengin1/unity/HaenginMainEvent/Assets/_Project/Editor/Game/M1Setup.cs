@@ -30,6 +30,7 @@ namespace Haengin.EditorGame
         public const string Zone1Scene = Root + "/Scenes/Zone1.unity";
         public const string SandboxScene = Root + "/Scenes/Sandbox.unity";
         const float ModelYaw = 90f;   // Tripo GLB 정면이 Unity −X → +90° 로 +Z 를 보게(SandboxSetup 과 같음)
+        public const string UiName = "UI 화면";
 
         static M1Setup()
         {
@@ -140,7 +141,7 @@ namespace Haengin.EditorGame
         {
             var scene = zoneRoot.gameObject.scene;
             foreach (var g in scene.GetRootGameObjects())
-                if (g.name == "Player" || g.name == "CM_Explore") Object.DestroyImmediate(g);
+                if (g.name == "Player" || g.name == "CM_Explore" || g.name == UiName) Object.DestroyImmediate(g);
             var spawn = zoneRoot.Find("Spawn");
             if (spawn != null)
                 foreach (Transform c in spawn.Cast<Transform>().ToList())
@@ -174,6 +175,15 @@ namespace Haengin.EditorGame
             RigFactory.Wire(rig);
             if (rig.Cam.gameObject.scene != scene) SceneManager.MoveGameObjectToScene(rig.Cam.gameObject, scene);
             if (rig.Main.gameObject.scene != scene) SceneManager.MoveGameObjectToScene(rig.Main.gameObject, scene);
+
+            // 화면 UI(조작 안내·알림·일시정지 메뉴, TMP 한글) — 부품은 실행할 때 GameUi 가 만든다
+            var uiGo = new GameObject(UiName) { layer = 5 };
+            SceneManager.MoveGameObjectToScene(uiGo, scene);
+            var ui = uiGo.AddComponent<GameUi>();
+            ui.Actions = Actions;
+            ui.Font = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>(KoreanFont.AssetPath);
+            ui.Cam = rig.CamRig;
+            if (ui.Font == null) Debug.LogWarning($"{Tag} 한글 글꼴 에셋이 없어 UI 가 기본 글꼴을 씁니다: {KoreanFont.AssetPath}");
 
             PrefabUtility.RecordPrefabInstancePropertyModifications(rig.Motor);
             if (rig.Input != null) PrefabUtility.RecordPrefabInstancePropertyModifications(rig.Input);

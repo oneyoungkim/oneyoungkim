@@ -17,7 +17,7 @@ namespace Haengin
         [Tooltip("L3(왼스틱 누름) = 달리기 토글 옵션")] public bool UseRunToggle;
 
         InputAction move, run, runToggle, interact, lockOn, pause, debugHud;
-        bool toggled;
+        bool toggled, prevPause;
 
         void Awake()
         {
@@ -56,7 +56,7 @@ namespace Haengin
         void Update()
         {
             if (!Bind()) return;
-            if (pause.WasPressedThisFrame()) GameState.TogglePause();
+            if (GameUi.Edge(pause, ref prevPause)) GameState.TogglePause();   // Esc·Options: 열고 닫기(메뉴 안 고르기는 GameUi)
             if (debugHud.WasPressedThisFrame()) DebugHud.Toggle();
             if (GameState.Paused) { Motor.ClearMoveInput(); return; }
 

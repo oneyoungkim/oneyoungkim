@@ -36,10 +36,18 @@ MonoBehaviour:
   padScale: 1
   invertMouseY: 0
   invertPadY: 0
-  autoRecenter: 1
+  autoRecenter: 2
   recenterWait: 1.2
+  walkRecenterWait: 1.8
+  alignStartDelay: 0.3
+  walkAlignSpeed: 30
+  runAlignSpeed: 60
+  alignGain: 1.2
+  alignAccel: 60
+  alignBackAngle: 150
   recenterTime: 2
   pitchRecenterWait: 3
+  pitchAlignSpeed: 12
   snapTime: 0.3
   camRadius: 0.1
   occludedDamping: 0

@@ -337,35 +337,45 @@ namespace Haengin.EditorTools
 
         /// 6-4 필름 후처리: 채도 .85, 대비 약간 억제, 스플릿 톤(그림자 청록·밝은 쪽 따뜻하게), 블룸·톤매핑 없음
         /// Zone1Builder 도 같은 레시피를 자기 경로(Zone1_FilmVolume.asset)에 만든다.
+        /// 2026-10-05 2차: 이미 있으면 지우지 않고 값만 고친다(GUID·서브 에셋 ID 유지 → 다시 만들어도 파일이 그대로).
         internal static VolumeProfile MakeFilmVolume(string path = VolumePath)
         {
-            var old = AssetDatabase.LoadAssetAtPath<VolumeProfile>(path);
-            if (old != null) AssetDatabase.DeleteAsset(path);
-            var profile = ScriptableObject.CreateInstance<VolumeProfile>();
-            AssetDatabase.CreateAsset(profile, path);
+            var profile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(path);
+            if (profile == null)
+            {
+                profile = ScriptableObject.CreateInstance<VolumeProfile>();
+                AssetDatabase.CreateAsset(profile, path);
+            }
+            T Get<T>() where T : VolumeComponent
+            {
+                if (profile.TryGet<T>(out var c)) return c;
+                c = profile.Add<T>(true);
+                c.name = typeof(T).Name;
+                AssetDatabase.AddObjectToAsset(c, profile);
+                return c;
+            }
 
-            var ca = profile.Add<ColorAdjustments>(true);
+            var ca = Get<ColorAdjustments>();
+            ca.active = true;
             ca.saturation.Override(-15f);
             ca.contrast.Override(-6f);
             ca.postExposure.Override(0f);
 
-            var st = profile.Add<SplitToning>(true);
+            var st = Get<SplitToning>();
+            st.active = true;
             st.shadows.Override(Color.Lerp(new Color(0.5f, 0.5f, 0.5f), Hex("#2F4A5A"), 0.35f));
             st.highlights.Override(Color.Lerp(new Color(0.5f, 0.5f, 0.5f), Hex("#F3D9B0"), 0.35f));
             st.balance.Override(0f);
 
-            var tm = profile.Add<Tonemapping>(true);
+            var tm = Get<Tonemapping>();
+            tm.active = true;
             tm.mode.Override(TonemappingMode.None);
 
-            var bloom = profile.Add<Bloom>(true);
+            var bloom = Get<Bloom>();
             bloom.intensity.Override(0f);
             bloom.active = false;
 
-            foreach (var c in profile.components)
-            {
-                c.name = c.GetType().Name;
-                AssetDatabase.AddObjectToAsset(c, profile);
-            }
+            foreach (var c in profile.components) EditorUtility.SetDirty(c);
             EditorUtility.SetDirty(profile);
             AssetDatabase.SaveAssets();
             return profile;

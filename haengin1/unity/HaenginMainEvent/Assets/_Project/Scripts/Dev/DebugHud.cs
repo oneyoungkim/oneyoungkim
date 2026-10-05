@@ -1,4 +1,5 @@
-// 행인1의 메인이벤트 — M1 화면 글자(IMGUI): 조작 안내, F1 디버그 정보, 일시정지 메뉴, 짧은 알림
+// 행인1의 메인이벤트 — F1 디버그 정보(IMGUI, 개발용) + 실행 확인 로그. 조작 안내·알림·일시정지 메뉴는 GameUi(TMP 한글)가 그린다.
+// GameUi 가 없는 장면(시험장)에서만 안내 줄·알림을 IMGUI 로 대신 그린다.
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,9 @@ namespace Haengin
         GUIStyle small, big, box;
 
         public static void Toggle() => show = !show;
+        /// 지금 알림 글(GameUi 가 읽음)과 끝나는 시각(unscaledTime)
+        public static string ToastText => toast;
+        public static float ToastUntil => toastUntil;
 
         public static void Toast(string msg, float seconds = 2f)
         {
@@ -70,33 +74,28 @@ namespace Haengin
             GUI.matrix = Matrix4x4.Scale(new Vector3(s, s, 1f));
             float w = Screen.width / s, h = Screen.height / s;
 
-            // 조작 안내(왼쪽 아래)
-            GUI.Label(new Rect(16, h - 30, w - 32, 24),
-                "이동 WASD·왼스틱   달리기 Shift·R2   카메라 마우스·오른스틱   카메라 정렬 Q·L1   일시정지 Esc·Options   정보 F1", small);
+            bool ui = GameUi.Instance != null;
+            // 조작 안내(왼쪽 아래) — GameUi 가 없을 때만
+            if (!ui)
+                GUI.Label(new Rect(16, h - 30, w - 32, 24),
+                    "이동 WASD·왼스틱   달리기 Shift·R2   카메라 마우스·오른스틱   카메라 정렬 Q·L1   일시정지 Esc·Options   정보 F1", small);
 
             if (show && Motor != null)
             {
                 string cam = Cam != null
-                    ? $"카메라 yaw {Cam.Yaw:F0}° pitch {Cam.Pitch:F0}° 거리 {Cam.Distance:F2}m FOV {Cam.Cam.Lens.FieldOfView:F1}° 당김 {Cam.Pull:F2}m"
+                    ? $"카메라 yaw {Cam.Yaw:F0}° pitch {Cam.Pitch:F0}° 거리 {Cam.Distance:F2}m FOV {Cam.Cam.Lens.FieldOfView:F1}° 당김 {Cam.Pull:F2}m\n" +
+                      $"자동 정렬 {Cam.AutoMode} · 정렬 속도 {Cam.AlignRate:F0}°/s · 수동 조작 뒤 {Mathf.Min(Cam.SinceManualLook, 99f):F1}초"
                     : "카메라 없음";
                 var p = Motor.Position;
-                GUI.Box(new Rect(16, 16, 560, 128),
+                GUI.Box(new Rect(16, 16, 600, 150),
                     $"상태 {Motor.State}   속도 {Motor.PlanarSpeed:F2} m/s   접지 {(Motor.Grounded ? "예" : "아니오")}   경사 {Motor.GroundAngle:F0}°\n" +
                     $"위치 ({p.x:F1}, {p.y:F2}, {p.z:F1})   방향 {Motor.Yaw:F0}°\n{cam}\n{fps:F0} fps", box);
             }
 
-            if (!string.IsNullOrEmpty(toast) && Time.unscaledTime < toastUntil)
+            if (!ui && !string.IsNullOrEmpty(toast) && Time.unscaledTime < toastUntil)
                 GUI.Box(new Rect(w / 2 - 220, h - 110, 440, 36), toast, box);
-
-            if (GameState.Paused)
-            {
-                GUI.color = new Color(0f, 0f, 0f, 0.55f);
-                GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
-                GUI.color = Color.white;
-                GUI.Label(new Rect(0, h / 2 - 120, w, 60), "일시정지", big);
-                if (GUI.Button(new Rect(w / 2 - 110, h / 2 - 30, 220, 44), "계속 (Esc)")) GameState.SetPaused(false);
-                if (GUI.Button(new Rect(w / 2 - 110, h / 2 + 26, 220, 44), "끝내기")) Application.Quit();
-            }
+            if (!ui && GameState.Paused)
+                GUI.Label(new Rect(0, h / 2 - 30, w, 60), "일시정지 (Esc·Options 로 계속)", big);
             GUI.matrix = m;
         }
     }

@@ -1,7 +1,8 @@
-// 행인1의 메인이벤트 — 1구역 자동 걷기 테스트 (docs/07_M1_조작_설계.md 9-2 T14) + 게임 화면 촬영
+// 행인1의 메인이벤트 — 1구역 자동 걷기·달리기 (docs/07_M1_조작_설계.md 9-2 T14) + 시작 구도(T21) + 게임 화면 촬영
 // Zone1.unity 를 열고, 테스트가 NavMesh 를 임시로 구워(저장 안 함) 체크포인트 1→10 사이 경로 모서리를 따라
-// PlayerMotor.SetMoveInput 으로 걷게(또는 달리게) 한다. 검사: 제한 시간 안 도착 · 땅 아래로 떨어지지 않음(y > 지면 − 1) ·
-// 끼어서 멈추지 않음(3초 동안 이동 < 0.2m 면 실패). 카메라가 벽 안에 들어가거나 가린 프레임 수도 센다.
+// PlayerMotor.SetMoveInput 으로 걷게(또는 달리게) 한다. 합격(07 9-2): 구간마다 1.3 × 경로 ÷ 속도 안 도착 · 땅 아래로 떨어지지 않음(y > 지면 − 1) ·
+// 끼어서 멈추지 않음(3초 동안 이동 < 0.2m 면 실패) · 리스폰 0 · 10프레임마다 카메라가 벽·땅 안에 들어가거나 인물이 가린 프레임 0(T09 와 같은 검사).
+// 카메라는 실제 게임처럼 자동 정렬(걷기·달리기)이 켜진 채로 따라온다.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -67,6 +68,7 @@ namespace Haengin.Tests
         public IEnumerator TearDown()
         {
             if (nav.valid) nav.Remove();
+            GameState.SetPaused(false);
             Time.captureDeltaTime = 0f;
             yield return null;
         }
@@ -76,7 +78,7 @@ namespace Haengin.Tests
         public IEnumerator T14_Zone1_Route_Walk() => Route(false);
 
         [UnityTest, Timeout(900000)]
-        public IEnumerator T15_Zone1_Route_Run() => Route(true);
+        public IEnumerator T14_Zone1_Route_Run() => Route(true);
 
         IEnumerator Route(bool run)
         {
@@ -110,6 +112,9 @@ namespace Haengin.Tests
             foreach (var s in segs) Assert.IsTrue(s.Ok, $"{mode} {s.Name}: {s.Fail}");
             Assert.AreEqual(route.Count - 1, segs.Count, "모든 구간");
             Assert.AreEqual(0, motor.Respawns, "맵 밖으로 떨어져 리스폰된 적 없음");
+            Assert.That(cam.Frames, Is.GreaterThan(50), "카메라 검사 프레임 수");
+            Assert.AreEqual(0, cam.Inside, $"{mode}: 카메라가 벽·땅 안에 들어간 프레임 {cam.First}");
+            Assert.AreEqual(0, cam.Blocked, $"{mode}: 카메라→인물 선이 벽·땅에 막힌 프레임 {cam.First}");
         }
 
         // ───────────────────────── 경로 걷기
@@ -146,7 +151,7 @@ namespace Haengin.Tests
         {
             if (!PathTo(goal, out var pts, out s.Len)) { s.Fail = "NavMesh 경로 없음"; yield break; }
             float speed = run ? motor.T.runSpeed : motor.T.walkSpeed;
-            s.Limit = 1.5f * s.Len / speed + 4f;
+            s.Limit = 1.3f * s.Len / speed;   // 07 9-2: 걸린 시간 ≤ 1.3 × 경로 길이 ÷ 속도
             int idx = 1, frame = 0;
             float tm = 0f;
             var hist = new List<(float t, Vector3 p)> { (0f, motor.Position) };
@@ -270,7 +275,47 @@ namespace Haengin.Tests
             return NavMesh.AddNavMeshData(data);
         }
 
-        // ───────────────────────── 게임 화면 촬영 (-m1shots <폴더> 를 줄 때만, -nographics 없이)
+        // ───────────────────────── T21 시작 구도 (07 4-3: 인물 화면 높이 약 50%, 발 아래 여백 10%) + 달리기 구도
+        [UnityTest, Timeout(900000)]
+        public IEnumerator T21_Start_Framing()
+        {
+            var cam = Camera.main;
+            Assert.NotNull(cam, "Main Camera");
+            motor.Teleport(route.SpawnPos, route.SpawnYaw);
+            camRig.SnapBehind();
+            yield return Lab.Seconds(1.5f);
+            Frame(cam, out float feet, out float head, out float vx);
+            float dist = camRig.Distance, pull = camRig.Pull;
+
+            // 달리기: 시작 지점에서 다음 체크포인트(2) 쪽으로 3초 — 자동 정렬로 등 뒤에 온 뒤의 구도(07: FOV 49·4.3m → 발 16%·정수리 59%)
+            var s = new Seg();
+            float t = 0f;
+            yield return WalkUntil(route.Points[1], 1.0f, true, s, () => (t += Dt) > 3.0f);
+            Frame(cam, out float rFeet, out float rHead, out _);
+            float rDist = camRig.Distance, rPull = camRig.Pull, rFov = camRig.Cam.Lens.FieldOfView;
+            float rGap = Mathf.Abs(Mathf.DeltaAngle(camRig.Yaw, motor.Yaw));
+            var p = motor.Position;
+            Debug.Log($"[M1Test] T21 시작 구도: 시우 ({p.x:F1},{p.z:F1}) · 카메라 거리 {dist:F2}m · 당김 {pull:F2}m · 발 {feet * 100f:F0}% · 정수리 {head * 100f:F0}% → 인물 {(head - feet) * 100f:F0}% · 가로 {vx:F2} | " +
+                      $"달리기 3초: 거리 {rDist:F2}m · 당김 {rPull:F2}m · FOV {rFov:F1} · 발 {rFeet * 100f:F0}% · 정수리 {rHead * 100f:F0}% → 인물 {(rHead - rFeet) * 100f:F0}% · 카메라-인물 방향 차 {rGap:F1}°");
+            Assert.That(pull, Is.LessThanOrEqualTo(0.05f), "시작: 벽·펜스 때문에 카메라를 당기지 않음");
+            Assert.That(dist, Is.EqualTo(4.0f).Within(0.1f), "시작: 카메라 거리 4.0m");
+            Assert.That(head - feet, Is.EqualTo(0.50f).Within(0.04f), "시작: 인물 화면 높이 약 50%");
+            Assert.That(feet, Is.EqualTo(0.10f).Within(0.03f), "시작: 발 아래 여백 약 10%");
+            Assert.That(rPull, Is.LessThanOrEqualTo(0.05f), "달리기: 카메라를 당기지 않음");
+            Assert.That(rGap, Is.LessThanOrEqualTo(15f), "달리기: 자동 정렬로 등 뒤");
+            Assert.That(rHead - rFeet, Is.InRange(0.38f, 0.48f), "달리기: 인물 화면 높이 약 43%");
+        }
+
+        /// 지금 화면에서 시우 발·정수리 뷰포트 높이, 가로 위치(카메라 최종 자세 기준)
+        void Frame(Camera cam, out float feet, out float head, out float x)
+        {
+            var p = motor.Position;
+            var f = cam.WorldToViewportPoint(p);
+            var h = cam.WorldToViewportPoint(p + Vector3.up * motor.T.height);
+            feet = f.y; head = h.y; x = (f.x + h.x) / 2f;
+        }
+
+        // ───────────────────────── 게임 화면 촬영 (-m1shots <폴더> 를 줄 때만, -nographics 없이). 화면 UI(길잡이 HUD·조작 안내·일시정지)까지 찍는다
         [UnityTest, Timeout(900000)]
         public IEnumerator Z_GameShots()
         {
@@ -284,6 +329,9 @@ namespace Haengin.Tests
             var camera = Camera.main;
             Assert.NotNull(camera, "Main Camera");
             var notes = new List<string>();
+            var guide = UnityEngine.Object.FindAnyObjectByType<RouteGuide>();
+            var hud = UnityEngine.Object.FindAnyObjectByType<RouteHud>();
+            void Target(int i) { if (guide != null) guide.SetIndex(i); if (hud != null) hud.ResetFlash(); }
 
             // (1) 시작 지점: 서 있는 그대로 1.5초
             motor.Teleport(route.SpawnPos, route.SpawnYaw);
@@ -291,33 +339,58 @@ namespace Haengin.Tests
             yield return Lab.Seconds(1.5f);
             notes.Add(Shot(camera, Path.Combine(dir, "m1_game_1_start.png"), "시작 지점"));
 
-            // (2) 오르막 중간: 시우네 집 앞(5) → 꼭대기 계단참(6)으로 걷다가 높이 절반에서
+            // (2) 명륜3가 골목: 골목 입구(4) → 시우네 집 앞(5)을 걷다가 절반쯤(자동 정렬로 카메라가 등 뒤)
+            Target(4);
+            motor.Teleport(Ground(route.Points[3]), Yaw(route.Points[4] - route.Points[3]));
+            camRig.SnapBehind();
+            yield return Lab.Seconds(0.3f);
+            float half = Lab.Flat(route.Points[4] - route.Points[3]).magnitude * 0.5f;
+            var s2 = new Seg();
+            yield return WalkUntil(route.Points[4], 1.5f, false, s2, () => Lab.Flat(motor.Position - route.Points[3]).magnitude >= half);
+            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_2_alley.png"), "명륜3가 골목"));
+
+            // (3) 꼭대기 계단참(6): 시우네 집 앞(5)에서 계단을 올라 도착한 뒤 1.5초 — 성곽이 드러나는 자리
+            Target(5);
             motor.Teleport(Ground(route.Points[4]), Yaw(route.Points[5] - route.Points[4]));
             camRig.SnapBehind();
             yield return Lab.Seconds(0.3f);
-            float midY = (route.Points[4].y + route.Points[5].y) / 2f;
-            var s2 = new Seg();
-            yield return WalkUntil(route.Points[5], 1.5f, false, s2, () => motor.Position.y >= midY);
-            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_2_uphill.png"), $"오르막 중간(y {motor.Position.y:F1})"));
+            var s3 = new Seg();
+            yield return WalkUntil(route.Points[5], 1.0f, false, s3, null);
+            yield return Lab.Seconds(1.5f);
+            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_3_reveal.png"), "꼭대기 계단참 성곽"));
 
-            // (3) 와룡공원 도착: 계단참(6) → 공터(7)까지 걸어 들어와 멈춘 뒤 1.5초
-            motor.Teleport(Ground(route.Points[5]), 0f);
+            // (4) 와룡공원 도착: 계단참(6) → 공터(7)까지 걸어 들어온 뒤 2초(자동 정렬이 등 뒤로) — 도착 HUD 가 뜬 화면
+            Target(6);
+            motor.Teleport(Ground(route.Points[5]), Yaw(route.Points[6] - route.Points[5]));
             camRig.SnapBehind();
             yield return Lab.Seconds(0.2f);
-            var s3 = new Seg();
-            yield return WalkUntil(route.Points[6], Mathf.Min(route.Radii[6], 2.5f), false, s3, null);
-            camRig.RecenterBehind();          // 걷는 동안은 카메라가 따라 돌지 않으므로(07: 자동 정렬은 달릴 때만) 도착해서 Q/L1 정렬
-            yield return Lab.Seconds(1.5f);
-            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_3_waryong.png"), "와룡공원 공터 도착"));
+            var s4 = new Seg();
+            yield return WalkUntil(route.Points[6], Mathf.Min(route.Radii[6], 2.5f), false, s4, null);
+            yield return Lab.Seconds(0.6f);
+            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_4_waryong.png"), "와룡공원 공터 도착"));
 
-            // (4) 덤: 상가거리 달리기 중(FOV 49·거리 4.3)
+            // (5) 상가거리 달리기 3초(FOV 49·거리 4.3, 자동 정렬)
+            Target(1);
             motor.Teleport(route.SpawnPos, route.SpawnYaw);
             camRig.SnapBehind();
             yield return Lab.Seconds(0.3f);
-            var s4 = new Seg();
-            float t4 = 0f;
-            yield return WalkUntil(route.Points[1], 1.0f, true, s4, () => (t4 += Dt) > 2.2f);
-            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_4_run.png"), "상가거리 달리기"));
+            var s5 = new Seg();
+            float t5 = 0f;
+            yield return WalkUntil(route.Points[1], 1.0f, true, s5, () => (t5 += Dt) > 3.0f);
+            notes.Add(Shot(camera, Path.Combine(dir, "m1_game_5_run.png"), "상가거리 달리기"));
+
+            // (6) 일시정지 메뉴(패드로 '카메라 자동 정렬' 항목을 고른 상태)
+            var ui = UnityEngine.Object.FindAnyObjectByType<GameUi>();
+            if (ui != null)
+            {
+                GameState.SetPaused(true);
+                yield return null;
+                yield return null;
+                notes.Add(Shot(camera, Path.Combine(dir, "m1_game_6_pause.png"), "일시정지 메뉴"));
+                GameState.SetPaused(false);
+                yield return null;
+            }
+            else notes.Add("일시정지: 장면에 GameUi 가 없음");
 
             Debug.Log("[M1Test] 게임 화면 촬영\n  " + string.Join("\n  ", notes));
         }
@@ -354,10 +427,15 @@ namespace Haengin.Tests
             big.Create(); small.Create();
             var prevT = cam.targetTexture;
             var prevA = RenderTexture.active;
+            // 화면 오버레이 UI(길잡이 HUD·조작 안내·일시정지)는 카메라 렌더에 안 들어가므로, 찍는 동안만 카메라 공간 캔버스로 바꾼다
+            var overlays = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Where(c => c.isRootCanvas && c.renderMode == RenderMode.ScreenSpaceOverlay).ToList();
             try
             {
                 cam.targetTexture = big;
+                foreach (var c in overlays) { c.renderMode = RenderMode.ScreenSpaceCamera; c.worldCamera = cam; c.planeDistance = 0.5f; }
+                Canvas.ForceUpdateCanvases();
                 cam.Render();
+                Canvas.ForceUpdateCanvases();
                 cam.Render();
                 Graphics.Blit(big, small);
                 RenderTexture.active = small;
@@ -369,13 +447,16 @@ namespace Haengin.Tests
             }
             finally
             {
+                foreach (var c in overlays) { c.renderMode = RenderMode.ScreenSpaceOverlay; c.worldCamera = null; }
                 cam.targetTexture = prevT;
                 RenderTexture.active = prevA;
                 big.Release(); small.Release();
                 UnityEngine.Object.Destroy(big); UnityEngine.Object.Destroy(small);
             }
             var p = motor.Position;
-            return $"{what}: {path} | 인물 ({p.x:F1},{p.y:F2},{p.z:F1}) yaw {motor.Yaw:F0}° | 카메라 거리 {camRig.Distance:F2}m · 당김 {camRig.Pull:F2}m · FOV {camRig.Cam.Lens.FieldOfView:F1}°";
+            Frame(cam, out float feet, out float head, out _);
+            var hud = UnityEngine.Object.FindAnyObjectByType<RouteHud>();
+            return $"{what}: {path} | 인물 ({p.x:F1},{p.y:F2},{p.z:F1}) yaw {motor.Yaw:F0}° · 화면 발 {feet * 100f:F0}% 정수리 {head * 100f:F0}% | 카메라 yaw {camRig.Yaw:F0}° 거리 {camRig.Distance:F2}m · 당김 {camRig.Pull:F2}m · FOV {camRig.Cam.Lens.FieldOfView:F1}° | HUD \"{(hud != null ? hud.Current : "없음")}\"";
         }
 
         static Vector3 Ground(Vector3 p)

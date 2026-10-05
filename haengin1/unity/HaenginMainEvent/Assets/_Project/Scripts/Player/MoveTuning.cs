@@ -45,7 +45,7 @@ namespace Haengin
         public float leanSmooth = 0.12f;
         public float bankSmooth = 0.10f;
         public float stepSmooth = 0.08f;
-        public float stepThreshold = 0.05f;
+        [Tooltip("루트가 경사로 예상보다 한 프레임에 이만큼 넘게 오르내리면 턱으로 보고 비주얼·카메라에서 흡수(캡슐이 연석을 넘을 때 프레임당 0.01~0.04m)")] public float stepThreshold = 0.01f;
 
         [Header("안전")]
         [Tooltip("마지막 안전 지점을 기록하는 간격(초)")] public float safeInterval = 0.5f;

@@ -7,6 +7,9 @@
   3. 시작 지점·체크포인트가 걸을 수 있는 면 위에 있고 모두 한 덩어리로 이어졌는지
   4. 체크포인트 사이 직선거리·고도차·경사, 길 따라 최단 거리, 걷기·달리기 시간
   5. 지형 격자가 길 높이와 맞는지, 길 밖 맨땅 경사, 건물이 길을 막는지
+  6. 시선(정보용): 성곽 윗선·다음 체크포인트 표지·길잡이가 보이는지
+  7. 골목 폭(2차): 체크포인트 4→6 골목 양옆이 건물·담으로 막히고 폭 2.5~4m 인지
+  8. 색 명도 차(2차): 화면 L* 모형으로 넓은 면끼리 ≥ 8, 하늘↔건물 ≥ 10, 하늘↔안개 ≥ 6
 
 실행: python tools/zone1_check.py [zone1.json 경로] [--md 출력.md]
 """
@@ -632,8 +635,170 @@ for i, r in enumerate(Z["route"]):
     say("| %d | %s | %d/%d | %s | %s |" % (i + 1, r["name"], nv, len(wtop), nxt, ", ".join(seen) or "—"))
 say("")
 
+# ---------------------------------------------------------------- 7. 골목 폭(체크포인트 3→6 골목이 '골목'으로 읽히는지)
+ALLEY_NAMES = ["명륜3가 골목 입구", "명륜3가 골목(시우네 골목)", "성곽 아래 꼭대기 계단(시우네 옆)"]
+ALLEY_MIN, ALLEY_MAX, ALLEY_SHARE = 2.5, 4.0, 0.6
+say("### 검증 7 — 골목 폭(체크포인트 4 → 5 → 6)")
+say("")
+say("골목 가운데선을 0.5m 마다 잘라 양옆(수직)으로 건물·담·축대·난간까지 거리를 잰다(6m 안에 없으면 '트임'). "
+    "합격 기준: 양옆이 막히고 폭이 %.1f~%.1fm 인 표본('골목') %d%% 이상, 양옆이 막힌 곳은 어디도 %.1fm 보다 좁지 않음. "
+    "옆으로 1m 넘게 나가서 다른 걷는 면(갈림길·계단참)을 먼저 만나는 표본은 뺀다." % (ALLEY_MIN, ALLEY_MAX, ALLEY_SHARE * 100, ALLEY_MIN))
+say("")
+say("| 길 | 표본(갈림길 뺌) | 골목(폭 %.1f~%.1fm) | 양옆 막힘(전체) | 한쪽만 | 트임 | 갈림길 | 막힌 곳 폭 최소·중앙·최대(m) | 판정 |" % (ALLEY_MIN, ALLEY_MAX))
+say("|---|---:|---:|---:|---:|---:|---:|---|---|")
+
+
+def side_hit(x, z, nx, nz, own, lim=6.0):
+    """수직으로 걸어 나가며 처음 닿는 것: 건물·담이면 거리, 다른 걷는 면(갈림길)이면 'branch', 6m 안에 없으면 None."""
+    d = 0.05
+    while d <= lim:
+        px, pz = x + nx * d, z + nz * d
+        if blocked(px, pz):
+            return d
+        if d > 1.0 and any(G is not own and G.surface(px, pz, 0.0) is not None for G in FEATS):
+            return "branch"
+        d += 0.05
+    return None
+
+
+alley_bad = 0
+for F in FEATS:
+    if F.name not in ALLEY_NAMES:
+        continue
+    seq = F.pts if F.typ == "ribbon" else [F.a, F.b]
+    both = one = none = branch = 0
+    widths = []
+    for i in range(len(seq) - 1):
+        a, b = seq[i], seq[i + 1]
+        L = math.hypot(b[0] - a[0], b[2] - a[2])
+        hx, hz = (b[0] - a[0]) / L, (b[2] - a[2]) / L
+        n = max(1, int(L / 0.5))
+        for k in range(n):
+            t = (k + 0.5) / n
+            x, z = a[0] + t * (b[0] - a[0]), a[2] + t * (b[2] - a[2])
+            dl, dr = side_hit(x, z, -hz, hx, F), side_hit(x, z, hz, -hx, F)
+            if "branch" in (dl, dr):
+                branch += 1
+            elif dl is not None and dr is not None:
+                both += 1
+                widths.append(dl + dr)
+            elif dl is not None or dr is not None:
+                one += 1
+            else:
+                none += 1
+    tot = both + one + none
+    widths.sort()
+    wtxt = "%.1f · %.1f · %.1f" % (widths[0], widths[len(widths) // 2], widths[-1]) if widths else "—"
+    lane = sum(1 for w in widths if ALLEY_MIN - 1e-6 <= w <= ALLEY_MAX + 1e-6)
+    good = tot > 0 and lane / tot >= ALLEY_SHARE and (not widths or widths[0] >= ALLEY_MIN - 1e-6)
+    alley_bad += (not good)
+    say("| %s | %d | %d (%.0f%%) | %d | %d | %d | %d | %s | %s |" % (F.name, tot, lane, 100 * lane / max(1, tot), both, one, none, branch,
+                                                                      wtxt, "OK" if good else "**확인**"))
+say("")
+
+# ---------------------------------------------------------------- 8. 색 명도 차(넓은 면끼리·하늘과 건물이 섞이지 않는지)
+# 화면 L* 모형 — Zone1Builder 의 빛·후처리와 같은 값(바꾸면 여기도):
+#   해 = 오일러 (48°, 335°) 흰빛 #FFF8EE ×1 · 그림자 세기 .7 · 주변광 평면 (0.62, 0.60, 0.57) · URP Lit 확산 0.96(스무스니스 0)
+#   후처리 = 대비 −6(로그 공간에서 중간 회색 0.18 기준 ×0.94) · 채도 −15·스플릿 톤은 명도에 거의 영향 없어 뺌 · 톤매핑 없음(1 넘으면 잘림)
+#   생성 텍스처 평균 밝기: 성곽 돌 줄눈 0.88 · 판석(성곽길·계단참) 0.90
+# 하늘(카메라 배경)은 빛을 안 받고 후처리만. 2026-10-05 배치 촬영 화소 15곳으로 맞춰 봄: 모형과 화면 차 평균 1.3, 최대 3.8 L*(06 문서 10장).
+def _lin(c):
+    c /= 255.0
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def _Y(h):
+    r, g, b = (int(h[i:i + 2], 16) for i in (1, 3, 5))
+    return 0.2126 * _lin(r) + 0.7152 * _lin(g) + 0.0722 * _lin(b)
+
+
+def _L(y):
+    y = min(1.0, max(0.0, y))
+    f = y ** (1.0 / 3.0) if y > 0.008856 else 7.787 * y + 16.0 / 116.0
+    return 116.0 * f - 16.0
+
+
+_sp, _sy = math.radians(48.0), math.radians(335.0)
+SUN = (-math.cos(_sp) * math.sin(_sy), math.sin(_sp), -math.cos(_sp) * math.cos(_sy))     # 빛이 오는 쪽(단위 벡터)
+SUN_Y = 0.2126 * _lin(255) + 0.7152 * _lin(0.973 * 255) + 0.0722 * _lin(0.933 * 255)
+AMB_Y = 0.2126 * _lin(0.62 * 255) + 0.7152 * _lin(0.60 * 255) + 0.0722 * _lin(0.57 * 255)
+FACES = {"윗면": (0, 1, 0), "남쪽 면": (0, 0, -1), "동쪽 면": (1, 0, 0), "그늘 면": (0, 0, 1)}
+TEX = {"wall": 0.88, "wallpath": 0.90, "pad_stone": 0.90}
+COL = Z["colors"]
+
+
+def screen_L(key, face="윗면", shadow=False):
+    n = FACES[face]
+    nd = max(0.0, sum(a * b for a, b in zip(n, SUN)))
+    light = 0.96 * (nd * SUN_Y * (0.3 if shadow else 1.0) + AMB_Y)
+    y = _Y(COL[key]) * TEX.get(key, 1.0) * light
+    return _L(0.18 * (y / 0.18) ** 0.94)
+
+
+SKY_L = _L(0.18 * (_Y(COL["sky"]) / 0.18) ** 0.94)
+FOG_L = _L(0.18 * (_Y(COL["fog"]) / 0.18) ** 0.94)
+NEIGHBOR, SKY_GAP, FOG_GAP = 8.0, 10.0, 6.0
+say("### 검증 8 — 색 명도 차(넓은 면·하늘)")
+say("")
+say("화면 L*(0 검정 ~ 100 흰색) = 종류 색 × 그 면이 받는 빛(해 48° 남남동 + 주변광) → 필름 후처리(대비 −6). "
+    "기준: ① 화면에서 맞붙는 넓은 면끼리 **%.0f 이상** ② 하늘과 건물·성곽의 가장 밝은 면(윗면·햇빛 받는 남쪽 면) **%.0f 이상** "
+    "③ 하늘과 안개 **%.0f 이상**(먼 건물·산이 안개 색으로 녹아도 하늘과 갈림)." % (NEIGHBOR, SKY_GAP, FOG_GAP))
+say("")
+say("| 종류 | 색 | 색 자체 L* | 윗면 | 윗면(그림자) | 남쪽 면(햇빛) | 동쪽 면 | 그늘 면 |")
+say("|---|---|---:|---:|---:|---:|---:|---:|")
+for k in ["sidewalk", "alley", "wallpath", "shop", "wall", "campus", "house", "pad_dirt", "retaining", "ground", "trail",
+          "path", "stairs", "road", "fence", "wallcap", "hanok"]:
+    say("| %s | `%s` | %.1f | %.1f | %.1f | %.1f | %.1f | %.1f |" % (
+        k, COL[k], _L(_Y(COL[k])), screen_L(k), screen_L(k, "윗면", True), screen_L(k, "남쪽 면"), screen_L(k, "동쪽 면"), screen_L(k, "그늘 면")))
+say("| 하늘(빛 없음) | `%s` | %.1f | 화면 %.1f | | | | |" % (COL["sky"], _L(_Y(COL["sky"])), SKY_L))
+say("| 안개(빛 없음) | `%s` | %.1f | 화면 %.1f | | | | |" % (COL["fog"], _L(_Y(COL["fog"])), FOG_L))
+say("")
+PAIRS = [  # (설명, (종류, 면), (종류, 면), 기준)
+    ("인도 ↔ 차도", ("sidewalk", "윗면"), ("road", "윗면"), NEIGHBOR),
+    ("인도 ↔ 상가 정면(햇빛)", ("sidewalk", "윗면"), ("shop", "남쪽 면"), NEIGHBOR),
+    ("땅 ↔ 골목 바닥", ("ground", "윗면"), ("alley", "윗면"), NEIGHBOR),
+    ("땅 ↔ 공원 흙길", ("ground", "윗면"), ("path", "윗면"), NEIGHBOR),
+    ("땅 ↔ 숲길", ("ground", "윗면"), ("trail", "윗면"), NEIGHBOR),
+    ("땅 ↔ 성곽길 돌 포장", ("ground", "윗면"), ("wallpath", "윗면"), NEIGHBOR),
+    ("땅 ↔ 흙 공터·마당", ("ground", "윗면"), ("pad_dirt", "윗면"), NEIGHBOR),
+    ("땅 ↔ 상가 벽(햇빛)", ("ground", "윗면"), ("shop", "남쪽 면"), NEIGHBOR),
+    ("땅 ↔ 주택 벽(햇빛)", ("ground", "윗면"), ("house", "남쪽 면"), NEIGHBOR),
+    ("골목 바닥 ↔ 주택 벽(햇빛)", ("alley", "윗면"), ("house", "남쪽 면"), NEIGHBOR),
+    ("골목 바닥 ↔ 담장(햇빛)", ("alley", "윗면"), ("fence", "남쪽 면"), NEIGHBOR),
+    ("골목 바닥 ↔ 계단", ("alley", "윗면"), ("stairs", "윗면"), NEIGHBOR),
+    ("성곽(안쪽 = 남쪽 면) ↔ 성곽길", ("wall", "남쪽 면"), ("wallpath", "윗면"), NEIGHBOR),
+    ("성곽(남쪽 면) ↔ 땅", ("wall", "남쪽 면"), ("ground", "윗면"), NEIGHBOR),
+    ("하늘 ↔ 상가 윗면", ("sky", None), ("shop", "윗면"), SKY_GAP),
+    ("하늘 ↔ 상가 정면(햇빛)", ("sky", None), ("shop", "남쪽 면"), SKY_GAP),
+    ("하늘 ↔ 주택 윗면", ("sky", None), ("house", "윗면"), SKY_GAP),
+    ("하늘 ↔ 캠퍼스 윗면", ("sky", None), ("campus", "윗면"), SKY_GAP),
+    ("하늘 ↔ 성곽 안쪽 면(햇빛)", ("sky", None), ("wall", "남쪽 면"), SKY_GAP),
+    ("하늘 ↔ 옹벽 윗면", ("sky", None), ("retaining", "윗면"), SKY_GAP),
+    ("하늘 ↔ 안개", ("sky", None), ("fog", None), FOG_GAP),
+]
+say("| 붙는 두 면 | 화면 L* | 화면 L* | 차 | 기준 | 판정 |")
+say("|---|---:|---:|---:|---:|---|")
+color_bad = 0
+
+
+def _pl(kf):
+    k, f = kf
+    if k == "sky":
+        return SKY_L
+    if k == "fog":
+        return FOG_L
+    return screen_L(k, f)
+
+
+for name, a, b, need in PAIRS:
+    la, lb = _pl(a), _pl(b)
+    good = abs(la - lb) >= need
+    color_bad += (not good)
+    say("| %s | %.1f | %.1f | %.1f | ≥ %.0f | %s |" % (name, la, lb, abs(la - lb), need, "OK" if good else "**확인**"))
+say("")
+
 ok = (bad_slope == 0 and len(comps) == 1 and off_walk == 0 and broken == 0 and n35 == 0 and not hit and sp_on
-      and not wall_hit and not lm_bad)
+      and not wall_hit and not lm_bad and alley_bad == 0 and color_bad == 0)
 say("**종합: %s**" % ("통과 — 경사·계단 기준 충족, 걸을 수 있는 면 한 덩어리, 체크포인트 전 구간 길로 이어짐" if ok else "확인 필요"))
 
 text = "\n".join(out)

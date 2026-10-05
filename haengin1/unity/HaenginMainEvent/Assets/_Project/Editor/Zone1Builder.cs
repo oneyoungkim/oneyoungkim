@@ -50,8 +50,17 @@ namespace Haengin.EditorTools
         static int LGround, LWall, LPlayerOnly, GroundMask, BlockMask;
         static Collider TerrainCol;
         static TMP_FontAsset LabelFont;
-        static int FixedBlocks, BuriedBlocks, FixedMarks;
+        static Material LabelMat;
+        static Texture2D StoneTex, PaveTex, BeamTex;
+        static int FixedBlocks, BuriedBlocks, FixedMarks, Labels;
         static float MaxBlockFix, MaxMarkFix;
+
+        // 텍스처가 덮는 실제 크기(m) — MB 의 UV 가 미터 단위라 재질 Tiling = 1 / 크기
+        const float StoneTileW = 2.4f, StoneTileH = 2.52f, PaveTile = 2.0f;
+        /// 이름표 기본 글자 크기(TMP 3D: fontSize 1 = 0.1m). 런타임 NameTags 가 거리에 따라 키운다.
+        public const float LabelSize = 4.5f, CheckpointLabelSize = 5.5f;
+        /// 생성 체크포인트 부품 이름(런타임 RouteGuide 가 이 이름으로 찾는다)
+        public const string CpDisc = "원판", CpRing = "테두리", CpPillar = "기둥", CpFlag = "깃발", CpBeam = "빛 기둥", CpTag = "이름표", CpTrigger = "트리거";
 
         /// 장면을 저장하기 직전에 부르는 확장 지점. 이 어셈블리는 게임 코드를 모르므로,
         /// M1 리그(플레이어·카메라)는 Haengin.EditorGame.M1Setup 이 여기에 등록해 붙인다 → Zone1 을 다시 만들어도 리그가 유지된다.
@@ -73,7 +82,8 @@ namespace Haengin.EditorTools
             try { BuildScene(); }
             finally
             {
-                Mats.Clear(); Meshes.Clear(); D = null; G = null; TerrainCol = null; LabelFont = null;
+                Mats.Clear(); Meshes.Clear(); D = null; G = null; TerrainCol = null; LabelFont = null; LabelMat = null;
+                StoneTex = PaveTex = BeamTex = null;
             }
         }
 
@@ -81,7 +91,7 @@ namespace Haengin.EditorTools
         {
             var t0 = DateTime.Now;
             Notes.Clear();
-            FixedBlocks = BuriedBlocks = FixedMarks = 0; MaxBlockFix = MaxMarkFix = 0f;
+            FixedBlocks = BuriedBlocks = FixedMarks = Labels = 0; MaxBlockFix = MaxMarkFix = 0f;
 
             D = Zone1Data.Load();
             Debug.Log($"{Tag} 배치도 읽음: {D.Name} v{D.Version} | 길 {D.Roads.Count} · 패드 {D.Pads.Count} · 계단 {D.Stairs.Count} · 블록 {D.Blocks.Count} · " +
@@ -89,11 +99,14 @@ namespace Haengin.EditorTools
 
             EnsureLayers();
             EnsureFolder(MatDir); EnsureFolder(SandboxSetup.SettingsDir); EnsureFolder(SandboxSetup.Root + "/Scenes");
-            if (AssetDatabase.LoadMainAssetAtPath(MeshPath) != null) AssetDatabase.DeleteAsset(MeshPath);
+            // 메시 에셋은 지우지 않는다(GUID 유지, SaveMeshes 가 안의 서브 에셋만 바꿈). 필름 볼륨도 제자리 갱신.
             var profile = SandboxSetup.MakeFilmVolume(VolumePath);
-            LabelFont = FindKoreanFont();
-            if (LabelFont == null)
-                Notes.Add("라벨 생략: 한글이 들어 있는 TMP 글꼴 에셋이 프로젝트에 없음(시스템 글꼴로 만들지 않음). 글꼴 에셋을 넣고 다시 실행하면 라벨이 붙는다");
+            LabelFont = KoreanFont.Ensure(Notes);
+            LabelMat = KoreanFont.LabelMaterial(LabelFont);
+            // 성곽 돌: 한 켜 0.50m(5켜/2.52m), 돌 길이 0.50~0.98m(가로세로 1:1~2:1 다듬돌) — 벽돌처럼 잘고 길쭉하게 보이지 않게. 줄눈은 돌보다 조금만 어둡게
+            StoneTex = GenTexture("T_Z1_Stone", 512, 512, StonePixels(512, 5, 0.50f, 0.98f, StoneTileW, 11, 4, 0.66f, 0.80f), true);
+            PaveTex = GenTexture("T_Z1_Paving", 512, 512, StonePixels(512, 5, 0.45f, 0.80f, PaveTile, 23, 4, 0.70f, 0.86f), true);
+            BeamTex = GenTexture("T_Z1_Beam", 8, 64, BeamPixels(8, 64), false);
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             SetupEnvironment();
@@ -137,11 +150,56 @@ namespace Haengin.EditorTools
             SaveMeshes();
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
+            int meshCount = Meshes.Count;
+            Stabilize();
+            KoreanFont.ResetDynamic(LabelFont);
 
-            Debug.Log($"{Tag} 완료: {ScenePath} | 메시 {Meshes.Count}개 → {MeshPath} | 재질 {Mats.Count}개 | " +
+            Debug.Log($"{Tag} 완료: {ScenePath} | 메시 {meshCount}개 → {MeshPath} | 재질 {Mats.Count}개 · 이름표 {Labels}개 | " +
                       $"떠 있던 블록 보정 {FixedBlocks}개(최대 {MaxBlockFix:F2}m) · 묻힌 블록 {BuriedBlocks}개 · 랜드마크 바닥 보정 {FixedMarks}개(최대 {MaxMarkFix:F2}m) | " +
                       $"길 가운데선 막힘 {blockedCenter}곳 | NavMesh {nav} | {(DateTime.Now - t0).TotalSeconds:F1}초");
             foreach (var n in Notes) Debug.Log($"{Tag}   {n}");
+
+            // -shots <폴더>: 그래픽이 있으면(-nographics 아님) 점검용 장면 컷을 바로 찍는다(Unity 한 번 띄울 때 여러 장)
+            string shotDir = CmdArg("-shots");
+            if (!string.IsNullOrEmpty(shotDir)) TakeShots(shotDir);
+        }
+
+        // ───────────────────────── 결정적 저장(문제 9)
+        /// 저장한 장면·메시 에셋의 무작위 fileID 를 경로·이름 기준 값으로 바꾸고(StableIds), 다시 읽어 참조가 깨지지 않았는지 본다.
+        static void Stabilize()
+        {
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);   // 디스크 파일을 고치기 전에 장면을 내린다
+            var meshMap = StableIds.RewriteSubAssets(MeshPath, MeshMainId, out int nMesh);
+            var (changed, kept) = StableIds.RewriteScene(ScenePath, AssetDatabase.AssetPathToGUID(MeshPath), meshMap);
+            AssetDatabase.ImportAsset(MeshPath, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            var sc = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            int objs = 0, broken = 0, missing = 0;
+            foreach (var root in sc.GetRootGameObjects())
+                foreach (var c in root.GetComponentsInChildren<Component>(true))
+                {
+                    objs++;
+                    if (c == null) { missing++; continue; }
+                    var so = new SerializedObject(c);
+                    var it = so.GetIterator();
+                    while (it.Next(true))
+                        if (it.propertyType == SerializedPropertyType.ObjectReference && it.objectReferenceValue == null && it.objectReferenceInstanceIDValue != 0)
+                            broken++;
+                }
+            foreach (var m in AssetDatabase.LoadAllAssetRepresentationsAtPath(MeshPath)) if (m == null) broken++;
+            Notes.Add($"결정적 저장: 장면 fileID {changed}개를 계층 경로 기준으로(그대로 둔 것 {kept}) · 메시 서브 에셋 {nMesh}개를 이름 기준으로 · " +
+                      $"다시 읽은 컴포넌트 {objs}개 중 깨진 참조 {broken} · 빠진 스크립트 {missing}");
+            if (broken > 0 || missing > 0) throw new Exception($"fileID 를 바꾼 뒤 참조가 깨졌습니다(깨진 참조 {broken}, 빠진 스크립트 {missing})");
+        }
+
+        const long MeshMainId = 4300000; // .asset 의 주 오브젝트(Mesh) fileID — 메시 목록용 빈 메시
+
+        static string CmdArg(string name)
+        {
+            var a = Environment.GetCommandLineArgs();
+            for (int i = 0; i < a.Length - 1; i++)
+                if (string.Equals(a[i], name, StringComparison.OrdinalIgnoreCase)) return a[i + 1];
+            return null;
         }
 
         // ───────────────────────── 레이어·폴더·재질
@@ -186,16 +244,30 @@ namespace Haengin.EditorTools
         {
             if (D.Colors.TryGetValue(key, out var c)) return c;
             if (key == "vista") return Color.Lerp(Col("wall"), Col("fog"), 0.3f);
+            if (key == "wallcap" || key == "wallpath")   // 0.1 데이터(색 없음) 호환
+                return key == "wallcap" ? Color.Lerp(Col("wall"), Ink, 0.55f) : Col("pad_stone");
             Debug.LogWarning($"{Tag} 색 '{key}' 가 zone1.json colors 에 없어 분홍으로 칠함");
             return Color.magenta;
         }
 
-        /// 종류별 단색 URP Lit(스무스니스 0, 스펙큘러·반사 끔) — 06 문서 10장 색 규칙.
+        /// 텍스처를 쓰는 종류: 성곽 = 돌 줄눈, 성곽길·돌 계단참 = 판석. 나머지는 단색.
+        static void TexFor(string key, out Texture2D tex, out Vector2 tiling)
+        {
+            tex = null; tiling = Vector2.one;
+            if (key == "wall") { tex = StoneTex; tiling = new Vector2(1f / StoneTileW, 1f / StoneTileH); }
+            else if (key == "wallpath" || key == "pad_stone") { tex = PaveTex; tiling = new Vector2(1f / PaveTile, 1f / PaveTile); }
+        }
+
+        /// 종류별 단색 URP Lit(스무스니스 0, 스펙큘러·반사 끔) — 06 문서 10장 색 규칙. 성곽·판석은 생성 텍스처 × 색.
         static Material Mat(string key)
         {
             if (Mats.TryGetValue(key, out var m)) return m;
             m = LoadOrCreate($"M_Z1_{key}", "Universal Render Pipeline/Lit");
             m.SetColor("_BaseColor", Col(key));
+            TexFor(key, out var tex, out var tiling);
+            m.SetTexture("_BaseMap", tex); m.SetTexture("_MainTex", tex);
+            m.SetTextureScale("_BaseMap", tiling); m.SetTextureScale("_MainTex", tiling);
+            m.SetTextureOffset("_BaseMap", Vector2.zero); m.SetTextureOffset("_MainTex", Vector2.zero);
             m.SetFloat("_Smoothness", 0f); m.SetFloat("_Metallic", 0f);
             m.SetFloat("_SpecularHighlights", 0f); m.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
             m.SetFloat("_EnvironmentReflections", 0f); m.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF");
@@ -206,13 +278,14 @@ namespace Haengin.EditorTools
             return Mats[key] = m;
         }
 
-        /// 반투명 무광(체크포인트·전투 무대 표시). 게임 중에도 보이게 그림자·깊이 쓰기 없음.
-        static Material Fx(string key, string colorKey, float alpha)
+        /// 반투명 무광(체크포인트·전투 무대 표시). 게임 중에도 보이게 그림자·깊이 쓰기 없음. tex = 알파 그라데이션(빛 기둥).
+        static Material Fx(string key, string colorKey, float alpha, Texture2D tex = null)
         {
             if (Mats.TryGetValue(key, out var m)) return m;
             m = LoadOrCreate($"M_Z1_{key}", "Universal Render Pipeline/Unlit");
             var c = Col(colorKey); c.a = alpha;
             m.SetColor("_BaseColor", c);
+            m.SetTexture("_BaseMap", tex); m.SetTexture("_MainTex", tex);
             m.SetFloat("_Surface", 1f); m.SetFloat("_Blend", 0f);
             m.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha); m.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
             m.SetFloat("_SrcBlendAlpha", (float)UnityEngine.Rendering.BlendMode.One); m.SetFloat("_DstBlendAlpha", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
@@ -234,18 +307,94 @@ namespace Haengin.EditorTools
             return mat;
         }
 
-        static TMP_FontAsset FindKoreanFont()
+        // ───────────────────────── 생성 텍스처(셰이더 그래프 없이 URP Lit/Unlit 의 _BaseMap 으로)
+        /// PNG 를 Materials/Zone1 에 쓴다(내용이 같으면 파일을 건드리지 않음 → 재임포트·diff 없음).
+        static Texture2D GenTexture(string name, int w, int h, Color32[] px, bool tile)
         {
-            foreach (var guid in AssetDatabase.FindAssets("t:TMP_FontAsset"))
+            string path = $"{MatDir}/{name}.png";
+            var t = new Texture2D(w, h, TextureFormat.RGBA32, false, false);
+            t.SetPixels32(px); t.Apply();
+            byte[] png = t.EncodeToPNG();
+            Object.DestroyImmediate(t);
+            string full = System.IO.Path.GetFullPath(path);
+            bool same = System.IO.File.Exists(full) && System.IO.File.ReadAllBytes(full).AsSpan().SequenceEqual(png);
+            if (!same) System.IO.File.WriteAllBytes(full, png);
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
+            var imp = (TextureImporter)AssetImporter.GetAtPath(path);
+            bool dirty = !same;
+            void Set<T>(T cur, T want, Action<T> apply) { if (!Equals(cur, want)) { apply(want); dirty = true; } }
+            Set(imp.textureType, TextureImporterType.Default, v => imp.textureType = v);
+            Set(imp.sRGBTexture, true, v => imp.sRGBTexture = v);
+            Set(imp.alphaSource, tile ? TextureImporterAlphaSource.None : TextureImporterAlphaSource.FromInput, v => imp.alphaSource = v);
+            Set(imp.alphaIsTransparency, !tile, v => imp.alphaIsTransparency = v);
+            Set(imp.wrapMode, tile ? TextureWrapMode.Repeat : TextureWrapMode.Clamp, v => imp.wrapMode = v);
+            Set(imp.mipmapEnabled, tile, v => imp.mipmapEnabled = v);
+            Set(imp.anisoLevel, tile ? 4 : 1, v => imp.anisoLevel = v);
+            Set(imp.filterMode, FilterMode.Bilinear, v => imp.filterMode = v);
+            Set(imp.textureCompression, TextureImporterCompression.CompressedHQ, v => imp.textureCompression = v);
+            if (dirty) imp.SaveAndReimport();
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
+
+        /// 돌 켜쌓기(성곽)·판석(성곽길) 무늬. size 픽셀 정사각 = tileM 미터, rows 켜, 돌 길이 minM~maxM(m), 줄눈 joint 픽셀.
+        /// 돌 면 밝기 lo~1.0(돌마다 다름) + 가장자리 살짝 어둡게, 줄눈 = mortar. 가로·세로 모두 이어 붙어도 이음매가 없다(같은 씨앗 = 같은 그림).
+        static Color32[] StonePixels(int size, int rows, float minM, float maxM, float tileM, int seed, int joint, float mortar, float lo)
+        {
+            var rnd = new System.Random(seed);
+            var v = new float[size * size];
+            float pxPerM = size / tileM;
+            for (int r = 0; r < rows; r++)
             {
-                var fa = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetDatabase.GUIDToAssetPath(guid));
-                if (fa != null && fa.HasCharacter('혜', true, true) && fa.HasCharacter('룡', true, true))
+                int y0 = Mathf.RoundToInt(r * size / (float)rows), y1 = Mathf.RoundToInt((r + 1) * size / (float)rows);
+                // 이 켜의 돌 경계(가로로 이어지게 합이 size)
+                var cuts = new List<int>();
+                int start = (int)(rnd.NextDouble() * size), x = 0;
+                while (true)
                 {
-                    Debug.Log($"{Tag} 라벨 글꼴: {AssetDatabase.GUIDToAssetPath(guid)}");
-                    return fa;
+                    int len = Mathf.RoundToInt(((float)rnd.NextDouble() * (maxM - minM) + minM) * pxPerM);
+                    if (x + len > size - minM * pxPerM * 0.6f) break;
+                    x += len; cuts.Add(x);
                 }
+                if (cuts.Count == 0) cuts.Add(size / 2);
+                // 돌 = 이웃한 경계 사이(고리 모양: 마지막 경계 → size → 0 → 첫 경계 가 한 돌)
+                var shades = new float[cuts.Count + 1];
+                for (int k = 0; k < cuts.Count; k++) shades[k] = lo + (1f - lo) * (float)rnd.NextDouble();
+                shades[cuts.Count] = shades[0];
+                int half = (joint + 1) / 2;
+                for (int y = y0; y < y1; y++)
+                    for (int px = 0; px < size; px++)
+                    {
+                        int xx = (px - start + size) % size;           // 켜마다 엇갈리게 밀기
+                        int k = 0; while (k < cuts.Count && xx >= cuts[k]) k++;
+                        int left = k == 0 ? cuts[cuts.Count - 1] - size : cuts[k - 1];
+                        int right = k < cuts.Count ? cuts[k] : cuts[0] + size;
+                        int dx = Mathf.Min(xx - left, right - 1 - xx), dy = Mathf.Min(y - y0, y1 - 1 - y);
+                        float val = shades[k];
+                        if (dx < half || dy < half) val = mortar;
+                        else if (dx < half + 2 || dy < half + 2) val *= 0.92f;
+                        // 결: 아주 옅은 점 무늬(결정적)
+                        uint hsh = (uint)(px * 73856093) ^ (uint)(y * 19349663) ^ (uint)(seed * 83492791);
+                        hsh ^= hsh >> 13; hsh *= 0x5bd1e995; hsh ^= hsh >> 15;
+                        val *= 0.97f + 0.03f * (hsh & 1023) / 1023f;
+                        v[y * size + px] = val;
+                    }
             }
-            return null;
+            var c = new Color32[size * size];
+            for (int i = 0; i < c.Length; i++) { byte b = (byte)Mathf.Clamp(Mathf.RoundToInt(v[i] * 255f), 0, 255); c[i] = new Color32(b, b, b, 255); }
+            return c;
+        }
+
+        /// 빛 기둥: 아래는 진하고 위로 갈수록 사라지는 알파(흰색 × 재질 색)
+        static Color32[] BeamPixels(int w, int h)
+        {
+            var c = new Color32[w * h];
+            for (int y = 0; y < h; y++)
+            {
+                float t = y / (h - 1f);
+                byte a = (byte)Mathf.RoundToInt(255f * Mathf.Clamp01(Mathf.Pow(1f - t, 1.6f) * 0.95f + 0.05f * (1f - t)));
+                for (int x = 0; x < w; x++) c[y * w + x] = new Color32(255, 255, 255, a);
+            }
+            return c;
         }
 
         // ───────────────────────── 환경
@@ -422,7 +571,10 @@ namespace Haengin.EditorTools
                 }
                 else
                 {
-                    Cube(p.Name, parent, new Vector3(p.Center.x, top - Skirt / 2f, p.Center.z), new Vector3(p.Size.x, Skirt, p.Size.y), p.Yaw, mat, LGround, true);
+                    // 상자 메시(월드 미터 UV — 돌 계단참 판석 무늬) + 같은 모양 충돌
+                    var mb = new MB();
+                    mb.Box(new Vector3(p.Center.x, top - Skirt / 2f, p.Center.z), Quaternion.Euler(0f, p.Yaw, 0f), new Vector3(p.Size.x, Skirt, p.Size.y));
+                    MeshObj(p.Name, parent, Reg(mb.ToMesh("Z1_Pad_" + Safe(p.Name))), mat, LGround, true);
                 }
             }
         }
@@ -480,12 +632,73 @@ namespace Haengin.EditorTools
             for (int k = 0; k < D.Walls.Count; k++)
             {
                 var w = D.Walls[k];
-                // 06 문서 14장: 아래 = 기초 − 1.5, 위 = 기초 + 높이. 충돌은 위로 10m 더(넘을 수 없게)
+                // 06 문서 14장·6장: 체성(아래 = 기초 − 1.5, 위 = 기초 + 높이, 돌 줄눈 텍스처) → 미석 띠 → 바깥 가장자리 여장(타·타구·총안) → 옥개석.
+                // 충돌은 체성 그대로 위로 10m 더(넘을 수 없게). 여장·미석·옥개석은 보이기만(충돌 상자 안에 들어 있음).
                 var vis = MeshObj(w.Name, parent, Reg(Extrude("Z1_Wall_" + k, w.Points, w.Thickness, 1.5f, w.Height)), Mat("wall"), LWall, false);
                 var col = new GameObject("충돌(위로 +10m)") { layer = LWall };
                 col.transform.SetParent(vis.transform, false);
                 col.AddComponent<MeshCollider>().sharedMesh = Reg(Extrude("Z1_WallCol_" + k, w.Points, w.Thickness, 1.5f, w.Height + 10f));
                 Static(col);
+
+                var top = w.Points.Select(p => p + Vector3.up * w.Height).ToArray();
+                MeshObj("미석(눈썹돌 띠)", vis.transform, Reg(Extrude("Z1_WallBrow_" + k, top, w.Thickness + 2f * w.BrowOver, 0.02f, w.BrowH)), Mat("wallcap"), LWall, false);
+
+                var stone = new MB(); var caps = new MB();
+                int merlons = 0;
+                for (int i = 0; i < w.Points.Length - 1; i++)
+                {
+                    Vector3 a = w.Points[i], b = w.Points[i + 1];
+                    var d = Flat(b - a); float L = d.magnitude;
+                    if (L < 0.5f) continue;
+                    var t = d / L;
+                    var outN = new Vector3(-t.z, 0f, t.x);               // 진행 방향 왼쪽 = 성 밖(북)
+                    var rot = Quaternion.LookRotation(t, Vector3.up);     // 상자 로컬 z = 성벽 방향
+                    int n = Mathf.Max(1, Mathf.RoundToInt(L / (w.Merlon + w.Crenel)));
+                    float pitch = L / n, len = Mathf.Max(0.6f, pitch - w.Crenel);
+                    float slope = Mathf.Abs(b.y - a.y) / L;
+                    for (int m = 0; m < n; m++)
+                    {
+                        float s = (m + 0.5f) * pitch;
+                        float yTop = Mathf.Lerp(a.y, b.y, s / L) + w.Height + w.BrowH;   // 여장이 앉는 높이(타마다 수평 — 비탈에선 계단식)
+                        float sink = 0.25f + slope * len / 2f;
+                        var c = a + t * s; c.y = 0f;
+                        var center = c + outN * (w.Thickness / 2f - w.ParapetT / 2f);
+                        float h = w.ParapetH + sink;
+                        stone.Box(center + Vector3.up * (yTop - sink + h / 2f), rot, new Vector3(w.ParapetT, h, len));
+                        caps.Box(center + Vector3.up * (yTop + w.ParapetH + w.CapH / 2f), rot,
+                                 new Vector3(w.ParapetT + 2f * w.CapOver, w.CapH, len + 2f * w.CapOver));
+                        // 총안: 안쪽 면에 작은 어두운 구멍(그레이박스는 얇은 판)
+                        var inner = center - outN * (w.ParapetT / 2f + 0.01f);
+                        caps.Box(inner + Vector3.up * (yTop + 0.45f + w.Embrasure.y / 2f), rot, new Vector3(0.03f, w.Embrasure.y, w.Embrasure.x));
+                        merlons++;
+                    }
+                }
+                MeshObj("여장(타·타구)", vis.transform, Reg(stone.ToMesh("Z1_WallParapet_" + k)), Mat("wall"), LWall, false);
+                MeshObj("옥개석·총안", vis.transform, Reg(caps.ToMesh("Z1_WallCap_" + k)), Mat("wallcap"), LWall, false);
+                Notes.Add($"성곽 '{w.Name}': 체성 {w.Height}m + 미석 {w.BrowH}m + 여장 {w.ParapetH}m(타 {merlons}개, 타구 {w.Crenel}m) + 옥개석 {w.CapH}m · 돌 줄눈 텍스처 {StoneTileW}×{StoneTileH}m");
+
+                // 이름표 '한양도성' — 두 군데: ① 꼭대기 계단참(체크포인트 6)에서 성곽이 처음 드러나는 쪽(Shot_Reveal 이 보는 곳)
+                // ② 성곽길 암문 앞(체크포인트 8). 각 기준점에서 가장 가까운 성벽 점의 여장 위.
+                var anchors = new List<(string tag, Vector3 at)>();
+                if (D.Route.Count >= 6) anchors.Add(("계단참 쪽", D.Route[5].Pos + new Vector3(-15f, 0f, 17f)));
+                if (D.Route.Count >= 8) anchors.Add(("암문 앞", D.Route[7].Pos));
+                foreach (var (tag, at) in anchors)
+                {
+                    float bd = float.MaxValue; Vector3 p = default, tt = Vector3.right;
+                    for (int i = 0; i < w.Points.Length - 1; i++)
+                    {
+                        SegClosest(w.Points[i], w.Points[i + 1], at.x, at.z, out float d, out _, out float u);
+                        if (d >= bd) continue;
+                        bd = d; p = Vector3.Lerp(w.Points[i], w.Points[i + 1], u); tt = Flat(w.Points[i + 1] - w.Points[i]).normalized;
+                    }
+                    var inward = -new Vector3(-tt.z, 0f, tt.x);
+                    var holder = new GameObject($"이름표 자리 ({tag})");
+                    holder.transform.SetParent(vis.transform, false);
+                    // 성벽 충돌 상자(위로 +10m) 밖, 안쪽 면에서 0.8m 앞 — 안 그러면 런타임 가림 검사에서 늘 '가림'
+                    holder.transform.position = p + inward * (w.Thickness / 2f + 0.8f) + Vector3.up * (w.Height + w.BrowH + w.ParapetH + w.CapH + 1.0f);
+                    Static(holder);
+                    Label(holder.transform, "한양도성", holder.transform.position, LabelSize * 1.15f, Vector3.Cross(Vector3.up, tt));
+                }
             }
         }
 
@@ -601,6 +814,7 @@ namespace Haengin.EditorTools
                 float h = lm.Height > 0f ? lm.Height : DefaultHeight(lm.Kind);
                 Vector3 toRoad = DirToRoad(lm.Pos);
                 float labelY = gy + h + 0.6f;
+                Vector3 labelXZ = lm.Pos;   // 이름표 수평 자리(출입문은 벽에서 바깥으로 띄움 — 글이 벽에 반쯤 묻히지 않게)
 
                 switch (lm.Kind)
                 {
@@ -633,7 +847,7 @@ namespace Haengin.EditorTools
                         break;
                     case "gate": labelY = gy + 4.6f; break; // 후문 기둥 2개·차단 펜스는 blocks 에 있다(상인방은 데이터에 없어 만들지 않음)
                     case "wall_gate": WallGate(lm, root.transform); labelY = lm.Pos.y + 4f; break;
-                    case "door": Door(lm, root.transform, gy); labelY = gy + 2.6f; break;
+                    case "door": labelXZ = Door(lm, root.transform, gy); labelY = gy + 2.75f; break;
                     case "viewpoint":
                         var vp = baseP + new Vector3(-2.2f, 0f, 1.8f);
                         if (GroundY(vp, out float vy, out _)) vp.y = vy;
@@ -660,7 +874,8 @@ namespace Haengin.EditorTools
                     case "vista": Vista(lm, root.transform); continue;
                     default: Notes.Add($"알 수 없는 랜드마크 종류 '{lm.Kind}': '{lm.Name}' — 자리만 둠"); break;
                 }
-                Label(root.transform, lm.Name, new Vector3(lm.Pos.x, labelY, lm.Pos.z), 2.2f);
+                if (Labelled(lm, gap))
+                    Label(root.transform, LabelText(lm.Name), new Vector3(labelXZ.x, labelY, labelXZ.z), LabelSize, toRoad);
             }
 
             // 전선: 같은 줄 전봇대 꼭대기끼리 두 가닥(06 문서 7장 '전선 = 로우앵글 하늘')
@@ -728,20 +943,22 @@ namespace Haengin.EditorTools
             go.transform.rotation = Quaternion.LookRotation(n, Vector3.up);
         }
 
-        static void Door(Zone1Data.Landmark lm, Transform parent, float gy)
+        /// 문짝을 가장 가까운 건물 면에 붙이고, 이름표 자리(문 앞 0.9m)를 돌려준다.
+        static Vector3 Door(Zone1Data.Landmark lm, Transform parent, float gy)
         {
             var probe = new Vector3(lm.Pos.x, gy + 1.0f, lm.Pos.z);
             if (!NearestWallFace(probe, 2.5f, out var q, out var n))
             {
                 Notes.Add($"출입문 '{lm.Name}': 붙일 건물 면을 2.5m 안에서 못 찾아 바닥 표시만");
                 Cube("문 자리", parent, new Vector3(lm.Pos.x, gy + 0.02f, lm.Pos.z), new Vector3(1f, 0.04f, 1f), 0f, Mat("door"), 0, false);
-                return;
+                return lm.Pos;
             }
             var c = new Vector3(q.x, gy + 1.05f, q.z) + n * 0.04f;
             var go = Cube("문짝", parent, c, new Vector3(1.0f, 2.1f, 0.08f), 0f, Mat("door"), 0, false);
             go.transform.rotation = Quaternion.LookRotation(n, Vector3.up);
             float off = Flat(q - lm.Pos).magnitude;
             if (off > 0.6f) Notes.Add($"출입문 '{lm.Name}': 데이터 위치에서 {off:F2}m 떨어진 건물 면에 붙임");
+            return q + n * 0.9f;
         }
 
         static void Vista(Zone1Data.Landmark lm, Transform parent)
@@ -792,25 +1009,59 @@ namespace Haengin.EditorTools
             return Mathf.Sqrt(dx * dx + dz * dz);
         }
 
-        static void Label(Transform parent, string text, Vector3 pos, float size)
+        /// 한글 이름표(TMP 3D, 먹색 글자 + 종이색 외곽선). toViewer = 처음에 글자가 향할 쪽(보는 사람 쪽).
+        /// 실행 중에는 NameTags(런타임)가 카메라를 보게 돌리고, 멀면 숨기고, 거리만큼 키운다. 그림자 없음.
+        static GameObject Label(Transform parent, string text, Vector3 pos, float size, Vector3 toViewer = default)
         {
-            if (LabelFont == null) return;
+            if (LabelFont == null || string.IsNullOrWhiteSpace(text)) return null;
             var go = new GameObject("이름표");
             go.transform.SetParent(parent, false);
             go.transform.position = pos;
+            var f = Flat(toViewer).sqrMagnitude > 1e-4f ? Flat(toViewer).normalized : Vector3.back;
+            go.transform.rotation = Quaternion.LookRotation(-f, Vector3.up);   // TMP 는 로컬 -Z 쪽에서 읽힌다
             var t = go.AddComponent<TextMeshPro>();
             t.font = LabelFont;
+            t.fontSharedMaterial = LabelMat;
             t.text = text;
             t.fontSize = size;
-            t.alignment = TextAlignmentOptions.Center;
+            t.alignment = TextAlignmentOptions.Bottom;
+            t.textWrappingMode = TextWrappingModes.NoWrap;
             t.color = Ink;
-            t.rectTransform.sizeDelta = new Vector2(30f, 4f);
+            t.rectTransform.sizeDelta = new Vector2(24f, 3f);
+            t.rectTransform.pivot = new Vector2(0.5f, 0f);
+            var mr = go.GetComponent<MeshRenderer>();
+            mr.shadowCastingMode = ShadowCastingMode.Off; mr.receiveShadows = false;
+            Labels++;
+            return go;
         }
 
+        /// 데이터 이름 → 보여 줄 이름: 앞 번호("5. ") 떼고, 괄호 속은 작은 둘째 줄로, 출입문·간판·표지·안내판 꼬리말 정리.
+        public static string LabelText(string name, bool small = true)
+        {
+            string s = Regex.Replace(name ?? "", @"^\d+\.\s*", "");
+            s = Regex.Replace(s, @"\s*(출입문|출입구|표지|간판|안내판)(?=\(|$)", "");
+            var m = Regex.Match(s, @"^(.*?)\((.+)\)\s*$");
+            if (!m.Success) return s.Trim();
+            return small ? $"{m.Groups[1].Value.Trim()}\n<size=62%>{m.Groups[2].Value.Trim()}</size>" : m.Groups[1].Value.Trim();
+        }
+
+        /// 이름표를 붙이는 랜드마크 종류(전봇대·가로등·원경·소품·NPC 자리·전투 무대 디버그는 안 붙임). 벽에 붙은 간판은 같은 가게 출입문 이름표가 대신.
+        static bool Labelled(Zone1Data.Landmark lm, float gap) =>
+            lm.Kind is "gate" or "bus_stop" or "board" or "wall_gate" or "viewpoint" or "door" || (lm.Kind == "sign" && gap <= 1f);
+
         // ───────────────────────── 체크포인트·시작 지점·촬영 자리
+        /// 체크포인트(06 문서 8장·9장): 걷는 면에 붙인 원판·테두리 + 3m 기둥·깃발 + 30m 빛 기둥 + 이름표 + 트리거.
+        /// 색 = 길잡이 주황(#E2582C 계열, 다른 소품과 겹치지 않음). 순서대로 켜는 일은 런타임 RouteGuide(RouteSetup 이 붙임):
+        /// 지금 목표만 기둥·빛 기둥·깃발·이름표, 지난 것은 원판만 옅게, 아직 안 온 것은 숨김. 저장 상태 = 시작 때(1번 지남 · 2번 목표).
+        public const int RouteStartIndex = 1;
         static void BuildRoute(Transform parent)
         {
             float worst = 0f;
+            var fill = Fx("cp_fill", "checkpoint", 0.30f);
+            var done = Fx("cp_done", "checkpoint", 0.12f);
+            var edge = Fx("cp_edge", "checkpoint", 0.85f);
+            var beam = Fx("cp_beam", "checkpoint", 0.55f, BeamTex);
+            var beamMesh = Reg(BeamMesh("Z1_CP_Beam", 0.45f, 30f, 16));
             for (int i = 0; i < D.Route.Count; i++)
             {
                 var cp = D.Route[i];
@@ -824,28 +1075,62 @@ namespace Haengin.EditorTools
                 }
                 else { gy = cp.Pos.y; Notes.Add($"체크포인트 {i + 1}: 발밑에 걷는 면이 없음"); }
 
-                // 얇은 반투명 원판(걷는 면에 붙임) + 진한 테두리 + 3m 표지 기둥
-                MeshObj("원판", root.transform, Reg(Conform($"Z1_CP{i + 1:00}", cp.Pos, 0f, cp.Radius - 0.2f, 0.05f)), Fx("cp_fill", "checkpoint", 0.22f), 0, false, false);
-                MeshObj("테두리", root.transform, Reg(Conform($"Z1_CP{i + 1:00}_Edge", cp.Pos, cp.Radius - 0.2f, cp.Radius, 0.06f)), Fx("cp_edge", "checkpoint", 0.7f), 0, false, false);
+                var disc = MeshObj(CpDisc, root.transform, Reg(Conform($"Z1_CP{i + 1:00}", cp.Pos, 0f, cp.Radius - 0.2f, 0.05f)), fill, 0, false, false);
+                MeshObj(CpRing, root.transform, Reg(Conform($"Z1_CP{i + 1:00}_Edge", cp.Pos, cp.Radius - 0.2f, cp.Radius, 0.06f)), edge, 0, false, false);
                 var pillarBase = new Vector3(cp.Pos.x, gy, cp.Pos.z);
-                // 시작 지점과 겹치는 체크포인트(1번)는 기둥을 세우지 않는다 — 시우가 기둥 안에서 시작하게 된다
+                // 시작 지점과 겹치는 체크포인트(1번)는 기둥·빛 기둥을 세우지 않는다 — 시우가 기둥 안에서 시작하게 된다(시작하자마자 지난 것으로 침)
                 if (Flat(cp.Pos - D.SpawnPos).magnitude > 1f)
                 {
-                    Cyl("표지 기둥 3m", root.transform, pillarBase, 0.14f, 3f, Mat("checkpoint"), 0, false);
-                    Cube("깃발", root.transform, pillarBase + new Vector3(0.3f, 2.75f, 0f), new Vector3(0.6f, 0.4f, 0.04f), 0f, Mat("checkpoint"), 0, false);
+                    Cyl(CpPillar, root.transform, pillarBase, 0.16f, 3f, Mat("checkpoint"), 0, false);
+                    Cube(CpFlag, root.transform, pillarBase + new Vector3(0.33f, 2.72f, 0f), new Vector3(0.62f, 0.42f, 0.04f), 0f, Mat("checkpoint"), 0, false);
+                    var b = MeshObj(CpBeam, root.transform, beamMesh, beam, 0, false, false);
+                    b.transform.position = pillarBase;   // 빛 기둥 메시는 원점 기준(체크포인트끼리 같은 메시)
+                    b.GetComponent<MeshRenderer>().receiveShadows = false;
                 }
+                Label(root.transform, LabelText(cp.Name), pillarBase + Vector3.up * 3.35f, CheckpointLabelSize, DirToRoad(cp.Pos));
 
-                // 트리거(반경 × 높이 3m 원기둥). 순서대로 켜는 일은 M1 런타임 코드 몫
-                var trig = new GameObject("트리거") { layer = IgnoreRaycastLayer };
+                // 트리거(반경 × 높이 3m 원기둥) — RouteGuide 는 거리로 판정하고, 트리거는 나중 이벤트(대사·컷신)용 자리
+                var trig = new GameObject(CpTrigger) { layer = IgnoreRaycastLayer };
                 trig.transform.SetParent(root.transform, false);
                 trig.transform.position = pillarBase;
                 var mc = trig.AddComponent<MeshCollider>();
                 mc.sharedMesh = Reg(Prism($"Z1_CP{i + 1:00}_Trig", Circle(Vector3.zero, cp.Radius, 24), 0f, 3f));
                 mc.convex = true;
                 mc.isTrigger = true;
-                Label(root.transform, cp.Name, pillarBase + Vector3.up * 3.6f, 2.4f);
+
+                // 저장 상태 = 게임 시작 때 상태
+                int state = i < RouteStartIndex ? 2 : i == RouteStartIndex ? 1 : 0;
+                foreach (Transform c in root.transform)
+                {
+                    GameObjectUtility.SetStaticEditorFlags(c.gameObject, 0);   // 켜고 끄고 재질을 바꾸므로 정적 배칭에서 뺀다
+                    if (c.name == CpTrigger) continue;
+                    c.gameObject.SetActive(state == 1 || (state == 2 && c.name == CpDisc));
+                }
+                disc.GetComponent<MeshRenderer>().sharedMaterial = state == 2 ? done : fill;
             }
-            Notes.Add($"체크포인트 {D.Route.Count}개: 데이터 높이와 발밑 면 높이 차 최대 {worst:F2}m");
+            Notes.Add($"체크포인트 {D.Route.Count}개: 데이터 높이와 발밑 면 높이 차 최대 {worst:F2}m · 길잡이 주황 · 시작 상태 = {RouteStartIndex + 1}번 목표");
+        }
+
+        /// 빛 기둥: 뚜껑 없는 원통(아래 = 원점), UV v = 높이 비율(위로 갈수록 투명한 알파 텍스처)
+        static Mesh BeamMesh(string name, float radius, float height, int sides)
+        {
+            var v = new List<Vector3>(); var uv = new List<Vector2>(); var tri = new List<int>();
+            for (int i = 0; i <= sides; i++)
+            {
+                float a = i * Mathf.PI * 2f / sides;
+                var p = new Vector3(Mathf.Cos(a) * radius, 0f, Mathf.Sin(a) * radius);
+                v.Add(p); uv.Add(new Vector2((float)i / sides, 0f));
+                v.Add(p + Vector3.up * height); uv.Add(new Vector2((float)i / sides, 1f));
+            }
+            for (int i = 0; i < sides; i++)
+            {
+                int a0 = i * 2, a1 = a0 + 1, b0 = a0 + 2, b1 = a0 + 3;
+                tri.Add(a0); tri.Add(a1); tri.Add(b1); tri.Add(a0); tri.Add(b1); tri.Add(b0);
+            }
+            var m = new Mesh { name = name };
+            m.SetVertices(v); m.SetUVs(0, uv); m.SetTriangles(tri, 0);
+            m.RecalculateNormals(); m.RecalculateBounds();
+            return m;
         }
 
         static void BuildSpawn(Transform root)
@@ -945,7 +1230,82 @@ namespace Haengin.EditorTools
             // (보너스) 꼭대기 계단참에서 성곽이 처음 보이는 순간
             var cp6 = D.Route.Count >= 6 ? D.Route[5].Pos : D.SpawnPos;
             Look("Shot_Reveal", cp6 + new Vector3(-1.0f, 1.6f, 0.9f), cp6 + new Vector3(-15f, 4.5f, 17f), 55f);
+
+            // (e) 명륜3가 골목 안 눈높이 — 체크포인트 4 를 지나 시우네 집 쪽(양옆 단독주택·담, 골목 바닥)
+            var alley = D.Roads.FirstOrDefault(r => r.Name.Contains("시우네 골목"));
+            if (alley != null)
+                Look("Shot_Alley", PolyAt(alley.Points, 1.2f) + Vector3.up * 1.6f, PolyAt(alley.Points, 14.5f) + Vector3.up * 1.2f, 62f);
+            // (f) 체크포인트 + 이름표 — 시작 지점 뒤에서 다음 목표(시작 상태 = 2번)를 봄
+            var tgt = D.Route[Mathf.Min(RouteStartIndex, D.Route.Count - 1)].Pos;
+            var dirT = Flat(tgt - D.SpawnPos).normalized;
+            Look("Shot_Target", D.SpawnPos - dirT * 1.2f + Vector3.up * 2.1f, tgt + Vector3.up * 2.4f, 58f);
             return list;
+        }
+
+        /// 폴리라인 위 호 길이 s 의 점(끝을 넘으면 끝점)
+        static Vector3 PolyAt(Vector3[] pts, float s)
+        {
+            for (int i = 0; i < pts.Length - 1; i++)
+            {
+                float L = Flat(pts[i + 1] - pts[i]).magnitude;
+                if (s <= L || i == pts.Length - 2) return Vector3.Lerp(pts[i], pts[i + 1], Mathf.Clamp01(s / Mathf.Max(L, 1e-4f)));
+                s -= L;
+            }
+            return pts[pts.Length - 1];
+        }
+
+        /// -shots &lt;폴더&gt;: 다시 연 장면에서 점검 컷을 찍는다(평면도 1 + 골목 + 계단참 성곽 + 와룡공원 + 체크포인트·이름표 + 시작 정적 카메라).
+        /// 이름표는 런타임 NameTags 를 리플렉션으로 불러 그 카메라를 보게 한다(이 어셈블리는 게임 코드를 참조하지 않음).
+        static void TakeShots(string dir)
+        {
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null) { Debug.LogWarning($"{Tag} -shots: 그래픽 장치가 없어 건너뜀(-nographics 빼기)"); return; }
+            ShaderUtil.allowAsyncCompilation = false;
+            System.IO.Directory.CreateDirectory(dir);
+            var cam = Camera.main ?? throw new Exception("Main Camera 가 없습니다");
+            var tagsType = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType("Haengin.NameTags")).FirstOrDefault(t => t != null);
+            var tags = tagsType != null ? Object.FindAnyObjectByType(tagsType) : null;
+            void Tags(string method, params object[] args) => tagsType?.GetMethod(method)?.Invoke(tags, args);
+            var shots = new (string file, string view)[]
+            {
+                ("z1_1_top", null), ("z1_2_alley", "Shot_Alley"), ("z1_3_reveal", "Shot_Reveal"), ("z1_4_waryong", "Shot_Waryong"),
+                ("z1_5_target", "Shot_Target"), ("z1_6_startcam", "Shot_StartCam"), ("z1_7_uphill", "Shot_Uphill"),
+            };
+            // 화면 위 HUD(오버레이 캔버스)는 렌더 텍스처에 안 그려지므로, HUD 를 보여 줄 컷에서만 카메라 캔버스로 잠깐 바꾼다
+            var hud = Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None).FirstOrDefault(c => c.isRootCanvas && c.name.StartsWith("HUD"));
+            foreach (var t in Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)) t.ForceMeshUpdate(true, true);
+            foreach (var (file, view) in shots)
+            {
+                string path = System.IO.Path.Combine(dir, file + ".png");
+                cam.orthographic = false;
+                if (view == null)
+                {
+                    if (tags != null) Tags("HideAll");
+                    var restore = BatchTools.SetupTopDown(cam, "-274,70,-130,174", 1800f / 1300f);
+                    try { BatchTools.RenderToPng(cam, 1800, 1300, 1, path); }
+                    finally { restore(); cam.orthographic = false; }
+                }
+                else
+                {
+                    var v = GameObject.Find("Zone1/Shots/" + view);
+                    if (v == null) { Debug.LogWarning($"{Tag} 촬영 자리 '{view}' 없음"); continue; }
+                    cam.transform.SetPositionAndRotation(v.transform.position, v.transform.rotation);
+                    var vc = v.GetComponent<Camera>();
+                    if (vc != null) { cam.fieldOfView = vc.fieldOfView; cam.nearClipPlane = 0.08f; cam.farClipPlane = vc.farClipPlane; }
+                    if (tags != null) Tags("Apply", cam);
+                    bool withHud = hud != null && view == "Shot_Target";
+                    float sf = withHud ? hud.scaleFactor : 1f;
+                    if (withHud)
+                    {
+                        // 배치에서는 CanvasScaler 가 돌지 않으므로 2배 슈퍼샘플(2160p) 기준 배율을 직접 준다(기준 해상도 1080p)
+                        hud.renderMode = RenderMode.ScreenSpaceCamera; hud.worldCamera = cam; hud.planeDistance = 0.5f; hud.scaleFactor = 2f;
+                        Canvas.ForceUpdateCanvases();
+                    }
+                    try { BatchTools.RenderToPng(cam, 1920, 1080, 2, path); }
+                    finally { if (withHud) { hud.renderMode = RenderMode.ScreenSpaceOverlay; hud.worldCamera = null; hud.scaleFactor = sf; } }
+                }
+                Debug.Log($"{Tag} 촬영: {path}");
+            }
+            KoreanFont.ResetDynamic(LabelFont);
         }
 
         // ───────────────────────── 점검
@@ -1282,32 +1642,63 @@ namespace Haengin.EditorTools
             return m;
         }
 
+        /// 메시 에셋: 주 오브젝트는 빈 '목록' 메시(fileID 4300000, GUID 유지), 생성 메시는 모두 서브 에셋.
+        /// 이미 있으면 지우지 않고 안의 서브 에셋만 갈아 끼운다 → .meta GUID 와 장면의 참조 GUID 가 바뀌지 않는다.
         static void SaveMeshes()
         {
             if (Meshes.Count == 0) return;
-            AssetDatabase.CreateAsset(Meshes[0], MeshPath);
-            for (int i = 1; i < Meshes.Count; i++) AssetDatabase.AddObjectToAsset(Meshes[i], MeshPath);
+            var main = AssetDatabase.LoadMainAssetAtPath(MeshPath) as Mesh;
+            if (main == null)
+            {
+                if (AssetDatabase.LoadMainAssetAtPath(MeshPath) != null) AssetDatabase.DeleteAsset(MeshPath);
+                main = new Mesh();
+                AssetDatabase.CreateAsset(main, MeshPath);
+            }
+            else
+                foreach (var o in AssetDatabase.LoadAllAssetRepresentationsAtPath(MeshPath))
+                {
+                    if (o == null) continue;
+                    AssetDatabase.RemoveObjectFromAsset(o);
+                    Object.DestroyImmediate(o, true);
+                }
+            main.Clear();
+            main.name = "Zone1_Mesh";   // 파일 이름과 같게(다르면 임포트 경고). 빈 목록 메시 — 실제 메시는 서브 에셋
+            EditorUtility.SetDirty(main);
+            foreach (var m in Meshes) AssetDatabase.AddObjectToAsset(m, main);
             AssetDatabase.SaveAssets();
         }
 
         /// 면마다 정점을 따로 두는(각진 음영) 간단한 메시 조립기. 면 방향은 hint 와 같은 쪽으로 맞춘다.
+        /// UV 는 면마다 월드 미터 단위로 붙인다(2026-10-05 2차): 윗면·바닥 = (x, z), 옆면 = (면을 따라간 거리, y).
+        /// 그래서 돌 줄눈·판석 텍스처는 재질 Tiling 하나로 어디서나 같은 크기, 성벽 켜는 늘 수평이다.
         sealed class MB
         {
             public readonly List<Vector3> V = new List<Vector3>();
+            readonly List<Vector2> UV = new List<Vector2>();
             readonly List<int> T = new List<int>();
+
+            void AddUv(Vector3 n, params Vector3[] ps)
+            {
+                n = n.sqrMagnitude > 1e-12f ? n.normalized : Vector3.up;
+                if (Mathf.Abs(n.y) > 0.7f) { foreach (var p in ps) UV.Add(new Vector2(p.x, p.z)); return; }
+                var t = Vector3.Cross(Vector3.up, n).normalized;
+                foreach (var p in ps) UV.Add(new Vector2(Vector3.Dot(p, t), p.y));
+            }
 
             public void Tri(Vector3 a, Vector3 b, Vector3 c, Vector3 hint)
             {
                 if (Vector3.Dot(Vector3.Cross(b - a, c - a), hint) < 0f) (b, c) = (c, b);
                 int s = V.Count; V.Add(a); V.Add(b); V.Add(c);
+                AddUv(Vector3.Cross(b - a, c - a), a, b, c);
                 T.Add(s); T.Add(s + 1); T.Add(s + 2);
             }
 
             public void Quad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 hint)
             {
                 var n = Vector3.Cross(b - a, c - a) + Vector3.Cross(c - a, d - a);
-                if (Vector3.Dot(n, hint) < 0f) (b, d) = (d, b);
+                if (Vector3.Dot(n, hint) < 0f) { (b, d) = (d, b); n = -n; }
                 int s = V.Count; V.Add(a); V.Add(b); V.Add(c); V.Add(d);
+                AddUv(n, a, b, c, d);
                 T.Add(s); T.Add(s + 1); T.Add(s + 2); T.Add(s); T.Add(s + 2); T.Add(s + 3);
             }
 
@@ -1360,7 +1751,7 @@ namespace Haengin.EditorTools
             {
                 var m = new Mesh { name = name };
                 if (V.Count > 65000) m.indexFormat = IndexFormat.UInt32;
-                m.SetVertices(V); m.SetTriangles(T, 0);
+                m.SetVertices(V); m.SetUVs(0, UV); m.SetTriangles(T, 0);
                 m.RecalculateNormals(); m.RecalculateBounds();
                 return m;
             }

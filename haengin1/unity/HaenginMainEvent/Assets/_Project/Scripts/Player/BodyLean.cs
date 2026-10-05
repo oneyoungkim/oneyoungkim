@@ -5,14 +5,15 @@ using UnityEngine.Rendering;
 
 namespace Haengin
 {
-    [DefaultExecutionOrder(100)]
+    // LateUpdate 를 CinemachineBrain(실행 순서 0)보다 먼저: 턱 보정으로 옮긴 따라가는 점(CamTarget) 높이가 같은 프레임 카메라 계산에 들어가게
+    [DefaultExecutionOrder(-10)]
     public sealed class BodyLean : MonoBehaviour
     {
         public PlayerMotor Motor;
         public CamRig Cam;
 
-        float pitch, roll, pitchVel, rollVel, yOff;
-        bool hidden;
+        float pitch, roll, pitchVel, rollVel, yOff, targetBaseY = float.NaN;
+        bool hidden, hooked;
         Renderer[] rends;
 
         public float Pitch => pitch;
@@ -28,7 +29,18 @@ namespace Haengin
         void Start()
         {
             if (Cam == null) Cam = FindAnyObjectByType<CamRig>();
+            if (Motor != null && !hooked) { Motor.Teleported += OnTeleported; hooked = true; }
         }
+
+        void OnDestroy()
+        {
+            if (Motor != null && hooked) Motor.Teleported -= OnTeleported;
+        }
+
+        void OnTeleported(Vector3 _) => yOff = 0f;
+
+        /// 턱 보정으로 비주얼을 루트보다 낮춰 둔 높이(m, 음수 = 아래). 카메라가 따라가는 점(CamTarget)도 같은 만큼 옮긴다(07 4-7 2번)
+        public float StepOffset => yOff;
 
         void LateUpdate()
         {
@@ -51,6 +63,15 @@ namespace Haengin
             if (Motor.StepDeltaY != 0f) yOff -= Motor.StepDeltaY;
             yOff = Mathf.Clamp(yOff * Mathf.Exp(-dt / Mathf.Max(0.01f, t.stepSmooth)), -0.4f, 0.4f);
             transform.localPosition = new Vector3(0f, yOff, 0f);
+            // 카메라도 턱 높이를 한 프레임에 받지 않게: 따라가는 점을 비주얼과 같이 내렸다가 올린다
+            var ct = Motor.CamTarget;
+            if (ct != null && ct.parent == Motor.transform)
+            {
+                if (float.IsNaN(targetBaseY)) targetBaseY = ct.localPosition.y;
+                var lp = ct.localPosition;
+                lp.y = targetBaseY + yOff;
+                ct.localPosition = lp;
+            }
 
             // 카메라가 너무 가까우면 숨김(그림자는 남김)
             if (Cam != null && Cam.T != null)

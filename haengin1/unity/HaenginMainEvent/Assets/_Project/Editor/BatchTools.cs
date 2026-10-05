@@ -123,7 +123,7 @@ namespace Haengin.EditorTools
         }
 
         /// 위에서 내려다보는 직교 카메라. 화면 위 = 북(+Z), 오른쪽 = 동(+X). 되돌리기 함수를 돌려준다.
-        static Action SetupTopDown(Camera cam, string area, float aspect)
+        internal static Action SetupTopDown(Camera cam, string area, float aspect)
         {
             var rs = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None).Where(r => r.enabled && r.gameObject.activeInHierarchy).ToList();
             if (rs.Count == 0) throw new Exception("장면에 렌더러가 없습니다");
@@ -188,7 +188,7 @@ namespace Haengin.EditorTools
             return vcam.name;
         }
 
-        static void RenderToPng(Camera cam, int w, int h, int ss, string path)
+        internal static void RenderToPng(Camera cam, int w, int h, int ss, string path)
         {
             var desc = new RenderTextureDescriptor(w * ss, h * ss, RenderTextureFormat.ARGB32, 24) { sRGB = true, msaaSamples = 1 };
             var big = new RenderTexture(desc) { name = "BatchShot_Big" };

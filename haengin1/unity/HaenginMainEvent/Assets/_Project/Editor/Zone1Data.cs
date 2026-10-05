@@ -55,7 +55,15 @@ namespace Haengin.EditorTools
         public sealed class Pad { public string Name, Shape, Surface; public Vector3 Center; public Vector2 Size; public float Yaw; }
         public sealed class Road { public string Name, Kind; public float Width; public Vector3[] Points; }
         public sealed class Block { public string Name, Kind, Use; public Vector3 Center, Size; public float Yaw; public int Floors; }
-        public sealed class Wall { public string Name; public Vector3[] Points; public float Height = 4.5f, Thickness = 2.5f; }
+        public sealed class Wall
+        {
+            public string Name; public Vector3[] Points; public float Height = 4.5f, Thickness = 2.5f;
+            // 한양도성 단면(0.2 데이터 'brow'·'parapet'·'cap'). 없으면 이 기본값
+            public float BrowH = 0.16f, BrowOver = 0.14f;                       // 미석(눈썹돌 띠)
+            public float ParapetH = 1.15f, ParapetT = 0.8f, Merlon = 3.4f, Crenel = 0.45f; // 여장(타·타구)
+            public Vector2 Embrasure = new Vector2(0.22f, 0.3f);                // 총안(폭, 높이)
+            public float CapH = 0.2f, CapOver = 0.08f;                          // 옥개석(지붕돌 띠)
+        }
         public sealed class Stair { public string Name; public Vector3 From, To; public float Width; public int Steps; }
         public sealed class Landmark { public string Name, Kind, Zone; public Vector3 Pos; public float Height, Radius; }
         public sealed class Checkpoint { public string Name, Zone; public Vector3 Pos; public float Radius; }
@@ -134,7 +142,19 @@ namespace Haengin.EditorTools
             foreach (var o in List(root, "walls"))
             {
                 var r = (Dictionary<string, object>)o;
-                z.Walls.Add(new Wall { Name = Str(r, "name"), Points = Pts(r["points"]), Height = Num(r, "height", 4.5f), Thickness = Num(r, "thickness", 2.5f) });
+                var w = new Wall { Name = Str(r, "name"), Points = Pts(r["points"]), Height = Num(r, "height", 4.5f), Thickness = Num(r, "thickness", 2.5f) };
+                var brow = Obj(r, "brow");
+                if (brow != null) { w.BrowH = Num(brow, "height", w.BrowH); w.BrowOver = Num(brow, "overhang", w.BrowOver); }
+                var par = Obj(r, "parapet");
+                if (par != null)
+                {
+                    w.ParapetH = Num(par, "height", w.ParapetH); w.ParapetT = Num(par, "thickness", w.ParapetT);
+                    w.Merlon = Num(par, "merlon", w.Merlon); w.Crenel = Num(par, "crenel", w.Crenel);
+                    if (par.TryGetValue("embrasure", out var em) && em is List<object>) w.Embrasure = V2(em);
+                }
+                var cap = Obj(r, "cap");
+                if (cap != null) { w.CapH = Num(cap, "height", w.CapH); w.CapOver = Num(cap, "overhang", w.CapOver); }
+                z.Walls.Add(w);
             }
             foreach (var o in List(root, "stairs"))
             {

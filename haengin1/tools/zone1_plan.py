@@ -99,7 +99,7 @@ for g in Z["ground"]:
         d.ellipse([cx - r, cz - r, cx + r, cz + r], fill=col, outline="black")
     else:
         d.polygon(rect(g["center"][0], g["center"][2], g["size"][0], g["size"][1], g["yaw"]), fill=col, outline="black")
-order = {"road": 0, "driveway": 1, "sidewalk": 2, "alley": 3, "path": 3, "trail": 3}
+order = {"road": 0, "driveway": 1, "sidewalk": 2, "alley": 3, "path": 3, "trail": 3, "wallpath": 3}
 for r in sorted(Z["roads"], key=lambda r: order[r["kind"]]):
     d.polygon(ribbon(r["points"], r["width"]), fill=C[r["kind"]], outline=(90, 90, 90))
 for s in Z["stairs"]:
@@ -173,7 +173,7 @@ d.text((sx0 + 10 * S, sz0 - 4), "20 m", font=F, fill="black", anchor="mb")
 # 범례
 lx, ly = W + 16, 60
 d.text((lx, ly - 20), "범례 (그레이박스 색)", font=FB, fill="black")
-items = [("차도", "road"), ("인도", "sidewalk"), ("골목", "alley"), ("공원 흙길", "path"), ("성곽길", "trail"),
+items = [("차도", "road"), ("인도", "sidewalk"), ("골목", "alley"), ("공원 흙길", "path"), ("숲길", "trail"), ("성곽길(돌 포장)", "wallpath"),
          ("계단", "stairs"), ("흙 공터·마당", "pad_dirt"), ("아스팔트 패드", "pad_asphalt"), ("상가", "shop"), ("주택", "house"),
          ("한옥(기와)", "hanok"), ("캠퍼스", "campus"), ("성곽", "wall"), ("담·난간", "fence"), ("옹벽", "retaining"),
          ("소나무", "tree"), ("풀숲", "bush"), ("정자·게이트", "pavilion"), ("경계 차단물", "barrier"), ("소품", "prop"),

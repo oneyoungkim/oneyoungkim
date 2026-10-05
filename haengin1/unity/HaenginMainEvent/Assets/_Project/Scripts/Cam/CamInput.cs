@@ -15,11 +15,13 @@ namespace Haengin
 
         InputAction lookPad, lookMouse;
         CamTuning fallback;
+        CamRig rig;
         CamTuning T => Tuning != null ? Tuning : (fallback != null ? fallback : fallback = ScriptableObject.CreateInstance<CamTuning>());
 
         void Awake()
         {
             if (Orbit == null) Orbit = GetComponent<CinemachineOrbitalFollow>();
+            rig = GetComponent<CamRig>();
         }
 
         void OnEnable() => Bind();   // AddComponent 직후에는 Actions 가 비어 있을 수 있음 → Update 에서 다시
@@ -50,9 +52,11 @@ namespace Haengin
 
         static float Curve(float v, CamTuning t) => Mathf.Sign(v) * Mathf.Pow(Mathf.Abs(v), t.padExponent);
 
-        /// 테스트·자동 시연도 같은 경로로 카메라를 돌린다
+        /// 테스트·자동 시연도 같은 경로로 카메라를 돌린다. 수동 조작이므로 자동 정렬은 다시 기다린다(07 4-8)
         public void Rotate(float dYaw, float dPitch)
         {
+            if (rig == null) rig = GetComponent<CamRig>();
+            if (rig != null) rig.NoteManualLook();
             Orbit.HorizontalAxis.Value = Mathf.DeltaAngle(0f, Orbit.HorizontalAxis.Value + dYaw);
             Orbit.VerticalAxis.Value = Mathf.Clamp(Orbit.VerticalAxis.Value + dPitch, Orbit.VerticalAxis.Range.x, Orbit.VerticalAxis.Range.y);
         }
