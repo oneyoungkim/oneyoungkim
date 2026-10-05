@@ -66,7 +66,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
   Label: "\uD070 \uD718\uB450\uB974\uAE30(\uB0C9\uC7A5\uACE0)"
   State: NjSwing
-  ClipId: 193
+  ClipId: 128
   Startup: 22
   Active: 4
   Recovery: 20
@@ -78,13 +78,13 @@ MonoBehaviour:
   Damage: 16
   Stagger: 40
   Knock: 0.3
-  KnockSide: 1
+  KnockSide: 0
   BlockKnock: -1
   Power: 3
   GuardDmg: 40
   Heat: 0
   Word: "\uCF70\uC9C1!"
-  Flinch: 1
+  Flinch: 0
   GuardBreak: 0
   Down: 0
   DownKnock: 1
@@ -103,7 +103,7 @@ MonoBehaviour:
   ChargeDist: 0
   ChargeTime: 0
   Followup: {fileID: 0}
-  ClipRate: 0.7
+  ClipRate: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

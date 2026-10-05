@@ -21,6 +21,9 @@ namespace Haengin
 
         public Entry[] Entries = new Entry[0];
 
+        /// 측정에 쓴 아바타(시우) 키 — 뻗은 거리를 다른 몸에 쓸 때 키 비율로 늘림
+        public const float ProbeHeight = 1.74f;
+
         public bool TryGet(string state, out Entry e)
         {
             foreach (var x in Entries) if (x.State == state) { e = x; return true; }
@@ -48,9 +51,10 @@ namespace Haengin
                 case 209: return "Kick";
                 case 206: return "FKick";
                 case 211: return "Knee";
-                case 259: return m.State == "Push" ? "Push" : "Grab";
+                case 259: return m.State == "Push" ? "PushFwd" : "Grab";      // 하체 밀기 = 260 짧은 밀기(259 뒷부분은 3초짜리 몰아붙이기라 — 2026-10-06 결정)
                 case 260: return "PushFwd";
                 case 512: return "Tackle";
+                case 128: return "Smash";      // 양손 내려찍기(냉장고 큰 휘두르기 — 2026-10-06 2차)
                 case 510: return "Cross";      // 달려들기: 돌진(Charge) 뒤 크로스
                 default: return null;
             }

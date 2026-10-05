@@ -45,6 +45,8 @@ namespace Haengin
         public double T;
         public int Combo;
         public float TurnLeft, MagnetTotal, MagnetLeft, MagnetUsed;
+        /// 닿는 거리 자석의 멈출 표면 거리(m, 음수 = 예전 자석: 사거리 − 0.15)
+        public float Contact = -1f;
         public bool Started, FirstTick = true;
         public int Hits;
         public readonly List<Fighter> Done = new List<Fighter>();
@@ -84,6 +86,8 @@ namespace Haengin
         public static event Action<HitEvent> AnyHit;
         /// 누가 기술을 시작했다(막기형 적이 시우 공격 발생 시작을 본다 — 08 4-5)
         public static event Action<Fighter, AttackRun> AttackStarted;
+        /// 다운으로 바닥에 닿았다(착지 쿵 — 이펙트·효과음·흔들림)
+        public static event Action<Fighter> DownLanded;
 
         [Header("몸")]
         public int Team;
@@ -101,6 +105,14 @@ namespace Haengin
         [Tooltip("시우에게 잡혔을 때 뿌리치기까지(초, 음수 = 조정값 2.0) — 깐족이 1.6 · 석 달 1.8")] public float GrabHoldTime = -1f;
         [Tooltip("디버그·연출: 무적")] public bool DebugInvuln;
         [Tooltip("시험용: 늘 막기(허수아비)")] public bool AlwaysGuard;
+        [Header("연출(기세 액션 — 08 3-8)")]
+        [Tooltip("기세 액션 중 다른 적: 무적(맞지 않음)")] public bool Shielded;
+        [Tooltip("기세 액션 대상: HP 가 0 이 돼도 다운 기술이 아니면 서 있다(연출은 끝까지)")] public bool KeepStanding;
+        [Tooltip("연출이 정한 애니메이터 상태(비우면 상태대로) — 되받기 비틀걸음 562")] public string ScriptAnim;
+        public float ScriptRate = 1f;
+        /// 다운 모양: 쓰러짐(366) / 벽에 기대 한쪽 무릎(365 앞부분 — 벽 러시 마무리) / 크게 날아감(187 — 구경꾼 되받기 마무리)
+        public enum DownLook { Fall, Kneel, Big }
+        public DownLook DownPose;
         public CombatTuning Tuning;
         public HitReact React;
 
@@ -128,7 +140,7 @@ namespace Haengin
         /// 회피 무적(PlayerCombat 이 줌)
         public Func<bool> IFrames;
         public bool InIFrames => IFrames != null && IFrames();
-        public bool Invulnerable => DebugInvuln || InvulnLeft > 0f || Down || State == Phase.Out || InIFrames;
+        public bool Invulnerable => DebugInvuln || Shielded || InvulnLeft > 0f || Down || State == Phase.Out || InIFrames;
         public float Guard { get; set; }
         /// 지금 막는 중(주인이 매 프레임 넣음)
         public bool Guarding;
@@ -145,6 +157,8 @@ namespace Haengin
         public Func<Vector3> ThreatPoint;
         /// 약타를 경직 없이 버틸 수 있으면 true(전진 버팀)
         public Func<MoveDef, bool> Brace;
+        /// 이 몸의 클립이 그 기술에서 실제로 닿는 거리(루트 → 치는 끝, m). 음수 = 모름(캡슐 몸) → 예전 자석. FighterAnim 이 넣음
+        public Func<MoveDef, float> ReachOf;
         public event Action<HitEvent> Hurt;
         public event Action<HitEvent> Landed;
         public event Action<AttackRun> MoveEnded;
@@ -183,7 +197,7 @@ namespace Haengin
         void OnDisable() { All.Remove(this); }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { All.Clear(); AnyHit = null; AttackStarted = null; }
+        static void ResetStatics() { All.Clear(); AnyHit = null; AttackStarted = null; DownLanded = null; }
 
         /// 처음 상태로(HP 가득, 자유)
         public void ResetFighter(int hp = -1)
@@ -201,6 +215,9 @@ namespace Haengin
             GrabbedBy = null;
             kbVel = Vector3.zero;
             shoves.Clear();
+            Shielded = KeepStanding = false;
+            ScriptAnim = null;
+            DownPose = DownLook.Fall;
             if (React != null) React.ResetPose();
         }
 
@@ -217,6 +234,15 @@ namespace Haengin
                 r.MagnetTotal = HitResolver.Magnet(surf, m, T);
                 // 자석 대상: 시작 때 사거리 + 0.8 안. 발생 동안 매 프레임 거리를 다시 잰다(넉백으로 물러나는 대상도 따라감 — 08 2-3 구현 메모)
                 r.MagnetLeft = m.Magnet > 0f && surf <= m.Range + HitResolver.Reach(m, T) ? m.Magnet : 0f;
+                // 닿는 거리 자석(08 11-3 결정 1, 아캄·용과 같이 방식): 판정 사거리는 그대로 두고, 클립이 실제로 닿는 거리(측정 뻗음 − 0.04)까지 붙인다.
+                // 그만큼 미끄러지는 게 1.2m(반격처럼 자석이 더 큰 기술은 그 값)를 넘으면 예전 자석 그대로 — 판정만 하고 젖힘·밀림으로 거리감을 가린다
+                float reach = m.Magnet > 0f && ReachOf != null ? ReachOf(m) : -1f;
+                if (reach > 0f)
+                {
+                    float stop = Mathf.Max(0.05f, reach - T.ContactSink);
+                    float lim = Mathf.Max(T.ContactMax, m.Magnet);
+                    if (surf - stop <= lim) { r.Contact = stop; r.MagnetLeft = lim; r.MagnetTotal = Mathf.Max(0f, surf - stop); }
+                }
             }
             Run = r;
             State = Phase.Act;
@@ -308,8 +334,9 @@ namespace Haengin
                     {
                         HitResolver.Measure(Position, Yaw, r.Aim.Position, r.Aim.Radius, out _, out float surf, out _);
                         var to = HitResolver.Flat(r.Aim.Position - Position);
-                        float want = surf - (m.Range - T.MagnetMargin);
-                        if ((surf > m.Range || r.MagnetUsed > 0f) && want > 0f && to.sqrMagnitude > 1e-6f)
+                        bool contact = r.Contact >= 0f;
+                        float want = surf - (contact ? r.Contact : m.Range - T.MagnetMargin);
+                        if ((contact || surf > m.Range || r.MagnetUsed > 0f) && want > 0f && to.sqrMagnitude > 1e-6f)
                         {
                             double left = Math.Max(1e-4, su - m0);
                             float step = Mathf.Min(r.MagnetLeft, want * (float)Math.Min(1.0, ov / left));
@@ -501,7 +528,7 @@ namespace Haengin
                 {
                     if (State == Phase.Grabbed) Release(0f);
                     Interrupt();
-                    if (Hp <= 0 || m.Down || openHeavy) StartDown(dir, m.Down ? m.DownKnock : openHeavy ? 1.0f : 0.3f);
+                    if ((Hp <= 0 && !KeepStanding) || m.Down || openHeavy) StartDown(dir, m.Down ? m.DownKnock : openHeavy ? 1.0f : 0.3f);
                     else
                     {
                         SetStagger(m.Stagger * StaggerMul / MoveDef.Fps);
@@ -513,7 +540,7 @@ namespace Haengin
             if (Hp <= 0)
             {
                 Hp = 0;
-                if (!Down && State != Phase.Out) { if (State == Phase.Grabbed) Release(0f); Interrupt(); StartDown(dir, 0.3f); }
+                if (!Down && State != Phase.Out && !KeepStanding) { if (State == Phase.Grabbed) Release(0f); Interrupt(); StartDown(dir, 0.3f); }
             }
             ImpactFx.OnHit(ev, t);
             Hurt?.Invoke(ev);
@@ -699,6 +726,7 @@ namespace Haengin
                     if (stateT >= t.DownFall - 1e-5)
                     {
                         Shake.Add(t.DownTrauma);
+                        DownLanded?.Invoke(this);
                         stateT = 0;
                         LieTotal = IsPlayer ? t.LiePlayer : t.LieEnemy;
                         State = KO ? Phase.Out : Phase.Lie;
@@ -715,6 +743,7 @@ namespace Haengin
                     if (stateT >= t.GetUp - 1e-5)
                     {
                         State = Phase.Free;
+                        DownPose = DownLook.Fall;
                         if (React != null) React.DownAmount = 0f;
                         InvulnLeft = IsPlayer ? t.AfterUpPlayer : t.AfterUpEnemy;
                     }

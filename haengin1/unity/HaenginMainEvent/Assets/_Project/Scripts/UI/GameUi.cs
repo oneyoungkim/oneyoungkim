@@ -24,6 +24,8 @@ namespace Haengin
         public static GameUi Instance { get; private set; }
         /// 테스트용: '끝내기'에서 Application.Quit 대신 부른다
         public static Action QuitHook;
+        /// 조작 안내 줄을 바꿔 쓴다(전투 중 CombatHud 가 전투 조작으로 — 08 7-5). null = 탐색 안내
+        public static string HintOverride;
 
         public enum Item { Resume = 0, AutoAlign = 1, Quit = 2 }
         public const int ItemCount = 3;
@@ -55,7 +57,7 @@ namespace Haengin
         void OnDisable() { if (Instance == this) Instance = null; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Instance = null; QuitHook = null; }
+        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; }
 
         System.Collections.IEnumerator Start()
         {
@@ -106,6 +108,13 @@ namespace Haengin
                 sub = can = false;   // 여는 프레임의 입력은 버린다
             }
             if (paused) Menu(sub, can);
+
+            // 조작 안내 줄(전투 중엔 전투 조작)
+            if (hint != null)
+            {
+                string want = HintOverride ?? Hint;
+                if (hint.text != want) hint.text = want;
+            }
 
             // 짧은 알림(DebugHud.Toast 가 넣음)
             bool on = !string.IsNullOrEmpty(DebugHud.ToastText) && Time.unscaledTime < DebugHud.ToastUntil;

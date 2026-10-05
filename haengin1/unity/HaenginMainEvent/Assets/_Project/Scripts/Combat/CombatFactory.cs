@@ -47,9 +47,48 @@ namespace Haengin
             pc.Tuning = t;
             pc.Moves = moves;
             pc.Lock = lockOn;
+            var heat = Get<HeatAction>(player);
+            heat.Player = pc;
+            pc.HeatAct = heat;
             var input = player.GetComponent<PInput>();
             if (input != null) input.Combat = pc;
             return pc;
+        }
+
+        /// 전투 이펙트(CombatFx)·HUD(CombatHud) — 플레이어 밑 'CombatUi'(08 5-5·7장)
+        public static GameObject AddUi(GameObject player, FxKit kit, CombatTuning t)
+        {
+            var tr = player.transform.Find("CombatUi");
+            var go = tr != null ? tr.gameObject : new GameObject("CombatUi");
+            go.transform.SetParent(player.transform, false);
+            var fx = Get<CombatFx>(go);
+            fx.Kit = kit;
+            fx.Tuning = t;
+            var hud = Get<CombatHud>(go);
+            hud.Kit = kit;
+            hud.Font = kit != null ? kit.Font : null;
+            hud.Player = player.GetComponent<PlayerCombat>();
+            return go;
+        }
+
+        public const string HeatCamName = "CM_Heat";
+
+        /// CM_Heat(6-4): 몸·조준 부품 없이 HeatCam 이 위치를 놓음 + TraumaShake. 우선순위 0(기세 액션 동안 30)
+        public static HeatCam BuildHeatCam(CamTuning ct, PlayerCombat pc)
+        {
+            var go = new GameObject(HeatCamName);
+            var cam = go.AddComponent<CinemachineCamera>();
+            cam.Priority = 0;
+            var lens = LensSettings.Default;
+            lens.FieldOfView = 40f;
+            lens.NearClipPlane = ct != null ? ct.near : 0.1f;
+            lens.FarClipPlane = ct != null ? ct.far : 400f;
+            cam.Lens = lens;
+            go.AddComponent<TraumaShake>();
+            var h = go.AddComponent<HeatCam>();
+            h.Cam = cam;
+            if (pc != null && pc.HeatAct != null) pc.HeatAct.Cam = h;
+            return h;
         }
 
         /// 적·허수아비: 레이어 Fighter, CharacterController + FighterBody + Fighter + HitReact(모델)
@@ -243,6 +282,7 @@ namespace Haengin
             if (pc != null) pc.CombatCam = rig;
 
             if (r.Brain != null && r.Brain.CustomBlends == null) r.Brain.CustomBlends = CombatMode.Blends();
+            BuildHeatCam(ct, pc);
             var rot = Quaternion.Euler(14f, yaw, 0f);
             go.transform.SetPositionAndRotation(pivot.position + rot * new Vector3(0f, 0f, -5f), rot);
             return rig;

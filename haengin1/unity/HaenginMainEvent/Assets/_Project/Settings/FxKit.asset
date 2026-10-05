@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c92709c2fdd733449063fe2220f2c6b, type: 3}
+  m_Name: FxKit
+  m_EditorClassIdentifier: Haengin.Game::Haengin.FxKit
+  Brush: {fileID: 2800000, guid: 02473487b80afc745bd6640c74ed775d, type: 3}
+  Splat: {fileID: 2800000, guid: 30d76e58f897fe2448bacbd82d9822aa, type: 3}
+  Shard: {fileID: 2800000, guid: 85c3281782718ca4dae09752ab11a8ec, type: 3}
+  Star: {fileID: 2800000, guid: e7c1103996fe7194cb46160b8b46f844, type: 3}
+  Lines: {fileID: 2800000, guid: 6634c3c740ebdd848822a238f72bb36d, type: 3}
+  Ring: {fileID: 2800000, guid: 720f9fde6f2d5014f85b78497d27e396, type: 3}
+  Dust: {fileID: 2800000, guid: 0bd74ec252a9ded42b3b6b5406339711, type: 3}
+  WordPok: {fileID: 2800000, guid: 65a5b9101c816b6458e183ba25411d94, type: 3}
+  WordPpak: {fileID: 2800000, guid: f2bcc55538656c3458ae398884ce7521, type: 3}
+  WordKwajik: {fileID: 2800000, guid: 3a94cf9b90c0b2b4f99ece4b5ed90927, type: 3}
+  WordKung: {fileID: 2800000, guid: 6f5253d770bcb9f4c9d59751284db0df, type: 3}
+  WordTuk: {fileID: 2800000, guid: fb68399d2e0e9c244a6fa199f858f292, type: 3}
+  WordRead: {fileID: 2800000, guid: 58416729a36decc4e93eee1908131421, type: 3}
+  WordHeat: {fileID: 2800000, guid: b26243362bdd6d644bfac30c9c5753c9, type: 3}
+  Edge: {fileID: 2800000, guid: ffb513f3cc8b1504880261a69d74dfbc, type: 3}
+  Tri: {fileID: 2800000, guid: 39eb611d887e2bc409b7fec6951d3802, type: 3}
+  Arc: {fileID: 2800000, guid: 26712cb617847e54fa8f032bd9e7feeb, type: 3}
+  Font: {fileID: 11400000, guid: d59ae07fe2498c447ab207bf9e54becf, type: 2}
+  Normal: {fileID: 2100000, guid: 638dc0a51bd916e48a2d07c70c8924a0, type: 2}
+  Top: {fileID: 2100000, guid: 5272a780f439ab74783ff62364515661, type: 2}
+  Hit:
+  - {fileID: 0}
+  - {fileID: 8300000, guid: d64b65b531f5e3f409c7868023bf312b, type: 3}
+  - {fileID: 8300000, guid: e010dcaaffb28f54bb3749d19f6346ad, type: 3}
+  - {fileID: 8300000, guid: 08edb97cd11becb4e81b496a9f9cbf2b, type: 3}
+  - {fileID: 8300000, guid: d3c9e981f52bbc2409188679208b282d, type: 3}
+  Whoosh: {fileID: 8300000, guid: 73e1e0f0facba7644a68b7e150144960, type: 3}
+  Slam: {fileID: 8300000, guid: a2e3d910700f97141a04c65a05202bab, type: 3}
+  Heat: {fileID: 8300000, guid: 15f6295e55ff791498947aae294fb64b, type: 3}
+  Block: {fileID: 8300000, guid: 30894ed909df93c49b7dadb035cd0889, type: 3}
+  Dodge: {fileID: 8300000, guid: 0596e0edf02b1af42aa51605aa2b296e, type: 3}

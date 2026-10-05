@@ -19,6 +19,7 @@ namespace Haengin
         public CamRig ExploreCam;
         public CombatCamRig CombatCam;
         public HeatGauge Heat = new HeatGauge();
+        [Tooltip("기세 액션(10단계, 같은 오브젝트)")] public HeatAction HeatAct;
         [Tooltip("시험용: 회피 이동 배율(C06 = 0)")] public float DodgeMoveScale = 1f;
 
         public CombatTuning T => Tuning != null ? Tuning : CombatTuning.Default;
@@ -66,8 +67,10 @@ namespace Haengin
         public Fighter Held => held;
         public bool Turning => turning;
 
-        /// 알림('읽었다'·'뿌리침' 등 — HUD 12단계, 지금은 DebugHud 토스트)
+        /// 알림('읽었다'·'뿌리침' 등 — HUD·이펙트가 받음, DebugHud 토스트도)
         public event Action<string> Notice;
+        /// 회피 시작(효과음)
+        public event Action DodgeStarted;
 
         public double GameNow => gameNow;
         public bool Locked => Lock != null && Lock.Target != null && Lock.Target.Targetable;
@@ -78,7 +81,11 @@ namespace Haengin
             if (Me == null) Me = GetComponent<Fighter>();
             if (Lock == null) Lock = GetComponent<LockOn>();
             if (Moves == null) Moves = MoveSet.CreateDefault();
+            if (HeatAct == null) HeatAct = GetComponent<HeatAction>();
         }
+
+        /// 기세 액션이 돌고 있다(그동안 시우 입력·이동은 연출이 쥔다)
+        public bool InHeatAction => HeatAct != null && HeatAct.Playing;
 
         void OnEnable()
         {
@@ -221,6 +228,7 @@ namespace Haengin
             var t = T;
             float dt = TimeFx.Dt;
             gameNow += dt;
+            if (InHeatAction) { Me.Guarding = false; return; }
             Heat.Tick(dt, t);
             Me.Guarding = false;
             if (dt <= 0f) return;    // 히트스톱·일시정지: 입력은 버퍼에 남는다(실제 시간)
@@ -253,6 +261,7 @@ namespace Haengin
             if (Buffered(Btn.Dodge) && CanDodge()) { Clear(Btn.Dodge); StartDodge(); return; }
             if (Take(Btn.Grab)) { StartGrab(); return; }
             var b = TakeLatest(Btn.Light, Btn.Heavy);
+            if (b == Btn.Heavy && TryHeat()) return;
             if (b != null)
             {
                 var m = Next(b.Value, out int idx);
@@ -340,6 +349,7 @@ namespace Haengin
             if (!chain || !r.LinkOpen) return;
             var b = TakeLatest(Btn.Light, Btn.Heavy);
             if (b == null) return;
+            if (b == Btn.Heavy && Heat.Full && HeatAct != null && HeatAct.Available(out _, out _)) { Me.CancelAttack(); if (TryHeat()) return; }
             var m = Next(b.Value, out int idx);
             if (m == null) return;
             bool waited = takenFrame != Time.frameCount;     // 창이 열리기 전에 눌러 둔 입력
@@ -349,8 +359,21 @@ namespace Haengin
             StartMove(m, carry, idx);
         }
 
+        /// 기세 100 + 조건(벽·구경꾼) → △ = 기세 액션(08 3-8). 조건이 없으면 false(평소 △)
+        bool TryHeat()
+        {
+            if (!Heat.Full || HeatAct == null) return false;
+            if (!HeatAct.TryStart()) return false;
+            Combo = 0;
+            comboEndAt = -1e9;
+            lightLocked = false;
+            counterReq = null;
+            if (Dodging) EndDodge();
+            return true;
+        }
+
         /// 락온 대상(서 있으면) 또는 소프트 조준(기준 방향 = 스틱 또는 몸 정면)
-        Fighter PickTarget(MoveDef m)
+        public Fighter PickTarget(MoveDef m)
         {
             if (Locked) return Lock.Target;
             var dir = StickWorld(out float amt);
@@ -389,6 +412,7 @@ namespace Haengin
             Combo = 0;
             Me.SetBusy(true);
             Motor.Halt();
+            DodgeStarted?.Invoke();
             TickDodge(TimeFx.Dt);
         }
 

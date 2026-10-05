@@ -176,6 +176,15 @@ HaenginMainEvent/
 - **손 셰이프 키**: GLB → FBX 할 때 `blender -b --factory-startup --python tools/glb2fbx.py -- <glb> <fbx> <클립> 1 1`(넷째 1 = 메시 포함, 다섯째 1 = `tools/hand_keys.py` 로 `Fist_L/R`·`Grip_L/R` 추가). 동작 클립은 넷째를 `p`(대리 메시).
 - **테스트**: `EnemyTests` C11(깐족이 3명 · 3유형 · 어려움 2명) · C12 · C13, `ClipTests` C14(손) · C14b(시우 클립 상태·타격 시각) · C14c(적 프리팹), `ZClipShots`(`-c9shots <폴더>` 를 줄 때만 — 기술 띠·손 확대·줄 세움·1:3 실전). 2026-10-06: **그래픽 켜고 51/51**(M1 27 + C 22 + 녹화 2, 로그 `e_15_gfx`).
 
+### M2 전투 — 10·11·12단계 + 결정 3건 (2026-10-06, 결과 = 08 문서 11-3)
+- **닿는 거리 자석**: 클립이 있는 몸은 발생 동안 '그 클립이 실제로 닿는 거리'(측정 뻗음 − 0.04m)까지 붙는다(1.2m 넘게 미끄러져야 하면 예전 자석). 판정 사거리는 그대로. `CombatTuning.ContactMax·ContactSink`, `Fighter.ReachOf`(FighterAnim 이 넣음).
+- **2차 클립**: `Art/Clips/{FallDown,Smash,SideL,SideR}.fbx`(366 쓰러짐 · 128 내려찍기 · 525/526 옆걸음). 하체 밀기 = 260 `PushFwd`. 컨트롤러에 `FallBig/LieBig`(187), 위층 `SideUpper`(옆걸음 때 상체 전투 자세).
+- **기세 액션**: `HeatAction`(조건·코드 타임라인, Player 에 붙음) · `HeatCam`(CM_Heat — `CombatFactory.BuildCombatCam` 이 같이 만듦).
+- **이펙트·효과음**: `CombatFx` · `FxKit`(`Settings/FxKit.asset`) · 셰이더 `Shaders/FxSprite.shader`·`ShockCut.shader` · 쇼크 컷 = PC·Mobile 렌더러의 Full Screen Pass(전역 `_HaenginShock`). 그림 `Art/Fx/*.png` = `python tools/ink_fx_gen.py <Art/Fx> <Fonts/BlackHanSans-Regular.ttf>`, 소리 `Audio/SFX/*.wav` = `python tools/sfx_gen.py <Audio/SFX>`. 묶기는 `FxSetup.Ensure`(CombatSetup.Build 가 부름). 배치 모드에선 소리를 끈다.
+- **HUD**: `CombatHud`(Player 밑 `CombatUi`, 전투 중에만). 조작 안내 줄은 `GameUi.HintOverride` 로 전투 조작.
+- **덩치 손**: `tools/hand_keys.py` 의 `PROFILES`(냉장고·스크럼) — `glb2fbx.py` 가 원본 이름으로 고른다.
+- **테스트**: `ClipTests` C05b(닿는 거리 자석), `HeatTests` C15, `HudTests` C10b(이펙트·효과음)·C16(HUD), `ZHeatShots`(`-c10shots <폴더>` — 기세 액션 녹화·이펙트·HUD 사진). 실제 Player 프리팹을 쓰는 테스트는 `PInput` 을 지운다(CombatMode 가 맵을 바꾸면 실제 HInput 이 켜져 InputTests 가 막힘). 2026-10-06: **그래픽 켜고 56/56**(M1 27 + C 26 + 녹화 3, 로그 `f_14_gfx`).
+
 2026-10-06 4차-2(대기 Idle_6·걷기 Quick_Walk 로 교체, 걷기 1.4 m/s): **27/27 통과**(게임 화면 11장, 로그 `a_26_tests`). T14 걷기 9/9 **140.0초**(경로 221.3m, 시간 한도는 1.3 × 경로 ÷ 1.4 로 같이 늘어남) · 달리기 9/9 46.3초 · 리스폰 0.
 
 2026-10-06 4차(리깅 모델·애니메이터·대각선 이동·HUD): **27/27 통과**(그래픽 켜고 게임 화면 10장 포함, 로그 `a_17_tests`, 실제 실행 50초). T14 걷기 9/9 122.5초 · 달리기 9/9 46.3초 · 리스폰 0(모델을 바꿔도 이동은 같음).
@@ -230,7 +239,7 @@ $a = @('-batchmode','-projectPath',"`"$proj`"",'-runTests','-testPlatform','Play
 $p = Start-Process $unity -ArgumentList $a -PassThru -WindowStyle Hidden; $p.WaitForExit(); "exit $($p.ExitCode)"
 [xml]$x = Get-Content "$env:TEMP\m1_tests.xml" -Encoding UTF8; $x.'test-run' | Select-Object total, passed, failed, skipped
 ```
-일부만: `'-testFilter','Haengin.Tests.ZoneTests'`. 전투만: `'-testFilter','Haengin.Tests.CombatTests|Haengin.Tests.CombatInputTests|Haengin.Tests.EnemyTests|Haengin.Tests.ClipTests'`. 전투 연습장 녹화: `-nographics` 빼고 `'-testFilter','Haengin.Tests.ZCombatShots','-c2shots','<폴더>'`. 9단계 띠 사진·손 확대·1:3: `-nographics` 빼고 `'-testFilter','Haengin.Tests.ZClipShots','-c9shots','<폴더>'`(PNG 와 `notes9.txt`, 띠마다 `meta.csv` — 묶음·mp4 는 밖에서).
+일부만: `'-testFilter','Haengin.Tests.ZoneTests'`. 전투만: `'-testFilter','Haengin.Tests.CombatTests|Haengin.Tests.CombatInputTests|Haengin.Tests.EnemyTests|Haengin.Tests.ClipTests|Haengin.Tests.HeatTests|Haengin.Tests.HudTests'`. 전투 연습장 녹화: `-nographics` 빼고 `'-testFilter','Haengin.Tests.ZCombatShots','-c2shots','<폴더>'`. 9단계 띠 사진·손 확대·1:3: `-nographics` 빼고 `'-testFilter','Haengin.Tests.ZClipShots','-c9shots','<폴더>'`(PNG 와 `notes9.txt`, 띠마다 `meta.csv` — 묶음·mp4 는 밖에서). 10~12단계 기세 액션·이펙트·HUD: `'-testFilter','Haengin.Tests.ZHeatShots','-c10shots','<폴더>'`(`notes10.txt`).
 
 ## 5. 주의
 

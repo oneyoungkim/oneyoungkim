@@ -33,6 +33,8 @@ namespace Haengin
         public int AimTurnFrames = 3;
         [Tooltip("사거리 + 이만큼 안이면 미끄러짐")] public float MagnetReach = 0.8f;
         [Tooltip("미끄러진 뒤 남길 거리(사거리 − 이만큼)")] public float MagnetMargin = 0.15f;
+        [Tooltip("닿는 거리 자석(11-3 결정 1): 클립이 실제로 닿는 거리(측정 뻗음)까지 붙여 주는 최대 미끄러짐 m. 넘으면 예전 자석(사거리 − 0.15, 0.8m)")] public float ContactMax = 1.2f;
+        [Tooltip("닿는 거리에서 주먹이 상대 표면 안으로 들어가게 더 붙는 깊이 m")] public float ContactSink = 0.04f;
 
         [Header("락온 2-3")]
         public float LockRadius = 10f, LockAngle = 70f, LockTurnRate = 540f, LockLoseDist = 12f, LockHideTime = 1.0f, LockNextDelay = 0.4f;

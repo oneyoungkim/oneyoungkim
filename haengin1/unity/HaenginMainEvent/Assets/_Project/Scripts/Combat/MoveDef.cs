@@ -228,8 +228,9 @@ namespace Haengin
         /// 냉장고 큰 휘두르기: 193(0.7배), '!' 0.6초(팔을 크게 뒤로), 22/4/20, 1.2m, 16, 40, 0.3, 강, 가드 −40
         public static MoveDef NjSwing()
         {
-            var m = M("NjSwing", "큰 휘두르기(냉장고)", 193, 22, 4, 20, 1.2f, 60f, 16, 40, 0.30f, Power.Heavy, 0, "콰직!", FlinchKind.Hook);
-            m.Lead = 0.6f; m.Warn = 1; m.GuardDmg = 40f; m.ClipRate = 0.7f; m.KnockSide = true;
+            // 클립 128 양손 내려찍기(2026-10-06 2차 — 처음엔 훅 193 을 0.7배로 썼다). 위에서 내려찍으니 넉백은 정면, 젖힘은 머리
+            var m = M("NjSwing", "큰 휘두르기(냉장고)", 128, 22, 4, 20, 1.2f, 60f, 16, 40, 0.30f, Power.Heavy, 0, "콰직!", FlinchKind.Head);
+            m.Lead = 0.6f; m.Warn = 1; m.GuardDmg = 40f;
             return m;
         }
         /// 냉장고 앞차기: 206 Spartan_Kick, '!' 0.5초, 20/4/18, 1.5m, 14, 36, 1.5m(막아도 1.0m), 중

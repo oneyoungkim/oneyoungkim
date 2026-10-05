@@ -80,6 +80,7 @@ GameObject:
   - component: {fileID: 1986048395380513755}
   - component: {fileID: 1473967906729586371}
   - component: {fileID: 1691137736475577592}
+  - component: {fileID: 1768074099850562308}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -102,6 +103,7 @@ Transform:
   m_Children:
   - {fileID: 2819796856806762110}
   - {fileID: 4928111037785458280}
+  - {fileID: 5735273917382056608}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &1464464413556266411
@@ -189,6 +191,11 @@ MonoBehaviour:
   GrabHoldTime: -1
   DebugInvuln: 0
   AlwaysGuard: 0
+  Shielded: 0
+  KeepStanding: 0
+  ScriptAnim: 
+  ScriptRate: 1
+  DownPose: 0
   Tuning: {fileID: 11400000, guid: a76c79ecfe284d84ea7218a63abf5857, type: 2}
   React: {fileID: 6412843476330949}
   Guarding: 0
@@ -228,7 +235,90 @@ MonoBehaviour:
   CombatCam: {fileID: 0}
   Heat:
     value: 20
+  HeatAct: {fileID: 1768074099850562308}
   DodgeMoveScale: 1
+--- !u!114 &1768074099850562308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2403999754716811262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48c4e9c1f9573c34693072282e8aa5ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HeatAction
+  Player: {fileID: 1691137736475577592}
+  Cam: {fileID: 0}
+  Reach: 2
+  HalfAngle: 45
+  WallBehind: 1.4
+  CrowdBehind: 1
+  ResumeDelay: 0.5
+--- !u!1 &7596527687921677794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5735273917382056608}
+  - component: {fileID: 4338335184112270364}
+  - component: {fileID: 4375469908091391071}
+  m_Layer: 0
+  m_Name: CombatUi
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5735273917382056608
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7596527687921677794}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1805354444406302035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4338335184112270364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7596527687921677794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d77dec9889bd4e34ead70f8f85d1a06b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.CombatFx
+  Kit: {fileID: 11400000, guid: 34edd5cefb240f240abf0fd47df49342, type: 2}
+  Tuning: {fileID: 11400000, guid: a76c79ecfe284d84ea7218a63abf5857, type: 2}
+  Pool: 256
+--- !u!114 &4375469908091391071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7596527687921677794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae97c7b354890144a96b38af28f46892, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.CombatHud
+  Player: {fileID: 1691137736475577592}
+  Kit: {fileID: 11400000, guid: 34edd5cefb240f240abf0fd47df49342, type: 2}
+  Font: {fileID: 11400000, guid: d59ae07fe2498c447ab207bf9e54becf, type: 2}
 --- !u!1 &8853468312801443223
 GameObject:
   m_ObjectHideFlags: 0

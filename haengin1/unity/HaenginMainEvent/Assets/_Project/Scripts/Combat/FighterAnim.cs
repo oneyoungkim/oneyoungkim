@@ -21,11 +21,13 @@ namespace Haengin
         public static readonly int HRate = Animator.StringToHash("AtkRate"), HCX = Animator.StringToHash("CX"), HCY = Animator.StringToHash("CY"),
                                    HBlend = Animator.StringToHash("Blend"), HLocoRate = Animator.StringToHash("Rate"), HSpeed = Animator.StringToHash("Speed");
         public const int GuardLayer = 1;
+        /// 옆걸음(525/526) 때 상체를 전투 자세(89)로 덮는 층 — 무게 = |CX|(막는 중엔 막기 층이 우선)
+        public const int SideLayer = 2;
 
         Animator anim;
         string cur;
         object curKey;
-        float guardW, cx, cy, rate = 1f, loco, locoVel;
+        float guardW, sideW, cx, cy, rate = 1f, loco, locoVel;
         Vector3 lastPos;
         int hurtCount;
         Power hurtPower;
@@ -50,7 +52,13 @@ namespace Haengin
         void Start()
         {
             if (Me == null) Me = GetComponentInParent<Fighter>();
-            if (Me != null) { Me.Hurt -= OnHurt; Me.Hurt += OnHurt; if (Me.React != null) Me.React.UseClips = Clips != null; lastPos = Me.Position; }
+            if (Me != null)
+            {
+                Me.Hurt -= OnHurt; Me.Hurt += OnHurt;
+                if (Me.React != null) Me.React.UseClips = Clips != null;
+                lastPos = Me.Position;
+                if (Clips != null) Me.ReachOf = ReachOf;
+            }
             if (Brain == null) Brain = GetComponentInParent<EnemyBrain>();
             if (Player == null) Player = GetComponentInParent<PlayerCombat>();
         }
@@ -62,6 +70,16 @@ namespace Haengin
                 hurtCount++;
                 hurtPower = e.Power;
             }
+        }
+
+        /// 이 몸에서 그 기술 클립이 닿는 거리(측정 뻗음 × 키 비율). 모르면 −1
+        public float ReachOf(MoveDef m)
+        {
+            if (Clips == null || m == null) return -1f;
+            var st = ClipTable.StateFor(m);
+            if (st == null || !Clips.TryGet(st, out var e) || e.Reach <= 0f) return -1f;
+            float h = Me != null && Me.Height > 0.5f ? Me.Height : ClipTable.ProbeHeight;
+            return e.Reach * h / ClipTable.ProbeHeight;
         }
 
         bool InCombat => Player != null ? Player.Active : Brain != null && Brain.State != EnemyBrain.S.Idle;
@@ -90,17 +108,27 @@ namespace Haengin
         {
             var t = Me.T;
             st = null; r = 1f; offset = 0f; key = null;
+            // 연출이 정한 상태(기세 액션 — 되받기 비틀걸음)
+            if (!string.IsNullOrEmpty(Me.ScriptAnim) && !Me.Down && Me.State != Fighter.Phase.Out)
+            {
+                st = Me.ScriptAnim; r = Me.ScriptRate; key = "script" + Me.ScriptAnim;
+                return;
+            }
+            bool kneel = Me.DownPose == Fighter.DownLook.Kneel, big = Me.DownPose == Fighter.DownLook.Big;
             switch (Me.State)
             {
                 case Fighter.Phase.Out:
                     if (cur == "Fall" && Me.StateTime < 0.05) { st = "Fall"; r = rate; key = curKey; return; }
                     st = "Kneel"; r = 1f; key = "out"; return;
+                case Fighter.Phase.Fall when kneel:
+                case Fighter.Phase.Lie when kneel:
+                    st = "Kneel"; key = "kneel" + hurtCount; r = 1f; return;     // 벽 러시 마무리: 벽에 기대 한쪽 무릎(365 앞부분)
                 case Fighter.Phase.Fall:
-                    st = "Fall"; key = "down" + hurtCount;
-                    r = Clips != null && Clips.TryGet("Fall", out var fe) && fe.Hit > 0f ? Mathf.Clamp(fe.Hit / t.DownFall, 0.3f, 6f) : 1f;
+                    st = big && HasState("FallBig") ? "FallBig" : "Fall"; key = "down" + hurtCount;
+                    r = Clips != null && Clips.TryGet(st, out var fe) && fe.Hit > 0f ? Mathf.Clamp(fe.Hit / t.DownFall, 0.3f, 6f) : 1f;
                     return;
                 case Fighter.Phase.Lie:
-                    st = "Lie"; key = "lie"; return;
+                    st = big && HasState("LieBig") ? "LieBig" : "Lie"; key = "lie" + st; return;
                 case Fighter.Phase.GetUp:
                     st = "StandUp"; key = "up" + hurtCount; r = FitRate("StandUp", t.GetUp); return;
                 case Fighter.Phase.Grabbed:
@@ -165,6 +193,8 @@ namespace Haengin
             key = m.ChargeTime > 0f ? (object)("strike" + run.GetHashCode()) : run;
         }
 
+        bool HasState(string st) => anim != null && anim.HasState(0, Animator.StringToHash(st));
+
         float Speed()
         {
             var b = Me.Body as FighterBody;
@@ -210,6 +240,9 @@ namespace Haengin
                 float gw = Me.Guarding && Me.State == Fighter.Phase.Free ? 1f : 0f;
                 guardW = Mathf.MoveTowards(guardW, gw, dt / (6f / MoveDef.Fps));
                 if (anim.layerCount > GuardLayer) anim.SetLayerWeight(GuardLayer, guardW);
+                float sw = cur == "CombatMove" ? Mathf.Clamp01(Mathf.Abs(cx) * 1.5f) * (1f - guardW) : 0f;
+                sideW = Mathf.MoveTowards(sideW, sw, dt / 0.1f);
+                if (anim.layerCount > SideLayer) anim.SetLayerWeight(SideLayer, sideW);
                 // 적 걷기·달리기(Move): LocoAnim 과 같은 계산
                 if (Player == null)
                 {

@@ -22,6 +22,7 @@ namespace Haengin
         [Tooltip("시험용: 막은 뒤 카운터 안 함")] public bool NoCounter;
         [Tooltip("시험용: 막기 확률을 이 값으로(음수 = 4-5 표)")] public float BlockOverride = -1f;
         [Tooltip("시험용: 제자리(자리 걷기 안 함, 시우만 봄)")] public bool HoldPosition;
+        [Tooltip("기세 액션 중(08 3-8): AI 정지 — 서서 시우만 본다")] public bool Frozen;
 
         public CombatTuning T => Tuning != null ? Tuning : CombatTuning.Default;
         public S State { get; private set; } = S.Idle;
@@ -96,6 +97,18 @@ namespace Haengin
         }
 
         public void ForceBlock(float seconds) { Go(S.Block); blockUntil = clock + seconds; }
+
+        /// 기세 액션 시작: 하던 공격을 거두고 공격권을 돌려준 뒤 멈춤(끝나면 Frozen = false 로 간보기부터)
+        public void Freeze(bool on)
+        {
+            Frozen = on;
+            if (!on) { if (State == S.AttackIn || State == S.Attack || State == S.Block || State == S.Taunt) Go(S.Strafe); return; }
+            if (Me != null && Me.State == Fighter.Phase.Act) Me.CancelAttack();
+            if (Me != null) Me.Guarding = false;
+            Release();
+            pending = null;
+            counterArmed = false;
+        }
 
         void Go(S s)
         {
@@ -176,6 +189,17 @@ namespace Haengin
                     break;
             }
             if ((State == S.Hurt || State == S.Down) && Me.State == Fighter.Phase.Free) Go(S.Strafe);
+            if (Frozen)
+            {
+                // 기세 액션: 멈춰 서서 본다(공격권·막기·도발 시계도 멈춤)
+                if (Body != null) Body.WalkVelocity = Vector3.zero;
+                if (Target != null && Me.State == Fighter.Phase.Free)
+                {
+                    var to = HitResolver.Flat(Target.Position - Me.Position);
+                    if (to.sqrMagnitude > 1e-4f) Body.SetYaw(Mathf.MoveTowardsAngle(Me.Yaw, HitResolver.Yaw(to), 360f * dt));
+                }
+                return;
+            }
             if (cooldown > 0f) cooldown -= dt;
 
             // 도주(깐족이: HP ≤ 25% + 동료 모두 탈락)
@@ -319,7 +343,7 @@ namespace Haengin
         // ───────────────────────── 막기형(4-5)
         void OnAttackStarted(Fighter atk, AttackRun run)
         {
-            if (Def == null || !Def.Blocks || atk != Target || Me == null || Me.State != Fighter.Phase.Free) return;
+            if (Frozen || Def == null || !Def.Blocks || atk != Target || Me == null || Me.State != Fighter.Phase.Free) return;
             if (!(State == S.Strafe || State == S.Block || State == S.Approach || State == S.Taunt)) return;
             var m = run.Move;
             HitResolver.Measure(Me.Position, Me.Yaw, atk.Position, atk.Radius, out _, out float surf, out float ang);

@@ -119,6 +119,73 @@ namespace Haengin.Tests
             Debug.Log("[M2Test] C14 손 셰이프 키: " + string.Join(" | ", log));
         }
 
+        // ───────────────────────── C05b 닿는 거리 자석(11-3 결정 1)
+        /// 실제 Player 프리팹(클립 있음)으로 □ / △: 판정 첫 프레임에 클립이 닿는 거리(측정 뻗음 − 0.04)까지 붙었나, 주먹(발)이 상대 몸 표면에 닿았나.
+        /// 붙는 거리가 1.2m 를 넘으면 예전 자석(사거리 − 0.15)
+        [UnityTest]
+        public IEnumerator C05b_Magnet_ClipContact()
+        {
+            Lab.Floor(0f, 40f);
+            var log = new List<string>();
+            var pc = SpawnSiwoo(Vector3.zero, 0f);
+            var model = Object.Instantiate(Load("Assets/_Project/Prefabs/Enemy_Seokdal.prefab"));
+            var d = CombatFactory.Dummy("허수아비", new Vector3(0f, 0f, 1.6f), 180f, 999, model, 1.77f, 0.30f, tune);
+            var fa = pc.GetComponentInChildren<FighterAnim>();
+            var a = fa.Animator;
+            yield return Frames(5);
+            pc.Begin(0f);
+            yield return Frames(10);
+
+            IEnumerator Case(string name, Btn b, float surf0, HumanBodyBones limb, bool expectContact, float[] outGap)
+            {
+                pc.Me.ResetFighter(); d.ResetFighter();
+                ((PlayerBody)pc.Me.Body).Place(Vector3.zero, 0f);
+                d.Body.Place(new Vector3(0f, 0f, surf0 + d.Radius), 180f);
+                yield return Frames(40);
+                pc.Press(b);
+                AttackRun run = null;
+                float gapLimb = 9f, surfAt = -1f;
+                bool contact = false;
+                for (int i = 0; i < 80; i++)
+                {
+                    yield return null;
+                    var r = pc.Me.Run;
+                    if (r != null && run == null) { run = r; contact = r.Contact >= 0f; }
+                    if (run != null && r == run && (r.ActiveNow || r.PastActive) && surfAt < 0f)
+                    {
+                        HitResolver.Measure(pc.Me.Position, pc.Me.Yaw, d.Position, d.Radius, out _, out surfAt, out _);
+                    }
+                    if (surfAt >= 0f && i < 80)
+                    {
+                        // 그린 자세(애니메이터 갱신 뒤)의 치는 끝 ↔ 상대 몸통 축 거리 − 반지름(수평)
+                        var t = a.GetBoneTransform(limb);
+                        if (t != null)
+                        {
+                            var off = HitResolver.Flat(t.position - d.Position);
+                            gapLimb = Mathf.Min(gapLimb, off.magnitude - d.Radius);
+                        }
+                    }
+                    if (run != null && pc.Me.Run != run && surfAt >= 0f) break;
+                }
+                float reach = pc.Me.ReachOf != null && run != null ? pc.Me.ReachOf(run.Move) : -1f;
+                log.Add($"{name}: 시작 표면 {surf0:F2}m · 닿는 거리 자석 {contact} · 클립 뻗음 {reach:F2}m · 판정 첫 프레임 표면 {surfAt:F2}m · 치는 끝 ↔ 몸 표면 최소 {gapLimb:F2}m · 사거리 {(run != null ? run.Move.Range : 0f):F1}");
+                Assert.AreEqual(expectContact, contact, name + " 자석 종류");
+                if (expectContact)
+                {
+                    Assert.That(surfAt, Is.EqualTo(reach - tune.ContactSink).Within(0.06f), name + " 판정 첫 프레임 표면 거리 = 뻗음 − 0.04");
+                    Assert.That(gapLimb, Is.LessThanOrEqualTo(0.12f), name + " 치는 끝이 몸에 닿음(≤ 0.12m)");
+                }
+                outGap[0] = gapLimb;
+            }
+            var g = new float[1];
+            float kick = pc.Me.ReachOf(pc.Moves.FrontKick) - tune.ContactSink;     // 앞차기 클립이 닿는 표면 거리
+            yield return Case("□ 잽(1.3m)", Btn.Light, 1.3f, HumanBodyBones.LeftHand, true, g);
+            yield return Case("□ 잽(0.9m — 사거리 안이어도 붙음)", Btn.Light, 0.9f, HumanBodyBones.LeftHand, true, g);
+            yield return Case($"△ 앞차기({kick + 1.1f:F2}m — 미끄러짐 1.1m)", Btn.Heavy, kick + 1.1f, HumanBodyBones.RightFoot, true, g);
+            yield return Case($"△ 앞차기({kick + 1.35f:F2}m — 1.35m 라 1.2m 넘음 → 예전 자석)", Btn.Heavy, kick + 1.35f, HumanBodyBones.RightFoot, false, g);
+            Debug.Log("[M2Test] C05b 닿는 거리 자석: " + string.Join(" | ", log));
+        }
+
         // ───────────────────────── C14b 시우 애니메이터
         static bool InState(Animator a, string st)
         {

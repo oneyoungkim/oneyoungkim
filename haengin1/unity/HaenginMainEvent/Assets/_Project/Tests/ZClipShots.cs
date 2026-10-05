@@ -83,6 +83,8 @@ namespace Haengin.Tests
             yield return Chain("bighook", "큰 훅(□□□△)", new[] { Btn.Light, Btn.Light, Btn.Light, Btn.Heavy });
             yield return Strip("grab", "잡기 → 무릎 → 밀기(○□△)", new[] { (0, Btn.Grab), (30, Btn.Light), (60, Btn.Heavy) }, 0.55f);
 
+            yield return SideStrip();
+
             // (2) 적 기술 띠(허수아비 = 석 달 모델이 적 기술을 씀) + 다운·기상
             pc.Me.DebugInvuln = true;
             yield return EnemyStrip("e_onetwo", "깐족이 원투", MoveLib.KkOneTwo(), 1.4f);
@@ -203,6 +205,37 @@ namespace Haengin.Tests
                 if (float.IsNaN(clip) || float.IsInfinity(clip)) clip = 0f;
             }
             return $"{n},{fa?.Current},{what},{(r != null && r.ActiveNow ? 1 : 0)},{(fa != null ? fa.Rate : 0f):F2},{clip:F3}";
+        }
+
+        /// 옆걸음(525/526 하체 + 전투 자세 상체 층): 락온한 채 오른쪽 1초 → 왼쪽 1초, 비스듬히 뒤에서 2프레임마다
+        IEnumerator SideStrip()
+        {
+            yield return Reset(new Vector3(0f, 0f, -0.9f), 0f, new Vector3(0f, 0f, 1.1f), 180f);
+            pc.Lock.Set(dummy);
+            var sd = Path.Combine(dir, "seq9_side");
+            Directory.CreateDirectory(sd);
+            var meta = new List<string> { "f,state,move,active,rate,clip,cx,side" };
+            var fa = AnimOf(pc.Me);
+            side.fieldOfView = 40f;
+            int n = 0;
+            for (int i = 0; i < 150; i++)
+            {
+                if (i == 10) pc.SetStickWorld(Vector3.right, 1f);
+                if (i == 75) pc.SetStickWorld(Vector3.left, 1f);
+                if (i == 140) pc.SetStickWorld(Vector3.zero, 0f);
+                yield return null;
+                var p = pc.Me.Position;
+                side.transform.position = p + new Vector3(1.6f, 1.5f, -3.4f);
+                side.transform.rotation = Quaternion.LookRotation(p + Vector3.up * 0.9f - side.transform.position);
+                var a = fa != null ? fa.Animator : null;
+                float cx = a != null ? a.GetFloat(FighterAnim.HCX) : 0f;
+                float sw = a != null && a.layerCount > FighterAnim.SideLayer ? a.GetLayerWeight(FighterAnim.SideLayer) : -1f;
+                meta.Add(Meta(n, fa, null, "옆걸음") + $",{cx:F2},{sw:F2}");
+                if (i % 2 == 0) { Shot(side, Path.Combine(sd, $"f_{n:000}.png"), 480, 270, 1); n++; }
+            }
+            side.fieldOfView = 34f;
+            File.WriteAllLines(Path.Combine(sd, "meta.csv"), meta);
+            notes.Add($"띠 옆걸음(오른쪽 → 왼쪽, 2프레임마다): {sd} {n}장 · 이동 {pc.Me.Position}");
         }
 
         IEnumerator EnemyStrip(string key, string label, MoveDef m, float gap)

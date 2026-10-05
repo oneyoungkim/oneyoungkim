@@ -39,6 +39,8 @@ namespace Haengin.EditorGame
             ("GrabPush", 259, false, false), ("Block", 138, false, false), ("Dodge", 156, false, false), ("HitFace", 174, false, false), ("HitBody", 178, false, false),
             ("Knockdown", 187, false, false), ("StandUp", 344, false, false), ("Kneel", 365, false, false), ("Stumble", 562, false, false),
             ("Charge", 510, false, false), ("Breath", 31, true, false), ("Victory", 403, false, false), ("Taunt", 88, false, false),
+            // 2차(2026-10-06 c541edd): 366 쓰러짐(보통 다운 — 187 은 크게 날아갈 때만) · 128 양손 내려찍기(냉장고 큰 휘두르기, 태오 리그) · 525/526 웅크려 옆걸음(하체만)
+            ("FallDown", 366, false, false), ("Smash", 128, false, true), ("SideL", 525, true, false), ("SideR", 526, true, false),
         };
 
         static string ClipPath(string f) => $"{ClipDir}/{f}.fbx";
@@ -164,7 +166,7 @@ namespace Haengin.EditorGame
                 foreach (var (name, v) in limbs)
                 {
                     float f = v[i].z - p.Chest[i].z;
-                    if (f > best) { best = f; hit = p.T[i]; reach = v[i].z - p.Hips[i].z; limb = name; }
+                    if (f > best) { best = f; hit = p.T[i]; reach = v[i].z; limb = name; }     // 뻗은 거리 = 루트(= Fighter 위치) 기준 정면
                 }
             }
             return (hit, reach, limb);
@@ -194,17 +196,19 @@ namespace Haengin.EditorGame
                     case "GrabPush":
                     {
                         // 손이 처음 가장 멀리 닿는 때(앞 60%) = 잡기 끝, 그 뒤 = 밀기(밀기 타격 = 나머지에서 손이 가장 멀리)
+                        // 뒷부분(3초 동안 몸을 낮춰 몰아붙이기)은 쓰지 않는다 — 하체 밀기·벽 러시 어깨 밀기 = 260 PushFwd(2026-10-06 결정)
                         var g = HandsForward(p, 0f, 0.6f);
-                        var q = HandsForward(p, Mathf.Min(0.95f, (g.t + 0.15f) / len), 1f);
                         subs.Add((Make("Grab", f0, Fr(g.t + 0.1f), false), g.t, g.f, "잡기(손 닿음)"));
-                        subs.Add((Make("Push", Fr(g.t), f1, false), q.t - g.t, q.f, "밀기"));
                         break;
                     }
                     case "Knockdown":
+                    case "FallDown":
                     {
+                        // 보통 다운 = 366(무릎이 꺾이며 뒤로 눕기), 크게 날아가는 다운(기세 액션 되받기) = 187
+                        string fall = file == "FallDown" ? "Fall" : "FallBig", lie = file == "FallDown" ? "Lie" : "LieBig";
                         float land = Landing(p);
-                        subs.Add((Make("Fall", f0, Fr(Mathf.Min(len, land + 0.15f)), false), land, 0f, "쓰러짐(바닥 닿음)"));
-                        subs.Add((Make("Lie", Fr(Mathf.Max(0f, len - 0.3f)), f1, true), 0f, 0f, "누움(끝 0.3초 반복)"));
+                        subs.Add((Make(fall, f0, Fr(Mathf.Min(len, land + 0.15f)), false), land, 0f, "쓰러짐(바닥 닿음)"));
+                        subs.Add((Make(lie, Fr(Mathf.Max(0f, len - 0.3f)), f1, true), 0f, 0f, "누움(끝 0.3초 반복)"));
                         break;
                     }
                     case "StandUp":
@@ -297,23 +301,25 @@ namespace Haengin.EditorGame
             catch (Exception e) { Debug.LogWarning($"{Tag} 곡선 저장 실패 {file}: {e.Message}"); }
         }
 
+        /// 두 손이 가슴에서 가장 멀리 나간 때와 그때 손이 루트에서 나간 거리
         static (float t, float f) HandsForward(Probe p, float from, float to)
         {
-            float best = float.MinValue, bt = 0f;
+            float best = float.MinValue, bt = 0f, reach = 0f;
             for (int i = 0; i < p.T.Length; i++)
             {
                 float u = p.T[i] / Mathf.Max(1e-4f, p.Length);
                 if (u < from || u > to) continue;
                 float f = Mathf.Max(p.LH[i].z, p.RH[i].z) - p.Chest[i].z;
-                if (f > best) { best = f; bt = p.T[i]; }
+                if (f > best) { best = f; bt = p.T[i]; reach = Mathf.Max(p.LH[i].z, p.RH[i].z); }
             }
-            return (bt, best);
+            return (bt, reach);
         }
 
         static float Landing(Probe p)
         {
             float min = p.Hips.Min(h => h.y);
-            for (int i = 0; i < p.T.Length; i++) if (p.Hips[i].y <= min + 0.05f) return p.T[i];
+            // 바닥 닿음 = 골반이 가장 낮은 높이 + 8cm 안으로 처음 들어온 때(366 은 누운 뒤에도 골반이 2~5cm 오르내려 5cm 로는 0.7초 늦게 잡혔다)
+            for (int i = 0; i < p.T.Length; i++) if (p.Hips[i].y <= min + 0.08f) return p.T[i];
             return p.Length;
         }
 
@@ -386,7 +392,7 @@ namespace Haengin.EditorGame
                 CombatMoveState(c, sm, kf, kb);
                 foreach (var e in table.Entries)
                 {
-                    if (e.State == "Stance" || e.State == "FwdWalk" || e.State == "BackWalk" || e.State == "Guard") continue;
+                    if (e.State == "Stance" || e.State == "FwdWalk" || e.State == "BackWalk" || e.State == "Guard" || e.State == "SideL" || e.State == "SideR") continue;
                     var clip = FindClip(e.State);
                     if (clip == null) continue;
                     var st = sm.states.Select(s => s.state).FirstOrDefault(s => s.name == e.State) ?? sm.AddState(e.State);
@@ -399,8 +405,9 @@ namespace Haengin.EditorGame
                     EditorUtility.SetDirty(st);
                 }
                 GuardLayer(c, mask);
+                SideUpperLayer(c, mask);
                 EditorUtility.SetDirty(c);
-                Debug.Log($"{Tag} 컨트롤러 {AssetDatabase.GetAssetPath(c)}: 상태 {string.Join(" ", c.layers[0].stateMachine.states.Select(s => s.state.name))} · 위층 {(c.layers.Length > 1 ? c.layers[1].name : "없음")}");
+                Debug.Log($"{Tag} 컨트롤러 {AssetDatabase.GetAssetPath(c)}: 상태 {string.Join(" ", c.layers[0].stateMachine.states.Select(s => s.state.name))} · 위층 {string.Join(", ", c.layers.Skip(1).Select(l => l.name))}");
             }
         }
 
@@ -441,18 +448,58 @@ namespace Haengin.EditorGame
             tree.blendParameter = "CX";
             tree.blendParameterY = "CY";
             var stance = FindClip("Stance"); var fwd = FindClip("FwdWalk"); var back = FindClip("BackWalk");
-            // 옆걸음 클립이 없다(08 2-4): 옆은 앞걸음을 옆 속도에 맞춘 배율로(몸 돌림은 다음 단계)
+            var sl = FindClip("SideL"); var sr = FindClip("SideR");
+            // 옆 = 525/526 웅크려 옆걸음(하체만 — 상체는 SideUpper 층이 전투 자세로 덮음). 없으면 앞걸음을 옆 속도 배율로
+            float kl = SideScale(sl, 1.04f), kr = SideScale(sr, 0.88f);
             tree.children = new[]
             {
                 new ChildMotion { motion = stance, position = Vector2.zero, timeScale = 1f },
                 new ChildMotion { motion = fwd, position = new Vector2(0f, 1f), timeScale = kf },
                 new ChildMotion { motion = back, position = new Vector2(0f, -1f), timeScale = kb },
-                new ChildMotion { motion = fwd, position = new Vector2(1f, 0f), timeScale = kf * 1.3f / 1.6f },
-                new ChildMotion { motion = fwd, position = new Vector2(-1f, 0f), timeScale = kf * 1.3f / 1.6f },
+                new ChildMotion { motion = sr != null ? sr : fwd, position = new Vector2(1f, 0f), timeScale = sr != null ? kr : kf * 1.3f / 1.6f },
+                new ChildMotion { motion = sl != null ? sl : fwd, position = new Vector2(-1f, 0f), timeScale = sl != null ? kl : kf * 1.3f / 1.6f },
             };
             st.iKOnFeet = true;
             st.writeDefaultValues = true;
             EditorUtility.SetDirty(tree); EditorUtility.SetDirty(st);
+        }
+
+        /// 옆걸음 재생 배율 = 옆 1.3 m/s ÷ 클립 옆 속도. 클립 루트 평균 속도(Humanoid 는 몸 크기 단위라 시우 골반 높이 0.92 를 곱함)가 이상하면
+        /// Blender 로 잰 값(왼 1.22m/1.17초 = 1.04, 오른 1.14m/1.29초 = 0.88 m/s — 2026-10-06)
+        static float SideScale(AnimationClip c, float measured)
+        {
+            if (c == null) return 1f;
+            float v = Mathf.Abs(c.averageSpeed.x) * 0.92f;
+            float use = v > 0.4f && v < 2.5f ? v : measured;
+            float k = Mathf.Clamp(1.3f / use, 0.5f, 2.5f);
+            Debug.Log($"{Tag} 옆걸음 {c.name}: 루트 평균 옆 속도 {v:F2} m/s(측정값 {measured:F2}) → 씀 {use:F2} · 배율 ×{k:F2}");
+            return k;
+        }
+
+        /// 옆걸음 때 상체를 전투 자세로 덮는 층(무게는 FighterAnim 이 |CX| 로)
+        static void SideUpperLayer(AnimatorController c, AvatarMask mask)
+        {
+            var stance = FindClip("Stance");
+            if (stance == null) return;
+            var layers = c.layers;
+            int i = Array.FindIndex(layers, l => l.name == "SideUpper");
+            if (i < 0)
+            {
+                c.AddLayer("SideUpper");
+                layers = c.layers;
+                i = layers.Length - 1;
+            }
+            layers[i].avatarMask = mask;
+            layers[i].defaultWeight = 0f;
+            layers[i].blendingMode = AnimatorLayerBlendingMode.Override;
+            layers[i].iKPass = false;
+            var sm = layers[i].stateMachine;
+            var st = sm.states.Select(s => s.state).FirstOrDefault(s => s.name == "Stance") ?? sm.AddState("Stance");
+            st.motion = stance;
+            st.writeDefaultValues = true;
+            sm.defaultState = st;
+            c.layers = layers;
+            EditorUtility.SetDirty(st);
         }
 
         static void EnemyMove(AnimatorController c, BlendTree siwooMove)

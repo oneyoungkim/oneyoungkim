@@ -118,6 +118,7 @@ namespace Haengin.EditorGame
                 AssetDatabase.CreateAsset(CombatMode.Blends(), BlendsPath);
                 Debug.Log($"{Tag} 카메라 블렌드 만듦: {BlendsPath}");
             }
+            FxSetup.Ensure();
         }
 
         public static CombatTuning Tuning => AssetDatabase.LoadAssetAtPath<CombatTuning>(TuningPath);
@@ -138,6 +139,9 @@ namespace Haengin.EditorGame
                 if (anim.GetComponent<HandShape>() == null) anim.gameObject.AddComponent<HandShape>();
                 extra = " · FighterAnim(전투 클립) · HandShape(주먹·잡기 손)";
             }
+            var kit = AssetDatabase.LoadAssetAtPath<FxKit>(FxSetup.KitPath);
+            CombatFactory.AddUi(player, kit, Tuning);
+            extra += $" · HeatAction · CombatUi(CombatFx·CombatHud, 묶음 {(kit != null ? "있음" : "없음")})";
             Debug.Log($"{Tag} 플레이어 전투 부품: Fighter(HP {pc.Me.MaxHp}) · HitReact(모델 {(pc.Me.React != null && pc.Me.React.Model != null ? pc.Me.React.Model.name : "-")}) · LockOn · PlayerCombat{extra}");
         }
 
@@ -150,7 +154,7 @@ namespace Haengin.EditorGame
         public static EnemyDef EnemyDefAsset(EnemyDef.Kind k)
         {
             var a = AssetDatabase.LoadAssetAtPath<EnemyDef>(EnemyDefPath(k));
-            if (a != null) return a;
+            if (a != null) { SyncClips(a, k); return a; }
             var d = EnemyLib.Make(k);
             AssetDatabase.CreateAsset(d, EnemyDefPath(k));
             var subs = new List<MoveDef>();
@@ -178,6 +182,25 @@ namespace Haengin.EditorGame
             EditorUtility.SetDirty(oc);
             Debug.Log($"{Tag} 적 {n}: 대기 클립을 자기 Idle 로(Override {path})");
             return oc;
+        }
+
+        /// 이미 있는 적 정의의 기술 하위 에셋에 '클립 연결' 값만 표(EnemyLib)대로 다시 넣는다(ClipId · 젖힘 · 옆 넉백 — 클립이 바뀌면 같이 바뀌는 것).
+        /// 피해·프레임 같은 손으로 고칠 수 있는 값은 그대로 둔다. 2026-10-06: 냉장고 큰 휘두르기 193 → 128
+        static void SyncClips(EnemyDef d, EnemyDef.Kind k)
+        {
+            var fresh = EnemyLib.Make(k);
+            var lib = new Dictionary<string, MoveDef>();
+            void Add(MoveDef m) { if (m == null || lib.ContainsKey(m.name)) return; lib[m.name] = m; Add(m.Followup); }
+            foreach (var m in fresh.Moves) Add(m);
+            Add(fresh.Far); Add(fresh.Counter);
+            foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(EnemyDefPath(k)).OfType<MoveDef>())
+            {
+                if (!lib.TryGetValue(sub.name, out var f)) continue;
+                if (sub.ClipId == f.ClipId && sub.Flinch == f.Flinch && sub.KnockSide == f.KnockSide) continue;
+                Debug.Log($"{Tag} 적 기술 클립 연결 고침 {d.Label}/{sub.Label}: 클립 {sub.ClipId} → {f.ClipId} · 젖힘 {sub.Flinch} → {f.Flinch} · 옆 넉백 {sub.KnockSide} → {f.KnockSide}");
+                sub.ClipId = f.ClipId; sub.Flinch = f.Flinch; sub.KnockSide = f.KnockSide; sub.ClipRate = f.ClipRate;
+                EditorUtility.SetDirty(sub);
+            }
         }
 
         public static void EnemyPrefabs()

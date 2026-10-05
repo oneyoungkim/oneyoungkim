@@ -25,12 +25,14 @@ namespace Haengin
         public bool Active { get; private set; }
         public double StartedAt { get; private set; }
         public event Action<bool> Changed;
+        /// 어느 CombatMode 든 전투 시작·끝(이펙트·HUD — 첫 타격 쇼크 컷 다시 세기)
+        public static event Action<bool> AnyChanged;
 
         void OnEnable() { Current = this; }
         void OnDisable() { if (Current == this) Current = null; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Current = null; }
+        static void ResetStatics() { Current = null; AnyChanged = null; }
 
         IEnumerator Start()
         {
@@ -57,6 +59,7 @@ namespace Haengin
             if (CombatCam != null) CombatCam.Activate(true);
             SetExploreHud(false);
             Changed?.Invoke(true);
+            AnyChanged?.Invoke(true);
         }
 
         public void End()
@@ -69,7 +72,9 @@ namespace Haengin
             if (Input != null) Input.SetCombatMap(false);
             TimeFx.Reset();
             SetExploreHud(true);
+            if (Player != null && Player.HeatAct != null) Player.HeatAct.Abort();
             Changed?.Invoke(false);
+            AnyChanged?.Invoke(false);
         }
 
         /// 길잡이 HUD·이름표·목표 화살표(주황 = 목표 색)를 전투 중 숨김(08 7장)

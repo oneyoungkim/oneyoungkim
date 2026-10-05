@@ -1,7 +1,7 @@
 # GLB(Tripo 리깅 + 클립 1개) → FBX (Unity Humanoid 용, 2026-10-06)
 # 사용: "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/glb2fbx.py -- <src.glb> <dst.fbx> <클립 이름> [메시 1|0|p] [손 0|1]
 #   메시 p(대리, M2 전투 클립용): 원래 메시를 빼고 뼈마다 작은 삼각형 하나씩(그 뼈 가중치 1)만 넣는다 — 바인드 포즈(아바타 기준 자세)는 그대로, 파일은 작게
-#   손 1(M2, 08 문서 9장 A′): tools/hand_keys.py 로 셰이프 키 Fist_L · Fist_R · Grip_L · Grip_R 를 더해 내보낸다
+#   손 1(M2, 08 문서 9장 A′): tools/hand_keys.py 로 셰이프 키 Fist_L · Fist_R · Grip_L · Grip_R 를 더해 내보낸다(원본 파일 이름 앞부분으로 모델별 값 — hand_keys.PROFILES)
 #   예) ... -- concept/art/3d/anim/siwoo_walk.glb unity/HaenginMainEvent/Assets/_Project/Art/Characters/Siwoo/SiwooWalk.fbx Walk
 # 메시는 기본 1(넣음): Unity CharSetup 이 아바타 기준 자세를 스킨 바인드 포즈에서 읽는다(메시 없는 FBX 는 기준 자세를 알 수 없음).
 # 배율 = FBX_SCALE_ALL(Unity 에서 루트 배율 1, 키 1.74m), 정면 = glTF +Z 그대로(Unity +Z). 텍스처는 넣지 않는다(GLB 의 JPEG 를 따로 꺼내 씀).
@@ -54,7 +54,7 @@ if hands and mesh:
     import hand_keys
     for o in mesh:
         if 'LeftHand' in o.vertex_groups and 'RightHand' in o.vertex_groups:
-            hand_keys.add_hand_keys(o, arm)
+            hand_keys.add_hand_keys(o, arm, src=src)     # 원본 파일 이름으로 모델별 값(덩치 손) 고름
 
 act = arm.animation_data.action
 act.name = clip

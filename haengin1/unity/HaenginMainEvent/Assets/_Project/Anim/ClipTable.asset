@@ -32,47 +32,47 @@ MonoBehaviour:
     Id: 191
     Length: 1.7666668
     Hit: 0.5152778
-    Reach: 0.7269669
+    Reach: 0.67918795
   - State: Cross
     Id: 192
     Length: 2
     Hit: 0.6333333
-    Reach: 0.6927677
+    Reach: 0.6236331
   - State: Hook
     Id: 193
     Length: 0.99999994
     Hit: 0.29166666
-    Reach: 0.5676499
+    Reach: 0.5695641
   - State: Upper
     Id: 194
     Length: 1.0333334
     Hit: 0.6630556
-    Reach: 0.47633415
+    Reach: 0.49502087
   - State: BigHook
     Id: 195
     Length: 1.7666668
     Hit: 0.7950001
-    Reach: 0.573024
+    Reach: 0.52234274
   - State: Kick
     Id: 209
     Length: 1.4000001
     Hit: 0.65333337
-    Reach: 0.7761626
+    Reach: 0.71630293
   - State: FKick
     Id: 206
     Length: 1.4333334
     Hit: 0.6927778
-    Reach: 0.7912248
+    Reach: 0.8573996
   - State: Knee
     Id: 211
     Length: 2.5000002
     Hit: 0.9375001
-    Reach: 0.452415
+    Reach: 0.39547133
   - State: PushFwd
     Id: 260
     Length: 2.6000001
     Hit: 1.95
-    Reach: 0.47639042
+    Reach: 0.41240168
   - State: Tackle
     Id: 512
     Length: 0.53333336
@@ -82,12 +82,7 @@ MonoBehaviour:
     Id: 259
     Length: 0.70000005
     Hit: 0.5916667
-    Reach: 0.4273535
-  - State: Push
-    Id: 259
-    Length: 4.1333337
-    Hit: 3.5105557
-    Reach: 0.4523775
+    Reach: 0.4533056
   - State: Guard
     Id: 138
     Length: 0.0333333
@@ -108,12 +103,12 @@ MonoBehaviour:
     Length: 1.6666667
     Hit: 0
     Reach: 0
-  - State: Fall
+  - State: FallBig
     Id: 187
     Length: 1.1333334
-    Hit: 0.9922223
+    Hit: 0.9711112
     Reach: 0
-  - State: Lie
+  - State: LieBig
     Id: 187
     Length: 0.3000002
     Hit: 0
@@ -151,5 +146,30 @@ MonoBehaviour:
   - State: Taunt
     Id: 88
     Length: 1.4000001
+    Hit: 0
+    Reach: 0
+  - State: Fall
+    Id: 366
+    Length: 1.0333334
+    Hit: 0.8816667
+    Reach: 0
+  - State: Lie
+    Id: 366
+    Length: 0.3000002
+    Hit: 0
+    Reach: 0
+  - State: Smash
+    Id: 128
+    Length: 1.8666668
+    Hit: 1.3377779
+    Reach: 0.6153517
+  - State: SideL
+    Id: 525
+    Length: 1.2
+    Hit: 0
+    Reach: 0
+  - State: SideR
+    Id: 526
+    Length: 1.3000001
     Hit: 0
     Reach: 0
