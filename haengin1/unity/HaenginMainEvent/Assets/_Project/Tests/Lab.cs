@@ -21,14 +21,14 @@ namespace Haengin.Tests
             yield return null;
         }
 
-        /// 테스트가 만든 장면만 내린다(keep 은 남김)
+        /// 테스트가 만든·연 장면만 내린다(keep 은 남김) — Lab_*, Zone1, CombatLab(M2 녹화)
         public static IEnumerator UnloadOurs(Scene keep)
         {
             for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
             {
                 var o = SceneManager.GetSceneAt(i);
                 if (o == keep || !o.isLoaded) continue;
-                if (o.name.StartsWith("Lab_") || o.name == "Zone1") yield return SceneManager.UnloadSceneAsync(o);
+                if (o.name.StartsWith("Lab_") || o.name == "Zone1" || o.name == "CombatLab") yield return SceneManager.UnloadSceneAsync(o);
             }
         }
 

@@ -6912,56 +6912,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 455738240}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0118d5d565a84704797d7581ebdcfa67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Haengin.Game::Haengin.RouteData
-  Names:
-  - "1. \uC131\uB300 \uD6C4\uBB38"
-  - "2. \uD6C4\uBB38 \uC0C1\uAC00\uAC70\uB9AC(\uAD6D\uBC25\xB7\uD558\uB8E8\uD3B8\uC758\uC810
-    \uC55E)"
-  - "3. \uD6C4\uBB38 \uB4B7\uACE8\uBAA9 \uC8FC\uCC28\uC7A5(Y4)"
-  - "4. \uBA85\uB95C3\uAC00 \uACE8\uBAA9 \uC785\uAD6C"
-  - "5. \uBC18\uC2DC\uC6B0\uB124 \uC9D1 \uC55E"
-  - "6. \uC131\uACFD \uC544\uB798 \uAF2D\uB300\uAE30 \uACC4\uB2E8\uCC38"
-  - "7. \uC640\uB8E1\uACF5\uC6D0 \uC131\uACFD \uC544\uB798 \uACF5\uD130(Y1)"
-  - "8. \uC640\uB8E1\uACF5\uC6D0 \uC131\uACFD\uAE38(\uC554\uBB38 \uC55E)"
-  - "9. \uC640\uB8E1 \uC131\uACFD\uAE38 \uC11C\uCABD"
-  - "10. \uC640\uB8E1\uACF5\uC6D0 \uC804\uB9DD \uC27C\uD130(\uC885\uC810)"
-  Points:
-  - {x: -197.45, y: 30.74, z: 97.35}
-  - {x: -179.54, y: 28.65, z: 103.2}
-  - {x: -172.49, y: 27.2, z: 84.38}
-  - {x: -172.5, y: 27, z: 115.5}
-  - {x: -161, y: 28, z: 125}
-  - {x: -160.5, y: 32.5, z: 137}
-  - {x: -192, y: 38, z: 142}
-  - {x: -215, y: 40, z: 142.2}
-  - {x: -244.75, y: 44, z: 136.5}
-  - {x: -258.6, y: 46, z: 136.3}
-  Radii:
-  - 2.5
-  - 3
-  - 5
-  - 2.5
-  - 2.5
-  - 2
-  - 5
-  - 3
-  - 3
-  - 3
-  SpawnPos: {x: -197.45, y: 30.675533, z: 97.35}
-  SpawnYaw: 34
-  BoundsMin: {x: -274, y: 15, z: 70}
-  BoundsMax: {x: -130, y: 62, z: 174}
---- !u!114 &455738243
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 455738240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af44f7b57fe506949a9a2317e350014d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Haengin.Game::Haengin.RouteGuide
@@ -7071,6 +7021,56 @@ MonoBehaviour:
   DoneDisc: {fileID: 2100000, guid: 5e588276b764a5142aecf0c2155d5886, type: 2}
   StartIndex: 1
   ArriveHeight: 3
+--- !u!114 &455738243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455738240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0118d5d565a84704797d7581ebdcfa67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.RouteData
+  Names:
+  - "1. \uC131\uB300 \uD6C4\uBB38"
+  - "2. \uD6C4\uBB38 \uC0C1\uAC00\uAC70\uB9AC(\uAD6D\uBC25\xB7\uD558\uB8E8\uD3B8\uC758\uC810
+    \uC55E)"
+  - "3. \uD6C4\uBB38 \uB4B7\uACE8\uBAA9 \uC8FC\uCC28\uC7A5(Y4)"
+  - "4. \uBA85\uB95C3\uAC00 \uACE8\uBAA9 \uC785\uAD6C"
+  - "5. \uBC18\uC2DC\uC6B0\uB124 \uC9D1 \uC55E"
+  - "6. \uC131\uACFD \uC544\uB798 \uAF2D\uB300\uAE30 \uACC4\uB2E8\uCC38"
+  - "7. \uC640\uB8E1\uACF5\uC6D0 \uC131\uACFD \uC544\uB798 \uACF5\uD130(Y1)"
+  - "8. \uC640\uB8E1\uACF5\uC6D0 \uC131\uACFD\uAE38(\uC554\uBB38 \uC55E)"
+  - "9. \uC640\uB8E1 \uC131\uACFD\uAE38 \uC11C\uCABD"
+  - "10. \uC640\uB8E1\uACF5\uC6D0 \uC804\uB9DD \uC27C\uD130(\uC885\uC810)"
+  Points:
+  - {x: -197.45, y: 30.74, z: 97.35}
+  - {x: -179.54, y: 28.65, z: 103.2}
+  - {x: -172.49, y: 27.2, z: 84.38}
+  - {x: -172.5, y: 27, z: 115.5}
+  - {x: -161, y: 28, z: 125}
+  - {x: -160.5, y: 32.5, z: 137}
+  - {x: -192, y: 38, z: 142}
+  - {x: -215, y: 40, z: 142.2}
+  - {x: -244.75, y: 44, z: 136.5}
+  - {x: -258.6, y: 46, z: 136.3}
+  Radii:
+  - 2.5
+  - 3
+  - 5
+  - 2.5
+  - 2.5
+  - 2
+  - 5
+  - 3
+  - 3
+  - 3
+  SpawnPos: {x: -197.45, y: 30.675533, z: 97.35}
+  SpawnYaw: 34
+  BoundsMin: {x: -274, y: 15, z: 70}
+  BoundsMax: {x: -130, y: 62, z: 174}
 --- !u!1 &456907264
 GameObject:
   m_ObjectHideFlags: 0
@@ -20731,7 +20731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Haengin.Game::Haengin.DebugHud
   Motor: {fileID: 1935390210}
-  Cam: {fileID: 1341643399}
+  Cam: {fileID: 1341643400}
 --- !u!1 &1112734272
 GameObject:
   m_ObjectHideFlags: 0
@@ -20875,7 +20875,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Haengin.Game::Haengin.RouteHud
   Text: {fileID: 1409144963}
   Plate: {fileID: 1379976640}
-  Guide: {fileID: 455738243}
+  Guide: {fileID: 455738242}
   ArriveFlash: 1.6
   FinishHold: 4
   ArrowSize: 54
@@ -26650,6 +26650,7 @@ GameObject:
   - component: {fileID: 1341643398}
   - component: {fileID: 1341643399}
   - component: {fileID: 1341643400}
+  - component: {fileID: 1341643401}
   m_Layer: 0
   m_Name: CM_Explore
   m_TagString: Untagged
@@ -26855,11 +26856,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1341643392}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70c42abf3edf48148a857bd2e1e2b606, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.TraumaShake
+--- !u!114 &1341643399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341643392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 10bcaf1106b308f4ba1848d61ad96f77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Haengin.Game::Haengin.CamClearance
-  Rig: {fileID: 1341643399}
---- !u!114 &1341643399
+  Rig: {fileID: 1341643400}
+--- !u!114 &1341643400
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -26877,8 +26890,8 @@ MonoBehaviour:
   Motor: {fileID: 1935390210}
   CamTarget: {fileID: 1935390209}
   Tuning: {fileID: 11400000, guid: ae8438c327d118d459d5f8aaa6932cd3, type: 2}
-  Clearance: {fileID: 1341643398}
---- !u!114 &1341643400
+  Clearance: {fileID: 1341643399}
+--- !u!114 &1341643401
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -31796,7 +31809,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Haengin.Game::Haengin.GameUi
   Actions: {fileID: -944628639613478452, guid: c9c5d66d44396ab47b73b8057ae4d9b7, type: 3}
   Font: {fileID: 11400000, guid: d59ae07fe2498c447ab207bf9e54becf, type: 2}
-  Cam: {fileID: 1341643399}
+  Cam: {fileID: 1341643400}
 --- !u!1 &1574797952
 GameObject:
   m_ObjectHideFlags: 0
@@ -39461,11 +39474,11 @@ PrefabInstance:
     - target: {fileID: 3866782560663018707, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
       propertyPath: Cam
       value: 
-      objectReference: {fileID: 1341643399}
+      objectReference: {fileID: 1341643400}
     - target: {fileID: 4305908093809879799, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
       propertyPath: Cam
       value: 
-      objectReference: {fileID: 1341643399}
+      objectReference: {fileID: 1341643400}
     - target: {fileID: 8214876749908705743, guid: ce684cad4d6d292419647bedeb8fecf5, type: 3}
       propertyPath: KillY
       value: 5
@@ -44073,7 +44086,7 @@ SceneRoots:
   - {fileID: 1533136513}
   - {fileID: 1009939201}
   - {fileID: 1109825409}
+  - {fileID: 1114768065}
   - {fileID: 1935390208}
   - {fileID: 1341643393}
   - {fileID: 1570960065}
-  - {fileID: 1114768065}

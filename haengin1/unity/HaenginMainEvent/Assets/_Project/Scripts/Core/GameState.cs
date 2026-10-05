@@ -14,7 +14,7 @@ namespace Haengin
         {
             if (Paused == p) return;
             Paused = p;
-            Time.timeScale = p ? 0f : 1f;
+            TimeFx.SetPaused(p);      // timeScale 은 TimeFx 하나만 쓴다(08 5-2)
             LockCursor(!p);
         }
 

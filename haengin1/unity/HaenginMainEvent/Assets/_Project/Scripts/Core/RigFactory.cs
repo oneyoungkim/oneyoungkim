@@ -175,6 +175,9 @@ namespace Haengin
             };
             d.ShotQualityEvaluation.Enabled = false;
 
+            // 타격 흔들림·줌 펀치(M2, 08 5-3) — 탐색엔 충격이 없어 0(07 4-7 원칙 1 그대로)
+            go.AddComponent<TraumaShake>();
+
             // 벽 간격·다리 가림: Deoccluder 다음(Finalize 단계)에서 머리→카메라 선을 따라 당김
             var cl = go.AddComponent<CamClearance>();
 

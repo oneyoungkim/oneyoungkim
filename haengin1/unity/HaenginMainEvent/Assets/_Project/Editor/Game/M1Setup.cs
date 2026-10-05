@@ -42,14 +42,17 @@ namespace Haengin.EditorGame
 
         // ───────────────────────── 진입점
         [MenuItem("Haengin/M1 다시 만들기(Zone1 + 플레이어)")]
-        public static void Build() => Run(() =>
+        public static void Build() => Run(BuildCore);
+
+        /// Build 의 본체(종료하지 않음 — CombatSetup.BuildAll 이 이어서 부름)
+        public static void BuildCore()
         {
             CharSetup.Setup();
             EnsureTuning();
             BuildPlayerPrefab();
             Zone1Builder.Rebuild();          // BeforeSave → OnZone1Built 가 리그를 붙인다
             SetBuildScenes();
-        });
+        }
 
         [MenuItem("Haengin/M1 + Sandbox 모두 다시 만들기")]
         public static void BuildAll() => Run(() =>
@@ -160,6 +163,8 @@ namespace Haengin.EditorGame
             float bindH = skin != null ? skin.sharedMesh.bounds.size.z * skin.transform.lossyScale.x : -1f;   // Blender Z-up 메시: z = 키
             var loco = inst.AddComponent<LocoAnim>();
             loco.Motor = rig.Motor;
+            // M2(08 문서 10-1): 전투 부품(Fighter·HitReact·LockOn·PlayerCombat) — 탐색 중에는 꺼진 채(전투 시작 때 CombatMode 가 켬)
+            CombatSetup.AddCombatToPlayer(rig.Player);
             var b = ModelFit.WorldBounds(inst.transform);
             string fit = $"배율 {inst.transform.localScale.x:F4} · 자리 {inst.transform.localPosition}";
             PrefabUtility.SaveAsPrefabAsset(rig.Player, PrefabPath, out bool ok);

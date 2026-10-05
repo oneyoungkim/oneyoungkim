@@ -161,6 +161,13 @@ HaenginMainEvent/
 
 - 07 문서 T15(상호작용 고르기)는 `Interactor` 가 아직 없어 미구현(07 11장 12).
 
+### M2 전투 — 0~6단계 (2026-10-06, 설계 = `docs/08_M2_전투_설계.md`, 결과 = 08 문서 11-1)
+- **코드** `Scripts/Combat/`: `Fighter`(HP·상태·피격·기술 실행 `AttackRun`) · `PlayerCombat`(입력 버퍼·약 4타·△ 마무리·회피/읽었다/반격·막기·전진 버팀·잡기 3갈래·기세) · `HitResolver`(부채꼴·구간 판정, 순수 함수) · `TimeFx`(timeScale 단독 소유 — 히트스톱·슬로·일시정지, 입력 버퍼 시계) · `ImpactFx`·`TraumaShake`(흔들림·줌 펀치 = 시안 식) · `HitReact`(젖힘·번쩍·셰이크, 클립 전 임시 공격 자세) · `LockOn` · `CombatCamRig`(CM_Combat) · `CombatMode`(탐색↔전투: 맵 전환·카메라 우선순위·HUD 숨김) · `MoveDef`/`MoveSet`/`MoveLib` · `CombatTuning` · `FighterBody`(적·허수아비 몸) · `HeatSurface`·`CrowdRing` · `CombatFactory`·`CombatLab`(장면 생성·테스트 공용). `Dev/InputScript`(프레임 입력 재생) · `Dev/CombatDebug`(F2 적 다시 · F3 기세 MAX · F4 시우 무적 · F7 판정 보기).
+- **에셋**: `Settings/CombatTuning.asset` · `Settings/SiwooMoves.asset`(기술 14개 하위 에셋) · `Settings/CombatBlends.asset`(CM_Explore↔CM_Combat 0.6/0.8초) — 셋 다 없을 때만 만든다(손으로 고친 값 보존. 기본값을 바꿨으면 지우고 다시). 입력 `HInput` 에 `Combat` 맵. 레이어 12 `Fighter` · 13 `Crowd`.
+- **전투 연습장** `Scenes/CombatLab.unity`: 평지 20×20 + 북쪽 벽(Wall + HeatSurface) + 구경꾼 원 반경 6(12명, Crowd) + 허수아비(태오 모델 회색 `Materials/Lab/M_Dummy_Toon`, HP 999) + 실제 Player 프리팹 + CM_Explore·CM_Combat, 장면이 뜨면 바로 전투. 빌드 목록에는 아직 안 넣음.
+- **Player 프리팹**에 Fighter·HitReact(Visual)·LockOn·PlayerCombat 가 붙는다(탐색 중엔 꺼진 채 — `CombatMode.Begin` 이 켬). Zone1 에는 아직 CM_Combat·CombatMode 가 없다(13단계 인카운터).
+- **테스트**: `CombatTests` C01~C10 · C09b · C17① · C20, `CombatInputTests` C21, `ZCombatShots`(`-c2shots <폴더>` 를 줄 때만, 그래픽 필요 — 시안과 같은 화각의 맞은 순간·연속 프레임·전환·읽었다·크러시·벽꽝). 이름이 Z 로 시작하는 이유: 장면의 PInput 이 실제 HInput 을 켜면 그 뒤 InputTestFixture 의 가짜 입력이 막혀서 InputTests 뒤에 돌게 함. 2026-10-06: **그래픽 켜고 42/42**(M1 27 + C 14 + 녹화 1, 로그 `c_18_all_gfx`).
+
 2026-10-06 4차-2(대기 Idle_6·걷기 Quick_Walk 로 교체, 걷기 1.4 m/s): **27/27 통과**(게임 화면 11장, 로그 `a_26_tests`). T14 걷기 9/9 **140.0초**(경로 221.3m, 시간 한도는 1.3 × 경로 ÷ 1.4 로 같이 늘어남) · 달리기 9/9 46.3초 · 리스폰 0.
 
 2026-10-06 4차(리깅 모델·애니메이터·대각선 이동·HUD): **27/27 통과**(그래픽 켜고 게임 화면 10장 포함, 로그 `a_17_tests`, 실제 실행 50초). T14 걷기 9/9 122.5초 · 달리기 9/9 46.3초 · 리스폰 0(모델을 바꿔도 이동은 같음).
@@ -198,6 +205,7 @@ function Run-Unity([string]$log, [string[]]$more) {
 | Zone1 평면도(위에서) | `Run-Unity "$env:TEMP\u_z1top.log" @('-executeMethod','Haengin.EditorTools.BatchTools.Screenshot','-scene','Assets/_Project/Scenes/Zone1.unity','-out','C:\temp\z1_top.png','-width','1800','-height','1300','-topdown','-area','-274,70,-130,174')` | 직교 투영, 화면 위 = 북. 찍는 동안만 안개·그림자 끔(`-shadows` 면 그림자 넣음). `-area` 없으면 모든 렌더러 범위 |
 | Zone1 장면 컷 | 위와 같고 `-topdown -area …` 대신 `'-view','Zone1/Shots/Shot_Start'`(또는 Shot_StartCam · Shot_Uphill · Shot_Waryong · Shot_Reveal), `-width 1920 -height 1080` | `-view` = 그 오브젝트의 위치·방향·화각(꺼진 Camera)으로 찍음. `-fov 도` 로 화각 덮어쓰기, `-nofog` 로 안개 끄기 |
 | M1 다시 만들기 | `Run-Unity "$env:TEMP\u_m1.log" @('-nographics','-executeMethod','Haengin.EditorGame.M1Setup.Build')` | 캐릭터(CharSetup) + 조정값(없을 때만) + `Prefabs/Player.prefab` + Zone1 다시 만들기(리그 포함) + 빌드 목록(Zone1, Sandbox). Sandbox 까지 한 번에: `M1Setup.BuildAll`(2026-10-06 실행 14초). `Zone1Builder.Build` 만 돌려도 리그가 다시 붙는다(BeforeSave 확장 지점). 리그만: `M1Setup.AddRigToZone1`. 로그 `[M1Setup]` |
+| M2 전투 설정·연습장 | `Run-Unity "$env:TEMP\u_c2.log" @('-nographics','-executeMethod','Haengin.EditorGame.CombatSetup.Build')` | 레이어 12·13 + 충돌 행렬 + 전투 에셋(없을 때만) + Player 프리팹(전투 부품) + `Scenes/CombatLab.unity`. Zone1 까지 다시: `CombatSetup.BuildAll`(= M1 다시 만들기 + 위, 2026-10-06 18초). 로그 `[CombatSetup]` |
 | PlayMode 테스트 | 아래 '테스트 실행' | `-runTests` 에는 **`-quit` 를 붙이지 않는다**(끝나면 스스로 닫힘). 종료 코드 0 = 전부 통과, 2 = 실패 있음 |
 | Windows 빌드 | `Run-Unity "$env:TEMP\u_build.log" @('-nographics','-executeMethod','Haengin.EditorTools.BatchTools.BuildWindows','-out','C:\클로드\haengin1-builds\M1')` | 빌드 목록 장면(**Zone1 첫 장면** → Sandbox), Windows 64비트, **Mono**, 개발 빌드 아님. M1 결과물 위치 = 레포 밖 `C:\클로드\haengin1-builds\M1\HaenginMainEvent.exe`(약 167MB). 빌드가 끝나면 `Fonts/OFL.txt` 를 `<out>\licenses\NotoSansKR-OFL.txt` 로 복사하고(OFL 1.1 은 글꼴과 함께 배포할 때 라이선스 동봉 의무), **배포 금지** 디버그 폴더 `…_BurstDebugInformation_DoNotShip` 을 지운다(2026-10-06부터 자동, 로그 `글꼴 라이선스 동봉` · `배포 금지 폴더 삭제`). 결과 `<out>\HaenginMainEvent.exe`. 로그에 `[BatchTools] 빌드 결과: Succeeded | 크기 | 시간 | 에러 | 경고`. 실패하면 exit 1. 임시 폴더를 못 쓰면 시작 전에 바로 실패 처리 |
 
@@ -214,7 +222,7 @@ $a = @('-batchmode','-projectPath',"`"$proj`"",'-runTests','-testPlatform','Play
 $p = Start-Process $unity -ArgumentList $a -PassThru -WindowStyle Hidden; $p.WaitForExit(); "exit $($p.ExitCode)"
 [xml]$x = Get-Content "$env:TEMP\m1_tests.xml" -Encoding UTF8; $x.'test-run' | Select-Object total, passed, failed, skipped
 ```
-일부만: `'-testFilter','Haengin.Tests.ZoneTests'`.
+일부만: `'-testFilter','Haengin.Tests.ZoneTests'`. 전투만: `'-testFilter','Haengin.Tests.CombatTests|Haengin.Tests.CombatInputTests'`. 전투 연습장 녹화: `-nographics` 빼고 `'-testFilter','Haengin.Tests.ZCombatShots','-c2shots','<폴더>'`.
 
 ## 5. 주의
 

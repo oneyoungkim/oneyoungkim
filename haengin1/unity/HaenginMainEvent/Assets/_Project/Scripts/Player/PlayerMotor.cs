@@ -1,6 +1,7 @@
 // 행인1의 메인이벤트 — 시우 3인칭 이동 (docs/07_M1_조작_설계.md 3장·7-4)
 // CharacterController 기반: 걷기·달리기·가감속·회전·중력·경사·턱·땅 붙이기·맵 밖 리스폰. 점프 없음.
 // 입력은 SetMoveInput 으로 "한 프레임만" 넣는다(PInput·테스트·자동 걷기가 매 프레임 다시 넣음). 입력원이 꺼지면 저절로 멈춘다.
+// M2(08 문서 2-4): 전투가 더한 것 — 걷기 속도 덮어쓰기·몸 방향 고정(락온, 한 프레임만) · 외부 이동(자석·넉백·회피 — AddDisplacement, CharacterController.Move 경유) · Halt · SetYaw.
 using System;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -21,8 +22,10 @@ namespace Haengin
 
         // 이번 프레임 입력
         Vector3 inDir;
-        float inAmt;
-        bool inRun, hasInput;
+        float inAmt, inSpeed = -1f;
+        bool inRun, hasInput, inKeepFacing;
+        Vector3 ext;
+        Collider sideHit, sideHitNow;
 
         // 상태
         Vector3 planarVel, prevPlanarVel, prevPos;
@@ -41,6 +44,8 @@ namespace Haengin
         public Vector3 Velocity { get; private set; }
         /// 실제 수평 속도(m/s)
         public float PlanarSpeed { get; private set; }
+        /// 제 발로 움직인 수평 속도(외부 이동 뺌, 걷기 동작용 — M2)
+        public float OwnSpeed { get; private set; }
         /// 목표로 움직이는 수평 속도(명령값, m/s)
         public float CommandSpeed => planarVel.magnitude;
         /// 명령 속도의 변화(m/s²) — 몸 기울기용
@@ -61,6 +66,8 @@ namespace Haengin
         public MoveTuning T => Tuning != null ? Tuning : (fallback != null ? fallback : fallback = ScriptableObject.CreateInstance<MoveTuning>());
         public CharacterController Controller => cc;
         public int Respawns { get; private set; }
+        /// 지난 이동에서 옆으로 부딪힌 것(전투 벽꽝 검사)
+        public Collider LastSideHit => sideHit;
 
         void Awake()
         {
@@ -98,6 +105,32 @@ namespace Haengin
             inAmt = amount01;
             inRun = run;
             hasInput = true;
+            inSpeed = -1f;
+            inKeepFacing = false;
+        }
+
+        /// 전투(08 2-4): walkSpeed = 이 프레임 걷기 최고 속도(m/s, 앞 1.6 · 뒤·옆 1.3 · 막기 1.0), keepFacing = 몸 방향을 입력 방향으로 돌리지 않음(락온)
+        public void SetMoveInput(Vector3 worldDir, float amount01, bool run, float walkSpeed, bool keepFacing)
+        {
+            SetMoveInput(worldDir, amount01, run);
+            inSpeed = walkSpeed;
+            inKeepFacing = keepFacing;
+        }
+
+        /// 외부 이동(자석·넉백·회피 등) — 다음 이동에 더해져 CharacterController.Move 로 간다(벽은 못 뚫음)
+        public void AddDisplacement(Vector3 d) => ext += new Vector3(d.x, 0f, d.z);
+
+        /// 걷던 속도를 0 으로(기술 시작)
+        public void Halt()
+        {
+            planarVel = Vector3.zero;
+        }
+
+        /// 몸 방향을 바로(락온·소프트 조준)
+        public void SetYaw(float yawDeg)
+        {
+            yaw = Mathf.DeltaAngle(0f, yawDeg);
+            transform.rotation = Quaternion.Euler(0f, yaw, 0f);
         }
 
         /// 테스트용 간단판: 월드 XZ 방향(길이 = 기울기, 1 이면 걷기 최고 속도)
@@ -109,6 +142,8 @@ namespace Haengin
             hasInput = false;
             inAmt = 0f;
             inRun = false;
+            inSpeed = -1f;
+            inKeepFacing = false;
         }
 
         // ───────────────────────── 순간 이동
@@ -126,8 +161,9 @@ namespace Haengin
             airTime = 0f;
             prevPos = LastSafePos = feet;
             hasInput = false;
+            ext = Vector3.zero;
             Velocity = PlanarAccel = Vector3.zero;
-            PlanarSpeed = YawRate = StepDeltaY = 0f;
+            PlanarSpeed = OwnSpeed = YawRate = StepDeltaY = 0f;
             grounded = false;
             if (CamTarget != null) CinemachineCore.OnTargetObjectWarped(CamTarget, delta);
             Teleported?.Invoke(delta);
@@ -144,7 +180,11 @@ namespace Haengin
             var dir = new Vector3(inDir.x, 0f, inDir.z);
             float amt = hasInput ? Mathf.Clamp01(inAmt) : 0f;
             bool run = hasInput && inRun;
+            float walkOverride = hasInput ? inSpeed : -1f;
+            bool keepFacing = hasInput && inKeepFacing;
             hasInput = false;
+            inSpeed = -1f;
+            inKeepFacing = false;
             if (dir.sqrMagnitude < 1e-8f) amt = 0f;
             else dir.Normalize();
             RunHeld = run && amt > 0.5f;
@@ -153,7 +193,8 @@ namespace Haengin
             var target = Vector3.zero;
             if (amt >= 0.01f)
             {
-                float walk = Mathf.Lerp(t.minWalkSpeed, t.walkSpeed, Mathf.Clamp01(amt / t.stickFull));
+                float walk = walkOverride > 0f ? walkOverride * Mathf.Clamp01(amt / t.stickFull)
+                                               : Mathf.Lerp(t.minWalkSpeed, t.walkSpeed, Mathf.Clamp01(amt / t.stickFull));
                 target = dir * (RunHeld ? t.runSpeed : walk);
             }
             float spd = planarVel.magnitude;
@@ -165,7 +206,7 @@ namespace Haengin
             planarVel = Vector3.MoveTowards(planarVel, target, rate * dt);
 
             // 3) 몸 방향 = 입력 방향(속도 방향이 아니라). 정지 중에도 돈다
-            if (amt > 0.1f)
+            if (amt > 0.1f && !keepFacing)
             {
                 float want = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
                 float turn = State == MoveState.Run || RunHeld ? t.turnRateRun : t.turnRateWalk;
@@ -203,7 +244,11 @@ namespace Haengin
             var p0 = transform.position;
             wallSum = Vector3.zero;
             wallHits = 0;
-            var flags = cc.Move(move * dt);
+            sideHitNow = null;
+            var extNow = ext;
+            var flags = cc.Move(move * dt + ext);
+            ext = Vector3.zero;
+            sideHit = sideHitNow;
             if ((flags & CollisionFlags.Sides) != 0 && wallHits > 0)
             {
                 // 벽으로 미는 성분 제거(벽에 붙어 속도가 쌓이지 않게)
@@ -238,6 +283,8 @@ namespace Haengin
             StepDeltaY = wasGrounded && grounded && Mathf.Abs(stepD) > t.stepThreshold ? stepD : 0f;
             Velocity = (pos - prevPos) / dt;
             PlanarSpeed = new Vector3(Velocity.x, 0f, Velocity.z).magnitude;
+            // 걷기 동작용 속도: 외부 이동(자석·넉백·회피, M2)을 뺀 제 발로 움직인 속도. 탐색(M1)에서는 외부 이동이 없어 PlanarSpeed 와 같다
+            OwnSpeed = extNow.sqrMagnitude > 0f ? Mathf.Min(PlanarSpeed, planarVel.magnitude) : PlanarSpeed;
             PlanarAccel = (planarVel - prevPlanarVel) / dt;
             YawRate = Mathf.DeltaAngle(prevYaw, yaw) / dt;
             prevPos = pos;
@@ -278,6 +325,7 @@ namespace Haengin
             {
                 wallSum += hit.normal;
                 wallHits++;
+                sideHitNow = hit.collider;
             }
         }
 

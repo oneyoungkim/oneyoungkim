@@ -1,0 +1,658 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5169872916040332499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: Jab
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC7BD"
+  State: Jab
+  ClipId: 191
+  Startup: 7
+  Active: 3
+  Recovery: 10
+  LinkAfter: 3
+  Range: 1.1
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 5
+  Stagger: 20
+  Knock: 0.05
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 1
+  GuardDmg: -1
+  Heat: 4
+  Word: "\uD37D!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &-4234868167138137991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: FrontKick
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC55E\uCC28\uAE30"
+  State: FrontKick
+  ClipId: 209
+  Startup: 14
+  Active: 4
+  Recovery: 16
+  LinkAfter: 3
+  Range: 1.5
+  HalfAngle: 30
+  HeightTol: 0.6
+  MaxTargets: 2
+  Damage: 12
+  Stagger: 36
+  Knock: 1.2
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: 40
+  Heat: 8
+  Word: "\uBE61!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &-2841264493878032428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: StepKnee
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC2A4\uD15D \uBB34\uB98E"
+  State: StepKnee
+  ClipId: 211
+  Startup: 12
+  Active: 4
+  Recovery: 14
+  LinkAfter: 3
+  Range: 0.8
+  HalfAngle: 40
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 12
+  Stagger: 50
+  Knock: 0.1
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: -1
+  Heat: 8
+  Word: "\uD37D!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 1
+  IgnoreArmor: 0
+  Advance: 0.4
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &-989081600893417131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: Knee
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD074\uB9B0\uCE58 \uBB34\uB98E"
+  State: Knee
+  ClipId: 211
+  Startup: 9
+  Active: 3
+  Recovery: 10
+  LinkAfter: 0
+  Range: 0.9
+  HalfAngle: 90
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 6
+  Stagger: 0
+  Knock: 0
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 1
+  GuardDmg: -1
+  Heat: 4
+  Word: "\uD37D!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 1
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &-140406273302003323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: Push
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD558\uCCB4 \uBC00\uAE30"
+  State: Push
+  ClipId: 259
+  Startup: 10
+  Active: 4
+  Recovery: 16
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 90
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 8
+  Stagger: 40
+  Knock: 0
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: -1
+  Heat: 8
+  Word: "\uD37D!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 1
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e77934bcd5500d541a2f9a3560bd52e8, type: 3}
+  m_Name: SiwooMoves
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveSet
+  Jab: {fileID: -5169872916040332499}
+  Cross: {fileID: 2614371368095396307}
+  Hook: {fileID: 8099952840315966445}
+  CrossEnd: {fileID: 4684162107650355756}
+  FrontKick: {fileID: -4234868167138137991}
+  Upper: {fileID: 440059442179812405}
+  StepKnee: {fileID: -2841264493878032428}
+  BigHook: {fileID: 7713941915979282864}
+  Grab: {fileID: 6227099052077430646}
+  Knee: {fileID: -989081600893417131}
+  Knee3: {fileID: 1030865912818580647}
+  Push: {fileID: -140406273302003323}
+  CounterCross: {fileID: 6233044739138742720}
+  DuckUpper: {fileID: 6758920670248219439}
+--- !u!114 &440059442179812405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: Upper
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uC5B4\uD37C\uCEF7"
+  State: Upper
+  ClipId: 194
+  Startup: 13
+  Active: 4
+  Recovery: 13
+  LinkAfter: 3
+  Range: 0.9
+  HalfAngle: 40
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 14
+  Stagger: 40
+  Knock: 0.16
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 3
+  GuardDmg: -1
+  Heat: 10
+  Word: "\uCF70\uC9C1!"
+  Flinch: 2
+  GuardBreak: 1
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &1030865912818580647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: Knee3
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD074\uB9B0\uCE58 \uBB34\uB98E(3)"
+  State: Knee3
+  ClipId: 211
+  Startup: 9
+  Active: 3
+  Recovery: 10
+  LinkAfter: 0
+  Range: 0.9
+  HalfAngle: 90
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 8
+  Stagger: 0
+  Knock: 0
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: -1
+  Heat: 4
+  Word: "\uD37D!"
+  Flinch: 3
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 1
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &2614371368095396307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: Cross
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD06C\uB85C\uC2A4"
+  State: Cross
+  ClipId: 192
+  Startup: 8
+  Active: 3
+  Recovery: 13
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 7
+  Stagger: 22
+  Knock: 0.1
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: -1
+  Heat: 6
+  Word: "\uBE61!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &4684162107650355756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: CrossEnd
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD06C\uB85C\uC2A4(\uB05D)"
+  State: CrossEnd
+  ClipId: 192
+  Startup: 8
+  Active: 3
+  Recovery: 19
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 9
+  Stagger: 30
+  Knock: 0.3
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: -1
+  Heat: 7
+  Word: "\uBE61!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &6227099052077430646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: Grab
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uBA71\uC0B4 \uC7A1\uAE30"
+  State: Grab
+  ClipId: 259
+  Startup: 8
+  Active: 4
+  Recovery: 18
+  LinkAfter: 3
+  Range: 0.9
+  HalfAngle: 50
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 0
+  Stagger: 0
+  Knock: 0
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 0
+  GuardDmg: -1
+  Heat: 5
+  Word: 
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 1
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &6233044739138742720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: CounterCross
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uCE74\uC6B4\uD130 \uD06C\uB85C\uC2A4"
+  State: CounterCross
+  ClipId: 192
+  Startup: 6
+  Active: 3
+  Recovery: 13
+  LinkAfter: 3
+  Range: 1.2
+  HalfAngle: 35
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 14
+  Stagger: 40
+  Knock: 0.3
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 3
+  GuardDmg: -1
+  Heat: 8
+  Word: "\uBE61!"
+  Flinch: 0
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 2.4
+  MagnetReach: 2.4
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &6758920670248219439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: DuckUpper
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uB354\uD0B9 \uC5B4\uD37C"
+  State: DuckUpper
+  ClipId: 194
+  Startup: 10
+  Active: 4
+  Recovery: 14
+  LinkAfter: 3
+  Range: 0.9
+  HalfAngle: 40
+  HeightTol: 0.6
+  MaxTargets: 1
+  Damage: 20
+  Stagger: 0
+  Knock: 0
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 4
+  GuardDmg: -1
+  Heat: 10
+  Word: "\uCF70\uC9C1!"
+  Flinch: 2
+  GuardBreak: 0
+  Down: 1
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 2.4
+  MagnetReach: 2.4
+  Slow: 0.5
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &7713941915979282864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: BigHook
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD070 \uD6C5"
+  State: BigHook
+  ClipId: 195
+  Startup: 16
+  Active: 4
+  Recovery: 16
+  LinkAfter: 3
+  Range: 1.1
+  HalfAngle: 60
+  HeightTol: 0.6
+  MaxTargets: 2
+  Damage: 18
+  Stagger: 0
+  Knock: 0
+  KnockSide: 0
+  BlockKnock: -1
+  Power: 3
+  GuardDmg: -1
+  Heat: 12
+  Word: "\uCF70\uC9C1!"
+  Flinch: 1
+  GuardBreak: 0
+  Down: 1
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 1
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0
+--- !u!114 &8099952840315966445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1895133ccce05204fbd442326b0ca8a5, type: 3}
+  m_Name: Hook
+  m_EditorClassIdentifier: Haengin.Game::Haengin.MoveDef
+  Label: "\uD6C5"
+  State: Hook
+  ClipId: 193
+  Startup: 12
+  Active: 3
+  Recovery: 13
+  LinkAfter: 3
+  Range: 1
+  HalfAngle: 60
+  HeightTol: 0.6
+  MaxTargets: 2
+  Damage: 8
+  Stagger: 24
+  Knock: 0.1
+  KnockSide: 1
+  BlockKnock: -1
+  Power: 2
+  GuardDmg: -1
+  Heat: 6
+  Word: "\uD37D!"
+  Flinch: 1
+  GuardBreak: 0
+  Down: 0
+  DownKnock: 1
+  Unblockable: 0
+  Crouch: 0
+  IgnoreArmor: 0
+  Advance: 0
+  Magnet: 0.8
+  MagnetReach: -1
+  Slow: 0
+  SlowScale: 0.3
+  StopPower: 0

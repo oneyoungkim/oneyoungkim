@@ -60,7 +60,7 @@ namespace Haengin
             float dt = Time.deltaTime;
             if (dt <= 0f || Motor == null || anim == null) return;
             var t = Motor.T;
-            v = Mathf.SmoothDamp(v, Motor.PlanarSpeed, ref vVel, SpeedSmooth, Mathf.Infinity, dt);
+            v = Mathf.SmoothDamp(v, Motor.OwnSpeed, ref vVel, SpeedSmooth, Mathf.Infinity, dt);     // M2: 자석·넉백·회피로 밀린 것은 걸음이 아님(탐색에선 PlanarSpeed 와 같음)
             if (v < 0.01f) v = 0f;
             Evaluate(v, t.minWalkSpeed, t.walkSpeed, t.runSpeed, out float b, out float r);
             Blend = b;
