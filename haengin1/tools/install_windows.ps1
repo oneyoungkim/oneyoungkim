@@ -44,7 +44,10 @@ function Refresh-Path {
 # ---------- 필수 ----------
 Step '필수 도구'
 Install-Winget 'Git.Git'               'Git'
-Install-Winget 'GitHub.GitLFS'         'Git LFS'
+$lfsBundled = $false
+if (Get-Command git -ErrorAction SilentlyContinue) { git lfs version 2>$null | Out-Null; $lfsBundled = ($LASTEXITCODE -eq 0) }
+if ($lfsBundled) { Say '  [있음] Git LFS (Git에 포함)'; $results['Git LFS'] = '이미 설치됨 (Git에 포함)' }
+else { Install-Winget 'GitHub.GitLFS' 'Git LFS' }
 Install-Winget 'GitHub.GitHubDesktop'  'GitHub Desktop'
 Install-Winget 'BlenderFoundation.Blender' 'Blender'
 Install-Winget 'pixivInc.VRoidStudio'  'VRoid Studio'
@@ -62,6 +65,11 @@ if (-not $DryRun) {
 if (-not $SkipUnity) {
   Step 'Unity 6.3 LTS 에디터'
   $hub = @("$env:ProgramFiles\Unity Hub\Unity Hub.exe", "${env:ProgramFiles(x86)}\Unity Hub\Unity Hub.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+  if (-not $hub) {
+    # Unity Hub 3.22+ installs from winget as an MSIX package under WindowsApps
+    $appx = Get-AppxPackage -Name 'UnityTechnologies.UnityHub*' -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($appx) { $hub = Join-Path $appx.InstallLocation 'app\Unity Hub.exe'; if (-not (Test-Path $hub)) { $hub = $null } }
+  }
   $modules = @('windows-il2cpp', 'visualstudio', 'language-ko')
   if (-not $hub) {
     if ($DryRun) { Say ('  [설치 예정] Unity Hub 설치 후 6000.3 LTS 에디터 + 모듈: ' + ($modules -join ', ')) 'Yellow'; $results['Unity 에디터'] = '설치 예정(DryRun)' }
@@ -85,8 +93,16 @@ if (-not $SkipUnity) {
         Say "  [설치] Unity $ver (수 GB, 오래 걸립니다) ..." 'Yellow'
         $hubArgs = @('--', '--headless', 'install', '--version', $ver) + ($modules | ForEach-Object { @('--module', $_) })
         & $hub @hubArgs
-        if ($LASTEXITCODE -eq 0) { $results['Unity 에디터'] = "설치 완료 $ver" }
-        else { $results['Unity 에디터'] = "실패 (코드 $LASTEXITCODE) — Hub에서 수동 설치"; Say '  Unity 에디터 설치 실패 — Unity Hub 화면에서 설치하세요.' 'Red' }
+        # The MSIX Hub returns at once and keeps downloading in a background Hub process.
+        # Wait for Unity.exe instead of trusting the exit code, and do not call the Hub again
+        # meanwhile: a new Hub instance drops the running install's queued modules as "orphaned".
+        $editorExe = Join-Path $env:ProgramFiles "Unity\Hub\Editor\$ver\Editor\Unity.exe"
+        $deadline = (Get-Date).AddMinutes(120)
+        while (-not (Test-Path $editorExe) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 30; Say "  ... 다운로드·설치 중 ($((Get-Date).ToString('HH:mm')))" }
+        if (Test-Path $editorExe) {
+          Start-Sleep -Seconds 120   # modules install right after the editor
+          $results['Unity 에디터'] = "설치 완료 $ver"
+        } else { $results['Unity 에디터'] = '2시간 안에 끝나지 않음 — Unity Hub 화면에서 확인'; Say '  Unity 에디터 설치가 끝나지 않았습니다 — Unity Hub 화면에서 확인하세요.' 'Red' }
       }
     }
   }
