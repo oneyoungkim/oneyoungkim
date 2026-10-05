@@ -29,7 +29,8 @@
 - 배경: A·A′에 한옥 골목(기와·막새 점·주칠 목재·돌 아랫벽), 종이색 하늘, 북쪽 산·도시 원경, 혜화문(옆 시점) 추가. 타격 이펙트 먹 레시피(fx:'ink'). 카메라 로우 앵글로 낮춤(cam y 1.0). 남은 것: 팔작지붕 추녀, 혜화문 문루가 화면 밖
 - 후지모토풍 재작업(2026-10-05): `concept/FUJIMOTO_STYLE.md` 스타일 바이블, `concept/art/fujimoto/` 설정화 11장(30.25크레딧). 코드로 깎은 3D 시안 캐릭터는 개선됐지만 검수 점수 4~5/10(머리카락·선 표현 한계)
 - **3D 캐릭터 파이프라인 시험**: A포즈 4방향 설정화 → Tripo 멀티뷰 3D → 자동 리깅. 시우 모델 모양은 설정화와 잘 맞음(`concept/art/3d/`, 시험 페이지 https://claude.ai/artifact/Mab3mDahjjWeNvFxaPYfkz). 리깅은 팔이 몸에 붙은 입력 탓에 실패 → 팔 뗀 A포즈로 재생성 필요. 캐릭터당 약 18~27크레딧, 힉스필드 잔액 12.22라 충전 필요(대표에게 보고함). 이후 유니티 Humanoid로 가져가는 게 본 경로
-- Windows 설치 스크립트 `tools/install_windows.ps1`로 **2026-10-05 대표 PC 설치 완료**: Unity 6000.3.25f1(+IL2CPP·Visual Studio·한국어), Unity Hub 3.22.2(MSIX), VRoid Studio, GitHub Desktop. 다음은 Unity 로그인·라이선스(대표가 Hub에서 직접), 프로젝트 생성(Universal 3D)·패키지 추가
+- Windows 설치 스크립트 `tools/install_windows.ps1`로 **2026-10-05 대표 PC 설치 완료**: Unity 6000.3.25f1(+IL2CPP·Visual Studio·한국어), Unity Hub 3.22.2(MSIX), VRoid Studio, GitHub Desktop. 대표 Unity 로그인 완료
+- **Unity 프로젝트** `unity/HaenginMainEvent` (2026-10-05): URP 17.3, Cinemachine 3.1.7, Input System, Timeline, ProBuilder, glTFast(GLB), UniVRM VRM 1.0 v0.131.3, Unity Toon Shader 0.15.1-preview. Sandbox 장면에 시우 GLB 1.74m + 툰 재질·외곽선. 화면 없이 촬영·빌드하는 배치 도구와 명령은 `unity/README.md`. **이 PC 주의: Unity 띄우기 전 `$env:TMPDIR=$env:TEMP`(ESTsoft TMPDIR 때문에 빌드 실패), 프로젝트 경로 53자 이하 유지(경로 길이 한계), Unity는 batchmode로만**
 - 사용자 결정 대기: 코너맨 세계관 공유 범위, 시우 다문화 설정, UFC 실명 여부, 시우 3·4화 새 설정(곽반장=아빠 15년 동료, 미성년 하루 7시간 노동 규칙의 시스템화, 성인 흡연 묘사도 뺄지)
 
 ## 규칙
