@@ -17,37 +17,44 @@ namespace Haengin.EditorTools
         public const string Ttf = Dir + "/NotoSansKR-Bold.ttf";
         public const string AssetPath = Dir + "/KR_Bold_SDF.asset";
         public const string LabelMatPath = Dir + "/KR_Label.mat";
+        // M3(09 2-2·D04): 붓 = Black Han Sans(OFL) · 손글씨 = Gaegu(OFL, 이 PC 의 OYK 글꼴 후보 폴더에서 복사 — 7장 결정 19)
+        public const string BrushTtf = Dir + "/BlackHanSans-Regular.ttf", BrushAsset = Dir + "/KR_Brush_SDF.asset";
+        public const string HandTtf = Dir + "/Gaegu-Regular.ttf", HandAsset = Dir + "/KR_Hand_SDF.asset";
+        public static readonly string[] AllAssets = { AssetPath, BrushAsset, HandAsset };
         const string Tag = "[KoreanFont]";
 
         static readonly Color Paper = new Color(0.957f, 0.937f, 0.902f); // #F4EFE6
 
         /// 글꼴 에셋을 찾거나 만든다. TMP 기본 리소스가 없으면 예외(레포에 Assets/TextMesh Pro 가 있어야 함).
-        public static TMP_FontAsset Ensure(List<string> notes)
+        public static TMP_FontAsset Ensure(List<string> notes) => EnsureFont(Ttf, AssetPath, "KR_Bold_SDF", notes);
+
+        /// 같은 규칙(동적·표본 64·2048 아틀라스·빌드 때 비움)으로 다른 글꼴 에셋을 찾거나 만든다
+        public static TMP_FontAsset EnsureFont(string ttf, string assetPath, string assetName, List<string> notes)
         {
             if (AssetDatabase.FindAssets("t:TMP_Settings").Length == 0)
                 throw new Exception("TMP 기본 리소스(Assets/TextMesh Pro/Resources/TMP Settings.asset)가 없습니다. Window › TextMeshPro › Import TMP Essential Resources 로 넣으세요");
 
-            var fa = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetPath);
+            var fa = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(assetPath);
             if (fa != null) { EnsureFlags(fa); return fa; }
 
-            var imp = AssetImporter.GetAtPath(Ttf) as TrueTypeFontImporter
-                      ?? throw new Exception("한글 글꼴 파일이 없습니다: " + Ttf);
+            var imp = AssetImporter.GetAtPath(ttf) as TrueTypeFontImporter
+                      ?? throw new Exception("글꼴 파일이 없습니다: " + ttf);
             if (!imp.includeFontData) { imp.includeFontData = true; imp.SaveAndReimport(); }
-            var font = AssetDatabase.LoadAssetAtPath<Font>(Ttf) ?? throw new Exception("글꼴을 읽지 못했습니다: " + Ttf);
+            var font = AssetDatabase.LoadAssetAtPath<Font>(ttf) ?? throw new Exception("글꼴을 읽지 못했습니다: " + ttf);
 
             // 표본 크기 64 · 여백 6(SDF 8% 남짓) · 2048 아틀라스(약 900자) · 모자라면 아틀라스를 더 만든다
             fa = TMP_FontAsset.CreateFontAsset(font, 64, 6, GlyphRenderMode.SDFAA, 2048, 2048, AtlasPopulationMode.Dynamic, true)
                  ?? throw new Exception("TMP 글꼴 에셋을 만들지 못했습니다(Include Font Data 확인)");
-            fa.name = "KR_Bold_SDF";
-            AssetDatabase.CreateAsset(fa, AssetPath);
-            fa.material.name = "KR_Bold_SDF Material";
+            fa.name = assetName;
+            AssetDatabase.CreateAsset(fa, assetPath);
+            fa.material.name = assetName + " Material";
             AssetDatabase.AddObjectToAsset(fa.material, fa);
-            fa.atlasTextures[0].name = "KR_Bold_SDF Atlas";
+            fa.atlasTextures[0].name = assetName + " Atlas";
             AssetDatabase.AddObjectToAsset(fa.atlasTextures[0], fa);
             EnsureFlags(fa);
             AssetDatabase.SaveAssets();
-            notes?.Add($"한글 글꼴 에셋 새로 만듦: {AssetPath} (동적, 표본 64pt, 2048 아틀라스)");
-            Debug.Log($"{Tag} 만듦: {AssetPath}");
+            notes?.Add($"한글 글꼴 에셋 새로 만듦: {assetPath} (동적, 표본 64pt, 2048 아틀라스)");
+            Debug.Log($"{Tag} 만듦: {assetPath}");
             return fa;
         }
 
@@ -104,8 +111,11 @@ namespace Haengin.EditorTools
         static void OnPlayMode(PlayModeStateChange st)
         {
             if (st != PlayModeStateChange.EnteredEditMode) return;
-            var fa = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(KoreanFont.AssetPath);
-            if (fa != null && fa.characterTable != null && fa.characterTable.Count > 0) KoreanFont.ResetDynamic(fa);
+            foreach (var path in KoreanFont.AllAssets)
+            {
+                var fa = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path);
+                if (fa != null && fa.characterTable != null && fa.characterTable.Count > 0) KoreanFont.ResetDynamic(fa);
+            }
         }
     }
 }

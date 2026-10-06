@@ -3,6 +3,7 @@
 // 도착 = 시우 발이 원판 반경 안(수평) + 높이차 3m 안. 부품은 Zone1Builder 가 만들고 RouteSetup(에디터)이 이 컴포넌트에 연결한다.
 // HUD·대사·퀘스트 코드는 RouteGuide.Current 의 공개 값과 이벤트만 쓰면 된다(CurrentTarget · Index · Distance · Reached · Completed).
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Haengin
@@ -53,7 +54,7 @@ namespace Haengin
 
         void Start()
         {
-            if (Index < 0) SetIndex(StartIndex);
+            if (Index < 0 && !StoryTargets) SetIndex(StartIndex);
         }
 
         /// 따라갈 대상(기본 = 장면의 PlayerMotor)
@@ -61,7 +62,7 @@ namespace Haengin
 
         void Update()
         {
-            if (Index < 0) SetIndex(StartIndex);
+            if (Index < 0) SetIndex(StoryTargets ? 0 : StartIndex);
             if (player == null)
             {
                 var m = FindAnyObjectByType<PlayerMotor>();
@@ -110,6 +111,73 @@ namespace Haengin
         }
 
         static void Set(GameObject g, bool on) { if (g != null && g.activeSelf != on) g.SetActive(on); }
+
+        // ───────────────────────── M3 이야기 목표(docs/09_M3_버티컬슬라이스_설계.md 2-0: 목표 목록을 장면이 넣게)
+        Stop[] defaultStops;
+        readonly List<GameObject> made = new List<GameObject>();
+        /// 지금 이야기 장면이 넣은 목표를 쓰는 중
+        public bool StoryTargets => defaultStops != null;
+
+        /// 장면 목표로 바꾼다: M1 체크포인트는 모두 숨기고, 첫 체크포인트 부품을 복제해 목표 자리에 세운다(이름표는 뺌 — HUD 가 이름을 보임)
+        public void SetTargets(IList<TargetDef> targets)
+        {
+            if (defaultStops == null) defaultStops = Stops ?? new Stop[0];
+            foreach (var s in defaultStops) Apply(s, State.Hidden);
+            ClearMade();
+            Stop proto = Array.Find(defaultStops, s => s != null && s.Beam != null && s.Disc != null);
+            var list = new List<Stop>();
+            foreach (var t in targets)
+            {
+                var pos = t.Pos;
+                if (Physics.Raycast(pos + Vector3.up * 3f, Vector3.down, out var hit, 10f, 1 << Layers.Ground, QueryTriggerInteraction.Ignore)) pos.y = hit.point.y;
+                var st = new Stop { Name = t.Label, Label = t.Label, Pos = pos, Radius = t.Radius };
+                if (proto != null)
+                {
+                    var root = proto.Disc.transform.parent;
+                    var go = Instantiate(root.gameObject, root.parent);
+                    go.name = "목표 " + t.Label;
+                    go.transform.position = root.position + (pos - proto.Pos);
+                    var tag = go.transform.Find(proto.Tag != null ? proto.Tag.name : "이름표");
+                    if (tag != null) Destroy(tag.gameObject);
+                    GameObject Part(GameObject p) => p != null ? go.transform.Find(p.name)?.gameObject : null;
+                    st.Disc = Part(proto.Disc.gameObject)?.GetComponent<MeshRenderer>();
+                    st.Ring = Part(proto.Ring); st.Pillar = Part(proto.Pillar); st.Flag = Part(proto.Flag); st.Beam = Part(proto.Beam);
+                    made.Add(go);
+                }
+                list.Add(st);
+            }
+            Stops = list.ToArray();
+            LastReached = null;
+            Index = -1;
+            SetIndex(0);
+        }
+
+        /// 이야기 목표를 지운다(장면 끝) — HUD 가 빈칸이 된다
+        public void ClearTargets()
+        {
+            if (defaultStops == null) return;
+            ClearMade();
+            Stops = new Stop[0];
+            LastReached = null;
+            Index = 0;
+        }
+
+        /// M1 체크포인트로 되돌린다(이야기를 끝냈을 때)
+        public void RestoreDefault()
+        {
+            if (defaultStops == null) return;
+            ClearMade();
+            Stops = defaultStops;
+            defaultStops = null;
+            LastReached = null;
+            SetIndex(StartIndex);
+        }
+
+        void ClearMade()
+        {
+            foreach (var g in made) if (g != null) Destroy(g);
+            made.Clear();
+        }
 
         /// HUD 한 줄: "다음: 반시우네 집 앞 · 23m" (끝나면 "도착: …")
         public string HudLine()

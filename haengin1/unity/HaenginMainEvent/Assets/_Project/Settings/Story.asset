@@ -1,0 +1,1176 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05aafa83390a7114f87f3640d64c8227, type: 3}
+  m_Name: Story
+  m_EditorClassIdentifier: Haengin.Game::Haengin.StoryDef
+  Version: 1
+  Episodes:
+  - No: 1
+    Title: "\uCD9C\uC11D\uBD80\uC5D0 \uC5C6\uB294 \uC774\uB984"
+    Dates: "3\uC6D4 3\uC77C"
+    Ledger: "\uC0C8\uBCBD \uBC30\uB2EC 4\uAC74 +8,000\uC6D0 \u2192 \uC5C4\uB9C8 \uD1B5\uC7A5.
+      \uBC1B\uC740 \uC774\uB984 3\uAC1C. \uC9C0\uAC11 2,600\uC6D0"
+    First: 1-0
+  - No: 2
+    Title: "\uD589\uC7781\uC758 \uAC00\uACC4\uBD80"
+    Dates: "3\uC6D4 4\uC77C ~ 3\uC6D4 6\uC77C"
+    Ledger: "\uB9E4\uB2EC \uBB34\uC870\uAC74 \uB098\uAC00\uB294 \uB3C8 1,200,000\uC6D0.
+      \uC9C0\uAC11 2,600\uC6D0. \uD558\uB298 \uCF00\uC774\uD06C 5,000 / 40,000"
+    First: 2-0
+  - No: 3
+    Title: "\uC720\uD1B5\uAE30\uD55C \uD55C \uC2DC\uAC04 \uC804"
+    Dates: "3\uC6D4 10\uC77C ~ 3\uC6D4 14\uC77C"
+    Ledger: "\uD3B8\uC758\uC810 \uC785\uACE0 \uC6D4\uAE09 = \uD3D0\uAE30 \uC0BC\uAC01\uAE40\uBC25
+      2\uAC1C. \uD558\uB298 \uCF00\uC774\uD06C 5,000 / 40,000"
+    First: 3-0
+  - No: 4
+    Title: "\uB178\uAC00\uB2E4\uB294 \uD558\uCCB4\uB2E4"
+    Dates: "3\uC6D4 14\uC77C ~ 3\uC6D4 16\uC77C"
+    Ledger: "\uC77C\uB2F9 120,000\uC6D0 \u2192 \uAD00\uB9AC\uBE44 \uACE0\uC9C0\uC11C
+      \uBC11. \uD558\uB298 \uCF00\uC774\uD06C 10,000 / 40,000"
+    First: 4-0
+  - No: 5
+    Title: "\uBD09\uD22C"
+    Dates: "3\uC6D4 17\uC77C ~ 5\uC6D4 1\uC77C"
+    Ledger: "[4\uC6D4 30\uC77C \uBC24] \uD558\uB298 \uCF00\uC774\uD06C \uBD09\uD22C
+      40,000\uC6D0. \uC9C0\uAC11 3,400\uC6D0. \uB0A8\uB294 \uB3C8 0\uC6D0."
+    First: 5-0
+  - No: 6
+    Title: "2\uD638 \uCD08\uCF54 \uC0DD\uD06C\uB9BC"
+    Dates: "5\uC6D4 1\uC77C"
+    Ledger: "[5\uC6D4 1\uC77C \uC624\uD6C4 5\uC2DC 41\uBD84] \uC794\uC561:"
+    First: 6-0
+  - No: 7
+    Title: "\uC5C9\uB9DD\uC9C4\uCC3D"
+    Dates: "5\uC6D4 1\uC77C ~ 5\uC6D4 4\uC77C"
+    Ledger: "[5\uC6D4 1\uC77C \uC624\uD6C4 5\uC2DC 46\uBD84] \uAD50\uBCF5 \uC154\uCE20
+      \uB2E8\uCD94 \uB450 \uAC1C. \uC7AC\uD0B7 \uC5B4\uAE68 \uC194\uAE30. \uBC14\uC9C0
+      \uC67C\uCABD \uBB34\uB98E \uAD6C\uBA4D. \uC67C\uCABD \uBB34\uB98E(\uAC00\uACA9
+      \uBBF8\uC815). \uC190\uB4F1 \uB450 \uAD70\uB370. \uCF54."
+    First: 7-0
+  Scenes:
+  - Id: 1-0
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 5
+    Minute: 31
+    Place: Zone1
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 0
+    Title: 
+    Summary: 
+    Dlg: 
+    Len: 3
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 1-1
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 5
+    Minute: 31
+    Place: Gukbap
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 0
+    Kind: 1
+    Title: "\uAD6D\uBC25\uC9D1 \uC8FC\uBC29"
+    Summary: "\uAC00\uB9C8\uC1A5 \uAE40 \u2192 \uC5C4\uB9C8 \"\uAD6D\uBB3C \uD758\uB9AC\uBA74
+      \uB108 \uC8FD\uC5B4!\" \u2192 \uBAA9\uB3C4\uB9AC \"\uCD94\uC6CC. \uBC14\uBCF4.\"
+      \u2192 \uC870\uB07C\xB7\uC790\uC804\uAC70 \u2192 \uB4F1 \uB4A4 \uCE74\uBA54\uB77C\uB85C
+      \uC870\uC791\uAD8C"
+    Dlg: 
+    Len: 35
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 1-2
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 5
+    Minute: 35
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -184, y: 29.4, z: 103.4}
+    Yaw: 262
+    Light: 0
+    Kind: 2
+    Title: "\uC131\uADE0\uAD00\uB85C \u2192 \uD6C4\uBB38 \uACBD\uBE44\uC2E4"
+    Summary: "\uC8FC\uD589 \uAD50\uC2B5(8\uB2E8\uACC4 \uC790\uC804\uAC70 \uC804\uC5D0\uB294
+      \uAC77\uAE30). \uACBD\uBE44\uC2E4 \uCC3D \uB108\uBA38 \"\uAD6D\uBC25\" \u2192
+      \uB3C4\uAC10 \uCCAB \uCE78"
+    Dlg: 
+    Len: 30
+    Targets:
+    - Label: "\uD6C4\uBB38 \uACBD\uBE44\uC2E4"
+      Pos: {x: -202.6, y: 31.2, z: 94.4}
+      Radius: 2.2
+    Clock: 1
+    Effects:
+    - "name:\uAD6D\uBC25"
+    - "ledger:+2000:\uBC30\uB2EC\uBE44(\uACBD\uBE44\uC2E4) \u2192 \uC5C4\uB9C8 \uD1B5\uC7A5"
+    Start: []
+  - Id: 1-3
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 5
+    Minute: 39
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -208, y: 31.4, z: 97.6}
+    Yaw: 272
+    Light: 0
+    Kind: 2
+    Title: "\uC640\uB8E1\uACF5\uC6D0\uAE38 \u2192 \uC640\uB8E1 \uC624\uB974\uB9C9"
+    Summary: "\uC5C9\uB369\uC774 \uB4E4\uAE30 \u2192 \uC77C\uC5B4\uC11C\uAE30 \uB9AC\uB4EC(\uC640\uB8E1
+      \uC624\uB974\uB9C9 \uC790\uC804\uAC70\uAE38\uC740 8\uB2E8\uACC4). \uD0DC\uC624
+      \uCE21\uBA74 \uD2B8\uB798\uD0B9 \uCD94\uC6D4"
+    Dlg: 
+    Len: 45
+    Targets:
+    - Label: "\uC640\uB8E1\uACF5\uC6D0\uAE38"
+      Pos: {x: -224, y: 33, z: 96.2}
+      Radius: 2.5
+    - Label: "\uC640\uB8E1 \uC624\uB974\uB9C9 \uC785\uAD6C"
+      Pos: {x: -236.5, y: 34.8, z: 94.6}
+      Radius: 2.5
+    Clock: 1
+    Effects: []
+    Start: []
+  - Id: 1-4
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 5
+    Minute: 44
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -232, y: 34.3, z: 95.2}
+    Yaw: 92
+    Light: 0
+    Kind: 2
+    Title: "\uAF2D\uB300\uAE30 \uC9D1 \u2192 \uB0B4\uB9AC\uB9C9"
+    Summary: "\uD560\uC544\uBC84\uC9C0 \"\uC5B4\uC774. N\uBD84 \uB2A6\uC5C8\uB2E4\"
+      \u2192 \uB0B4\uB9AC\uB9C9 \uCD94\uC6D4 \"\uC26C\uC774\uC775. \uC624\uB298\uB3C4
+      1\uB3001.\" \u2192 \uC18C\uADF9\uC7A5 \uCE74\uB4DC \u300C\uC790\uC804\uAC70\u300D
+      \u2192 \uB3C4\uAC10 \u300C\uBC18\uC2DC\uC6B0 ?\u300D"
+    Dlg: 
+    Len: 25
+    Targets:
+    - Label: "\uD6C4\uBB38 \uC0C1\uAC00\uAC70\uB9AC"
+      Pos: {x: -186, y: 29.6, z: 99}
+      Radius: 3
+    Clock: 1
+    Effects:
+    - "name:\uC5B4\uC774"
+    - "ledger:+2000:\uBC30\uB2EC\uBE44(\uAF2D\uB300\uAE30 \uC9D1) \u2192 \uC5C4\uB9C8
+      \uD1B5\uC7A5"
+    - "ledger:+2000:\uBC30\uB2EC\uBE44(\uAF2D\uB300\uAE30 \uC9D1) \u2192 \uC5C4\uB9C8
+      \uD1B5\uC7A5"
+    - "name:\uC790\uC804\uAC70"
+    - "ledger:+2000:\uBC30\uB2EC\uBE44(\uC18C\uADF9\uC7A5) \u2192 \uC5C4\uB9C8 \uD1B5\uC7A5"
+    Start: []
+  - Id: 1-5
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 6
+    Minute: 50
+    Place: Home
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 3
+    Title: "\uC2DC\uC6B0\uB124 \u2014 \uC591\uAC08\uB798 \uB54B\uAE30"
+    Summary: "\uD558\uB298 \"6\uBD84 \uB2A6\uC5C8\uC5B4\" \u2192 \uC591\uAC08\uB798
+      \uB54B\uAE30 3\uD68C(\uC591\uD30C \u2192 \uB2E4\uC2DC \u2192 \uD569\uACA9)
+      \u2192 \uC11C\uBA85 \"\uC2F8\uC778 \uB108\uBB34 \uC5C6\uC5B4 \uBCF4\uC5EC\"
+      \u2192 \"\uC62C\uD574\uB294 \uB118\uC5B4\uC9C0\uC9C0 \uB9C8.\""
+    Dlg: 
+    Len: 45
+    Targets: []
+    Clock: 0
+    Effects:
+    - braid:3
+    - rel:haneul:+3
+    Start: []
+  - Id: 1-6
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 8
+    Minute: 23
+    Place: School
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 1
+    Title: "\uD61C\uC131\uACE0 \uB4B7\uBB38\xB72-3\uBC18"
+    Summary: "\u300C\uAF43\u300D \uC120\uC5B8 \u2192 \"\uBC18\uC2DC\uC6B0 \uC5C6\uB2C8?\"
+      \u2192 \uD0DC\uC624 \"\uB4B7\uBB38\uC5D0 \uC788\uC5B4\uC694\" \u2192 \uBBFC\uC7AC
+      \"\uC544 \uD589\uC7781\uC774\uB124\u314B\u314B\" \u2192 \uD559\uC608\uD68C
+      \uD751\uBC31 \uCEF7 \u2192 \uAD50\uC2E4 \uAC00\uB85C\uC9C0\uB974\uAE30(\uBD89\uC740
+      \uBE44\uB124\uD305) \u2192 \uC5C4\uC9C0 1\uCD08 \u2192 \uAC00\uBC29"
+    Dlg: 
+    Len: 45
+    Targets: []
+    Clock: 0
+    Effects:
+    - "name:\uD589\uC7781"
+    Start: []
+  - Id: 1-7
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 9
+    Minute: 10
+    Place: School
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 1
+    Title: "2-3\uBC18 \u2014 \uBC18\uCD0C \uB188"
+    Summary: "\uBBFC\uC7AC \uBB34\uB9AC \"\uBC18\uCD0C \uB188\" \u2192 \uCCAB '\uCC38\uAE30'
+      \uC120\uD0DD \u2192 \uD6C5 \uC790\uB9C9 + \uB77D\uC628 \uB9C8\uCEE4 0.5\uCD08"
+    Dlg: 
+    Len: 20
+    Targets: []
+    Clock: 0
+    Effects:
+    - "name:\uBC18\uCD0C \uB188"
+    Start: []
+  - Id: 2-0
+    Ep: 2
+    Month: 3
+    Day: 4
+    Hour: 7
+    Minute: 30
+    Place: Zone1
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 0
+    Title: 
+    Summary: 
+    Dlg: 
+    Len: 3
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 2-1
+    Ep: 2
+    Month: 3
+    Day: 4
+    Hour: 12
+    Minute: 40
+    Place: School
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 6
+    Title: "\uAC00\uACC4\uBD80 \uACF5\uAC1C"
+    Summary: "\uC218\uC785\xB7\uC9C0\uCD9C\xB7\uB9E4\uB2EC 1,200,000 \u2192 \"\uC2E4\uB9AC\uCF58\"
+      \xB7 \uBC18\uC7A5 \uC120\uAC70 \uBC31\uC9C0 \xB7 \uB9E4\uC810 200\uC6D0 \xB7
+      \uC6B0\uC720 \uBBF8\uC5ED\uAD6D \uD751\uBC31 \uCEF7 \u2192 '\uCC38\uAE30' \uC120\uD0DD
+      [\uB2E4 \uBA39\uB294\uB2E4]"
+    Dlg: 
+    Len: 35
+    Targets: []
+    Clock: 0
+    Effects:
+    - "entry:\uBC18\uC7A5 \uC120\uAC70 \u2014 \uBC31\uC9C0"
+    - "entry:\uB9E4\uC810 \uC154\uD2C0 \u2014 5\uBD84\uC5D0 200\uC6D0"
+    Start: []
+  - Id: 2-2
+    Ep: 2
+    Month: 3
+    Day: 6
+    Hour: 19
+    Minute: 30
+    Place: Gukbap
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 2
+    Kind: 1
+    Title: "\uAD6D\uBC25\uC9D1 \uD640"
+    Summary: "\uC7C1\uBC18 4\uAC1C \u2192 \uACE0\uAE30 \uB450 \uBC30 \"\uB0A8\uC558\uC5B4\"
+      \u2192 \uD560\uBA38\uB2C8 \"\uD30C\uC57C. \uB108 \uADF8\uB7EC\uB2E4 \uAC00\uAC8C
+      \uB9DD\uD55C\uB2E4\" + \uACC4\uB780 \uD504\uB77C\uC774"
+    Dlg: 
+    Len: 25
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 2-3
+    Ep: 2
+    Month: 3
+    Day: 6
+    Hour: 20
+    Minute: 30
+    Place: Gukbap
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 3
+    Kind: 1
+    Title: "\uD558\uB298 \u300C\uC0DD\uC77C \uC694\uAD6C\uC0AC\uD56D\u300D"
+    Summary: "\uCCB4\uD06C\uB9AC\uC2A4\uD2B8 UI \u2192 \"\u2026\uBE44\uC2F8\uBA74
+      1\uD638\uB3C4 \uB3FC.\" \"2\uD638 \uD574.\" \u2192 \uD018\uC2A4\uD2B8 \u300C\uD558\uB298\uC774
+      \uC0DD\uC77C\u300D D-56 \xB7 \uBD09\uD22C \uCCAB 5\uCC9C \uC6D0"
+    Dlg: 
+    Len: 35
+    Targets: []
+    Clock: 0
+    Effects:
+    - "flag:\uD018\uC2A4\uD2B8_\uD558\uB298\uC0DD\uC77C"
+    - envelope:+5000
+    Start:
+    - quest
+  - Id: 2-4
+    Ep: 2
+    Month: 3
+    Day: 6
+    Hour: 21
+    Minute: 40
+    Place: Gukbap
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 3
+    Kind: 1
+    Title: "\uAD6D\uBC25\uC9D1 \uB9C8\uAC10"
+    Summary: "\uAD00\uB9AC\uBE44 \uACE0\uC9C0\uC11C \u2192 \"'\uC815\uD638 \uC544\uB4E4.
+      \uADF8\uB188 \uBCF4\uB0B4.'\" \u2192 \uC554\uC804 \uC790\uB9C9 \u300C\uBC18\uC815\uD638\u300D"
+    Dlg: 
+    Len: 20
+    Targets: []
+    Clock: 0
+    Effects:
+    - "flag:\uC815\uD638\uC544\uB4E4_\uC608\uACE0"
+    Start: []
+  - Id: 3-0
+    Ep: 3
+    Month: 3
+    Day: 10
+    Hour: 22
+    Minute: 0
+    Place: Zone1
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 0
+    Title: 
+    Summary: 
+    Dlg: 
+    Len: 3
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 3-1
+    Ep: 3
+    Month: 3
+    Day: 10
+    Hour: 22
+    Minute: 10
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -180.5, y: 28.8, z: 101.2}
+    Yaw: 80
+    Light: 3
+    Kind: 3
+    Title: "\uC0C1\uAC00 \uC55E \u2014 \uD558\uCC28"
+    Summary: "\uBB3C\uB958 \uD2B8\uB7ED \uBC15\uC2A4 6\uAC1C, \uBB34\uB98E \uAD7D\uD600
+      \uB4E4\uAE30\xB7\uD5C8\uB9AC \uB4E4\uAE30 \uACBD\uACE0 \u2192 \uD3B8\uC758\uC810
+      \uB4B7\uBB38(11\uB2E8\uACC4)"
+    Dlg: 
+    Len: 35
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 3-2
+    Ep: 3
+    Month: 3
+    Day: 10
+    Hour: 22
+    Minute: 25
+    Place: Conv
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 3
+    Kind: 3
+    Title: "\uD558\uB8E8\uD3B8\uC758\uC810 \u2014 \uC9C4\uC5F4\xB7\uD3D0\uAE30"
+    Summary: "\uB098\uB9AC \"3\uBC18. \uBC15\uC2A4 \uAC70\uAFB8\uB85C \uB1A8\uC5B4.\"
+      \u2192 \uBC18\uCC3D\uACE0 \uC120\uD0DD\uC9C0 \u2192 \uB3C4\uAC10 \u300C3\uBC18\u300D
+      \u2192 \uC9C4\uC5F4(\uC120\uC785\uC120\uCD9C) \u2192 \uD3D0\uAE30(22:30 '\uD310\uB9E4
+      \uBD88\uAC00' + \uCD9C\uC11D\uBD80 \uD39C \uD50C\uB798\uC2DC)"
+    Dlg: 
+    Len: 45
+    Targets: []
+    Clock: 0
+    Effects:
+    - "name:3\uBC18"
+    - "item:\uD3D0\uAE30 \uC9C1\uC804 \uC0BC\uAC01\uAE40\uBC25:2"
+    Start: []
+  - Id: 3-3
+    Ep: 3
+    Month: 3
+    Day: 10
+    Hour: 22
+    Minute: 50
+    Place: Conv
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 3
+    Kind: 1
+    Title: "\uACC4\uC0B0\uB300"
+    Summary: "\uCD5C\uC0AC\uC7A5 \uBD09\uC9C0 \"\uB178\uB3D9\uC758 \uB300\uAC00\uC9C0,
+      \uB3D9\uC815 \uC544\uB2C8\uB2E4.\" \u2192 \uD30C\uB77C\uC194\xB7\uCD08\uCF54\uC6B0\uC720
+      \u2192 \uB77C\uB514\uC624 \uBCFC\uB968 \uC5C5"
+    Dlg: 
+    Len: 20
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 3-4
+    Ep: 3
+    Month: 3
+    Day: 13
+    Hour: 21
+    Minute: 30
+    Place: Home
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 3
+    Kind: 1
+    Title: "\uC2DC\uC6B0\uB124 \u2014 \uB3D9\uC758\uC11C"
+    Summary: "\uC774\uC218\uC99D(\uC544\uC774\uD15C \uD31D\uC5C5) \u2192 \uC5C4\uB9C8
+      \uC11C\uBA85 \"\uC751. \uC6B4. \uD30C.\" \u2192 \"\uB2E4\uCE58\uC9C0 \uB9C8.
+      \uC544\uBE60\uCC98\uB7FC\u2026\""
+    Dlg: 
+    Len: 15
+    Targets: []
+    Clock: 0
+    Effects:
+    - "item:\uAE30\uCD08\uC548\uC804\uBCF4\uAC74\uAD50\uC721 \uC774\uC218\uC99D"
+    Start: []
+  - Id: 3-5
+    Ep: 3
+    Month: 3
+    Day: 14
+    Hour: 6
+    Minute: 55
+    Place: Site
+    Spawn: Gate
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 1
+    Title: "\uD604\uC7A5 \uC785\uAD6C"
+    Summary: "\uD615\uB4E4 \"\uBB50\uC57C, \uC560\uAE30\uB124?\" \u2192 \u300C\uD615\uD2C0
+      \uBC18\uC7A5 \u2014 \uACFD\uCD98\uC2DD\u300D \u2192 \"\u2026\uC815\uD638 \uC544\uB4E4.\"
+      \"\uB9D0\uB790\uB124.\" \u2192 \"\uB118\uC5B4\uC9C0\uBA74 \uC9D1\uC5D0 \uAC00\uB77C.\""
+    Dlg: 
+    Len: 20
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 4-0
+    Ep: 4
+    Month: 3
+    Day: 14
+    Hour: 7
+    Minute: 0
+    Place: Zone1
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 0
+    Title: 
+    Summary: 
+    Dlg: 
+    Len: 3
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 4-1
+    Ep: 4
+    Month: 3
+    Day: 14
+    Hour: 7
+    Minute: 0
+    Place: Site
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 3
+    Title: "\uD604\uC7A5 \u2014 \uC720\uB85C\uD3FC"
+    Summary: "\uCCB4\uC870 \u2192 \"\uC815\uD638 \uC544\uB4E4.\" \uB3C4\uAC10(\uB530\uB73B\uD55C
+      \uC0C9) \u2192 \uC720\uB85C\uD3FC [\uB450 \uC7A5/\uD55C \uC7A5] \u2192 \"\uB178\uAC00\uB2E4\uB294
+      \uD558\uCCB4\uB2E4.\"(10\uB2E8\uACC4)"
+    Dlg: 
+    Len: 40
+    Targets: []
+    Clock: 0
+    Effects:
+    - "name:\uC815\uD638 \uC544\uB4E4"
+    Start: []
+  - Id: 4-2
+    Ep: 4
+    Month: 3
+    Day: 14
+    Hour: 13
+    Minute: 30
+    Place: Site
+    Spawn: Stairs
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 3
+    Title: "\uD604\uC7A5 \uACC4\uB2E8 \u2014 \uACF0\uBC29"
+    Summary: "\uACF0\uBC29 \u2192 14\uBC88\uC9F8 \uBC15\uB9AC\uC81C \uC2AC\uB9BD
+      \u2192 \uC2AC\uB85C \u2192 1\uC778\uCE6D '\uC544\uBE60 \uBC00\uAE30' \u2192
+      2\uB2E8 \uC785\uB825 \u2192 \"\uC624, \uC815\uD638 \uC544\uB4E4! \uD558\uCCB4
+      \uC88B\uB124!\"(10\uB2E8\uACC4)"
+    Dlg: 
+    Len: 60
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 4-3
+    Ep: 4
+    Month: 3
+    Day: 14
+    Hour: 15
+    Minute: 0
+    Place: Site
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 1
+    Title: "\uD604\uC7A5 \u2014 \uC815\uC0B0"
+    Summary: "\"\uB2C8 \uC5C4\uB9C8\uB294. \uC798 \uC788\uB0D0\" \u2192 7\uC2DC\uAC04
+      \uC548\uB0B4 \u2192 \uC77C\uB2F9 120,000 \u2192 \uB4F1 \"\uD55C \uBC88\uB3C4
+      \uC548 \uB118\uC5B4\uC84C\uB2E4.\""
+    Dlg: 
+    Len: 25
+    Targets: []
+    Clock: 0
+    Effects:
+    - "ledger:+120000:\uC77C\uB2F9 \u2192 \uAD00\uB9AC\uBE44 \uACE0\uC9C0\uC11C \uBC11"
+    Start: []
+  - Id: 4-4
+    Ep: 4
+    Month: 3
+    Day: 14
+    Hour: 21
+    Minute: 0
+    Place: Home
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 3
+    Kind: 5
+    Title: "\uBABD\uD0C0\uC8FC \u2014 \uD3AD\uADC4"
+    Summary: "\uACE0\uC9C0\uC11C \uBC11 \uBD09\uD22C \u2192 \uACE0\uAE30\uAC00 \uAD6D\uBB3C\uBCF4\uB2E4
+      \uB9CE\uC740 \uAD6D \u2192 \uD3AD\uADC4 \uAC78\uC74C + \uD558\uB298 \uC911\uACC4
+      \u2192 \uBD09\uD22C 1\uB9CC \uC6D0 \u2192 \uC0C8\uBCBD \uC624\uB974\uB9C9 \uCCAD\uC18C\uCC28"
+    Dlg: 
+    Len: 20
+    Targets: []
+    Clock: 0
+    Effects:
+    - envelope:+5000
+    Start: []
+  - Id: 4-5
+    Ep: 4
+    Month: 3
+    Day: 16
+    Hour: 8
+    Minute: 10
+    Place: School
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 1
+    Title: "2-3\uBC18 \u2014 \uC6B0\uC720\uD329"
+    Summary: "\uC6B0\uC720 \u2192 \uC9C0\uD37C \u2192 \uBD09\uD22C \u2192 \uC190\uBC14\uB2E5
+      \u2192 '\uCC38\uAE30' \uACE0\uC815 \uC120\uD0DD \u2192 \uD0DC\uC624 \uC77C\uACF1
+      \uAC78\uC74C \u2192 \"\uADF8\uB7FC \uBB54\uB370. \uBD88\uC30D\uD574\uC11C?\"
+      \u2192 \uB4B7\uBB38"
+    Dlg: 
+    Len: 60
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 4-6
+    Ep: 4
+    Month: 3
+    Day: 16
+    Hour: 8
+    Minute: 16
+    Place: School
+    Spawn: Hall
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 1
+    Title: "\uBCF5\uB3C4 \uB05D \uCC3D\uAC00 / \uC2E0\uBC1C\uC7A5"
+    Summary: "\"\uAC1C\uD559\uB0A0\uC5D4 \uCC3E\uC544\uC84C\uACE0, \uC624\uB298\uC740
+      \uAD6C\uD574\uC84C\uB2E4.\" \u2192 \uC2E0\uBC1C\uC7A5 \uBBFC\uC7AC \"\u2026\uD558\uB298\uC774\uAC00
+      \uB204\uAD6C\uB0D0?\""
+    Dlg: 
+    Len: 20
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 5-0
+    Ep: 5
+    Month: 3
+    Day: 17
+    Hour: 7
+    Minute: 30
+    Place: Zone1
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 0
+    Title: 
+    Summary: 
+    Dlg: 
+    Len: 3
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 5-1
+    Ep: 5
+    Month: 3
+    Day: 17
+    Hour: 7
+    Minute: 30
+    Place: Home
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 5
+    Title: "\uBABD\uD0C0\uC8FC \u2014 \uBD09\uD22C"
+    Summary: "\uC9C4\uC9DC \uC2DC\uAC04\uD45C \uCE74\uB4DC \u2192 \uBD09\uD22C\uB294
+      \uC7AC\uD0B7 \uC548\uC8FC\uBA38\uB2C8 \u2192 \uBBFC\uC7AC \"\uD558\uB298\uC774
+      \uC798 \uC788\uB0D0?\" \u2192 \uADFC\uB85C\uACC4\uC57D\uC11C \u2192 \uBC9A\uAF43
+      \u2192 \uD558\uB298 \uC18C\uC6D0 \uBAA9\uB85D \u2192 \uC77C\uC694\uC77C \uBC24
+      \uBD09\uD22C +5\uCC9C \uC5EC\uC12F \uBC88 \u2192 4/30 \uBD09\uD22C \uC138\uAE30
+      \u2192 5/1 \"\uBC18\uD558\uB298 \uB2D8!\""
+    Dlg: 
+    Len: 30
+    Targets: []
+    Clock: 0
+    Effects:
+    - envelope:+5000
+    - envelope:+5000
+    - envelope:+5000
+    - envelope:+5000
+    - envelope:+5000
+    - envelope:+5000
+    - wallet=3400
+    - "name:\uBC18\uD558\uB298 \uB2D8"
+    Start: []
+  - Id: 5-2
+    Ep: 5
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 30
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -191.5, y: 30.3, z: 98.3}
+    Yaw: 100
+    Light: 2
+    Kind: 2
+    Title: "\uC131\uADE0\uAD00\uB85C \u2192 \uD6C4\uBB38 \uB4B7\uACE8\uBAA9 \uC8FC\uCC28\uC7A5"
+    Summary: "\uC9E7\uC740 \uC8FC\uD589(\uC0DD\uD06C\uB9BC \uAC8C\uC774\uC9C0) \u2192
+      \uC790\uC804\uAC70 \uC138\uC6B0\uAE30 \u2192 \uC0C1\uC790 \uB4E0 \uAC77\uAE30
+      \u2192 \uC790\uD310\uAE30 \uBD88\uBE5B \uC544\uB798 \uADF8\uB9BC\uC790 \uC14B
+      \u2192 \"\u2026\uB0B4\uB194.\""
+    Dlg: 
+    Len: 40
+    Targets:
+    - Label: "\uD6C4\uBB38 \uB4B7\uACE8\uBAA9 \uC8FC\uCC28\uC7A5"
+      Pos: {x: -172, y: 27.2, z: 87.6}
+      Radius: 3
+    Clock: 1
+    Effects:
+    - "flag:\uBBFC\uC7AC\uAC00_\uC0C1\uC790\uB97C_\uBD04"
+    Start: []
+  - Id: 6-0
+    Ep: 6
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 40
+    Place: Zone1
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 0
+    Title: 
+    Summary: 
+    Dlg: 
+    Len: 3
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 6-1
+    Ep: 6
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 40
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -172, y: 27.2, z: 87.6}
+    Yaw: 200
+    Light: 2
+    Kind: 1
+    Title: "\uC8FC\uCC28\uC7A5 \u2014 \uC0C1\uC790"
+    Summary: "\uC0C1\uC790 \uB099\uD558 \uC2AC\uB85C '\uD22D.' \u2192 \uBBFC\uC7AC
+      \uD770 \uC6B4\uB3D9\uD654 '\uAFB9.' \u2192 \"\uC544, \uC2E4\uC218\u314B\" \u2192
+      \uC784\uCC2C \uD734\uB300\uD3F0 REC \u2192 '\uB2D8' \uBB49\uAC1C\uC9D0"
+    Dlg: 
+    Len: 20
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 6-2
+    Ep: 6
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 41
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -172, y: 27.2, z: 87.6}
+    Yaw: 200
+    Light: 2
+    Kind: 1
+    Title: "\uCCAB \uBC18\uD56D \uC810\uD654"
+    Summary: "\uAC00\uACC4\uBD80 \uACC4\uC0B0 \uC904 \u2192 \u300C\uC794\uC561:\u300D
+      \uC22B\uC790\uAC00 \uC548 \uB728\uACE0 \uAEBC\uC9D0 \u2192 \uBE44\uB124\uD305
+      \uBD89\uC740\uC0C9 \u2192 \uC8FC\uD669 \u2192 \uC8FC\uBA39 \u2192 \uAE30\uC138
+      \uCCAB \uC810\uD654(14\uB2E8\uACC4)"
+    Dlg: 
+    Len: 18
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 6-3
+    Ep: 6
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 41
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -172, y: 27.2, z: 87.6}
+    Yaw: 200
+    Light: 2
+    Kind: 4
+    Title: "\uBCF4\uC2A4\uC804 1\uD398\uC774\uC988"
+    Summary: "vs \uBBFC\uC7AC \uAD50\uC2B5 5\uB2E8\uACC4 \u2014 \uB77D\uC628 / \u25A1
+      \uD5DB\uBC29 + \uD558\uCCB4 \uBC84\uD300 / R1 / \xD7 \uC784\uCC2C \uB3CC\uC9C4
+      / \u25A1\u25B3 \uC5B4\uD37C(14\uB2E8\uACC4)"
+    Dlg: 
+    Len: 60
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 6-4
+    Ep: 6
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 43
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -172, y: 27.2, z: 87.6}
+    Yaw: 200
+    Light: 2
+    Kind: 1
+    Title: "\uAC74\uC6B0"
+    Summary: "\uBBFC\uC7AC \"\u2026\uAC74\uC6B0\uC57C.\" \u2192 \uC288\uD37C\uC544\uBA38
+      \u2192 \uD5E4\uB4DC\uB77D \u2192 \uBC14\uB2E5 '\uCFF5.' \u2192 \uB204\uC6B4
+      \uC2DC\uC810 \uD558\uB298 \u2192 \"\u2026\uC77C\uC5B4\uB098.\""
+    Dlg: 
+    Len: 18
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 7-0
+    Ep: 7
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 43
+    Place: Zone1
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 0
+    Title: 
+    Summary: 
+    Dlg: 
+    Len: 3
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 7-1
+    Ep: 7
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 43
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -172, y: 27.2, z: 87.6}
+    Yaw: 200
+    Light: 2
+    Kind: 4
+    Title: "\uBCF4\uC2A4\uC804 2\uD398\uC774\uC988"
+    Summary: "'\uC77C\uC5B4\uB098\uAE30' \uC5F0\uD0C0 \u2192 1:3 \u2192 \uC4F0\uB808\uAE30\uD1B5
+      \u2192 \uCC28\uB2E8\uAE30 \uBB34\uB98E \u2192 \u300C\uBC30\uB2EC \uC790\uC804\uAC70\u300D(\uC55E\uBC14\uD034\uB85C
+      \uC815\uAC15\uC774 \u2192 \uC9E7\uC740 \uC5B4\uD37C)(14\uB2E8\uACC4)"
+    Dlg: 
+    Len: 90
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: 7-2
+    Ep: 7
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 46
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -172, y: 27.2, z: 87.6}
+    Yaw: 200
+    Light: 2
+    Kind: 1
+    Title: "\uC11C \uC788\uB294 \uD589\uC7781"
+    Summary: "\"\uC11C \uC788\uB294 \uAC74 \uD558\uB098\uC600\uB2E4. \uCF54\uD53C
+      \uD758\uB9AC\uB294 \uD589\uC7781.\" \u2192 \uAC00\uACC4\uBD80 \uACB0\uC0B0
+      \uCE74\uB4DC \u2192 \"\u2026\uBC18\uD558\uB298.\" \u2192 \uBE48 \uBD09\uD22C
+      \"\uBE48 \uBD09\uD22C\uB294 \uC9C0\uCF30\uB2E4. \uC6C3\uACBC\uB2E4.\""
+    Dlg: 
+    Len: 20
+    Targets: []
+    Clock: 0
+    Effects:
+    - "entry:\uAD50\uBCF5 \uC154\uCE20 \uB2E8\uCD94 \uB450 \uAC1C \xB7 \uC67C\uCABD
+      \uBB34\uB98E(\uAC00\uACA9 \uBBF8\uC815)"
+    Start: []
+  - Id: 7-3
+    Ep: 7
+    Month: 5
+    Day: 1
+    Hour: 17
+    Minute: 50
+    Place: Gukbap
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 3
+    Kind: 1
+    Title: "\uAD6D\uBC25\uC9D1 \u2014 \uC0DD\uC77C"
+    Summary: "\uC5C4\uB9C8 \uCC2C\uBB3C \uD589\uC8FC \"\uBC14\uBCF4.\" \u2192 \uD558\uB298
+      \"\uC774\uC790\uB294 5%\uC57C.\" \u2192 \"\uAE00\uC528\uB294 \uC0B4\uC558\uB124.\"
+      \u2192 \uAE34 \uCD08 11\uAC1C \xB7 \uC0DD\uC77C \uB178\uB798 1\uC808 \u2192
+      \uC18C\uC6D0 1\uBC88 \"1\uBC88. \uC624\uBE60\uAC00 \uC774\uB984\uC73C\uB85C
+      \uBD88\uB9AC\uAC8C \uD574 \uC8FC\uC138\uC694.\""
+    Dlg: 
+    Len: 50
+    Targets: []
+    Clock: 0
+    Effects:
+    - rel:haneul:+1
+    Start: []
+  - Id: 7-4
+    Ep: 7
+    Month: 5
+    Day: 4
+    Hour: 8
+    Minute: 20
+    Place: School
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 1
+    Kind: 6
+    Title: "\uC6D4\uC694\uC77C \uB4B7\uBB38 \u2014 \uB370\uBAA8 \uACB0\uC0B0"
+    Summary: "\uC544\uBB34\uB3C4 \uC6C3\uC9C0 \uC54A\uB294\uB2E4 \u2192 \uB370\uBAA8
+      \uACB0\uC0B0(\uAC00\uACC4\uBD80 \uD55C \uC904\xB7\uB3C4\uAC10 7/8\xB7\uCC38\uC740
+      \uD69F\uC218\xB7\uCCAB \uD3C9\uD310) \u2192 \"1\uBD80 \u300C\uD589\uC7781\u300D\uC740
+      \uACC4\uC18D\uB429\uB2C8\uB2E4\""
+    Dlg: 
+    Len: 25
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  Test:
+  - Id: T1
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 5
+    Minute: 35
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -184, y: 29.4, z: 103.4}
+    Yaw: 262
+    Light: 0
+    Kind: 2
+    Title: "\uC2DC\uD5D8 1 \u2014 \uC0C8\uBCBD \uC0C1\uAC00\uAC70\uB9AC \u2192 \uD6C4\uBB38
+      \uACBD\uBE44\uC2E4"
+    Summary: 
+    Dlg: 
+    Len: 20
+    Targets:
+    - Label: "\uD6C4\uBB38 \uACBD\uBE44\uC2E4"
+      Pos: {x: -202.6, y: 31.2, z: 94.4}
+      Radius: 2.2
+    Clock: 1
+    Effects:
+    - "name:\uAD6D\uBC25"
+    - "ledger:+2000:\uBC30\uB2EC\uBE44(\uACBD\uBE44\uC2E4) \u2192 \uC5C4\uB9C8 \uD1B5\uC7A5"
+    Start: []
+  - Id: T2
+    Ep: 1
+    Month: 3
+    Day: 3
+    Hour: 5
+    Minute: 31
+    Place: Gukbap
+    Spawn: 
+    HasPos: 0
+    Pos: {x: 0, y: 0, z: 0}
+    Yaw: 0
+    Light: 0
+    Kind: 1
+    Title: "\uC2DC\uD5D8 2 \u2014 \uAD6D\uBC25\uC9D1 \uC8FC\uBC29(\uBB34\uB300)"
+    Summary: "\uBB34\uB300 \uC7A5\uBA74 Additive \uC5F4\uAE30 \xB7 \uB300\uC0AC"
+    Dlg: T2
+    Len: 20
+    Targets: []
+    Clock: 0
+    Effects: []
+    Start: []
+  - Id: T3
+    Ep: 3
+    Month: 3
+    Day: 10
+    Hour: 22
+    Minute: 10
+    Place: Zone1
+    Spawn: 
+    HasPos: 1
+    Pos: {x: -180.5, y: 28.8, z: 101.2}
+    Yaw: 150
+    Light: 3
+    Kind: 2
+    Title: "\uC2DC\uD5D8 3 \u2014 \uBC24 \uC0C1\uAC00\uAC70\uB9AC \u2192 \uC8FC\uCC28\uC7A5"
+    Summary: 
+    Dlg: 
+    Len: 20
+    Targets:
+    - Label: "\uD6C4\uBB38 \uB4B7\uACE8\uBAA9 \uC8FC\uCC28\uC7A5"
+      Pos: {x: -172, y: 27.2, z: 87.6}
+      Radius: 3
+    Clock: 1
+    Effects: []
+    Start: []
+  Names:
+  - Slot: 1
+    Name: "\uAD6D\uBC25"
+    Caller: "\uD6C4\uBB38 \uACBD\uBE44\uC2E4 \uC544\uC800\uC528"
+    Scene: 1-2
+    Note: "\uC0C8\uBCBD\uB9C8\uB2E4 \uAD6D\uC744 \uBC1B\uB294 \uC0AC\uB78C"
+    Tone: 0
+  - Slot: 2
+    Name: "\uC5B4\uC774"
+    Caller: "\uAF2D\uB300\uAE30 \uC9D1 \uD560\uC544\uBC84\uC9C0"
+    Scene: 1-4
+    Note: "\"3\uBD84 \uB2A6\uC5C8\uB2E4.\""
+    Tone: 0
+  - Slot: 3
+    Name: "\uC790\uC804\uAC70"
+    Caller: "\uB300\uD559\uB85C \uC18C\uADF9\uC7A5 \uC2A4\uD0DC\uD504 \uB204\uB098"
+    Scene: 1-4
+    Note: "\uBC24\uC0C8 \uBB34\uB300\uB97C \uC138\uD305\uD55C \uC0AC\uB78C"
+    Tone: 0
+  - Slot: 4
+    Name: "\uD589\uC7781"
+    Caller: "\uD669\uBBFC\uC7AC(\uADF8\uB9AC\uACE0 \uBAA8\uB450)"
+    Scene: 1-6
+    Note: "\uC9111 \uD559\uC608\uD68C, \uB118\uC5B4\uC9C4 \uB0A0\uBD80\uD130"
+    Tone: 2
+  - Slot: 5
+    Name: "\uBC18\uCD0C \uB188"
+    Caller: "\uD669\uBBFC\uC7AC"
+    Scene: 1-7
+    Note: "\uD55C\uC790\uB3C4 \uB2E4\uB978\uB370"
+    Tone: 2
+  - Slot: 6
+    Name: "3\uBC18"
+    Caller: "\uC720\uB098\uB9AC"
+    Scene: 3-2
+    Note: "\"\uADF8\uAC70 \uC2EB\uC5B4\uD558\uB294 \uC5BC\uAD74\uC774\uB358\uB370.\""
+    Tone: 0
+  - Slot: 7
+    Name: "\uC815\uD638 \uC544\uB4E4"
+    Caller: "\uACFD\uCD98\uC2DD"
+    Scene: 4-1
+    Note: "\uCC98\uC74C\uC73C\uB85C \uB4E4\uC5B4\uB3C4 \uC774\uAC00 \uC548 \uAC08\uB9AC\uB294
+      \uC774\uB984"
+    Tone: 1
+  - Slot: 8
+    Name: 
+    Caller: 
+    Scene: 
+    Note: 
+    Tone: 5
+  - Slot: 9
+    Name: "\uBC18\uC2DC\uC6B0"
+    Caller: '?'
+    Scene: "23\uD654"
+    Note: 
+    Tone: 3
+  - Slot: 0
+    Name: "\uBC18\uD558\uB298 \uB2D8"
+    Caller: "\uB85C\uD130\uB9AC\uC81C\uACFC \uC9C1\uC6D0 \uB204\uB098"
+    Scene: 5-1
+    Note: "\uBCF8\uC778 \uC774\uB984 \uC544\uB2D8"
+    Tone: 4
+  LedgerRows:
+  - "[\uC218\uC785]"
+  - "\uC0C8\uBCBD \uBC30\uB2EC \u2014 \uAC74\uB2F9 2,000\uC6D0. \uD55C \uB2EC \uC57D
+    23\uB9CC \uC6D0."
+  - "\uAD6D\uBC25\uC9D1 \uC800\uB141 \uC124\uAC70\uC9C0\xB7\uC11C\uBE59 \u2014 \uD55C
+    \uB2EC 40\uB9CC \uC6D0."
+  - "[\uC9C0\uCD9C]"
+  - "\uC5C4\uB9C8 \uD1B5\uC7A5\uC73C\uB85C \uC774\uCCB4 \u2014 50\uB9CC \uC6D0."
+  - "\uD558\uB298\uC774 \uBC29\uACFC\uD6C4 \uC218\uC5C5\uBE44 + \uC900\uBE44\uBB3C
+    \u2014 8\uB9CC \uC6D0."
+  - "\uB0B4 \uD734\uB300\uD3F0 \uC694\uAE08 \u2014 3\uB9CC \uC6D0."
+  - "\uAD50\uD1B5\uBE44 0\uC6D0. \uC2DD\uBE44 0\uC6D0."
+  - "[\uC794\uC561]"
+  - "\uB300\uCDA9 0\uC6D0. \uC815\uD655\uD788\uB294 \uC9C0\uAC11\uC5D0 2,600\uC6D0."
+  - "[\uB9E4\uB2EC \uBB34\uC870\uAC74 \uB098\uAC00\uB294 \uB3C8]"
+  - "\uC6D4\uC138 55\uB9CC \uC6D0. \uB300\uCD9C 40\uB9CC \uC6D0. \uAD00\uB9AC\uBE44\uB791
+    \uACF5\uACFC\uAE08 25\uB9CC \uC6D0."
+  - "1,200,000\uC6D0"
+  QuestHead: "\u3008\uBC18\uD558\uB298 11\uC138 \uC0DD\uC77C \uC694\uAD6C\uC0AC\uD56D
+    (\uCD5C\uC885_\uC9C4\uC9DC\uCD5C\uC885)\u3009"
+  QuestMemo:
+  - "1. \uCF00\uC774\uD06C: 2\uD638. \uCD08\uCF54 \uC0DD\uD06C\uB9BC. \uB538\uAE30
+    \uB9D0\uACE0 \uCD08\uCF54\uBCFC."
+  - "2. \uCD08: \uC22B\uC790 \uCD08 \uAE08\uC9C0. \uAE34 \uCD08 11\uAC1C. (\uC18C\uC6D0
+    11\uAC1C \uBE4C \uC608\uC815)"
+  - "3. \uCF00\uC774\uD06C \uAE00\uC528: '\uD558\uB298\uC544 \uC0DD\uC77C \uCD95\uD558\uD574'
+    \uAE08\uC9C0. '\uBC18\uD558\uB298 \uB2D8 \uC0DD\uC77C \uCD95\uD558\uB4DC\uB9BD\uB2C8\uB2E4'."
+  - "4. \uC7A5\uC18C: \uAD6D\uBC25\uC9D1. \uAC00\uAC8C \uB05D\uB098\uACE0. (\uC0AC\uC7A5
+    \uD560\uBA38\uB2C8 \uD5C8\uB77D \uC644\uB8CC)"
+  - "5. \uC0DD\uC77C \uB178\uB798: \uC624\uBE60\uB294 1\uC808\uB9CC."

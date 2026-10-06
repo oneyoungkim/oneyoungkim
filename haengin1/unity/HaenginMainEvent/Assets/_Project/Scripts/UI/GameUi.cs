@@ -29,12 +29,15 @@ namespace Haengin
 
         /// 메뉴 항목. M1 의 셋(계속·카메라 자동 정렬·끝내기)은 순서 그대로 두고 M2 항목을 뒤에 붙인다(08 7-5·8-1·8-2):
         /// 흔들림 줄이기(늘) · 전투 다시(인카운터를 이긴 뒤 그 근처에서) · 항복(야차 중에만)
-        public enum Item { Resume = 0, AutoAlign = 1, Quit = 2, Reduce = 3, Retry = 4, Surrender = 5 }
-        public const int MaxItems = 6;
+        public enum Item { Resume = 0, AutoAlign = 1, Quit = 2, Reduce = 3, Retry = 4, Surrender = 5, Book = 6, SaveTitle = 7 }
+        public const int MaxItems = 8;
         /// 지금 보이는 항목 수
         public int ItemCount => visible.Count;
         /// '전투 다시'(인카운터가 넣음, null 이면 안 보임) · '항복'(야차가 넣음)
         public static Action RetryHook, SurrenderHook;
+        /// M3 이야기 중(09 2-5·2-10): '도감'(BookHook) · '저장하고 타이틀로'(TitleHook). 도감처럼 메뉴 위에 뜨는 화면은 SubOpen 이 참인 동안 × · ○ 가 SubClose 로 간다
+        public static Action BookHook, TitleHook, SubClose;
+        public static Func<bool> SubOpen;
         readonly System.Collections.Generic.List<Item> visible = new System.Collections.Generic.List<Item> { Item.Resume, Item.AutoAlign, Item.Quit, Item.Reduce };
         public Item ItemAt(int i) => i >= 0 && i < visible.Count ? visible[i] : Item.Resume;
 
@@ -65,7 +68,7 @@ namespace Haengin
         void OnDisable() { if (Instance == this) Instance = null; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; RetryHook = null; SurrenderHook = null; }
+        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; RetryHook = null; SurrenderHook = null; BookHook = TitleHook = SubClose = null; SubOpen = null; }
 
         System.Collections.IEnumerator Start()
         {
@@ -115,7 +118,8 @@ namespace Haengin
                 Refresh();
                 sub = can = false;   // 여는 프레임의 입력은 버린다
             }
-            if (paused) Menu(sub, can);
+            if (paused && SubOpen != null && SubOpen()) { if (sub || can) SubClose?.Invoke(); }
+            else if (paused) Menu(sub, can);
 
             // 조작 안내 줄(전투 중엔 전투 조작)
             if (hint != null)
@@ -180,6 +184,8 @@ namespace Haengin
                     break;
                 case Item.Retry: { var h = RetryHook; GameState.SetPaused(false); h?.Invoke(); break; }
                 case Item.Surrender: { var h = SurrenderHook; GameState.SetPaused(false); h?.Invoke(); break; }
+                case Item.Book: BookHook?.Invoke(); break;
+                case Item.SaveTitle: { var h = TitleHook; h?.Invoke(); break; }
                 case Item.Quit:
                     Debug.Log("[M1] 끝내기");
                     if (QuitHook != null) { QuitHook(); break; }
@@ -219,6 +225,8 @@ namespace Haengin
             visible.Add(Item.Resume); visible.Add(Item.AutoAlign); visible.Add(Item.Quit); visible.Add(Item.Reduce);
             if (RetryHook != null) visible.Add(Item.Retry);
             if (SurrenderHook != null) visible.Add(Item.Surrender);
+            if (BookHook != null) visible.Add(Item.Book);
+            if (TitleHook != null) visible.Add(Item.SaveTitle);
             if (Selected >= visible.Count) Selected = 0;
             for (int i = 0; i < rows.Length; i++)
             {
@@ -233,6 +241,8 @@ namespace Haengin
                     Item.Reduce => "흔들림 줄이기 ◀ " + (Accessibility.Reduced ? "켬" : "끔") + " ▶",
                     Item.Retry => "전투 다시",
                     Item.Surrender => "항복",
+                    Item.Book => "도감",
+                    Item.SaveTitle => "저장하고 타이틀로",
                     _ => "",
                 };
                 rows[i].Rt.anchoredPosition = new Vector2(0f, 60f - i * 68f);
@@ -266,7 +276,7 @@ namespace Haengin
 
             if (!TryGetComponent<Canvas>(out var canvas)) canvas = gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 20;   // 길잡이 HUD(10) 위
+            canvas.sortingOrder = 70;   // 길잡이 HUD(10)·M3 이야기 화면(30~60) 위 — 일시정지 메뉴가 늘 맨 위
             if (!TryGetComponent<CanvasScaler>(out var scaler)) scaler = gameObject.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920f, 1080f);

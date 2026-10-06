@@ -246,16 +246,20 @@ namespace Haengin.EditorGame
 
             // M2(08 8장): CM_Combat · CM_Heat · CombatMode · 인카운터 Y4 · 야차 Y1
             StageSetup.AddCombatToZone1(rig, d, zoneRoot);
+            // M3(09 2-1): 이야기 루트(StoryRunner·화면들) · 빛 자리 · 창문 불
+            StorySetup.AddStoryToZone1(rig, zoneRoot);
 
             EditorSceneManager.MarkSceneDirty(scene);
             Debug.Log($"{Tag} 리그 붙임: Player @ ({feet.x:F2}, {feet.y:F2}, {feet.z:F2}) yaw {d.SpawnYaw}° (데이터 y {d.SpawnPos.y:F2}) · " +
                       $"카메라 {(cam != null ? cam.name + "(장면 것 재사용)" : "새로 만듦")} + CM_Explore · KillY {rig.Motor.KillY:F1} · 체크포인트 {d.Route.Count}개");
         }
 
-        /// 빌드 목록: Zone1 첫 장면, Sandbox 두 번째
+        /// 빌드 목록: (M3) 타이틀 첫 장면 → Zone1 → 무대 St_* → Sandbox → 전투 연습장(타이틀 '연습장'). 없는 장면은 뺀다
         public static void SetBuildScenes()
         {
-            var list = new[] { Zone1Scene, SandboxScene }
+            var list = new[] { StorySetup.TitleScene, Zone1Scene }
+                .Concat(StorySetup.StageKeys.Select(SceneLoader.StagePath))
+                .Concat(new[] { SandboxScene, CombatSetup.LabScene })
                 .Where(path => AssetDatabase.LoadAssetAtPath<SceneAsset>(path) != null)
                 .Select(path => new EditorBuildSettingsScene(path, true)).ToArray();
             EditorBuildSettings.scenes = list;

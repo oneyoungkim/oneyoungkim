@@ -94,8 +94,9 @@ namespace Haengin
         {
             Hook();
             string line;
-            if (Time.unscaledTime < flashUntil) line = flash;
-            else if (finished || hooked == null) line = "";
+            if (hooked != null && !hooked.isActiveAndEnabled) line = "";      // M3: 무대 장면(Zone1 루트 꺼짐)에선 도착 알림도 숨김
+            else if (Time.unscaledTime < flashUntil) line = flash;
+            else if (finished || hooked == null || !hooked.isActiveAndEnabled) line = "";      // M3: 무대 장면에선 Zone1 루트(길잡이)가 꺼짐
             else line = hooked.HudLine();
             Show(line);
             UpdateArrow(string.IsNullOrEmpty(line) || finished ? null : hooked != null ? hooked.CurrentTarget : null);
