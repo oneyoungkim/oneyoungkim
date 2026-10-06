@@ -10,7 +10,7 @@ namespace Haengin
     [DefaultExecutionOrder(-20), DisallowMultipleComponent]
     public sealed class EnemyBrain : MonoBehaviour
     {
-        public enum S { Idle, Approach, Strafe, Taunt, AttackIn, Attack, Block, Hurt, Down, Out, Flee, Stumble, BackOff, Leave }
+        public enum S { Idle, Approach, Strafe, Taunt, AttackIn, Attack, Block, Hurt, Down, Out, Flee, Stumble, BackOff, Leave, Flank }
 
         public EnemyDef Def;
         public Fighter Me;
@@ -53,6 +53,10 @@ namespace Haengin
         /// 페이즈 2(스크럼 HP ≤ 50%)
         public bool Phase2 { get; private set; }
         public int Tackles, TackleWhiffs;
+        /// 연타 난이도(08 12장 11): 끊긴 횟수 · 옆·뒤로 돌아 들어온 횟수
+        public int Cut, Flanked;
+        bool flankRun;
+        float flankGoal;
         bool tauntHit, tauntPaid, counterArmed;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -113,6 +117,7 @@ namespace Haengin
             Phase2 = false;
             pending = null; lastRun = null;
             counterArmed = false;
+            flankRun = false;
             cooldown = 0f; stumbleLeft = backLeft = 0f;
             if (Def != null) Me.ArmorMax = Def.ArmorGauge;
             Me.ResetFighter();
@@ -137,11 +142,12 @@ namespace Haengin
         public void Freeze(bool on)
         {
             Frozen = on;
-            if (!on) { if (State == S.AttackIn || State == S.Attack || State == S.Block || State == S.Taunt) Go(S.Strafe); return; }
+            if (!on) { if (State == S.AttackIn || State == S.Attack || State == S.Block || State == S.Taunt || State == S.Flank) Go(S.Strafe); return; }
             if (Me != null && Me.State == Fighter.Phase.Act) Me.CancelAttack();
             if (Me != null) Me.Guarding = false;
             Release();
             pending = null;
+            flankRun = false;
             counterArmed = false;
         }
 
@@ -155,11 +161,12 @@ namespace Haengin
         }
 
         /// 공격권을 받았다(AttackDirector)
-        internal void Grant()
+        internal void Grant(bool flank = false, float frontYaw = 0f)
         {
             HasToken = true;
             pending = Choose();
             inStart = Me.Position;
+            flankRun = false;
             if (pending == null)
             {
                 // 물러나기(1.0초 뒤로) — 공격권은 돌려줌
@@ -171,6 +178,17 @@ namespace Haengin
             }
             Attacks++;
             if (pending == Def.Tackle) Tackles++;
+            if (flank && Target != null)
+            {
+                // 끊긴 적(시우 앞) 반대편 ± FlankSide 중 가까운 쪽으로 돌아 들어감
+                float cur = HitResolver.Yaw(HitResolver.Flat(Me.Position - Target.Position));
+                float a = frontYaw + 180f - T.FlankSide, b = frontYaw + 180f + T.FlankSide;
+                flankGoal = Mathf.Abs(Mathf.DeltaAngle(cur, a)) <= Mathf.Abs(Mathf.DeltaAngle(cur, b)) ? a : b;
+                flankRun = true;
+                Flanked++;
+                Go(S.Flank);
+                return;
+            }
             Go(S.AttackIn);
         }
 
@@ -204,8 +222,17 @@ namespace Haengin
 
         void StartMove(MoveDef m)
         {
-            double pre = m.PreTime + (AttackDirector.OnScreen(Camera.main, Me) ? 0.0 : T.OffscreenDelay);
+            bool off = !AttackDirector.OnScreen(Camera.main, Me);
+            double pre = m.PreTime + (flankRun ? Math.Max(T.OffscreenDelay, T.FlankDelay) : off ? T.OffscreenDelay : 0.0);
             lastRun = Me.StartAttack(m, Target, -pre);
+            if (flankRun && lastRun != null)
+            {
+                // 옆·뒤에서: 예고 없는 기술도 '!', 판정 0.5초 전에(화면 밖 화살표는 예고와 같이 커짐)
+                lastRun.WarnOverride = Math.Max(1, m.Warn);
+                lastRun.WarnLead = Mathf.Max(T.FlankWarnLead, m.Lead);
+                lastRun.NoFollowup = true;      // 한 방 — 예고 하나에 회피 하나
+            }
+            flankRun = false;
             Go(S.Attack);
             AttackBegan?.Invoke(this, m);
         }
@@ -239,7 +266,18 @@ namespace Haengin
                     break;
                 case Fighter.Phase.Stagger:
                 case Fighter.Phase.Grabbed:
-                    if (State != S.Hurt) { if (HasToken) WaitSince = clock; Release(); Go(S.Hurt); }
+                    if (State != S.Hurt)
+                    {
+                        if (HasToken)
+                        {
+                            WaitSince = clock;
+                            // 판정 전에 끊겼다(들어가기·돌아 들어오기·예고·발생 중) → 다른 적이 옆·뒤에서(08 12장 11)
+                            bool beforeHit = State == S.AttackIn || State == S.Flank || (State == S.Attack && (lastRun == null || lastRun.Hits == 0));
+                            if (beforeHit) { Cut++; Director?.Interrupted(this); }
+                        }
+                        flankRun = false;
+                        Release(); Go(S.Hurt);
+                    }
                     break;
             }
             if ((State == S.Hurt || State == S.Down) && Me.State == Fighter.Phase.Free) Go(S.Strafe);
@@ -336,8 +374,28 @@ namespace Haengin
                     }
                     if (stateT >= t.TauntTime) { Me.StaggerMul = 1f; Go(S.Strafe); }
                     break;
+                case S.Flank:
+                    if (pending == null || Target == null) { Release(); flankRun = false; Go(S.Strafe); break; }
+                    {
+                        // 시우 둘레를 반지름 FlankRadius 로 돌아 목표 각까지(시우를 뚫고 지나가지 않게)
+                        var p = Target.Position;
+                        var offs = HitResolver.Flat(Me.Position - p);
+                        float r = Mathf.Max(0.5f, offs.magnitude), cur = HitResolver.Yaw(offs);
+                        float spd = Mathf.Max(Def.ApproachSpeed, t.FlankSpeed);
+                        float na = Mathf.MoveTowardsAngle(cur, flankGoal, spd * dt / r * Mathf.Rad2Deg);
+                        float nr = Mathf.MoveTowards(r, t.FlankRadius, spd * dt);
+                        var want = p + HitResolver.YawDir(na) * nr;
+                        vel = HitResolver.Flat(want - Me.Position) / dt;
+                        if (vel.magnitude > spd * 1.3f) vel = vel.normalized * spd * 1.3f;
+                        if ((Mathf.Abs(Mathf.DeltaAngle(cur, flankGoal)) < 15f && Mathf.Abs(r - t.FlankRadius) < 0.4f) || stateT > t.FlankTime)
+                        {
+                            inStart = Me.Position;
+                            Go(S.AttackIn);
+                        }
+                    }
+                    break;
                 case S.AttackIn:
-                    if (pending == null || Target == null) { Release(); Go(S.Strafe); break; }
+                    if (pending == null || Target == null) { Release(); flankRun = false; Go(S.Strafe); break; }
                     {
                         HitResolver.Measure(Me.Position, Me.Yaw, Target.Position, Target.Radius, out _, out float surf, out _);
                         bool far = pending.ChargeTime > 0f || pending.ActiveAdvance > 0f;
@@ -401,7 +459,7 @@ namespace Haengin
                     break;
             }
 
-            if (Me.State != Fighter.Phase.Free || (HoldPosition && State != S.AttackIn && State != S.Flee)) vel = Vector3.zero;
+            if (Me.State != Fighter.Phase.Free || (HoldPosition && State != S.AttackIn && State != S.Flee && State != S.Flank)) vel = Vector3.zero;
             if (Body != null) Body.WalkVelocity = vel;
             if (face && Target != null)
             {

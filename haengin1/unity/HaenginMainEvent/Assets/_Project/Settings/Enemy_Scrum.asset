@@ -53,6 +53,7 @@ MonoBehaviour:
   Followup: {fileID: 0}
   ClipRate: 1
   ActiveAdvance: 4
+  Committed: 1
 --- !u!114 &-1086992462752032868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,6 +107,7 @@ MonoBehaviour:
   Followup: {fileID: 0}
   ClipRate: 1
   ActiveAdvance: 0
+  Committed: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,6 +211,7 @@ MonoBehaviour:
   Followup: {fileID: 0}
   ClipRate: 1
   ActiveAdvance: 0
+  Committed: 0
 --- !u!114 &2139228669818718258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,6 +265,7 @@ MonoBehaviour:
   Followup: {fileID: 1359353492147294410}
   ClipRate: 1
   ActiveAdvance: 0
+  Committed: 0
 --- !u!114 &5333338528716713262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,6 +319,7 @@ MonoBehaviour:
   Followup: {fileID: 0}
   ClipRate: 1
   ActiveAdvance: 0
+  Committed: 0
 --- !u!114 &7263515223098876301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -368,3 +373,4 @@ MonoBehaviour:
   Followup: {fileID: 0}
   ClipRate: 1
   ActiveAdvance: 0
+  Committed: 0

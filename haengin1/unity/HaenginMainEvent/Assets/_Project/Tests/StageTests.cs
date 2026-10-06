@@ -1,7 +1,9 @@
 // 행인1의 메인이벤트 — M2 13·14단계 테스트 C18 · C22 · C17② · C19 (docs/08_M2_전투_설계.md 8장·10-5)
 //   C18 Encounter_Flow_Y4 : Zone1 주차장 — 걸어 들어가면 시비 → 전투(Combat 맵·CM_Combat 20) → 봇 승리 → 결과 카드 1번 → 탐색(CM_Combat 0) /
 //                            일부러 패배 → 패배 화면 '다시' → 적 3명·HP 200·기세 20, 다시 걸어 들어가면 다시 시작
-//   C22 Bot_MashOnly_Wins  : 같은 인카운터를 연타 봇(□ 만, 회피·막기·잡기 없음)으로 — 240초 안 승리, 남은 HP ≥ 20%
+//   C22 Bot_MashOnly_Wins  : 같은 인카운터를 연타 봇(□ 만, 회피·막기·잡기 없음)으로 — 240초 안 승리, 남은 HP ≥ 20%,
+//                            그리고 너무 쉽지 않게(08 12장 11): 90초 이상 걸리거나 HP 70% 이하로 끝남.
+//                            같은 판을 '회피·막기' 봇(FightBot Mash=false, 시우 무적 아님)으로 — 연타 봇보다 HP 15%p 이상 더 남김
 //   C17② Camera_Framing_Wall : 연습장 북쪽 벽을 등지고 락온 30초(적이 앞쪽 반원을 돎) — 매 프레임 카메라 벽 안 0 · 가림 0, 옆 바꾸기 ≤ 4번
 //   C19 Yacha_WinLose      : Zone1 공터 — 심판 형 대화 → 입장 6초 → 스크럼 HP 0 = 항복 승 / 시우 다운 3번 = 심판 스톱 패 / 메뉴 항복 = 패 /
 //                            시우를 바깥으로 밀어도 링 중심 거리 ≤ 6.8m(매 프레임)
@@ -118,8 +120,9 @@ namespace Haengin.Tests
             var bot = FightBot.On(pc, false);
             float t = 0f;
             int results0 = hud.ResultCount;
-            while (enc.State == Encounter.Phase.Fight && t < 180f) { yield return null; t += Dt; }
-            log.Add($"봇 승리: {t:F1}초 · 탈락 {enc.Eliminated}/3 · 누름 {bot.Presses} · 기세 액션 {bot.HeatActions}");
+            while (enc.State == Encounter.Phase.Fight && t < 240f) { yield return null; t += Dt; }
+            log.Add($"봇 승리: {t:F1}초 · 탈락 {enc.Eliminated}/3 · 누름 {bot.Presses} · 회피 {bot.Dodges} · 기세 액션 {bot.HeatActions} · 옆·뒤 공격권 {enc.Director?.Flanks}");
+            Assert.That(t, Is.LessThanOrEqualTo(240f), "녹화 봇 240초 안");
             Assert.AreEqual(Encounter.Phase.Finish, enc.State, "셋 다 탈락 → 마무리");
             Assert.AreEqual(3, enc.Eliminated, "탈락 3");
             Assert.AreEqual("정리.", hud.LastBigWord, "큰 붓 글자 「정리.」");
@@ -169,32 +172,89 @@ namespace Haengin.Tests
         public IEnumerator C22_Bot_MashOnly_Wins()
         {
             yield return OpenZone1();
+            var mash = new BotRun();
+            yield return RunBot(true, mash);
+            Debug.Log($"[M2Test] C22 연타 봇: {mash}");
+            // 같은 판을 회피·막기 봇으로(처음 자리에서 다시)
+            var hud = StageHud.Instance;
+            float w = 0f;
+            while ((enc.State == Encounter.Phase.Finish || enc.State == Encounter.Phase.Result || (enc.State == Encounter.Phase.Lost && (hud == null || !hud.DefeatShown))) && w < 8f) { yield return null; w += Dt; }
+            if (hud != null && hud.DefeatShown) hud.DefeatChoose(false);
+            yield return Frames(5);
+            enc.ResetAll(true);
+            pc.Me.ResetFighter();
+            yield return Frames(20);
+            var skill = new BotRun();
+            yield return RunBot(false, skill);
+            Debug.Log($"[M2Test] C22b 회피·막기 봇: {skill} | 연타 봇과 차이 HP {(skill.HpLeft - mash.HpLeft) * 100f:+0;-0}%p · 시간 {skill.Time - mash.Time:+0.0;-0.0}초");
+            Assert.IsTrue(mash.Win, "연타만으로 승리");
+            Assert.That(mash.Time, Is.LessThanOrEqualTo(240f), "240초 안");
+            Assert.That(mash.HpLeft, Is.GreaterThanOrEqualTo(0.2f), "남은 HP ≥ 20%");
+            Assert.IsTrue(mash.Time >= 90f || mash.HpLeft <= 0.70f, "연타만으로는 쉽지 않게: 90초 이상 또는 HP 70% 이하");
+            Assert.IsTrue(skill.Win, "회피·막기 봇 승리");
+            Assert.That(skill.HpLeft - mash.HpLeft, Is.GreaterThanOrEqualTo(0.15f), "회피·막기 봇이 HP 15%p 이상 더 남김");
+            // 화살표는 HUD 가 앞 프레임 끝 카메라로 그려서 화면 가장자리를 넘는 프레임엔 1프레임 어긋날 수 있음 → 5% 까지
+            int off = mash.OffWarn + skill.OffWarn, miss = mash.ArrowMiss + skill.ArrowMiss;
+            Assert.That(miss, Is.LessThanOrEqualTo(Mathf.Max(2, off / 20)), "화면 밖 예고 중 화살표 보임");
+        }
+
+        sealed class BotRun
+        {
+            public bool Win; public float Time, HpLeft; public int Hp, Hits, Presses, Dodges, Guard, Flanks, Cuts, Braces, Back, OffWarn, ArrowMiss;
+            public string Detail = "";
+            public override string ToString() =>
+                $"승리 {Win} · {Time:F1}초 · 남은 HP {Hp}/200({HpLeft * 100f:F0}%) · 맞음 {Hits}(뒤·옆에서 {Back}) · 누름 {Presses} · 회피 {Dodges} · 막기 {Guard}f · 끊긴 공격권 {Cuts} → 옆·뒤 공격권 {Flanks} · 몸 던지기 버팀 {Braces} · 화면 밖 예고 {OffWarn}f 중 화살표 없음 {ArrowMiss}f | {Detail}";
+        }
+
+        /// 인도에서 걸어 들어가 시비 → 봇으로 끝까지(240초 한도)
+        IEnumerator RunBot(bool mashOnly, BotRun res)
+        {
             var d = enc.Def;
             ((PlayerBody)pc.Me.Body).Place(d.ToWorld(d.RetryLocal) + Vector3.up * 0.1f, d.Yaw + 180f);
             yield return Frames(10);
             yield return WalkIn();
             yield return Frames(70);
             Assert.AreEqual(Encounter.Phase.Fight, enc.State, "전투 시작");
-            var bot = FightBot.On(pc, true);
+            var bot = FightBot.On(pc, mashOnly);
             float t = 0f;
-            int hits = 0;
-            System.Action<HitEvent> rec = e => { if (e.Victim == pc.Me && e.Landed) hits++; };
+            int hits = 0, back = 0;
+            System.Action<HitEvent> rec = e =>
+            {
+                if (e.Victim != pc.Me || !e.Landed || e.Attacker == null) return;
+                hits++;
+                if (!HitResolver.InGuardArc(pc.Me, e.Attacker.Position, pc.T.GuardAngle)) back++;
+            };
             Fighter.AnyHit += rec;
+            int flank0 = enc.Director != null ? enc.Director.Flanks : 0;
+            int cut0 = enc.Brains.Sum(b => b.Cut), brace0 = enc.Brains.Sum(b => b.Me.CommittedBraces);
             var log = new List<string>();
             int sec = 0;
+            var hudC = pc.GetComponentInChildren<CombatHud>();
+            var cam = Camera.main;
             while (enc.State == Encounter.Phase.Fight && t < 240f)
             {
                 yield return null;
                 t += Dt;
+                // 공격권 가진 적이 화면 밖에서 예고 중이면 화살표가 떠 있어야(7-4 · 08 12장 11)
+                foreach (var bb in enc.Brains)
+                    if (bb.HasToken && bb.Me.Telegraphing && cam != null)
+                    {
+                        var v = cam.WorldToViewportPoint(bb.Me.Chest);
+                        bool off = !(v.z > 0f && v.x > 0f && v.x < 1f && v.y > 0f && v.y < 1f);
+                        if (off) { res.OffWarn++; if (hudC != null && !hudC.ArrowShown) res.ArrowMiss++; }
+                    }
                 if ((int)(t / 30f) > sec) { sec = (int)(t / 30f); log.Add($"{sec * 30}초: " + string.Join(", ", enc.Brains.Select(b => $"{b.Def.Label} {b.State} HP {b.Me.Hp}")) + $" · 시우 HP {pc.Me.Hp}"); }
             }
             Fighter.AnyHit -= rec;
-            bool win = enc.State == Encounter.Phase.Finish || enc.State == Encounter.Phase.Result || enc.State == Encounter.Phase.Cleared;
-            float hpLeft = pc.Me.Hp / (float)pc.Me.MaxHp;
-            Debug.Log($"[M2Test] C22 연타 봇: 승리 {win} · {t:F1}초 · 남은 HP {pc.Me.Hp}/{pc.Me.MaxHp}({hpLeft * 100f:F0}%) · 누름 {bot.Presses} · 맞음 {hits} · 탈락 {enc.Eliminated}/3 | " + string.Join(" | ", log));
-            Assert.IsTrue(win, "연타만으로 승리");
-            Assert.That(t, Is.LessThanOrEqualTo(240f), "240초 안");
-            Assert.That(hpLeft, Is.GreaterThanOrEqualTo(0.2f), "남은 HP ≥ 20%");
+            res.Win = enc.State == Encounter.Phase.Finish || enc.State == Encounter.Phase.Result || enc.State == Encounter.Phase.Cleared;
+            res.Time = t; res.Hp = pc.Me.Hp; res.HpLeft = pc.Me.Hp / (float)pc.Me.MaxHp;
+            res.Hits = hits; res.Back = back; res.Presses = bot.Presses; res.Dodges = bot.Dodges; res.Guard = bot.GuardFrames;
+            res.Flanks = (enc.Director != null ? enc.Director.Flanks : 0) - flank0;
+            res.Cuts = enc.Brains.Sum(b => b.Cut) - cut0;
+            res.Braces = enc.Brains.Sum(b => b.Me.CommittedBraces) - brace0;
+            res.Detail = string.Join(" | ", log);
+            Object.Destroy(bot);
+            yield return null;
         }
 
         // ───────────────────────── C17②

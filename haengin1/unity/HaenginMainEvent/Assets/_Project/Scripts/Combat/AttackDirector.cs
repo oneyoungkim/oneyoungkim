@@ -3,6 +3,8 @@
 // 받을 조건: 간보기 상태, 개인 쿨다운 끝, 시우가 다운·기상·기세 액션 중이 아님, 시우가 맞아 경직 중이 아님.
 // 고르는 순서: 기다린 시간이 긴 적(화면 밖은 기다린 시간 × 0.5) → 가까운 적. 한 적 공격이 끝난 뒤 다음 적 시작까지 0.6초. 굶김 한도 15초.
 // 자리: 공격권 가진 적 2.0~2.6m, 나머지 3.5~5.0m 링, 시우 둘레 70° 이상 떨어지게, 카메라 정면 ±40° 쪽으로 당김.
+// 연타 난이도(08 12장 11): 공격권을 받은 적이 판정 전에 맞아 끊기면 0.3초 뒤 다른 적에게 — 끊긴 적(시우 앞) 반대편에 가장 가까운 적이 옆·뒤로 돌아 들어온다
+//   ('!' 판정 0.5초 전 + 화면 밖 화살표, 동시 공격 상한은 그대로).
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,7 +21,10 @@ namespace Haengin
 
         public CombatTuning T => Tuning != null ? Tuning : CombatTuning.Default;
         public int Max => MaxAttackers > 0 ? MaxAttackers : T.MaxAttackers;
-        double clock, lastEnd = -1e9;
+        double clock, lastEnd = -1e9, flankUntil = -1;
+        Fighter flankFront;
+        /// 끊겨서 옆·뒤로 돌린 공격권 수(테스트·기록)
+        public int Flanks { get; private set; }
 
         /// 공격 시작 기록(테스트·디버그): (적, 게임 시각)
         public readonly List<(EnemyBrain who, double at)> Starts = new List<(EnemyBrain, double)>();
@@ -39,6 +44,14 @@ namespace Haengin
             }
         }
 
+        /// 공격권을 가진 적이 판정 전에 시우에게 맞아 끊겼다 → 곧 다른 적이 옆·뒤에서
+        public void Interrupted(EnemyBrain b)
+        {
+            if (b == null || Members.Count < 2) return;
+            flankFront = b.Me;
+            flankUntil = clock + T.FlankWindow;
+        }
+
         public void Release(EnemyBrain b)
         {
             if (b == null || !b.HasToken) return;
@@ -54,7 +67,9 @@ namespace Haengin
             AssignSlots();
             if (Frozen || !PlayerOpen) return;
             if (Attacking >= Max) return;
-            if (clock - lastEnd < T.AttackGap - 1e-6) return;
+            bool flank = clock <= flankUntil && Player != null && flankFront != null;
+            if (clock - lastEnd < (flank ? T.FlankGap : T.AttackGap) - 1e-6) return;
+            if (flank && GrantFlank()) return;
             EnemyBrain best = null;
             float bestScore = float.MinValue;
             var cam = Camera.main;
@@ -73,6 +88,29 @@ namespace Haengin
         }
 
         float Dist(EnemyBrain m) => Player != null ? HitResolver.Flat(m.Me.Position - Player.Position).magnitude : 0f;
+
+        /// 끊긴 적(시우 앞) 반대편에 가장 가까운 적에게 '돌아 들어오기' 공격권
+        bool GrantFlank()
+        {
+            var front = HitResolver.Flat(flankFront.Position - Player.Position);
+            float frontYaw = front.sqrMagnitude > 1e-4f ? HitResolver.Yaw(front) : Player.Yaw;
+            EnemyBrain best = null;
+            float bestScore = float.MinValue;
+            foreach (var m in Members)
+            {
+                if (m == null || !m.WantsToken || m.Me == flankFront) continue;
+                float ang = Mathf.Abs(Mathf.DeltaAngle(frontYaw, HitResolver.Yaw(HitResolver.Flat(m.Me.Position - Player.Position))));
+                float score = ang - Dist(m) * 2f;
+                if (score > bestScore) { bestScore = score; best = m; }
+            }
+            if (best == null) return false;
+            flankUntil = -1;
+            flankFront = null;
+            Flanks++;
+            best.Grant(true, frontYaw);
+            Starts.Add((best, clock));
+            return true;
+        }
 
         public static bool OnScreen(Camera cam, Fighter f)
         {

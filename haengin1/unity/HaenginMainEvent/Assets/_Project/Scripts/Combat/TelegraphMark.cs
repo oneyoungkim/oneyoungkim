@@ -41,14 +41,14 @@ namespace Haengin
         {
             if (Me == null || text == null) return;
             var r = Me.Run;
-            if (r != null && r != shownFor && r.Move.Warn > 0)
+            if (r != null && r != shownFor && r.Warn > 0)
             {
-                double at = r.Move.ActiveStart - Mathf.Max(r.Move.Lead, 0.2f);
+                double at = r.Move.ActiveStart - (r.WarnLead > 0f ? r.WarnLead : Mathf.Max(r.Move.Lead, 0.2f));
                 if (r.T >= at - 1e-4)
                 {
                     shownFor = r;
                     left = Show;
-                    text.text = r.Move.Warn >= 2 ? "!!" : "!";
+                    text.text = r.Warn >= 2 ? "!!" : "!";
                     text.gameObject.SetActive(true);
                     Shown++;
                     if (r.Move.Warn >= 2 && Me.React != null) { Me.React.Flash(); flashes = 1; flashAt = 0.15f; }

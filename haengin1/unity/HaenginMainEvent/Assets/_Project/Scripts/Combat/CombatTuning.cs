@@ -90,6 +90,10 @@ namespace Haengin
         [Tooltip("자리(4-2): 공격권 가진 적 2.0~2.6m, 나머지 3.5~5.0m, 서로 70° 이상, 카메라 정면 ±40° 우선, 서로 밀어내기 0.9m")] public float RingNear = 2.3f, RingFar = 4.2f, SlotSep = 70f, CamArc = 40f, Separate = 0.9f;
         [Tooltip("공격권을 받으면 사거리까지 들어가는 최대 거리(m)")] public float AttackInMax = 1.5f;
         [Tooltip("화면 밖에서 공격하면 발생 + 이만큼(초)")] public float OffscreenDelay = 0.2f;
+        [Header("연타 난이도(08 12장 11 · 11-5)")]
+        [Tooltip("공격권을 받은 적이 판정 전에 맞아 끊기면, 이만큼 뒤(초) 다른 적에게 공격권 — 옆·뒤로 돌아 들어옴(이 창 안에서만, 초)")] public float FlankGap = 0.3f, FlankWindow = 2.0f;
+        [Tooltip("돌아 들어갈 자리: 끊긴 적(시우 앞) 반대편 ± 이 각(°) · 시우에서 거리(m) · 최저 속도(m/s) · 최대 시간(초)")] public float FlankSide = 60f, FlankRadius = 2.4f, FlankSpeed = 2.2f, FlankTime = 1.8f;
+        [Tooltip("돌아 들어온 공격: 발생 앞 + 이만큼(초, 화면 밖 지연 대신) · '!' 를 판정 이만큼 전에(초)")] public float FlankDelay = 0.4f, FlankWarnLead = 0.5f;
         [Tooltip("도발(88, 1.4초) 중 맞으면 경직 ×1.5 · 1.0초 안 맞고 버티면 시우 기세 +8")] public float TauntTime = 1.4f, TauntMul = 1.5f, TauntHold = 1.0f;
         public int TauntHeat = 8;
         [Tooltip("막기형(4-5): 막기 유지(마지막 공격 뒤) · 카운터 창 · 카운터 확률")] public float BlockHold = 0.4f, CounterWindow = 0.25f, CounterChance = 0.6f;

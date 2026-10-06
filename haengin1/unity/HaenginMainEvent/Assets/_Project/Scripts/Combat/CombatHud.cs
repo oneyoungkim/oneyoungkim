@@ -37,6 +37,8 @@ namespace Haengin
         public bool HeatPlateShown => plate != null && plate.activeSelf && plateGroup.alpha > 0.5f;
         public string HeatPlateText => plateText != null ? plateText.text : "";
         public bool ArrowShown => arrow != null && arrow.gameObject.activeSelf;
+        /// 화살표 크기(예고 때 0.2초 간격 2번 커짐 — 1.0 이 보통)
+        public float ArrowScale => arrowBack != null ? arrowBack.rectTransform.localScale.x : 1f;
         public bool GuardShown => guard != null && guard.gameObject.activeSelf;
         public int OtherBarsShown { get { int n = 0; foreach (var b in bars.Values) if (b.Root.activeSelf) n++; return n; } }
         public TMP_FontAsset UsedFont => nameText != null ? nameText.font : null;

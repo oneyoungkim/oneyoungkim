@@ -138,6 +138,145 @@ namespace Haengin.Tests
         [UnityTest] public IEnumerator C11_Director_ThreeTypes() => DirectorRun(new[] { EnemyDef.Kind.Kkanjok, EnemyDef.Kind.Seokdal, EnemyDef.Kind.Naengjanggo }, 1, "3유형");
         [UnityTest] public IEnumerator C11_Director_Hard2() => DirectorRun(new[] { EnemyDef.Kind.Kkanjok, EnemyDef.Kind.Seokdal, EnemyDef.Kind.Naengjanggo }, 2, "3유형 어려움(2명)");
 
+        // ───────────────────────── C12b 연타 난이도(08 12장 11): 끊기면 옆·뒤에서 · '!'·화살표 · 피할 수 있음 · 몸 던지기는 □ 에 안 끊김
+        [UnityTest, Timeout(120000)]
+        public IEnumerator C12b_Flank_Telegraph_Dodge()
+        {
+            Lab.Floor(0f, 60f);
+            var (r, pc) = Siwoo(Vector3.zero, 0f);
+            pc.Me.MaxHp = pc.Me.Hp = 9999;
+            CombatFactory.AddUi(r.Player, null, tune);
+            var hud = r.Player.GetComponentInChildren<CombatHud>();
+            var dir = CombatFactory.Director(pc.Me, tune);
+            var a = CombatFactory.Enemy(EnemyLib.Seokdal(), new Vector3(0f, 0f, 3.0f), 180f, pc.Me, dir, 0, tune);
+            var b = CombatFactory.Enemy(EnemyLib.Kkanjok(), new Vector3(1.6f, 0f, 4.2f), 200f, pc.Me, dir, 1, tune);
+            a.BlockOverride = 0f; b.NoAttack = true;
+            yield return Frames(5);
+            a.Activate(); b.Activate();
+            if (pc.Lock != null) pc.Lock.Set(a.Me);       // 앞 적에 락온(카메라는 시우 등 뒤에서 앞 적을 봄 — 옆·뒤는 화면 밖이 되기 쉬움)
+            // ① 앞의 석 달이 공격권을 받아 들어오는 중(판정 전)에 맞힘 → 끊김
+            float w = 0f;
+            while (!(a.HasToken && (a.State == EnemyBrain.S.AttackIn || (a.State == EnemyBrain.S.Attack && a.Me.Run != null && a.Me.Run.T < a.Me.Run.Move.ActiveStart - 0.05))) && w < 15f) { yield return null; w += Dt; }
+            Assert.IsTrue(a.HasToken, "앞 적 공격권");
+            int flank0 = dir.Flanks;
+            a.Me.Receive(pc.Me, MoveLib.Jab());
+            b.NoAttack = false;
+            float cutT = 0f;
+            while (a.Cut == 0 && cutT < 0.5f) { yield return null; cutT += Dt; }     // 히트스톱 동안은 AI 가 멈춰 있음
+            Assert.AreEqual(1, a.Cut, "판정 전 끊김");
+            // ② 깐족이가 옆·뒤로 돌아 들어와 공격 — '!' 와 화살표, 맞기 0.12초 전 옆 회피
+            var mark = b.GetComponentInChildren<TelegraphMark>();
+            int shown0 = mark != null ? mark.Shown : 0, maxAtk = 0;
+            float grantAt = -1f, warnLead = -1f, angle = -1f, t = 0f;
+            bool offAtWarn = false, arrowAtWarn = false, warned = false;
+            int dodges = 0;
+            AttackRun run = null, dodgedFor = null;
+            var labels = new List<string>();
+            var cam = Camera.main;
+            while (t < 8f)
+            {
+                if (b.HasToken && grantAt < 0f) grantAt = t;
+                if (run == null && b.Me.Run != null) { run = b.Me.Run; angle = Mathf.Abs(Mathf.DeltaAngle(0f, HitResolver.Yaw(HitResolver.Flat(b.Me.Position - pc.Me.Position)))); }
+                var cur = b.Me.Run;
+                if (cur != null && cur != dodgedFor)
+                {
+                    // 원투처럼 이어지는 2타도 각각 피함(피하는 길: 맞기 0.12초 전 공격자 반대쪽으로 회피)
+                    float tHit = (float)(cur.Move.ActiveStart - cur.T);
+                    if (tHit <= 0.12f && pc.Me.State == Fighter.Phase.Free)
+                    {
+                        pc.SetStickWorld(HitResolver.Flat(pc.Me.Position - b.Me.Position).normalized, 1f);     // 공격자 반대쪽으로
+                        pc.Press(Btn.Dodge);
+                        dodgedFor = cur; dodges++;
+                        labels.Add(cur.Move.Label);
+                    }
+                }
+                yield return null;
+                t += Dt;
+                maxAtk = Mathf.Max(maxAtk, dir.Attacking);
+                if (!warned && mark != null && mark.Shown > shown0 && run != null)
+                {
+                    warned = true;
+                    warnLead = (float)(run.Move.ActiveStart - run.T);
+                    offAtWarn = !AttackDirector.OnScreen(cam, b.Me);
+                    arrowAtWarn = hud != null && hud.ArrowShown;
+                }
+                if (run != null && b.Me.Run == null && b.State != EnemyBrain.S.Attack) break;
+            }
+            pc.SetStickWorld(Vector3.zero, 0f);
+            int landed = hits.Count(h => h.Victim == pc.Me && h.Attacker == b.Me && h.Landed);
+            string hitInfo = string.Join(", ", hits.Where(h => h.Victim == pc.Me && h.Attacker == b.Me).Select(h => $"{h.Move.Label} {h.Outcome}"));
+            // ②b 화면 밖에서 예고하는 공격권 적 → 화살표(7-4, 예고 때 커짐): 락온을 풀고 카메라가 덩치 반대쪽 옆(90°)을 보게 붙잡음
+            a.NoAttack = b.NoAttack = true;
+            if (pc.Lock != null) pc.Lock.Unlock();
+            tune.AttackInMax = 0.1f;        // 제자리에서 바로 침(화면 밖 그대로)
+            var dir2 = CombatFactory.Director(pc.Me, tune, "Director_Off");
+            var spot = pc.Me.Position + HitResolver.YawDir(pc.Me.Yaw - 90f) * 4.4f;
+            var side = CombatFactory.Enemy(EnemyLib.Naengjanggo(), spot, HitResolver.Yaw(HitResolver.Flat(pc.Me.Position - spot)), pc.Me, dir2, 3, tune);
+            side.HoldPosition = true;
+            yield return Frames(3);
+            side.Activate();
+            bool offTele = false, arrowTele = false, pulsed = false;
+            float tw = 0f;
+            var rig = pc.CombatCam;
+            while (tw < 12f)
+            {
+                if (rig != null)
+                {
+                    float want = HitResolver.Yaw(HitResolver.Flat(side.Me.Position - pc.Me.Position)) + 90f;
+                    rig.Rotate(Mathf.DeltaAngle(rig.Yaw, want), 0f);
+                }
+                yield return null; tw += Dt;
+                if (side.HasToken && side.Me.Telegraphing && !AttackDirector.OnScreen(cam, side.Me))
+                {
+                    offTele = true;
+                    if (hud != null && hud.ArrowShown) { arrowTele = true; if (hud.ArrowScale > 1.05f) pulsed = true; }
+                }
+                if (offTele && side.Me.Run != null && !side.Me.Telegraphing) break;
+            }
+            side.NoAttack = true;
+            tune.AttackInMax = 1.5f;
+            // ③ 몸 던지기: 냉장고 큰 휘두르기는 시작 ~ 판정 끝 □ 4타에 안 끊김(피해는 받음), △ 어퍼엔 끊김
+            var nj = CombatFactory.Enemy(EnemyLib.Naengjanggo(), new Vector3(-6f, 0f, 0f), 90f, pc.Me, null, 2, tune);
+            yield return Frames(3);
+            var sw = nj.Def.Moves.First(m => m.Committed && m.Lead > 0f && !m.Unblockable);
+            var njRun = nj.Me.StartAttack(sw, null, -sw.PreTime);
+            int hp0 = nj.Me.Hp;
+            ((PlayerBody)pc.Me.Body).Place(new Vector3(-6f, 0f, 1.0f), 180f);
+            int braced = 0;
+            for (int i = 0; i < 4 && nj.Me.Committed; i++)
+            {
+                var mv = new[] { MoveLib.Jab(), MoveLib.Cross(), MoveLib.Hook(), MoveLib.CrossEnd() }[i];
+                var pr = pc.Me.StartAttack(mv, nj.Me, 0, null, i + 1);
+                var ev = nj.Me.Receive(pc.Me, mv);
+                if (ev.Outcome == HitOutcome.Armored) braced++;
+                pc.Me.CancelAttack();
+            }
+            int dmg4 = hp0 - nj.Me.Hp;
+            bool stillAttacking = nj.Me.Run == njRun;
+            var up = MoveLib.Upper();
+            pc.Me.StartAttack(up, nj.Me, 0, null, 0);
+            var evUp = nj.Me.Receive(pc.Me, up);
+            pc.Me.CancelAttack();
+            bool cutByHeavy = nj.Me.Run != njRun;
+            Debug.Log($"[M2Test] C12b 연타 난이도: 앞 석 달 판정 전 끊김 {a.Cut} → 옆·뒤 공격권 {dir.Flanks - flank0}(끊긴 뒤 {grantAt:F2}초) · 깐족이 공격 각(시우 앞 기준) {angle:F0}° · '!' 판정 {warnLead:F2}초 전 · 그때 화면 밖 {offAtWarn} · 화살표 {arrowAtWarn} · " +
+                      $"화면 밖 예고(왼쪽 덩치) {offTele} → 화살표 {arrowTele} · 커짐 {pulsed} · 맞기 0.12초 전 반대쪽 회피 {dodges}번({string.Join("·", labels)}) → 맞음 {landed}({hitInfo}) · 동시 공격 최대 {maxAtk} | 냉장고 {sw.Label} 중 □ 4타: 버팀 {braced}/4 · 피해 {dmg4} · 공격 계속 {stillAttacking} / △ 어퍼: {evUp.Outcome} · 끊김 {cutByHeavy}");
+            Assert.AreEqual(1, dir.Flanks - flank0, "끊기면 다른 적에게 옆·뒤 공격권");
+            Assert.That(grantAt, Is.InRange(0f, 1.0f), "곧(1초 안) 넘김");
+            Assert.That(angle, Is.GreaterThanOrEqualTo(90f), "시우 앞(끊긴 적) 기준 90° 넘게 — 옆·뒤");
+            Assert.IsTrue(warned, "옆·뒤 공격 '!'");
+            Assert.That(warnLead, Is.GreaterThanOrEqualTo(0.45f), "'!' 가 판정 0.45초 이상 전");
+            if (offAtWarn) Assert.IsTrue(arrowAtWarn, "화면 밖이면 화살표");
+            Assert.IsTrue(offTele, "시험 배치: 왼쪽 덩치가 화면 밖에서 예고");
+            Assert.IsTrue(arrowTele, "화면 밖 예고 → 화살표");
+            Assert.IsTrue(pulsed, "예고 때 화살표가 커짐");
+            Assert.AreEqual(0, landed, "회피로 피할 수 있음");
+            Assert.That(maxAtk, Is.LessThanOrEqualTo(1), "동시 공격 1명 그대로");
+            Assert.AreEqual(4, braced, "몸 던지기: □ 4타에 안 끊김");
+            Assert.IsTrue(stillAttacking, "몸 던지기 공격 계속");
+            Assert.That(dmg4, Is.EqualTo(5 + 7 + 8 + 9), "피해는 그대로");
+            Assert.IsTrue(cutByHeavy, "△ 어퍼엔 끊김");
+        }
+
         // ───────────────────────── C13 다운·기상
         [UnityTest]
         public IEnumerator C13_Down_GetUp()

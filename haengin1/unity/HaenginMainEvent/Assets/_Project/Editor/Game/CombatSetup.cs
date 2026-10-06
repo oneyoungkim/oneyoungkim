@@ -197,10 +197,13 @@ namespace Haengin.EditorGame
             var lib = new Dictionary<string, MoveDef>();
             void Add(MoveDef m) { if (m == null || lib.ContainsKey(m.name)) return; lib[m.name] = m; Add(m.Followup); }
             foreach (var m in fresh.Moves) Add(m);
-            Add(fresh.Far); Add(fresh.Counter);
+            if (fresh.Moves2 != null) foreach (var m in fresh.Moves2) Add(m);
+            Add(fresh.Far); Add(fresh.Counter); Add(fresh.Tackle);
             foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(EnemyDefPath(k)).OfType<MoveDef>())
             {
                 if (!lib.TryGetValue(sub.name, out var f)) continue;
+                // 몸을 던지는 공격(08 12장 11) 표시도 표대로
+                if (sub.Committed != f.Committed) { Debug.Log($"{Tag} 적 기술 '몸 던지기' {d.Label}/{sub.Label}: {sub.Committed} → {f.Committed}"); sub.Committed = f.Committed; EditorUtility.SetDirty(sub); }
                 if (sub.ClipId == f.ClipId && sub.Flinch == f.Flinch && sub.KnockSide == f.KnockSide) continue;
                 Debug.Log($"{Tag} 적 기술 클립 연결 고침 {d.Label}/{sub.Label}: 클립 {sub.ClipId} → {f.ClipId} · 젖힘 {sub.Flinch} → {f.Flinch} · 옆 넉백 {sub.KnockSide} → {f.KnockSide}");
                 sub.ClipId = f.ClipId; sub.Flinch = f.Flinch; sub.KnockSide = f.KnockSide; sub.ClipRate = f.ClipRate;

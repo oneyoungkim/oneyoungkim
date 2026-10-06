@@ -57,6 +57,7 @@ namespace Haengin
         [Tooltip("이어지는 기술(원투의 2타) — 이 기술의 연결 창에서 바로")] public MoveDef Followup;
         [Tooltip("클립 재생 배율(표의 '0.7배' 등) — 9단계 클립 연결에서 측정 배율에 곱함")] public float ClipRate = 1f;
         [Tooltip("판정 동안 앞으로 달리는 거리 m(스크럼 태클 4.0m — 판정 내내 검사, 맞히면 멈춤)")] public float ActiveAdvance;
+        [Tooltip("몸을 던지는 공격(냉장고 전부 · 달려들기 · 태클 — 08 12장 11): 시작(예고 몸짓·돌진 포함)부터 판정 끝까지 시우 □ 연타에 경직 없음. 피해는 받음. △·잡기·기세·반격엔 끊김")] public bool Committed;
 
         public const float Fps = 60f;
         public static double Sec(int f) => f / (double)Fps;
@@ -206,7 +207,7 @@ namespace Haengin
         public static MoveDef KkCharge()
         {
             var m = M("KkCharge", "달려들기(깐족이)", 510, 10, 3, 16, 1.2f, 35f, 12, 30, 0.30f, Power.Mid, 0, "빡!");
-            m.Lead = 0.5f; m.Warn = 1; m.ChargeDist = 2.5f; m.ChargeTime = 0.45f; m.GuardDmg = 25f;
+            m.Lead = 0.5f; m.Warn = 1; m.ChargeDist = 2.5f; m.ChargeTime = 0.45f; m.GuardDmg = 25f; m.Committed = true;
             return m;
         }
         /// 석 달 잽: 191 9/3/11, 1.1m, 5, 18, .05, 약
@@ -231,14 +232,14 @@ namespace Haengin
         {
             // 클립 128 양손 내려찍기(2026-10-06 2차 — 처음엔 훅 193 을 0.7배로 썼다). 위에서 내려찍으니 넉백은 정면, 젖힘은 머리
             var m = M("NjSwing", "큰 휘두르기(냉장고)", 128, 22, 4, 20, 1.2f, 60f, 16, 40, 0.30f, Power.Heavy, 0, "콰직!", FlinchKind.Head);
-            m.Lead = 0.6f; m.Warn = 1; m.GuardDmg = 40f;
+            m.Lead = 0.6f; m.Warn = 1; m.GuardDmg = 40f; m.Committed = true;
             return m;
         }
         /// 냉장고 앞차기: 206 Spartan_Kick, '!' 0.5초, 20/4/18, 1.5m, 14, 36, 1.5m(막아도 1.0m), 중
         public static MoveDef NjKick()
         {
             var m = M("NjKick", "앞차기(냉장고)", 206, 20, 4, 18, 1.5f, 30f, 14, 36, 1.5f, Power.Mid, 0, "빡!", FlinchKind.Body);
-            m.Lead = 0.5f; m.Warn = 1; m.BlockKnock = 1.0f;
+            m.Lead = 0.5f; m.Warn = 1; m.BlockKnock = 1.0f; m.Committed = true;
             return m;
         }
         // ── 4-6 야차 상대 스크럼(188cm·102kg)
@@ -269,7 +270,7 @@ namespace Haengin
         {
             var m = M("ScTackle", "태클(스크럼)", 512, 1, 44, 12, 0.8f, 50f, 22, 0, 0f, Power.Heavy, 0, "쿵!", FlinchKind.Body);
             m.Lead = 0.6f; m.Warn = 2; m.Unblockable = true; m.Down = true; m.DownKnock = 1.5f;
-            m.ActiveAdvance = 4.0f; m.Magnet = 0f; m.LinkAfter = 0;
+            m.ActiveAdvance = 4.0f; m.Magnet = 0f; m.LinkAfter = 0; m.Committed = true;
             return m;
         }
 
@@ -277,7 +278,7 @@ namespace Haengin
         public static MoveDef NjHug()
         {
             var m = M("NjHug", "껴안기(냉장고)", 259, 24, 6, 30, 1.2f, 45f, 18, 0, 0f, Power.Heavy, 0, "쿵!", FlinchKind.Body);
-            m.Lead = 0.7f; m.Warn = 2; m.Unblockable = true; m.Down = true; m.DownKnock = 1.5f;
+            m.Lead = 0.7f; m.Warn = 2; m.Unblockable = true; m.Down = true; m.DownKnock = 1.5f; m.Committed = true;
             return m;
         }
     }

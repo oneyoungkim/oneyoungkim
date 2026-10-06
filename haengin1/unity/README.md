@@ -192,6 +192,7 @@ HaenginMainEvent/
 - **덩치 팔**: 냉장고·스크럼 적 프리팹의 `FighterAnim.ArmSpread = 12`(재생 뒤 위팔을 몸 바깥으로 벌림 — 시우 리그 클립의 팔이 굵은 몸통을 파고들지 않게). 근육 범위 줄이기는 효과가 없거나 거꾸로라(실측) 기본값으로 둔다. 측정: `-executeMethod Haengin.EditorGame.ArmProbe.Run`(후보별 '몸 안·닿음' 비율을 로그와 `Logs/arm_probe.csv` 에, `-armshots <폴더>` 를 주고 `-nographics` 를 빼면 자세 사진).
 - **접근성**: 일시정지 메뉴 '흔들림 줄이기'(`Accessibility.Reduced`, PlayerPrefs `haengin.fx.reduced`) — 흔들림 ×0.3, 화면 번쩍·쇼크 컷·슬로 끔. 메뉴 항목은 상황에 따라: 계속 · 자동 정렬 · 끝내기 · 흔들림 줄이기 · (이긴 뒤 근처) 전투 다시 · (야차 중) 항복.
 - **전투 카메라 옆 고르기**(6-5 보강): 락온 중 막히면 옆 각 18°·40°·65°·90° 중 열린 가장 작은 각, 지금 옆 우선, 반대 옆으로 넘어갈 길이 막혔으면 컷.
+- **연타 난이도(08 12장 11, 2026-10-06 결정)**: `MoveDef.Committed`(몸을 던지는 공격 — 냉장고 전부·깐족이 달려들기·스크럼 태클: 시작~판정 끝 시우 □ 4타에 안 끊김, 피해는 받음) · `AttackDirector` 끊기면 옆·뒤 공격권(`CombatTuning` 의 FlankGap 0.3 · FlankSide 60 · FlankRadius 2.4 · FlankSpeed 2.2 · FlankTime 1.8 · FlankDelay 0.4 · FlankWarnLead 0.5) · `AttackRun.WarnOverride/WarnLead/NoFollowup`(옆·뒤 공격 '!'·한 방). `FightBot` Mash=false 는 '회피·막기' 봇(막을 수 없는 쪽은 판정 0.12초 전 회피, 0.6초 전부터 손 멈춤). 테스트 `EnemyTests` C12b, `StageTests` C22(연타 봇 + 회피·막기 봇 비교).
 - **봇·스모크**: `Dev/FightBot`(연타 봇 / 녹화 봇 — `PlayerCombat` 에 사람 손과 같은 길로 입력) · `Dev/M2Smoke`(빌드에서 장면이 뜨고 3.5초 뒤 `[M2] 실행 확인` 한 줄, 실행 인자 `-m2smoke` 면 인카운터·야차를 봇으로 한 판씩 돌고 `[M2] 스모크` 줄을 남긴 뒤 스스로 종료).
 - **테스트**: `StageTests` C18(인카운터 흐름) · C22(연타 봇) · C17②(벽 등지고 락온) · C19(야차 승패), `ZStageShots`(`-c13shots <폴더>` — 적 4명 정면·옆, 덩치 공격 자세, 인카운터·야차 한 판 녹화, 패배 화면, 일시정지 메뉴). M1 의 Zone1 테스트(ZoneTests·RouteTests)는 `Encounter.Suppress = true`(경로 걷기가 주차장을 지나감). 결과 수 = 08 문서 11-4.
 

@@ -44,6 +44,12 @@ namespace Haengin
         public Fighter Owner, Aim, Fixed;
         public double T;
         public int Combo;
+        /// 예고 덮어쓰기(옆·뒤로 돌아 들어온 공격 — 예고 없는 기술도 '!'): 표시 = max(기술 Warn, 이것) · '!' 를 판정 몇 초 전에(음수 = 기술 값)
+        public int WarnOverride;
+        public float WarnLead = -1f;
+        public int Warn => Math.Max(Move.Warn, WarnOverride);
+        /// 이어지는 기술(원투의 2타)을 내지 않음 — 옆·뒤에서 들어온 공격은 한 방(예고 하나에 회피 하나, 08 12장 11)
+        public bool NoFollowup;
         public float TurnLeft, MagnetTotal, MagnetLeft, MagnetUsed;
         /// 닿는 거리 자석의 멈출 표면 거리(m, 음수 = 예전 자석: 사거리 − 0.15)
         public float Contact = -1f;
@@ -132,7 +138,12 @@ namespace Haengin
         /// 싸움이 끝나 달아나는 중(인카운터 결과) — 락온·조준·봇 대상에서 뺀다
         public bool Leaving;
         /// 공격 예고 중: 예고가 있는 기술의 판정 전(소프트 조준 우선·위협 중심 무게 2·락온 다음 대상 우선)
-        public bool Telegraphing => Run != null && Run.Move.Warn > 0 && Run.T < Run.Move.ActiveStart - HitResolver.Eps;
+        public bool Telegraphing => Run != null && Run.Warn > 0 && Run.T < Run.Move.ActiveStart - HitResolver.Eps;
+        /// 몸을 던지는 공격 중(시작 ~ 판정 끝) — □ 연타에 안 끊김(08 12장 11)
+        public bool Committed => State == Phase.Act && Run != null && Run.Move.Committed && Run.T < Run.Move.ActiveEnd - HitResolver.Eps;
+        /// 시우의 □ 4타(약 공격 순번 1~4)로 맞힌 타격인가 — △ 마무리·잡기·반격·기세는 순번 0
+        public static bool LightChainHit(Fighter atk, MoveDef m) => atk != null && atk.IsPlayer && atk.Run != null && atk.Run.Move == m && atk.Run.Combo > 0;
+        public int CommittedBraces { get; private set; }
         /// 경직 게이지(슈퍼아머)
         public float ArmorGauge { get; private set; } = 30f;
         /// 경직 게이지가 깨져 열린 동안(3초 뒤 가득 회복될 때까지 — 보통 타격처럼 경직)
@@ -376,7 +387,7 @@ namespace Haengin
             r.T = t1;
             Pose(r);
             // 이어지는 기술(원투의 2타): 연결 창이 열리면 넘친 시간을 넘겨 바로
-            if (m.Followup != null && r.LinkOpen)
+            if (m.Followup != null && !r.NoFollowup && r.LinkOpen)
             {
                 var next = StartAttack(m.Followup, r.Aim, r.T - m.LinkAt, null, r.Combo + 1);
                 next.FollowOf = r;
@@ -503,6 +514,14 @@ namespace Haengin
                     SetStagger(t.CrushStagger / MoveDef.Fps);
                 }
                 else ev.Outcome = HitOutcome.Blocked;
+            }
+            else if (Committed && LightChainHit(atk, m) && !m.Down)
+            {
+                // 몸을 던지는 공격(08 12장 11): □ 연타는 피해만 — 경직·슈퍼아머 게이지 없음, 공격은 그대로 나감
+                ev.Outcome = HitOutcome.Armored;
+                ev.Damage = m.Damage;
+                Hp -= ev.Damage;
+                CommittedBraces++;
             }
             else if (m.Power == Power.Light && !m.Down && Brace != null && State == Phase.Act && Brace(m))
             {

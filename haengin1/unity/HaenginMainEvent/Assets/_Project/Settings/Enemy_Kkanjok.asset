@@ -52,6 +52,8 @@ MonoBehaviour:
   ChargeTime: 0
   Followup: {fileID: -7758480607212997971}
   ClipRate: 1
+  ActiveAdvance: 0
+  Committed: 0
 --- !u!114 &-7758480607212997971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,6 +106,8 @@ MonoBehaviour:
   ChargeTime: 0
   Followup: {fileID: 0}
   ClipRate: 1
+  ActiveAdvance: 0
+  Committed: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,6 +144,16 @@ MonoBehaviour:
   Far: {fileID: 2759116160624689738}
   FarChance: 0.5
   Counter: {fileID: 0}
+  Tackle: {fileID: 0}
+  TackleChance: 0.5
+  TackleChance2: 0.8
+  Stumble: 1.2
+  Stumble2: 0.9
+  BackOff: 0.2
+  Phase2Hp: 0
+  Cooldown2: 1.3
+  ArmorGauge2: 50
+  Moves2: []
 --- !u!114 &2759116160624689738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,3 +206,5 @@ MonoBehaviour:
   ChargeTime: 0.45
   Followup: {fileID: 0}
   ClipRate: 1
+  ActiveAdvance: 0
+  Committed: 1
