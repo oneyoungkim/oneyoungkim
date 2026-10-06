@@ -1,0 +1,60 @@
+{
+  "note": "Style frames = target pictures for the map art pass (docs/10). GPT Image 2.5 high 2k 16:9, 2.75 cr each. The reference image is Siwoo's color concept so the small back-view player matches.",
+  "defaults": {
+    "quality": "high",
+    "resolution": "2k",
+    "aspect": "16:9",
+    "refs": [
+      "concept/art/fujimoto/siwoo_color_v2.png"
+    ]
+  },
+  "prefix": "In-game screenshot of a polished stylized 3D action-adventure game set in Hyehwa-dong, a hillside neighborhood of Seoul, Korea.",
+  "common": "RENDERING STYLE: cel-shaded 3D that reads like a flat-colored anime background painting. Every surface is a flat color area with exactly one crisp shadow tone (a warm grey multiply of the base color, never black or muddy), thin warm-black ink outlines (#1A1417) on silhouettes, roof edges, window frames and object edges; outlines get thinner with distance and disappear on far mountains. No gradients on walls, no photographic textures, no realistic dirt: materials are suggested only by sparse hand-drawn marks (brick joints, a few ink dots, short hatching strokes). Muted low-saturation palette: cream paper sky as one flat color (#E9E0CC in daylight), grey-brown distant mountain silhouettes with fine hatching, pale grey far city layers, dark ink-grey roof tiles (#3A3A3A) with a row of white dots on the eave end tiles, faded vermilion wood (#9B4A3A), red-brown brick, cream plaster, sandy beige ground (#D9C9A8). Subtle paper grain over the whole image, gentle split toning. The neighborhood is dense and lived-in, with real Korean alley details: yellow gas pipes running along walls, gas meters, air-conditioner outdoor units on brackets, white window security bars, utility poles with sagging tangled power lines crossing the sky, convex traffic mirrors, rubber basins and styrofoam boxes planted with green onions and chili. SEASON: spring (March to May): fresh light-green leaves, no autumn colors, no fruit on trees. Shapes are clean and readable like a real-time 3D game built from modular pieces, yet rich in props. CAMERA: third-person over-the-shoulder game camera, lens height about 1.6 m, 35 mm lens, natural eye-level perspective. The reference image shows the player character: draw him small, seen from behind, standing at the lower left third and filling about one quarter of the image height. No HUD, no UI, no watermark. All signboards and banners are blank solid color panels with at most simple abstract shapes: absolutely no letters, no Korean or English text, no numbers, no logos, no brand marks anywhere. No alcohol, no cigarettes, no vehicle badges.",
+  "items": [
+    {
+      "name": "f04_siwoo_house_morning",
+      "out": "concept/art/env/frames/f04_siwoo_house_morning.png",
+      "prompt": "SCENE: bright spring morning at the very top of the hill, in front of the player's home. An old three-storey red-brick multi-family house (dasedae villa) with an open ground-floor piloti parking space supported by square columns, small aluminum windows with white security bars, a narrow external steel staircase painted dull green climbing the side up to the flat roof. On the roof: a sky-blue cylindrical water tank, green waterproof-painted roof floor, brown earthenware sauce jars, a clothesline with laundry, potted plants. A small dark green front door with a dented mailbox and an intercom. Next door, a one-storey older house behind a low cement wall with a black iron gate and a small tree with fresh spring leaves. Directly behind and above the houses the old Seoul fortress wall of large grey granite blocks runs along the ridge with pine trees. A utility pole with a transformer and tangled power lines in the foreground right. Clean crisp morning shadows, sky flat cream."
+    },
+    {
+      "name": "f01_hoomun_street_night",
+      "out": "concept/art/env/frames/f01_hoomun_street_night.png",
+      "prompt": "SCENE: night, 10 pm, the sloping shop street outside the back gate of a university. Three- and four-storey shop buildings in brick and tiled facades line both sides. Ground floors are glass shop fronts with aluminum frames: a Korean beef-soup restaurant with a steamed-up glass door and a big steel pot visible inside, a small 24-hour convenience store on the corner glowing cool teal-white with a folded green parasol outside, a stationery and copy shop with its shutter rolled down. Above every shop a horizontal signboard band (blank colored panels), upper floors with rows of study-room windows, one projecting vertical sign. A small village-bus stop shelter at the curb. Utility poles with tangled sagging power lines and transformer cans. Sodium-orange street lamps make warm pools of light on the asphalt; between the pools the street sinks into flat dark navy-violet shadow. Some upper windows lit warm yellow. At the far top end, the university back gate with stone pillars and a low barrier, a dark wooded hill above it. Sky: flat deep indigo, no stars."
+    },
+    {
+      "name": "f02_parking_sunset",
+      "out": "concept/art/env/frames/f02_parking_sunset.png",
+      "prompt": "SCENE: late afternoon golden hour in a cramped back-alley parking lot behind a row of shop buildings. Cracked asphalt with faded white parking lines and oil stains drawn as flat shapes. On the right a tall grey concrete retaining wall with abstract spray-paint graffiti shapes (no letters) and a strip of weeds at its foot. On the left the back walls of the shop buildings: yellow gas pipes, gas meters, exhaust vents, air-conditioner outdoor units, a soup restaurant's back door with stacked plastic crates and a big steel pot drying upside down, and a delivery bicycle with a rear box leaning against a wall pipe. A glowing drink vending machine stands against the wall halfway along, next to a green wheeled trash bin. At the lot entrance a lowered red-and-white parking barrier arm on a concrete base. Long warm shadows across the ground, sky flat peach-cream, power lines crossing overhead."
+    },
+    {
+      "name": "f03_alley_stairs_dawn",
+      "out": "concept/art/env/frames/f03_alley_stairs_dawn.png",
+      "prompt": "SCENE: pre-dawn blue hour, 5:30 am. A steep narrow residential alley climbing up the hill with concrete stairs and a painted metal handrail, lined on both sides with three-storey red-brick multi-family villas: aluminum windows with white security bars, yellow gas pipes snaking along the walls, gas meters, air-conditioner units on brackets, laundry racks on tiny balconies, a green-painted iron gate in a cement wall, rubber basins and styrofoam boxes planted with green onions lining the steps, a convex traffic mirror on a pole at the bend. A few windows lit warm yellow. One street lamp still on, casting a small orange pool on the steps. High above at the top of the alley the grey granite fortress wall of Seoul runs along the ridge. Sky flat pale blue-grey turning cream at the horizon; the whole scene in cool blue-grey shadow tones."
+    },
+    {
+      "name": "f05_waryong_climb_dawn",
+      "out": "concept/art/env/frames/f05_waryong_climb_dawn.png",
+      "prompt": "SCENE: early dawn on the last steep climb. A narrow paved lane about 3.5 m wide rises steeply toward the old Seoul fortress wall, which looms large ahead: weathered grey granite blocks with dark ink joints, a crenellated parapet along the top, pine trees above it, a black street lamp on the wall path. The lane is edged by low retaining walls of rough stone, overgrown bushes and an old single-storey house with a dark tile roof at the top of the lane. In this frame the player character is pushing a delivery bicycle with a box on the rear rack up the slope. Far below and behind, the city lies in pale grey flat layers. Sky flat warm cream with a faint peach band near the horizon, long soft shadows."
+    },
+    {
+      "name": "f06_fortress_trail_day",
+      "out": "concept/art/env/frames/f06_fortress_trail_day.png",
+      "prompt": "SCENE: spring midday in Waryong Park. A gently winding path of granite paving runs along the inside of the old Seoul fortress wall: a tall wall of large weathered grey granite blocks with a crenellated parapet, pine trees and fresh light-green spring foliage, wooden benches, a few outdoor exercise machines in faded paint, a black iron street lamp, a small round dirt clearing. Through a gap on the right the city spreads far below as flat pale grey layers, with a mountain silhouette on the horizon. Sky flat cream with a few flat cloud shapes."
+    },
+    {
+      "name": "f07_hyehwamun_day",
+      "out": "concept/art/env/frames/f07_hyehwamun_day.png",
+      "prompt": "SCENE: afternoon at Hyehwamun, the small restored northeast gate of Seoul's fortress, seen from the uphill sidewalk. A massive granite base with an arched tunnel opening, topped by a one-storey wooden gate pavilion with a dark-tile hipped roof, faded vermilion columns, eave brackets painted in simplified flat green-blue and red bands, a row of white dots on the eave end tiles. The fortress wall continues down the slope on both sides. Below, a wide road and a sidewalk with planters; across the road a hill ridge covered with small houses. Sky flat cream."
+    },
+    {
+      "name": "f08_convenience_night",
+      "out": "concept/art/env/frames/f08_convenience_night.png",
+      "prompt": "SCENE: night, 11 pm, outside a small 24-hour convenience store on a street corner. Large glass front glowing cool teal-white fluorescent; inside, shelves of snacks and drink coolers drawn as simple color blocks with no readable labels (no alcohol, no cigarettes visible). On the sidewalk two folded green parasols, plastic tables and chairs, an ice-cream freezer chest by the door, stacked plastic delivery crates, a parked small delivery scooter, a one-ton delivery truck with a box body at the curb. On the other side of the street an orange sodium street lamp makes a warm pool of light: strong split tone of teal versus orange. Dry asphalt. Sky flat deep indigo."
+    },
+    {
+      "name": "f09_school_front_morning",
+      "out": "concept/art/env/frames/f09_school_front_morning.png",
+      "prompt": "SCENE: spring morning, 7:50 am, the steep uphill road ending at the gate of a hillside high school. A pair of granite gate pillars with a sliding iron gate, a long school wall that merges into the old granite fortress wall behind, a four-storey cream concrete school building with rows of large windows, cherry trees in bloom drawn as pale pink flat shapes. The road surface in front of the gate is painted red-brown as a school safety zone with a white outline (no letters), a yellow-green safety fence along the sidewalk, a convex traffic mirror. Small students in navy blazers walk up the slope in the background. Clear morning light, sky flat cream."
+    }
+  ]
+}

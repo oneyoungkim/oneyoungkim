@@ -1,0 +1,47 @@
+{
+ "_note": "chosen generator per prop (default hunyuan), yaw = extra turn in degrees after the generator's base turn, fit = h|w|d|max|xyz, dims overrides props_meta dims",
+ "delivery_scooter": {
+  "model": "hunyuan",
+  "fit": "d"
+ },
+ "delivery_bicycle": {
+  "yaw": 90
+ },
+ "street_lamp_cobra": {
+  "yaw": -90
+ },
+ "truck_1ton_box": {
+  "fit": "xyz",
+  "dims": [
+   1.95,
+   5.1,
+   2.7
+  ]
+ },
+ "mixer_truck": {
+  "fit": "xyz",
+  "dims": [
+   2.5,
+   8.6,
+   3.7
+  ]
+ },
+ "styrofoam_planter": {
+  "fit": "w"
+ },
+ "plastic_crates_stack": {
+  "fit": "w"
+ },
+ "park_bench": {
+  "fit": "xyz"
+ },
+ "cement_bags": {
+  "fit": "w"
+ },
+ "euroform_stack": {
+  "fit": "w"
+ },
+ "laundry_rack": {
+  "fit": "w"
+ }
+}

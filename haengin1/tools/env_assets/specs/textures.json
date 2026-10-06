@@ -1,0 +1,106 @@
+{
+ "note": "Base pattern textures -> tools/env_assets/seamless.py -> concept/art/env/textures/<name>.png. Generated from textures_list.py.",
+ "defaults": {
+  "quality": "high",
+  "resolution": "2k",
+  "aspect": "1:1"
+ },
+ "common": "Seamless tileable texture swatch for a stylized cel-shaded 3D game. The surface fills the entire square image edge to edge, seen perfectly flat and straight-on (orthographic), no perspective, no lighting, no shadows, no vignette, no border, no frame, no objects. Style: flat-colored anime background painting: flat base color fills, pattern drawn with thin hand-drawn warm-dark ink lines, a few sparse ink dots or short hatching strokes, muted low-saturation colors, no photographic detail, no noise, no gradients, even brightness everywhere. The pattern continues seamlessly past all four edges. No text, no letters, no logos.",
+ "items": [
+  {
+   "name": "M_Brick_Red",
+   "out": "concept/art/env/textures/src/M_Brick_Red.png",
+   "prompt": "SURFACE: a red-brick wall in running bond: about 15 brick courses tall and 5 bricks across, thin pale mortar joints, each brick a flat fill with slight hue variation between bricks, a few chipped corners drawn with short ink strokes. COLORS: red-brown bricks around #8E4A3A with some #9C5545 and #7E4234, mortar #CFC4B3. SCALE: the square shows 1.0 m by 1.0 m of surface."
+  },
+  {
+   "name": "M_Brick_Brown",
+   "out": "concept/art/env/textures/src/M_Brick_Brown.png",
+   "prompt": "SURFACE: a dark brown face-brick wall of a Korean multi-family villa in running bond: about 15 brick courses tall and 5 bricks across, thin grey mortar joints, flat fills with slight variation between bricks. COLORS: chocolate brown bricks around #6E4B3A with some #7A5644 and #5E3F31, mortar #A9A196. SCALE: the square shows 1.0 m by 1.0 m of surface."
+  },
+  {
+   "name": "M_Plaster_White",
+   "out": "concept/art/env/textures/src/M_Plaster_White.png",
+   "prompt": "SURFACE: an off-white rough sprayed plaster wall (stucco), surface suggested only by a sparse scatter of tiny ink dots, a few faint hairline cracks and two or three soft rain-streak marks. COLORS: off-white #E8E2D6 with marks slightly darker #D3CBBE. SCALE: the square shows 2.0 m by 2.0 m of surface."
+  },
+  {
+   "name": "M_Plaster_Cream",
+   "out": "concept/art/env/textures/src/M_Plaster_Cream.png",
+   "prompt": "SURFACE: a cream painted cement plaster wall, surface suggested only by sparse tiny ink dots, a couple of hairline cracks and faint patch marks. COLORS: cream #E3D5B8 with marks #CDBF9F. SCALE: the square shows 2.0 m by 2.0 m of surface."
+  },
+  {
+   "name": "M_Tile_Beige",
+   "out": "concept/art/env/textures/src/M_Tile_Beige.png",
+   "prompt": "SURFACE: a shop building facade clad in small rectangular ceramic tiles, 20 cm wide and 10 cm tall, stack bond (aligned joints), 10 rows and 5 columns, thin grey grout lines, flat fills with slight tile-to-tile variation. COLORS: beige tiles #CDBFA6 with some #C4B59B and #D6C9B1, grout #A79C8B. SCALE: the square shows 1.0 m by 1.0 m of surface."
+  },
+  {
+   "name": "M_Concrete",
+   "out": "concept/art/env/textures/src/M_Concrete.png",
+   "prompt": "SURFACE: a cast-in-place concrete retaining wall with formwork panel lines: a grid of 4 panels across and 2 panels tall, small round form-tie holes in a regular pattern, sparse ink dots and a few faint water stains. COLORS: cool grey #B9B6AF with lines #9D9A93. SCALE: the square shows 2.4 m by 2.4 m of surface."
+  },
+  {
+   "name": "M_Granite",
+   "out": "concept/art/env/textures/src/M_Granite.png",
+   "prompt": "SURFACE: the outer face of an old Korean fortress wall built of large dressed granite blocks laid in rough horizontal courses: about 5 courses, blocks of slightly different widths, thick dark ink joint lines, each block a flat fill with a few ink dots and short hatching on one edge. COLORS: warm light grey granite #CFC6B4 with blocks varying #C4BBA8 to #D8D0BF, joints #4A443E. SCALE: the square shows 3.0 m by 3.0 m of surface."
+  },
+  {
+   "name": "M_Stone_Base",
+   "out": "concept/art/env/textures/src/M_Stone_Base.png",
+   "prompt": "SURFACE: the lower wall of a traditional Korean hanok made of rectangular grey stone blocks about 30 cm by 50 cm in staggered courses, bold dark ink joint lines, flat fills. COLORS: grey stone #9C9890 with variation #8E8A82 to #AAA69E, joints #2C2826. SCALE: the square shows 1.5 m by 1.5 m of surface."
+  },
+  {
+   "name": "M_Stone_Rubble",
+   "out": "concept/art/env/textures/src/M_Stone_Rubble.png",
+   "prompt": "SURFACE: a rough stone retaining wall of irregular rounded fieldstones of many sizes packed together, dark ink outlines around each stone, flat fills. COLORS: stones in warm greys #B8AE9C #A79E8C #C6BDAB, gaps #5A534A. SCALE: the square shows 2.0 m by 2.0 m of surface."
+  },
+  {
+   "name": "M_Giwa_Dark",
+   "out": "concept/art/env/textures/src/M_Giwa_Dark.png",
+   "prompt": "SURFACE: a traditional Korean roof seen straight from above: parallel vertical rows of dark grey clay roof tiles, alternating convex cover-tile rows and concave pan-tile channels, 4 channels across, overlapping tile ends visible as repeating curved lines along each row. COLORS: dark ink grey #3A3A3A with cover tiles #454545 and channel shadows #2C2C2C, thin lighter edge lines #5A5A5A. SCALE: the square shows 1.2 m by 1.2 m of surface."
+  },
+  {
+   "name": "M_Wood_Red",
+   "out": "concept/art/env/textures/src/M_Wood_Red.png",
+   "prompt": "SURFACE: faded vermilion painted wooden boards with long vertical wood grain shown by a few thin darker lines and small knots, paint slightly worn on edges. COLORS: faded vermilion #9B4A3A with grain #84402F and worn spots #A9604E. SCALE: the square shows 1.0 m by 1.0 m of surface."
+  },
+  {
+   "name": "M_Wood_Dark",
+   "out": "concept/art/env/textures/src/M_Wood_Dark.png",
+   "prompt": "SURFACE: dark stained wooden planks running vertically, 6 planks across, thin dark gaps between planks, grain drawn with a few thin lines. COLORS: dark brown #4A3A30 with grain #3C2F27 and plank variation #554336. SCALE: the square shows 1.0 m by 1.0 m of surface."
+  },
+  {
+   "name": "M_Metal_Green",
+   "out": "concept/art/env/textures/src/M_Metal_Green.png",
+   "prompt": "SURFACE: a flat painted steel surface in dull green with a few small scuffs, scratches and paint chips drawn as tiny flat shapes. COLORS: dull green #4F6B58 with chips #3E5546 and scuffs #61806B. SCALE: the square shows 1.0 m by 1.0 m of surface."
+  },
+  {
+   "name": "M_Metal_Rust",
+   "out": "concept/art/env/textures/src/M_Metal_Rust.png",
+   "prompt": "SURFACE: a rusty corrugated galvanized iron sheet with vertical corrugations, about 13 ridges across, rust patches as flat orange-brown shapes over the grey metal, light and shadow sides of each ridge as two flat tones. COLORS: grey metal #8E9094 and #7A7C80, rust #8A5A3C and #A0693F. SCALE: the square shows 1.0 m by 1.0 m of surface."
+  },
+  {
+   "name": "M_Metal_Grey",
+   "out": "concept/art/env/textures/src/M_Metal_Grey.png",
+   "prompt": "SURFACE: a flat painted grey steel surface with a few small scuffs and scratches drawn as tiny flat marks. COLORS: grey #8C8F93 with marks #7A7D81 and #9EA1A5. SCALE: the square shows 1.0 m by 1.0 m of surface."
+  },
+  {
+   "name": "M_Roof_Green",
+   "out": "concept/art/env/textures/src/M_Roof_Green.png",
+   "prompt": "SURFACE: a flat rooftop floor coated in green waterproof urethane paint, with a few hairline cracks, two repaired patches in a slightly different green and sparse ink dots. COLORS: green #6E8F6A with patches #648463 and cracks #4F6B4D. SCALE: the square shows 2.0 m by 2.0 m of surface."
+  },
+  {
+   "name": "M_Asphalt",
+   "out": "concept/art/env/textures/src/M_Asphalt.png",
+   "prompt": "SURFACE: an asphalt road surface seen from above: flat grey with a sparse scatter of small darker and lighter aggregate dots, two thin crack lines and one darker rectangular patch repair. COLORS: grey #6F6C69 with dots #5E5B58 and #807D7A, patch #625F5C. SCALE: the square shows 4.0 m by 4.0 m of surface."
+  },
+  {
+   "name": "M_Paving",
+   "out": "concept/art/env/textures/src/M_Paving.png",
+   "prompt": "SURFACE: a sidewalk of square concrete paving blocks 30 cm by 30 cm, 4 by 4, aligned joints, thin dark joint lines, blocks in two mixed colors in a random pattern. COLORS: grey-beige #BDB3A3 and muted red #A9796A, joints #6E665C. SCALE: the square shows 1.2 m by 1.2 m of surface."
+  },
+  {
+   "name": "M_Dirt",
+   "out": "concept/art/env/textures/src/M_Dirt.png",
+   "prompt": "SURFACE: packed sandy dirt ground of a small park clearing seen from above: flat fill with a sparse scatter of ink dots, tiny pebbles and a few faint footprint smudges. COLORS: sandy beige #D9C9A8 with dots #BFAE8C and pebbles #A89A80. SCALE: the square shows 3.0 m by 3.0 m of surface."
+  }
+ ]
+}

@@ -1,0 +1,4503 @@
+{
+ "generator": "haengin1/tools/env/build_env.py",
+ "doc": "haengin1/docs/11_건물생성기.md",
+ "zone": "unity/HaenginMainEvent/Assets/_Project/Data/zone1.json",
+ "zone_version": "0.2.0",
+ "seed": 20261006,
+ "geometry_sha1": "d294590fce4015a45d680849d6d604d59db65c09",
+ "axes": "Unity 좌표 그대로(X 동, Y 위, Z 북). 프리팹을 원점·회전 0·배율 1 로 놓음",
+ "lod": {
+  "distances_m": [
+   40.0,
+   110.0
+  ],
+  "cull_screen_height": 0.006,
+  "camera_fov_deg": 45.0,
+  "note": "lod_screen_heights = [LOD0→1, LOD1→2, 안 그림] Unity LODGroup screenRelativeTransitionHeight(LOD Bias 1 기준)"
+ },
+ "districts": {
+  "HoomunN": {
+   "desc": "성균관로 북쪽 줄(후문 상가거리·명륜3가 다세대)",
+   "stats": {
+    "lod0": 16858,
+    "lod1": 6604,
+    "lod2": 3918,
+    "detail": 8834,
+    "winlit": 324,
+    "signs": 22,
+    "objects": 7,
+    "sockets": 6
+   },
+   "lit_panes": 162
+  },
+  "HoomunS": {
+   "desc": "성균관로 남쪽 줄 + 후문 뒷골목 주차장 둘레",
+   "stats": {
+    "lod0": 14134,
+    "lod1": 5820,
+    "lod2": 3586,
+    "detail": 7972,
+    "winlit": 262,
+    "signs": 4,
+    "objects": 7,
+    "sockets": 3
+   },
+   "lit_panes": 131
+  },
+  "Alley": {
+   "desc": "명륜3가 골목·시우네·꼭대기 계단·한옥",
+   "stats": {
+    "lod0": 44172,
+    "lod1": 12932,
+    "lod2": 6434,
+    "detail": 17172,
+    "winlit": 352,
+    "signs": 4,
+    "objects": 15,
+    "sockets": 0
+   },
+   "lit_panes": 176
+  },
+  "Campus": {
+   "desc": "캠퍼스 건물·후문 경비실·기둥·캠퍼스 담장",
+   "stats": {
+    "lod0": 12658,
+    "lod1": 5392,
+    "lod2": 2858,
+    "detail": 314,
+    "winlit": 144,
+    "signs": 6,
+    "objects": 5,
+    "sockets": 2
+   },
+   "lit_panes": 72
+  },
+  "Waryong": {
+   "desc": "와룡공원(정자)",
+   "stats": {
+    "lod0": 4130,
+    "lod1": 790,
+    "lod2": 250,
+    "detail": 216,
+    "winlit": 0,
+    "signs": 0,
+    "objects": 1,
+    "sockets": 0
+   },
+   "lit_panes": 0
+  },
+  "Wall": {
+   "desc": "한양도성 성곽(와룡공원 구간)",
+   "stats": {
+    "lod0": 30856,
+    "lod1": 2009,
+    "lod2": 1369,
+    "detail": 0,
+    "winlit": 0,
+    "signs": 0,
+    "objects": 7,
+    "sockets": 0
+   },
+   "lit_panes": 0
+  },
+  "Wires": {
+   "desc": "전봇대·전선(구역 전체)",
+   "stats": {
+    "lod0": 9320,
+    "lod1": 3128,
+    "lod2": 848,
+    "detail": 384,
+    "winlit": 0,
+    "signs": 0,
+    "objects": 8,
+    "sockets": 0
+   },
+   "lit_panes": 0
+  }
+ },
+ "files_bytes": {
+  "HoomunN.fbx": 1008540,
+  "HoomunS.fbx": 878268,
+  "Alley.fbx": 2118396,
+  "Campus.fbx": 482428,
+  "Waryong.fbx": 178364,
+  "Wall.fbx": 956124,
+  "Wires.fbx": 606092
+ },
+ "materials": {
+  "M_Brick_Red": {
+   "color": "#9A4D3E",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "빨간 벽돌(다세대·담장). 줄눈 무늬 텍스처",
+   "tiling": 1.0
+  },
+  "M_Brick_Brown": {
+   "color": "#7C5C4A",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "갈색·고동색 벽돌(오래된 다세대·하숙)",
+   "tiling": 1.0
+  },
+  "M_Plaster_White": {
+   "color": "#E7E1D6",
+   "tile": 2.0,
+   "uv": "world",
+   "note": "흰 회벽·흰 칠(한옥 윗벽·단독주택)",
+   "tiling": 0.5
+  },
+  "M_Plaster_Cream": {
+   "color": "#D8C9AE",
+   "tile": 2.0,
+   "uv": "world",
+   "note": "크림색 뿜칠(단독·원룸)",
+   "tiling": 0.5
+  },
+  "M_Tile_Beige": {
+   "color": "#CBBDA4",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "베이지 외장 타일(상가·원룸·학교)",
+   "tiling": 1.0
+  },
+  "M_Concrete": {
+   "color": "#A9A49B",
+   "tile": 2.0,
+   "uv": "world",
+   "note": "콘크리트(기초·띠·옥상 난간 갓돌·옹벽·전봇대)",
+   "tiling": 0.5
+  },
+  "M_Granite": {
+   "color": "#BDB7AD",
+   "tile": 2.0,
+   "uv": "world",
+   "note": "화강석(성곽 체성·한옥 기단·축대·상가 1층 마감)",
+   "tiling": 0.5
+  },
+  "M_Giwa_Dark": {
+   "color": "#3B3A3A",
+   "tile": 2.0,
+   "uv": "world",
+   "note": "먹회색 기와(지붕 면·용마루·막새)",
+   "tiling": 0.5
+  },
+  "M_Wood_Red": {
+   "color": "#9B4A3A",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "바랜 주칠 목재(한옥 기둥·창살·서까래 끝)",
+   "tiling": 1.0
+  },
+  "M_Wood_Dark": {
+   "color": "#4F3D33",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "짙은 나무(대문·풍판·평상·마루)",
+   "tiling": 1.0
+  },
+  "M_Metal_Green": {
+   "color": "#4E6A5B",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "녹색 칠 철물(철대문·철제 계단·캠퍼스 펜스)",
+   "tiling": 1.0
+  },
+  "M_Metal_Rust": {
+   "color": "#7B4B37",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "녹슨 철(오래된 방범창·철문)",
+   "tiling": 1.0
+  },
+  "M_Metal_Grey": {
+   "color": "#8C8E8D",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "회색 금속(알루미늄 새시·난간·셔터 박스·실외기 받침)",
+   "tiling": 1.0
+  },
+  "M_Glass_Dark": {
+   "color": "#414D55",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "어두운 유리(창·상가 유리). 반사 없음",
+   "tiling": 1.0
+  },
+  "M_Glass_Lit": {
+   "color": "#F2D9A6",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "창문 불(밤에 켜지는 판, 발광). 0~1 UV — 커튼 그림자 그림 한 장",
+   "tiling": 1.0
+  },
+  "M_Roof_Green": {
+   "color": "#6E9273",
+   "tile": 2.0,
+   "uv": "world",
+   "note": "옥상 녹색 방수 바닥",
+   "tiling": 0.5
+  },
+  "M_Pipe_Yellow": {
+   "color": "#C9A445",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "노란 가스관(채도 낮춘 황토 노랑 — 바나나우유 강조 노랑과 구분)",
+   "tiling": 1.0
+  },
+  "M_AC_White": {
+   "color": "#E3E1DB",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "실외기·계량기 함·스티로폼 화분",
+   "tiling": 1.0
+  },
+  "M_Asphalt": {
+   "color": "#6F6B67",
+   "tile": 4.0,
+   "uv": "world",
+   "note": "아스팔트(키트에선 옥상 방수 시트 일부·주차장 바닥 띠)",
+   "tiling": 0.25
+  },
+  "M_Paving": {
+   "color": "#CFC8BC",
+   "tile": 2.0,
+   "uv": "world",
+   "note": "판석·보도블록(한옥 마당·성곽 위 포장)",
+   "tiling": 0.5
+  },
+  "M_Sign_Atlas": {
+   "color": "#EFE9DA",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "간판 자리(Sign_<n>). 0~1 UV — Unity 에서 아틀라스 칸 또는 TMP 를 얹음",
+   "tiling": 1.0
+  },
+  "M_Granite_Dark": {
+   "color": "#6B6863",
+   "tile": 2.0,
+   "uv": "world",
+   "new": true,
+   "note": "짙은 화강석(성곽 미석·옥개석, 06 문서 wallcap 색) · LOD0 돌 쌓기 뒤 줄눈 면",
+   "tiling": 0.5
+  },
+  "M_Granite_Block": {
+   "color": "#C2BCB1",
+   "tile": 1.0,
+   "uv": "world",
+   "new": true,
+   "note": "돌 한 장 면(줄눈 없는 화강석 결). LOD0 돌 쌓기 덩어리 전용 — 줄눈은 지오메트리가 그림",
+   "tiling": 1.0
+  },
+  "M_Hanji": {
+   "color": "#EEE6D3",
+   "tile": 1.0,
+   "uv": "world",
+   "new": true,
+   "note": "창호지(한옥 창살 뒤 종이)",
+   "tiling": 1.0
+  },
+  "M_Wire_Black": {
+   "color": "#2B2427",
+   "tile": 1.0,
+   "uv": "world",
+   "new": true,
+   "note": "전선·철망 줄(먹색 가까이, 외곽선 #1A1417 보다 조금 밝게)",
+   "tiling": 1.0
+  },
+  "M_Plant_Green": {
+   "color": "#6E7C57",
+   "tile": 1.0,
+   "uv": "world",
+   "new": true,
+   "note": "화분 식물·담쟁이",
+   "tiling": 1.0
+  },
+  "M_Fabric": {
+   "color": "#A9B7C2",
+   "tile": 1.0,
+   "uv": "world",
+   "new": true,
+   "note": "빨래·천막(옅은 파랑 — 텍스처로 여러 색 아틀라스 권장)",
+   "tiling": 1.0
+  },
+  "M_Tank_Blue": {
+   "color": "#7F9EAB",
+   "tile": 1.0,
+   "uv": "world",
+   "new": true,
+   "note": "옥상 물탱크(FRP 하늘색, 채도 낮춤)",
+   "tiling": 1.0
+  }
+ },
+ "objects": [
+  {
+   "name": "shop_000",
+   "district": "HoomunN",
+   "kind": "building",
+   "info": {
+    "block": "후문상가 A동",
+    "index": 0,
+    "btype": "shop",
+    "kind": "shop",
+    "center": [
+     -190.2,
+     34.08,
+     109.63
+    ],
+    "size": [
+     8.5,
+     10.56,
+     9.0
+    ],
+    "yaw": -5.71,
+    "floors": 3,
+    "use": "1층 '반짝 문구·복사'(가칭) / 2층 번개배달 사무실(남쪽 출입 계단) / 3층 원룸",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "shop",
+     "main": "M_Tile_Beige",
+     "floors": 3,
+     "y0": 29.76,
+     "top": 39.36
+    },
+    "lod_size": 12.51,
+    "lod_screen_heights": [
+     0.3775,
+     0.1373,
+     0.006
+    ]
+   },
+   "tris": [
+    2502,
+    952,
+    612
+   ],
+   "detail_tris": 928,
+   "origin": [
+    -190.22,
+    28.8,
+    109.577
+   ]
+  },
+  {
+   "name": "Sign_001",
+   "district": "HoomunN",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "plate",
+    "size_m": [
+     0.3,
+     1.14
+    ],
+    "center": [
+     -186.752,
+     31.06,
+     105.329
+    ],
+    "normal": [
+     0.0995,
+     0.0,
+     -0.995
+    ],
+    "tenant": "번개배달 사무실",
+    "block": "후문상가 A동",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -186.752,
+    30.49,
+    105.329
+   ]
+  },
+  {
+   "name": "Sign_002",
+   "district": "HoomunN",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "band",
+    "size_m": [
+     5.393,
+     0.81
+    ],
+    "center": [
+     -190.957,
+     33.095,
+     104.908
+    ],
+    "normal": [
+     0.0995,
+     0.0,
+     -0.995
+    ],
+    "tenant": "반짝 문구·복사",
+    "block": "후문상가 A동",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -190.957,
+    32.69,
+    104.908
+   ]
+  },
+  {
+   "name": "Sign_003",
+   "district": "HoomunN",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "band",
+    "size_m": [
+     7.24,
+     0.54
+    ],
+    "center": [
+     -189.74,
+     33.18,
+     105.03
+    ],
+    "normal": [
+     0.0995,
+     0.0,
+     -0.995
+    ],
+    "tenant": "번개배달 사무실",
+    "block": "후문상가 A동",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -189.74,
+    32.91,
+    105.03
+   ]
+  },
+  {
+   "name": "Sign_004",
+   "district": "HoomunN",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "projecting",
+    "size_m": [
+     0.69,
+     2.34
+    ],
+    "center": [
+     -185.567,
+     34.86,
+     105.043
+    ],
+    "normal": [
+     0.995,
+     0.0,
+     0.0995
+    ],
+    "tenant": "번개배달 사무실",
+    "block": "후문상가 A동",
+    "faces": 2
+   },
+   "tris": 4,
+   "detail_tris": 0,
+   "origin": [
+    -185.67,
+    33.69,
+    105.033
+   ]
+  },
+  {
+   "name": "Sock_shop_light_001",
+   "district": "HoomunN",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "shop_light",
+    "pos": [
+     -191.029,
+     31.91,
+     105.628
+    ],
+    "normal": [
+     0.0995,
+     0.0,
+     -0.995
+    ],
+    "tenant": "반짝 문구·복사"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -191.029,
+    31.91,
+    105.628
+   ]
+  },
+  {
+   "name": "shop_001",
+   "district": "HoomunN",
+   "kind": "building",
+   "info": {
+    "block": "후문상가 B동",
+    "index": 1,
+    "btype": "shop",
+    "kind": "shop",
+    "center": [
+     -179.84,
+     31.15,
+     108.89
+    ],
+    "size": [
+     8.0,
+     8.57,
+     9.0
+    ],
+    "yaw": 12.31,
+    "floors": 2,
+    "use": "1층 서쪽 성대후문 국밥 / 1층 동쪽 하루편의점 후문점(골목 모서리, 동쪽 면도 유리) / 2층 하숙",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "party",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "shop",
+     "main": "M_Tile_Beige",
+     "floors": 2,
+     "y0": 28.84,
+     "top": 35.44,
+     "corner_glass": "+x",
+     "landmark_sign": "하루편의점 간판"
+    },
+    "lod_size": 11.55,
+    "lod_screen_heights": [
+     0.3485,
+     0.1267,
+     0.006
+    ]
+   },
+   "tris": [
+    1528,
+    652,
+    430
+   ],
+   "detail_tris": 406,
+   "origin": [
+    -179.818,
+    26.78,
+    108.4
+   ]
+  },
+  {
+   "name": "Sign_005",
+   "district": "HoomunN",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "band",
+    "size_m": [
+     3.49,
+     0.81
+    ],
+    "center": [
+     -182.706,
+     32.17,
+     104.784
+    ],
+    "normal": [
+     -0.2132,
+     0.0,
+     -0.977
+    ],
+    "tenant": "성대후문 국밥",
+    "block": "후문상가 B동",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -182.706,
+    31.765,
+    104.784
+   ]
+  },
+  {
+   "name": "Sign_006",
+   "district": "HoomunN",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "band",
+    "size_m": [
+     3.49,
+     0.81
+    ],
+    "center": [
+     -178.945,
+     32.17,
+     103.963
+    ],
+    "normal": [
+     -0.2132,
+     0.0,
+     -0.977
+    ],
+    "tenant": "하루편의점 후문점",
+    "block": "후문상가 B동",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -178.945,
+    31.765,
+    103.963
+   ]
+  },
+  {
+   "name": "Sign_007",
+   "district": "HoomunN",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "band",
+    "size_m": [
+     3.94,
+     0.81
+    ],
+    "center": [
+     -176.281,
+     32.17,
+     105.862
+    ],
+    "normal": [
+     0.977,
+     0.0,
+     -0.2132
+    ],
+    "tenant": "하루편의점 후문점",
+    "block": "후문상가 B동",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -176.281,
+    31.765,
+    105.862
+   ]
+  },
+  {
+   "name": "Sign_008",
+   "district": "HoomunN",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "projecting",
+    "size_m": [
+     0.84,
+     1.14
+    ],
+    "center": [
+     -177.064,
+     31.8,
+     103.064
+    ],
+    "normal": [
+     0.977,
+     0.0,
+     -0.2132
+    ],
+    "tenant": "하루편의점",
+    "block": "후문상가 B동",
+    "faces": 2
+   },
+   "tris": 4,
+   "detail_tris": 0,
+   "origin": [
+    -177.166,
+    31.23,
+    103.086
+   ]
+  },
+  {
+   "name": "Sock_shop_light_002",
+   "district": "HoomunN",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "shop_light",
+    "pos": [
+     -182.552,
+     30.985,
+     105.49
+    ],
+    "normal": [
+     -0.2132,
+     0.0,
+     -0.977
+    ],
+    "tenant": "성대후문 국밥"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -182.552,
+    30.985,
+    105.49
+   ]
+  },
+  {
+   "name": "Sock_shop_light_003",
+   "district": "HoomunN",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "shop_light",
+    "pos": [
+     -178.791,
+     30.985,
+     104.669
+    ],
+    "normal": [
+     -0.2132,
+     0.0,
+     -0.977
+    ],
+    "tenant": "하루편의점 후문점"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -178.791,
+    30.985,
+    104.669
+   ]
+  },
+  {
+   "name": "Sock_shop_light_004",
+   "district": "HoomunN",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "shop_light",
+    "pos": [
+     -176.987,
+     30.985,
+     106.016
+    ],
+    "normal": [
+     0.977,
+     0.0,
+     -0.2132
+    ],
+    "tenant": "하루편의점 후문점"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -176.987,
+    30.985,
+    106.016
+   ]
+  },
+  {
+   "name": "villa_002",
+   "district": "HoomunN",
+   "kind": "building",
+   "info": {
+    "block": "명륜3가 다세대 1(벽돌)",
+    "index": 2,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -165.75,
+     32.86,
+     104.96
+    ],
+    "size": [
+     9.0,
+     13.68,
+     8.5
+    ],
+    "yaw": 17.05,
+    "floors": 4,
+    "use": "다세대 4층, 1층 '빨랫줄 세탁'(가칭)",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Brick_Brown",
+     "floors": 4,
+     "y0": 27.1,
+     "top": 39.7
+    },
+    "lod_size": 14.88,
+    "lod_screen_heights": [
+     0.449,
+     0.1633,
+     0.006
+    ]
+   },
+   "tris": [
+    3676,
+    1412,
+    852
+   ],
+   "detail_tris": 2612,
+   "origin": [
+    -165.774,
+    26.02,
+    104.716
+   ]
+  },
+  {
+   "name": "villa_003",
+   "district": "HoomunN",
+   "kind": "building",
+   "info": {
+    "block": "명륜3가 원룸 2",
+    "index": 3,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -155.3,
+     31.49,
+     101.48
+    ],
+    "size": [
+     9.0,
+     13.64,
+     8.0
+    ],
+    "yaw": 17.45,
+    "floors": 4,
+    "use": "원룸 4층",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "piloti",
+     "main": "M_Tile_Beige",
+     "floors": 4,
+     "y0": 25.71,
+     "top": 38.31,
+     "piloti_depth": 5.6
+    },
+    "lod_size": 14.76,
+    "lod_screen_heights": [
+     0.4454,
+     0.162,
+     0.006
+    ]
+   },
+   "tris": [
+    4578,
+    1698,
+    848
+   ],
+   "detail_tris": 2566,
+   "origin": [
+    -155.035,
+    24.67,
+    101.48
+   ]
+  },
+  {
+   "name": "Sock_ceiling_light_005",
+   "district": "HoomunN",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "ceiling_light",
+    "pos": [
+     -155.66,
+     28.36,
+     100.335
+    ],
+    "normal": [
+     0,
+     -1,
+     0
+    ],
+    "tenant": null
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -155.66,
+    28.36,
+    100.335
+   ]
+  },
+  {
+   "name": "villa_004",
+   "district": "HoomunN",
+   "kind": "building",
+   "info": {
+    "block": "명륜3가 다세대 3",
+    "index": 4,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -145.3,
+     28.74,
+     98.34
+    ],
+    "size": [
+     9.0,
+     10.56,
+     8.0
+    ],
+    "yaw": 17.45,
+    "floors": 3,
+    "use": "다세대 3층, 1층 '나사 철물'(가칭)",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "semi",
+     "main": "M_Brick_Brown",
+     "floors": 3,
+     "y0": 23.22,
+     "top": 32.82
+    },
+    "lod_size": 11.06,
+    "lod_screen_heights": [
+     0.3338,
+     0.1214,
+     0.006
+    ]
+   },
+   "tris": [
+    2188,
+    900,
+    556
+   ],
+   "detail_tris": 1272,
+   "origin": [
+    -145.3,
+    23.46,
+    98.099
+   ]
+  },
+  {
+   "name": "shop_005",
+   "district": "HoomunN",
+   "kind": "building",
+   "info": {
+    "block": "명륜1가 방면 상가주택",
+    "index": 5,
+    "btype": "shop",
+    "kind": "shop",
+    "center": [
+     -135.35,
+     27.58,
+     95.32
+    ],
+    "size": [
+     9.0,
+     10.55,
+     8.0
+    ],
+    "yaw": 16.7,
+    "floors": 3,
+    "use": "1층 '고쳐요 PC'(가칭) / 위층 주택",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "shop",
+     "main": "M_Tile_Beige",
+     "floors": 3,
+     "y0": 23.25,
+     "top": 32.85
+    },
+    "lod_size": 12.5,
+    "lod_screen_heights": [
+     0.3772,
+     0.1372,
+     0.006
+    ]
+   },
+   "tris": [
+    2314,
+    924,
+    554
+   ],
+   "detail_tris": 784,
+   "origin": [
+    -135.35,
+    22.305,
+    95.25
+   ]
+  },
+  {
+   "name": "Sign_009",
+   "district": "HoomunN",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "band",
+    "size_m": [
+     8.34,
+     0.81
+    ],
+    "center": [
+     -136.535,
+     26.59,
+     91.371
+    ],
+    "normal": [
+     -0.2874,
+     0.0,
+     -0.9578
+    ],
+    "tenant": "고쳐요 PC",
+    "block": "명륜1가 방면 상가주택",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -136.535,
+    26.185,
+    91.371
+   ]
+  },
+  {
+   "name": "Sock_shop_light_006",
+   "district": "HoomunN",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "shop_light",
+    "pos": [
+     -136.327,
+     25.405,
+     92.063
+    ],
+    "normal": [
+     -0.2874,
+     0.0,
+     -0.9578
+    ],
+    "tenant": "고쳐요 PC"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -136.327,
+    25.405,
+    92.063
+   ]
+  },
+  {
+   "name": "Fences_HoomunN",
+   "district": "HoomunN",
+   "kind": "fences",
+   "info": {
+    "blocks": [
+     {
+      "block": "골목 담장",
+      "index": 59,
+      "btype": "fence_wall",
+      "center": [
+       -171.59,
+       27.88,
+       108.85
+      ],
+      "size": [
+       3.0,
+       2.74,
+       0.35
+      ],
+      "yaw": -83.16,
+      "meta": {
+       "variant": "coping",
+       "main": "M_Plaster_Cream",
+       "barbed": true
+      }
+     },
+     {
+      "block": "골목 담장",
+      "index": 60,
+      "btype": "fence_wall",
+      "center": [
+       -171.31,
+       27.82,
+       111.17
+      ],
+      "size": [
+       1.07,
+       2.61,
+       0.35
+      ],
+      "yaw": -83.16,
+      "meta": {
+       "variant": "coping",
+       "main": "M_Brick_Red",
+       "barbed": false
+      }
+     },
+     {
+      "block": "골목 담장",
+      "index": 61,
+      "btype": "fence_wall",
+      "center": [
+       -170.97,
+       27.83,
+       113.08
+      ],
+      "size": [
+       2.84,
+       2.64,
+       0.35
+      ],
+      "yaw": -78.69,
+      "meta": {
+       "variant": "coping",
+       "main": "M_Plaster_Cream",
+       "barbed": false
+      }
+     }
+    ],
+    "lod_size": 7.22,
+    "lod_screen_heights": [
+     0.2178,
+     0.0792,
+     0.006
+    ]
+   },
+   "tris": [
+    72,
+    66,
+    66
+   ],
+   "detail_tris": 266,
+   "origin": [
+    -171.312,
+    26.51,
+    110.924
+   ]
+  },
+  {
+   "name": "WinLit_t00",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.05,
+    "panes": 21,
+    "note": "LightSpot(Kind=Window, Threshold=0.05): 켜짐 비율 > 0.05 이면 켬"
+   },
+   "tris": 42,
+   "detail_tris": 0,
+   "origin": [
+    -165.243,
+    26.64,
+    102.592
+   ]
+  },
+  {
+   "name": "WinLit_t01",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.15,
+    "panes": 9,
+    "note": "LightSpot(Kind=Window, Threshold=0.15): 켜짐 비율 > 0.15 이면 켬"
+   },
+   "tris": 18,
+   "detail_tris": 0,
+   "origin": [
+    -161.671,
+    24.693,
+    106.319
+   ]
+  },
+  {
+   "name": "WinLit_t02",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.25,
+    "panes": 24,
+    "note": "LightSpot(Kind=Window, Threshold=0.25): 켜짐 비율 > 0.25 이면 켬"
+   },
+   "tris": 48,
+   "detail_tris": 0,
+   "origin": [
+    -163.094,
+    26.87,
+    102.63
+   ]
+  },
+  {
+   "name": "WinLit_t03",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.35,
+    "panes": 12,
+    "note": "LightSpot(Kind=Window, Threshold=0.35): 켜짐 비율 > 0.35 이면 켬"
+   },
+   "tris": 24,
+   "detail_tris": 0,
+   "origin": [
+    -162.699,
+    28.03,
+    105.479
+   ]
+  },
+  {
+   "name": "WinLit_t04",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.45,
+    "panes": 18,
+    "note": "LightSpot(Kind=Window, Threshold=0.45): 켜짐 비율 > 0.45 이면 켬"
+   },
+   "tris": 36,
+   "detail_tris": 0,
+   "origin": [
+    -161.202,
+    24.5,
+    102.422
+   ]
+  },
+  {
+   "name": "WinLit_t05",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.55,
+    "panes": 14,
+    "note": "LightSpot(Kind=Window, Threshold=0.55): 켜짐 비율 > 0.55 이면 켬"
+   },
+   "tris": 28,
+   "detail_tris": 0,
+   "origin": [
+    -162.331,
+    26.669,
+    103.364
+   ]
+  },
+  {
+   "name": "WinLit_t06",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.65,
+    "panes": 19,
+    "note": "LightSpot(Kind=Window, Threshold=0.65): 켜짐 비율 > 0.65 이면 켬"
+   },
+   "tris": 38,
+   "detail_tris": 0,
+   "origin": [
+    -162.142,
+    24.685,
+    99.642
+   ]
+  },
+  {
+   "name": "WinLit_t07",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.75,
+    "panes": 18,
+    "note": "LightSpot(Kind=Window, Threshold=0.75): 켜짐 비율 > 0.75 이면 켬"
+   },
+   "tris": 36,
+   "detail_tris": 0,
+   "origin": [
+    -162.329,
+    24.626,
+    100.274
+   ]
+  },
+  {
+   "name": "WinLit_t08",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.85,
+    "panes": 15,
+    "note": "LightSpot(Kind=Window, Threshold=0.85): 켜짐 비율 > 0.85 이면 켬"
+   },
+   "tris": 30,
+   "detail_tris": 0,
+   "origin": [
+    -164.945,
+    27.185,
+    102.56
+   ]
+  },
+  {
+   "name": "WinLit_t09",
+   "district": "HoomunN",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.95,
+    "panes": 12,
+    "note": "LightSpot(Kind=Window, Threshold=0.95): 켜짐 비율 > 0.95 이면 켬"
+   },
+   "tris": 24,
+   "detail_tris": 0,
+   "origin": [
+    -164.835,
+    24.995,
+    103.021
+   ]
+  },
+  {
+   "name": "shop_006",
+   "district": "HoomunS",
+   "kind": "building",
+   "info": {
+    "block": "남쪽 상가 1(제본)",
+    "index": 6,
+    "btype": "shop",
+    "kind": "shop",
+    "center": [
+     -188.3,
+     32.32,
+     91.23
+    ],
+    "size": [
+     4.5,
+     8.06,
+     6.0
+    ],
+    "yaw": -5.71,
+    "floors": 2,
+    "use": "1층 '넘김 제본'(가칭) / 2층 하숙",
+    "roles": {
+     "+x": "party",
+     "-x": "street",
+     "+z": "front",
+     "-z": "street"
+    },
+    "meta": {
+     "variant": "shop",
+     "main": "M_Tile_Beige",
+     "floors": 2,
+     "y0": 29.75,
+     "top": 36.35
+    },
+    "lod_size": 9.18,
+    "lod_screen_heights": [
+     0.277,
+     0.1007,
+     0.006
+    ]
+   },
+   "tris": [
+    890,
+    434,
+    292
+   ],
+   "detail_tris": 378,
+   "origin": [
+    -188.341,
+    28.29,
+    91.331
+   ]
+  },
+  {
+   "name": "Sign_010",
+   "district": "HoomunS",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "band",
+    "size_m": [
+     3.84,
+     0.81
+    ],
+    "center": [
+     -188.611,
+     33.085,
+     94.338
+    ],
+    "normal": [
+     -0.0995,
+     0.0,
+     0.995
+    ],
+    "tenant": "넘김 제본",
+    "block": "남쪽 상가 1(제본)",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -188.611,
+    32.68,
+    94.338
+   ]
+  },
+  {
+   "name": "Sock_shop_light_007",
+   "district": "HoomunS",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "shop_light",
+    "pos": [
+     -188.539,
+     31.9,
+     93.618
+    ],
+    "normal": [
+     -0.0995,
+     0.0,
+     0.995
+    ],
+    "tenant": "넘김 제본"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -188.539,
+    31.9,
+    93.618
+   ]
+  },
+  {
+   "name": "shop_007",
+   "district": "HoomunS",
+   "kind": "building",
+   "info": {
+    "block": "남쪽 상가 2(분식)",
+    "index": 7,
+    "btype": "shop",
+    "kind": "shop",
+    "center": [
+     -184.64,
+     31.47,
+     91.0
+    ],
+    "size": [
+     4.5,
+     8.15,
+     6.0
+    ],
+    "yaw": 12.31,
+    "floors": 2,
+    "use": "1층 '계단분식'(가칭) / 2층 하숙",
+    "roles": {
+     "+x": "street",
+     "-x": "party",
+     "+z": "front",
+     "-z": "street"
+    },
+    "meta": {
+     "variant": "shop",
+     "main": "M_Tile_Beige",
+     "floors": 2,
+     "y0": 28.95,
+     "top": 35.55
+    },
+    "lod_size": 9.35,
+    "lod_screen_heights": [
+     0.282,
+     0.1026,
+     0.006
+    ]
+   },
+   "tris": [
+    1086,
+    500,
+    328
+   ],
+   "detail_tris": 610,
+   "origin": [
+    -184.629,
+    27.319,
+    91.083
+   ]
+  },
+  {
+   "name": "Sign_011",
+   "district": "HoomunS",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "band",
+    "size_m": [
+     3.84,
+     0.81
+    ],
+    "center": [
+     -183.974,
+     32.28,
+     94.051
+    ],
+    "normal": [
+     0.2132,
+     0.0,
+     0.977
+    ],
+    "tenant": "계단분식",
+    "block": "남쪽 상가 2(분식)",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -183.974,
+    31.875,
+    94.051
+   ]
+  },
+  {
+   "name": "Sock_shop_light_008",
+   "district": "HoomunS",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "shop_light",
+    "pos": [
+     -184.128,
+     31.095,
+     93.345
+    ],
+    "normal": [
+     0.2132,
+     0.0,
+     0.977
+    ],
+    "tenant": "계단분식"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.128,
+    31.095,
+    93.345
+   ]
+  },
+  {
+   "name": "villa_008",
+   "district": "HoomunS",
+   "kind": "building",
+   "info": {
+    "block": "명륜3가 하숙집 A(남쪽)",
+    "index": 8,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -157.2,
+     29.53,
+     82.16
+    ],
+    "size": [
+     9.0,
+     10.6,
+     8.0
+    ],
+    "yaw": 17.45,
+    "floors": 3,
+    "use": "하숙 3층",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "front",
+     "-z": "street"
+    },
+    "meta": {
+     "variant": "semi",
+     "main": "M_Brick_Brown",
+     "floors": 3,
+     "y0": 24.03,
+     "top": 33.63
+    },
+    "lod_size": 11.35,
+    "lod_screen_heights": [
+     0.3425,
+     0.1246,
+     0.006
+    ]
+   },
+   "tris": [
+    1914,
+    704,
+    474
+   ],
+   "detail_tris": 1384,
+   "origin": [
+    -157.176,
+    24.23,
+    82.181
+   ]
+  },
+  {
+   "name": "villa_009",
+   "district": "HoomunS",
+   "kind": "building",
+   "info": {
+    "block": "명륜3가 원룸 B(남쪽)",
+    "index": 9,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -146.65,
+     29.74,
+     78.88
+    ],
+    "size": [
+     9.0,
+     13.55,
+     8.0
+    ],
+    "yaw": 16.7,
+    "floors": 4,
+    "use": "원룸 4층",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "front",
+     "-z": "back"
+    },
+    "meta": {
+     "variant": "piloti",
+     "main": "M_Tile_Beige",
+     "floors": 4,
+     "y0": 23.91,
+     "top": 36.52,
+     "piloti_depth": 5.6
+    },
+    "lod_size": 15.5,
+    "lod_screen_heights": [
+     0.4678,
+     0.1701,
+     0.006
+    ]
+   },
+   "tris": [
+    3504,
+    1460,
+    794
+   ],
+   "detail_tris": 1906,
+   "origin": [
+    -146.625,
+    22.965,
+    78.88
+   ]
+  },
+  {
+   "name": "Sock_ceiling_light_009",
+   "district": "HoomunS",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "ceiling_light",
+    "pos": [
+     -146.305,
+     26.565,
+     80.029
+    ],
+    "normal": [
+     0,
+     -1,
+     0
+    ],
+    "tenant": null
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -146.305,
+    26.565,
+    80.029
+   ]
+  },
+  {
+   "name": "villa_010",
+   "district": "HoomunS",
+   "kind": "building",
+   "info": {
+    "block": "명륜1가 방면 빌라(남쪽)",
+    "index": 10,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -136.15,
+     27.19,
+     75.73
+    ],
+    "size": [
+     8.0,
+     10.28,
+     8.0
+    ],
+    "yaw": 16.7,
+    "floors": 3,
+    "use": "빌라 3층",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "front",
+     "-z": "back"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Tile_Beige",
+     "floors": 3,
+     "y0": 22.73,
+     "top": 32.33
+    },
+    "lod_size": 11.4,
+    "lod_screen_heights": [
+     0.344,
+     0.1251,
+     0.006
+    ]
+   },
+   "tris": [
+    3422,
+    1264,
+    740
+   ],
+   "detail_tris": 2026,
+   "origin": [
+    -136.537,
+    22.05,
+    75.752
+   ]
+  },
+  {
+   "name": "villa_041",
+   "district": "HoomunS",
+   "kind": "building",
+   "info": {
+    "block": "주차장 뒤 다세대",
+    "index": 41,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -175.86,
+     31.35,
+     73.39
+    ],
+    "size": [
+     16.0,
+     9.5,
+     9.0
+    ],
+    "yaw": 17.05,
+    "floors": 3,
+    "use": "주차장 남쪽 담 너머 다세대 3층",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "front",
+     "-z": "back"
+    },
+    "meta": {
+     "variant": "semi",
+     "main": "M_Brick_Brown",
+     "floors": 3,
+     "y0": 25.3,
+     "top": 34.9
+    },
+    "lod_size": 18.01,
+    "lod_screen_heights": [
+     0.5435,
+     0.1976,
+     0.006
+    ]
+   },
+   "tris": [
+    2866,
+    1108,
+    724
+   ],
+   "detail_tris": 1428,
+   "origin": [
+    -175.86,
+    26.6,
+    73.659
+   ]
+  },
+  {
+   "name": "Fences_HoomunS",
+   "district": "HoomunS",
+   "kind": "fences",
+   "info": {
+    "blocks": [
+     {
+      "block": "주차장 난간",
+      "index": 34,
+      "btype": "railing",
+      "center": [
+       -176.41,
+       27.82,
+       92.07
+      ],
+      "size": [
+       6.0,
+       2.19,
+       0.2
+      ],
+      "yaw": 17.05,
+      "meta": {
+       "variant": "pipe"
+      }
+     },
+     {
+      "block": "주차장 난간",
+      "index": 35,
+      "btype": "railing",
+      "center": [
+       -164.93,
+       27.38,
+       88.55
+      ],
+      "size": [
+       6.0,
+       1.83,
+       0.2
+      ],
+      "yaw": 17.05,
+      "meta": {
+       "variant": "pipe"
+      }
+     },
+     {
+      "block": "주차장 옹벽(남)",
+      "index": 36,
+      "btype": "retaining_concrete",
+      "center": [
+       -180.09,
+       28.5,
+       80.07
+      ],
+      "size": [
+       6.0,
+       3.58,
+       0.6
+      ],
+      "yaw": 17.05,
+      "meta": {
+       "variant": "concrete"
+      }
+     },
+     {
+      "block": "주차장 옹벽(남)",
+      "index": 37,
+      "btype": "retaining_concrete",
+      "center": [
+       -174.35,
+       28.25,
+       78.31
+      ],
+      "size": [
+       6.0,
+       3.09,
+       0.6
+      ],
+      "yaw": 17.05,
+      "meta": {
+       "variant": "concrete"
+      }
+     },
+     {
+      "block": "주차장 옹벽(남)",
+      "index": 38,
+      "btype": "retaining_concrete",
+      "center": [
+       -168.61,
+       28.16,
+       76.55
+      ],
+      "size": [
+       6.0,
+       3.1,
+       0.6
+      ],
+      "yaw": 17.05,
+      "meta": {
+       "variant": "concrete"
+      }
+     },
+     {
+      "block": "주차장 옹벽(동)",
+      "index": 39,
+      "btype": "retaining_concrete",
+      "center": [
+       -164.43,
+       27.6,
+       78.77
+      ],
+      "size": [
+       6.0,
+       2.14,
+       0.6
+      ],
+      "yaw": -72.95,
+      "meta": {
+       "variant": "concrete"
+      }
+     },
+     {
+      "block": "주차장 옹벽(동)",
+      "index": 40,
+      "btype": "retaining_concrete",
+      "center": [
+       -162.67,
+       27.54,
+       84.51
+      ],
+      "size": [
+       6.0,
+       2.32,
+       0.6
+      ],
+      "yaw": -72.95,
+      "meta": {
+       "variant": "concrete"
+      }
+     }
+    ],
+    "lod_size": 21.62,
+    "lod_screen_heights": [
+     0.6524,
+     0.2372,
+     0.006
+    ]
+   },
+   "tris": [
+    452,
+    350,
+    234
+   ],
+   "detail_tris": 240,
+   "origin": [
+    -172.268,
+    25.668,
+    84.156
+   ]
+  },
+  {
+   "name": "WinLit_t00",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.05,
+    "panes": 11,
+    "note": "LightSpot(Kind=Window, Threshold=0.05): 켜짐 비율 > 0.05 이면 켬"
+   },
+   "tris": 22,
+   "detail_tris": 0,
+   "origin": [
+    -156.746,
+    24.068,
+    77.054
+   ]
+  },
+  {
+   "name": "WinLit_t01",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.15,
+    "panes": 11,
+    "note": "LightSpot(Kind=Window, Threshold=0.15): 켜짐 비율 > 0.15 이면 켬"
+   },
+   "tris": 22,
+   "detail_tris": 0,
+   "origin": [
+    -157.254,
+    24.845,
+    81.76
+   ]
+  },
+  {
+   "name": "WinLit_t02",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.25,
+    "panes": 17,
+    "note": "LightSpot(Kind=Window, Threshold=0.25): 켜짐 비율 > 0.25 이면 켬"
+   },
+   "tris": 34,
+   "detail_tris": 0,
+   "origin": [
+    -160.306,
+    23.66,
+    77.806
+   ]
+  },
+  {
+   "name": "WinLit_t03",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.35,
+    "panes": 17,
+    "note": "LightSpot(Kind=Window, Threshold=0.35): 켜짐 비율 > 0.35 이면 켬"
+   },
+   "tris": 34,
+   "detail_tris": 0,
+   "origin": [
+    -162.458,
+    24.845,
+    80.307
+   ]
+  },
+  {
+   "name": "WinLit_t04",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.45,
+    "panes": 13,
+    "note": "LightSpot(Kind=Window, Threshold=0.45): 켜짐 비율 > 0.45 이면 켬"
+   },
+   "tris": 26,
+   "detail_tris": 0,
+   "origin": [
+    -161.201,
+    24.941,
+    84.494
+   ]
+  },
+  {
+   "name": "WinLit_t05",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.55,
+    "panes": 12,
+    "note": "LightSpot(Kind=Window, Threshold=0.55): 켜짐 비율 > 0.55 이면 켬"
+   },
+   "tris": 24,
+   "detail_tris": 0,
+   "origin": [
+    -158.871,
+    26.66,
+    79.271
+   ]
+  },
+  {
+   "name": "WinLit_t06",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.65,
+    "panes": 9,
+    "note": "LightSpot(Kind=Window, Threshold=0.65): 켜짐 비율 > 0.65 이면 켬"
+   },
+   "tris": 18,
+   "detail_tris": 0,
+   "origin": [
+    -158.358,
+    23.916,
+    78.2
+   ]
+  },
+  {
+   "name": "WinLit_t07",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.75,
+    "panes": 18,
+    "note": "LightSpot(Kind=Window, Threshold=0.75): 켜짐 비율 > 0.75 이면 켬"
+   },
+   "tris": 36,
+   "detail_tris": 0,
+   "origin": [
+    -159.351,
+    23.66,
+    80.409
+   ]
+  },
+  {
+   "name": "WinLit_t08",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.85,
+    "panes": 14,
+    "note": "LightSpot(Kind=Window, Threshold=0.85): 켜짐 비율 > 0.85 이면 켬"
+   },
+   "tris": 28,
+   "detail_tris": 0,
+   "origin": [
+    -160.929,
+    23.66,
+    82.089
+   ]
+  },
+  {
+   "name": "WinLit_t09",
+   "district": "HoomunS",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.95,
+    "panes": 9,
+    "note": "LightSpot(Kind=Window, Threshold=0.95): 켜짐 비율 > 0.95 이면 켬"
+   },
+   "tris": 18,
+   "detail_tris": 0,
+   "origin": [
+    -160.904,
+    23.66,
+    81.603
+   ]
+  },
+  {
+   "name": "villa_011",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "반시우네 다세대",
+    "index": 11,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -155.0,
+     32.04,
+     127.0
+    ],
+    "size": [
+     9.0,
+     9.92,
+     9.0
+    ],
+    "yaw": 0.0,
+    "floors": 3,
+    "use": "다세대 2층 = 시우네(실내 씬). 3층 위 옥상(장독·빨랫줄·평상). 출입문 서쪽 면",
+    "roles": {
+     "+x": "back",
+     "-x": "front",
+     "+z": "street",
+     "-z": "street"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Brick_Brown",
+     "floors": 3,
+     "y0": 27.4,
+     "top": 37.0
+    },
+    "lod_size": 11.12,
+    "lod_screen_heights": [
+     0.3356,
+     0.122,
+     0.006
+    ]
+   },
+   "tris": [
+    3336,
+    1262,
+    706
+   ],
+   "detail_tris": 2712,
+   "origin": [
+    -154.955,
+    27.08,
+    127.0
+   ]
+  },
+  {
+   "name": "villa_012",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "꼭대기 다세대(4층)",
+    "index": 12,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -153.0,
+     37.75,
+     141.5
+    ],
+    "size": [
+     9.0,
+     13.5,
+     9.0
+    ],
+    "yaw": 0.0,
+    "floors": 4,
+    "use": "R1 배달 고객. 엘리베이터 없음(실내 계단 QTE). 출입문 서쪽 = 계단참",
+    "roles": {
+     "+x": "back",
+     "-x": "front",
+     "+z": "back",
+     "-z": "street"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Brick_Red",
+     "floors": 4,
+     "y0": 31.9,
+     "top": 44.5
+    },
+    "lod_size": 14.41,
+    "lod_screen_heights": [
+     0.435,
+     0.1582,
+     0.006
+    ]
+   },
+   "tris": [
+    4286,
+    1524,
+    836
+   ],
+   "detail_tris": 2654,
+   "origin": [
+    -153.23,
+    31.0,
+    141.225
+   ]
+  },
+  {
+   "name": "hanok_013",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "명륜3가 단독주택(기와)",
+    "index": 13,
+    "btype": "hanok",
+    "kind": "hanok",
+    "center": [
+     -144.5,
+     27.79,
+     109.5
+    ],
+    "size": [
+     9.0,
+     6.0,
+     7.0
+    ],
+    "yaw": 0.0,
+    "floors": null,
+    "use": "기와지붕 단층 + 다락. 담장 화분",
+    "roles": {
+     "+x": "street",
+     "-x": "back",
+     "+z": "front",
+     "-z": "back"
+    },
+    "meta": {
+     "variant": "lived",
+     "y_podium": 27.04,
+     "y_wall": 29.59,
+     "roof": "paljak",
+     "ridge_y": 32.18
+    },
+    "lod_size": 11.52,
+    "lod_screen_heights": [
+     0.3477,
+     0.1264,
+     0.006
+    ]
+   },
+   "tris": [
+    8632,
+    1838,
+    594
+   ],
+   "detail_tris": 1470,
+   "origin": [
+    -144.5,
+    24.79,
+    109.5
+   ]
+  },
+  {
+   "name": "Sign_012",
+   "district": "Alley",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "plate",
+    "size_m": [
+     0.29,
+     0.14
+    ],
+    "center": [
+     -146.8,
+     28.392,
+     113.033
+    ],
+    "normal": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "tenant": "문패",
+    "block": "명륜3가 단독주택(기와)",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -146.8,
+    28.322,
+    113.033
+   ]
+  },
+  {
+   "name": "villa_014",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "명륜3가 다세대 4",
+    "index": 14,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -144.0,
+     31.61,
+     126.0
+    ],
+    "size": [
+     10.0,
+     9.5,
+     8.0
+    ],
+    "yaw": 0.0,
+    "floors": 3,
+    "use": "다세대 3층",
+    "roles": {
+     "+x": "back",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "semi",
+     "main": "M_Brick_Brown",
+     "floors": 3,
+     "y0": 25.56,
+     "top": 35.16
+    },
+    "lod_size": 11.33,
+    "lod_screen_heights": [
+     0.3419,
+     0.1243,
+     0.006
+    ]
+   },
+   "tris": [
+    2376,
+    914,
+    494
+   ],
+   "detail_tris": 1278,
+   "origin": [
+    -144.275,
+    26.86,
+    126.853
+   ]
+  },
+  {
+   "name": "villa_015",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "골목 끝 다세대 5",
+    "index": 15,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -133.5,
+     30.37,
+     124.0
+    ],
+    "size": [
+     6.0,
+     9.5,
+     12.0
+    ],
+    "yaw": 0.0,
+    "floors": 3,
+    "use": "다세대 3층(구역 동쪽 끝)",
+    "roles": {
+     "+x": "back",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Brick_Red",
+     "floors": 3,
+     "y0": 25.52,
+     "top": 35.12
+    },
+    "lod_size": 15.31,
+    "lod_screen_heights": [
+     0.4619,
+     0.168,
+     0.006
+    ]
+   },
+   "tris": [
+    2898,
+    1094,
+    622
+   ],
+   "detail_tris": 1856,
+   "origin": [
+    -133.775,
+    25.62,
+    124.803
+   ]
+  },
+  {
+   "name": "hanok_016",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "성곽 아래 빈집",
+    "index": 16,
+    "btype": "hanok",
+    "kind": "hanok",
+    "center": [
+     -142.5,
+     34.13,
+     145.0
+    ],
+    "size": [
+     9.0,
+     5.5,
+     8.0
+    ],
+    "yaw": 0.0,
+    "floors": null,
+    "use": "빈 한옥(문 잠김). 지붕 너머 성곽",
+    "roles": {
+     "+x": "back",
+     "-x": "back",
+     "+z": "front",
+     "-z": "back"
+    },
+    "meta": {
+     "variant": "empty",
+     "y_podium": 34.66,
+     "y_wall": 37.21,
+     "roof": "gable",
+     "ridge_y": 40.11
+    },
+    "lod_size": 11.38,
+    "lod_screen_heights": [
+     0.3434,
+     0.1249,
+     0.006
+    ]
+   },
+   "tris": [
+    5226,
+    1454,
+    554
+   ],
+   "detail_tris": 1422,
+   "origin": [
+    -142.5,
+    31.38,
+    145.0
+   ]
+  },
+  {
+   "name": "Sign_013",
+   "district": "Alley",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "plate",
+    "size_m": [
+     0.29,
+     0.14
+    ],
+    "center": [
+     -144.8,
+     36.008,
+     149.033
+    ],
+    "normal": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "tenant": "문패",
+    "block": "성곽 아래 빈집",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -144.8,
+    35.938,
+    149.033
+   ]
+  },
+  {
+   "name": "villa_017",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "후문상가 뒤 하숙집",
+    "index": 17,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -187.5,
+     33.84,
+     121.0
+    ],
+    "size": [
+     11.0,
+     8.0,
+     8.0
+    ],
+    "yaw": 0.0,
+    "floors": 2,
+    "use": "하숙 2층, 비탈에 앉음",
+    "roles": {
+     "+x": "back",
+     "-x": "front",
+     "+z": "back",
+     "-z": "back"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Brick_Red",
+     "floors": 2,
+     "y0": 31.24,
+     "top": 37.84
+    },
+    "lod_size": 12.69,
+    "lod_screen_heights": [
+     0.383,
+     0.1393,
+     0.006
+    ]
+   },
+   "tris": [
+    2142,
+    806,
+    464
+   ],
+   "detail_tris": 1456,
+   "origin": [
+    -187.405,
+    29.84,
+    120.98
+   ]
+  },
+  {
+   "name": "villa_018",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "명륜3가 다세대 6",
+    "index": 18,
+    "btype": "villa",
+    "kind": "house",
+    "center": [
+     -176.5,
+     32.93,
+     126.0
+    ],
+    "size": [
+     8.0,
+     9.5,
+     9.0
+    ],
+    "yaw": 0.0,
+    "floors": 3,
+    "use": "다세대 3층",
+    "roles": {
+     "+x": "back",
+     "-x": "back",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Brick_Brown",
+     "floors": 3,
+     "y0": 28.08,
+     "top": 37.68
+    },
+    "lod_size": 10.62,
+    "lod_screen_heights": [
+     0.3205,
+     0.1165,
+     0.006
+    ]
+   },
+   "tris": [
+    2086,
+    918,
+    594
+   ],
+   "detail_tris": 1278,
+   "origin": [
+    -176.5,
+    28.18,
+    125.77
+   ]
+  },
+  {
+   "name": "house_053",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "골목 단독주택(단층)",
+    "index": 53,
+    "btype": "house",
+    "kind": "house",
+    "center": [
+     -177.45,
+     29.6,
+     115.22
+    ],
+    "size": [
+     3.8,
+     5.65,
+     6.0
+    ],
+    "yaw": -78.69,
+    "floors": 1,
+    "use": "명륜3가 골목 벽(왼쪽)",
+    "roles": {
+     "+x": "street",
+     "-x": "party",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "yard",
+     "main": "M_Brick_Brown",
+     "roof": "giwa",
+     "floors": 1,
+     "y0": 28.83
+    },
+    "lod_size": 7.65,
+    "lod_screen_heights": [
+     0.2309,
+     0.084,
+     0.006
+    ]
+   },
+   "tris": [
+    3422,
+    674,
+    284
+   ],
+   "detail_tris": 318,
+   "origin": [
+    -177.732,
+    26.775,
+    115.367
+   ]
+  },
+  {
+   "name": "house_054",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "골목 단독주택(2층)",
+    "index": 54,
+    "btype": "house",
+    "kind": "house",
+    "center": [
+     -172.77,
+     30.22,
+     119.19
+    ],
+    "size": [
+     5.5,
+     6.99,
+     2.5
+    ],
+    "yaw": -38.66,
+    "floors": 2,
+    "use": "명륜3가 골목 벽(왼쪽)",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Plaster_Cream",
+     "roof": "slab",
+     "floors": 2,
+     "y0": 27.11
+    },
+    "lod_size": 6.96,
+    "lod_screen_heights": [
+     0.21,
+     0.0764,
+     0.006
+    ]
+   },
+   "tris": [
+    776,
+    286,
+    196
+   ],
+   "detail_tris": 586,
+   "origin": [
+    -172.77,
+    26.725,
+    119.19
+   ]
+  },
+  {
+   "name": "house_056",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "골목 단독주택(단층)",
+    "index": 56,
+    "btype": "house",
+    "kind": "house",
+    "center": [
+     -168.06,
+     29.97,
+     124.89
+    ],
+    "size": [
+     5.21,
+     5.69,
+     6.0
+    ],
+    "yaw": -33.69,
+    "floors": 1,
+    "use": "명륜3가 골목 벽(왼쪽)",
+    "roles": {
+     "+x": "party",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "yard",
+     "main": "M_Brick_Red",
+     "roof": "giwa",
+     "floors": 1,
+     "y0": 29.21,
+     "barbed": true
+    },
+    "lod_size": 8.81,
+    "lod_screen_heights": [
+     0.2659,
+     0.0967,
+     0.006
+    ]
+   },
+   "tris": [
+    3856,
+    740,
+    308
+   ],
+   "detail_tris": 570,
+   "origin": [
+    -168.475,
+    27.125,
+    125.304
+   ]
+  },
+  {
+   "name": "house_057",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "골목 단독주택(2층)",
+    "index": 57,
+    "btype": "house",
+    "kind": "house",
+    "center": [
+     -166.11,
+     30.87,
+     126.69
+    ],
+    "size": [
+     2.1,
+     7.16,
+     6.5
+    ],
+    "yaw": -51.34,
+    "floors": 2,
+    "use": "명륜3가 골목 벽(왼쪽)",
+    "roles": {
+     "+x": "street",
+     "-x": "party",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Plaster_Cream",
+     "roof": "slab",
+     "floors": 2,
+     "y0": 27.85
+    },
+    "lod_size": 7.13,
+    "lod_screen_heights": [
+     0.2152,
+     0.0782,
+     0.006
+    ]
+   },
+   "tris": [
+    428,
+    228,
+    148
+   ],
+   "detail_tris": 384,
+   "origin": [
+    -166.11,
+    27.29,
+    126.69
+   ]
+  },
+  {
+   "name": "house_062",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "골목 단독주택(2층)",
+    "index": 62,
+    "btype": "house",
+    "kind": "house",
+    "center": [
+     -166.93,
+     30.15,
+     114.13
+    ],
+    "size": [
+     5.67,
+     7.2,
+     5.5
+    ],
+    "yaw": -38.66,
+    "floors": 2,
+    "use": "명륜3가 골목 벽(오른쪽)",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "front",
+     "-z": "back"
+    },
+    "meta": {
+     "variant": "yard",
+     "main": "M_Brick_Red",
+     "roof": "slab",
+     "floors": 2,
+     "y0": 27.15
+    },
+    "lod_size": 8.22,
+    "lod_screen_heights": [
+     0.2481,
+     0.0902,
+     0.006
+    ]
+   },
+   "tris": [
+    1050,
+    450,
+    308
+   ],
+   "detail_tris": 878,
+   "origin": [
+    -166.8,
+    26.55,
+    114.0
+   ]
+  },
+  {
+   "name": "house_064",
+   "district": "Alley",
+   "kind": "building",
+   "info": {
+    "block": "계단 옆 단층집",
+    "index": 64,
+    "btype": "house",
+    "kind": "house",
+    "center": [
+     -164.87,
+     31.28,
+     130.41
+    ],
+    "size": [
+     3.4,
+     5.38,
+     4.5
+    ],
+    "yaw": -86.59,
+    "floors": 1,
+    "use": "꼭대기 계단 골목 벽(왼쪽)",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "back",
+     "-z": "front"
+    },
+    "meta": {
+     "variant": "plain",
+     "main": "M_Plaster_Cream",
+     "roof": "giwa",
+     "floors": 1,
+     "y0": 30.37
+    },
+    "lod_size": 6.49,
+    "lod_screen_heights": [
+     0.1958,
+     0.0712,
+     0.006
+    ]
+   },
+   "tris": [
+    2990,
+    598,
+    180
+   ],
+   "detail_tris": 50,
+   "origin": [
+    -164.87,
+    28.59,
+    130.41
+   ]
+  },
+  {
+   "name": "Fences_Alley",
+   "district": "Alley",
+   "kind": "fences",
+   "info": {
+    "blocks": [
+     {
+      "block": "골목 담장",
+      "index": 55,
+      "btype": "fence_wall",
+      "center": [
+       -169.19,
+       28.32,
+       120.67
+      ],
+      "size": [
+       1.34,
+       3.05,
+       0.35
+      ],
+      "yaw": -38.66,
+      "meta": {
+       "variant": "coping",
+       "main": "M_Concrete",
+       "barbed": true
+      }
+     },
+     {
+      "block": "골목 담장",
+      "index": 58,
+      "btype": "fence_wall",
+      "center": [
+       -163.22,
+       29.25,
+       126.15
+      ],
+      "size": [
+       1.42,
+       3.08,
+       0.35
+      ],
+      "yaw": -100.3,
+      "meta": {
+       "variant": "coping",
+       "main": "M_Plaster_Cream",
+       "barbed": true
+      }
+     },
+     {
+      "block": "골목 담장",
+      "index": 63,
+      "btype": "fence_wall",
+      "center": [
+       -165.54,
+       28.17,
+       118.43
+      ],
+      "size": [
+       1.93,
+       2.72,
+       0.35
+      ],
+      "yaw": -33.69,
+      "meta": {
+       "variant": "giwa_cap",
+       "main": "M_Plaster_Cream",
+       "barbed": false
+      }
+     },
+     {
+      "block": "계단 축대",
+      "index": 65,
+      "btype": "retaining_stone",
+      "center": [
+       -162.78,
+       31.62,
+       133.55
+      ],
+      "size": [
+       2.51,
+       2.58,
+       0.7
+      ],
+      "yaw": -86.59,
+      "meta": {
+       "variant": "stone"
+      }
+     },
+     {
+      "block": "골목 담장",
+      "index": 66,
+      "btype": "fence_wall",
+      "center": [
+       -159.47,
+       31.93,
+       133.15
+      ],
+      "size": [
+       2.91,
+       3.8,
+       0.35
+      ],
+      "yaw": -86.59,
+      "meta": {
+       "variant": "giwa_cap",
+       "main": "M_Brick_Red",
+       "barbed": false
+      }
+     }
+    ],
+    "lod_size": 17.27,
+    "lod_screen_heights": [
+     0.5212,
+     0.1895,
+     0.006
+    ]
+   },
+   "tris": [
+    668,
+    146,
+    146
+   ],
+   "detail_tris": 260,
+   "origin": [
+    -164.463,
+    26.795,
+    126.21
+   ]
+  },
+  {
+   "name": "WinLit_t00",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.05,
+    "panes": 16,
+    "note": "LightSpot(Kind=Window, Threshold=0.05): 켜짐 비율 > 0.05 이면 켬"
+   },
+   "tris": 32,
+   "detail_tris": 0,
+   "origin": [
+    -157.832,
+    28.08,
+    128.463
+   ]
+  },
+  {
+   "name": "WinLit_t01",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.15,
+    "panes": 25,
+    "note": "LightSpot(Kind=Window, Threshold=0.15): 켜짐 비율 > 0.15 이면 켬"
+   },
+   "tris": 50,
+   "detail_tris": 0,
+   "origin": [
+    -155.061,
+    26.45,
+    124.18
+   ]
+  },
+  {
+   "name": "WinLit_t02",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.25,
+    "panes": 13,
+    "note": "LightSpot(Kind=Window, Threshold=0.25): 켜짐 비율 > 0.25 이면 켬"
+   },
+   "tris": 26,
+   "detail_tris": 0,
+   "origin": [
+    -161.771,
+    28.33,
+    128.205
+   ]
+  },
+  {
+   "name": "WinLit_t03",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.35,
+    "panes": 19,
+    "note": "LightSpot(Kind=Window, Threshold=0.35): 켜짐 비율 > 0.35 이면 켬"
+   },
+   "tris": 38,
+   "detail_tris": 0,
+   "origin": [
+    -160.057,
+    28.192,
+    125.98
+   ]
+  },
+  {
+   "name": "WinLit_t04",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.45,
+    "panes": 18,
+    "note": "LightSpot(Kind=Window, Threshold=0.45): 켜짐 비율 > 0.45 이면 켬"
+   },
+   "tris": 36,
+   "detail_tris": 0,
+   "origin": [
+    -161.407,
+    28.045,
+    122.165
+   ]
+  },
+  {
+   "name": "WinLit_t05",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.55,
+    "panes": 16,
+    "note": "LightSpot(Kind=Window, Threshold=0.55): 켜짐 비율 > 0.55 이면 켬"
+   },
+   "tris": 32,
+   "detail_tris": 0,
+   "origin": [
+    -166.0,
+    29.56,
+    133.75
+   ]
+  },
+  {
+   "name": "WinLit_t06",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.65,
+    "panes": 15,
+    "note": "LightSpot(Kind=Window, Threshold=0.65): 켜짐 비율 > 0.65 이면 켬"
+   },
+   "tris": 30,
+   "detail_tris": 0,
+   "origin": [
+    -160.1,
+    29.49,
+    130.297
+   ]
+  },
+  {
+   "name": "WinLit_t07",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.75,
+    "panes": 22,
+    "note": "LightSpot(Kind=Window, Threshold=0.75): 켜짐 비율 > 0.75 이면 켬"
+   },
+   "tris": 44,
+   "detail_tris": 0,
+   "origin": [
+    -158.51,
+    27.0,
+    128.479
+   ]
+  },
+  {
+   "name": "WinLit_t08",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.85,
+    "panes": 18,
+    "note": "LightSpot(Kind=Window, Threshold=0.85): 켜짐 비율 > 0.85 이면 켬"
+   },
+   "tris": 36,
+   "detail_tris": 0,
+   "origin": [
+    -162.288,
+    27.5,
+    127.476
+   ]
+  },
+  {
+   "name": "WinLit_t09",
+   "district": "Alley",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.95,
+    "panes": 14,
+    "note": "LightSpot(Kind=Window, Threshold=0.95): 켜짐 비율 > 0.95 이면 켬"
+   },
+   "tris": 28,
+   "detail_tris": 0,
+   "origin": [
+    -166.48,
+    28.08,
+    124.193
+   ]
+  },
+  {
+   "name": "school_019",
+   "district": "Campus",
+   "kind": "building",
+   "info": {
+    "block": "캠퍼스 건물(이름 미표기)",
+    "index": 19,
+    "btype": "school",
+    "kind": "campus",
+    "center": [
+     -221.0,
+     38.74,
+     80.0
+    ],
+    "size": [
+     34.0,
+     16.5,
+     14.0
+    ],
+    "yaw": 0.0,
+    "floors": null,
+    "use": "강의동 뒷면. 들어갈 수 없음",
+    "roles": {
+     "+x": "back",
+     "-x": "back",
+     "+z": "front",
+     "-z": "back"
+    },
+    "meta": {
+     "variant": "school",
+     "floors": 4,
+     "y0": 30.89
+    },
+    "lod_size": 34.28,
+    "lod_screen_heights": [
+     0.95,
+     0.3762,
+     0.006
+    ]
+   },
+   "tris": [
+    7678,
+    2284,
+    1376
+   ],
+   "detail_tris": 260,
+   "origin": [
+    -221.0,
+    30.49,
+    80.53
+   ]
+  },
+  {
+   "name": "booth_020",
+   "district": "Campus",
+   "kind": "building",
+   "info": {
+    "block": "후문 경비실",
+    "index": 20,
+    "btype": "booth",
+    "kind": "campus",
+    "center": [
+     -205.0,
+     32.17,
+     88.8
+    ],
+    "size": [
+     2.6,
+     3.2,
+     2.6
+    ],
+    "yaw": 0.0,
+    "floors": null,
+    "use": "게이트 안쪽 경비실",
+    "roles": {
+     "+x": "back",
+     "-x": "back",
+     "+z": "front",
+     "-z": "back"
+    },
+    "meta": {},
+    "lod_size": 3.3,
+    "lod_screen_heights": [
+     0.0996,
+     0.0362,
+     0.006
+    ]
+   },
+   "tris": [
+    316,
+    136,
+    106
+   ],
+   "detail_tris": 54,
+   "origin": [
+    -205.0,
+    30.57,
+    88.8
+   ]
+  },
+  {
+   "name": "Sign_014",
+   "district": "Campus",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "plate",
+    "size_m": [
+     1.54,
+     0.21
+    ],
+    "center": [
+     -205.0,
+     33.155,
+     90.153
+    ],
+    "normal": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "tenant": "경비실",
+    "block": "후문 경비실",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -205.0,
+    33.05,
+    90.153
+   ]
+  },
+  {
+   "name": "gatepost_021",
+   "district": "Campus",
+   "kind": "building",
+   "info": {
+    "block": "성대 후문 기둥(서)",
+    "index": 21,
+    "btype": "gatepost",
+    "kind": "gate",
+    "center": [
+     -201.0,
+     32.38,
+     92.7
+    ],
+    "size": [
+     1.0,
+     3.7,
+     1.0
+    ],
+    "yaw": 0.0,
+    "floors": null,
+    "use": "후문 게이트 기둥",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "front",
+     "-z": "street"
+    },
+    "meta": {},
+    "lod_size": 4.02,
+    "lod_screen_heights": [
+     0.1213,
+     0.0441,
+     0.006
+    ]
+   },
+   "tris": [
+    80,
+    74,
+    68
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -201.0,
+    30.53,
+    92.7
+   ]
+  },
+  {
+   "name": "Sign_015",
+   "district": "Campus",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "plate",
+    "size_m": [
+     0.5,
+     1.34
+    ],
+    "center": [
+     -201.0,
+     32.636,
+     93.203
+    ],
+    "normal": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "tenant": "성대 후문(기둥 현판)",
+    "block": "성대 후문 기둥(서)",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -201.0,
+    31.966,
+    93.203
+   ]
+  },
+  {
+   "name": "Sock_lamp_globe_010",
+   "district": "Campus",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "lamp_globe",
+    "pos": [
+     -201.0,
+     34.39,
+     92.7
+    ],
+    "normal": [
+     0,
+     1,
+     0
+    ],
+    "tenant": null
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -201.0,
+    34.39,
+    92.7
+   ]
+  },
+  {
+   "name": "gatepost_022",
+   "district": "Campus",
+   "kind": "building",
+   "info": {
+    "block": "성대 후문 기둥(동)",
+    "index": 22,
+    "btype": "gatepost",
+    "kind": "gate",
+    "center": [
+     -195.0,
+     31.66,
+     92.7
+    ],
+    "size": [
+     1.0,
+     3.7,
+     1.0
+    ],
+    "yaw": 0.0,
+    "floors": null,
+    "use": "후문 게이트 기둥",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "front",
+     "-z": "street"
+    },
+    "meta": {},
+    "lod_size": 4.02,
+    "lod_screen_heights": [
+     0.1213,
+     0.0441,
+     0.006
+    ]
+   },
+   "tris": [
+    80,
+    74,
+    68
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -195.0,
+    29.81,
+    92.7
+   ]
+  },
+  {
+   "name": "Sign_016",
+   "district": "Campus",
+   "kind": "sign",
+   "info": {
+    "sign_kind": "plate",
+    "size_m": [
+     0.5,
+     1.34
+    ],
+    "center": [
+     -195.0,
+     31.861,
+     93.203
+    ],
+    "normal": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "tenant": "성대 후문(기둥 현판)",
+    "block": "성대 후문 기둥(동)",
+    "faces": 1
+   },
+   "tris": 2,
+   "detail_tris": 0,
+   "origin": [
+    -195.0,
+    31.191,
+    93.203
+   ]
+  },
+  {
+   "name": "Sock_lamp_globe_011",
+   "district": "Campus",
+   "kind": "socket",
+   "info": {
+    "sock_kind": "lamp_globe",
+    "pos": [
+     -195.0,
+     33.67,
+     92.7
+    ],
+    "normal": [
+     0,
+     1,
+     0
+    ],
+    "tenant": null
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -195.0,
+    33.67,
+    92.7
+   ]
+  },
+  {
+   "name": "Fences_Campus",
+   "district": "Campus",
+   "kind": "fences",
+   "info": {
+    "blocks": [
+     {
+      "block": "캠퍼스 담장",
+      "index": 24,
+      "btype": "fence_grille",
+      "center": [
+       -242.67,
+       36.39,
+       89.9
+      ],
+      "size": [
+       6.74,
+       3.87,
+       0.3
+      ],
+      "yaw": -8.53,
+      "meta": {
+       "variant": "grille"
+      }
+     },
+     {
+      "block": "캠퍼스 담장",
+      "index": 25,
+      "btype": "fence_grille",
+      "center": [
+       -236.0,
+       35.39,
+       90.9
+      ],
+      "size": [
+       6.74,
+       3.54,
+       0.3
+      ],
+      "yaw": -8.53,
+      "meta": {
+       "variant": "grille"
+      }
+     },
+     {
+      "block": "캠퍼스 담장",
+      "index": 26,
+      "btype": "fence_grille",
+      "center": [
+       -229.33,
+       34.54,
+       91.9
+      ],
+      "size": [
+       6.74,
+       3.56,
+       0.3
+      ],
+      "yaw": -8.53,
+      "meta": {
+       "variant": "grille"
+      }
+     },
+     {
+      "block": "캠퍼스 담장",
+      "index": 27,
+      "btype": "fence_grille",
+      "center": [
+       -222.75,
+       33.71,
+       92.55
+      ],
+      "size": [
+       6.51,
+       3.51,
+       0.3
+      ],
+      "yaw": -2.64,
+      "meta": {
+       "variant": "grille"
+      }
+     },
+     {
+      "block": "캠퍼스 담장",
+      "index": 28,
+      "btype": "fence_grille",
+      "center": [
+       -216.25,
+       32.85,
+       92.85
+      ],
+      "size": [
+       6.51,
+       3.61,
+       0.3
+      ],
+      "yaw": -2.64,
+      "meta": {
+       "variant": "grille"
+      }
+     },
+     {
+      "block": "캠퍼스 담장",
+      "index": 29,
+      "btype": "fence_grille",
+      "center": [
+       -210.15,
+       32.25,
+       92.92
+      ],
+      "size": [
+       5.7,
+       3.04,
+       0.3
+      ],
+      "yaw": 1.51,
+      "meta": {
+       "variant": "grille"
+      }
+     },
+     {
+      "block": "캠퍼스 담장",
+      "index": 30,
+      "btype": "fence_grille",
+      "center": [
+       -204.45,
+       32.02,
+       92.78
+      ],
+      "size": [
+       5.7,
+       2.83,
+       0.3
+      ],
+      "yaw": 1.51,
+      "meta": {
+       "variant": "grille"
+      }
+     },
+     {
+      "block": "캠퍼스 담장(동쪽)",
+      "index": 31,
+      "btype": "fence_grille",
+      "center": [
+       -194.4,
+       31.11,
+       89.65
+      ],
+      "size": [
+       6.1,
+       2.84,
+       0.3
+      ],
+      "yaw": 90.0,
+      "meta": {
+       "variant": "grille"
+      }
+     },
+     {
+      "block": "캠퍼스 담장(동쪽)",
+      "index": 32,
+      "btype": "fence_grille",
+      "center": [
+       -194.4,
+       30.98,
+       83.45
+      ],
+      "size": [
+       6.3,
+       2.88,
+       0.3
+      ],
+      "yaw": 90.0,
+      "meta": {
+       "variant": "grille"
+      }
+     },
+     {
+      "block": "캠퍼스 담장(동쪽)",
+      "index": 33,
+      "btype": "fence_grille",
+      "center": [
+       -194.4,
+       30.82,
+       77.15
+      ],
+      "size": [
+       6.3,
+       2.91,
+       0.3
+      ],
+      "yaw": 90.0,
+      "meta": {
+       "variant": "grille"
+      }
+     }
+    ],
+    "lod_size": 51.84,
+    "lod_screen_heights": [
+     0.95,
+     0.5689,
+     0.006
+    ]
+   },
+   "tris": [
+    4504,
+    2824,
+    1240
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -220.14,
+    29.365,
+    83.576
+   ]
+  },
+  {
+   "name": "WinLit_t01",
+   "district": "Campus",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.15,
+    "panes": 3,
+    "note": "LightSpot(Kind=Window, Threshold=0.15): 켜짐 비율 > 0.15 이면 켬"
+   },
+   "tris": 6,
+   "detail_tris": 0,
+   "origin": [
+    -205.0,
+    31.7,
+    88.912
+   ]
+  },
+  {
+   "name": "WinLit_t02",
+   "district": "Campus",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.25,
+    "panes": 6,
+    "note": "LightSpot(Kind=Window, Threshold=0.25): 켜짐 비율 > 0.25 이면 켬"
+   },
+   "tris": 12,
+   "detail_tris": 0,
+   "origin": [
+    -229.7,
+    33.22,
+    80.0
+   ]
+  },
+  {
+   "name": "WinLit_t03",
+   "district": "Campus",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.35,
+    "panes": 12,
+    "note": "LightSpot(Kind=Window, Threshold=0.35): 켜짐 비율 > 0.35 이면 켬"
+   },
+   "tris": 24,
+   "detail_tris": 0,
+   "origin": [
+    -221.0,
+    31.82,
+    80.0
+   ]
+  },
+  {
+   "name": "WinLit_t04",
+   "district": "Campus",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.45,
+    "panes": 6,
+    "note": "LightSpot(Kind=Window, Threshold=0.45): 켜짐 비율 > 0.45 이면 켬"
+   },
+   "tris": 12,
+   "detail_tris": 0,
+   "origin": [
+    -221.0,
+    35.62,
+    80.0
+   ]
+  },
+  {
+   "name": "WinLit_t05",
+   "district": "Campus",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.55,
+    "panes": 7,
+    "note": "LightSpot(Kind=Window, Threshold=0.55): 켜짐 비율 > 0.55 이면 켬"
+   },
+   "tris": 14,
+   "detail_tris": 0,
+   "origin": [
+    -221.0,
+    35.62,
+    80.0
+   ]
+  },
+  {
+   "name": "WinLit_t06",
+   "district": "Campus",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.65,
+    "panes": 7,
+    "note": "LightSpot(Kind=Window, Threshold=0.65): 켜짐 비율 > 0.65 이면 켬"
+   },
+   "tris": 14,
+   "detail_tris": 0,
+   "origin": [
+    -221.2,
+    32.264,
+    80.0
+   ]
+  },
+  {
+   "name": "WinLit_t07",
+   "district": "Campus",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.75,
+    "panes": 10,
+    "note": "LightSpot(Kind=Window, Threshold=0.75): 켜짐 비율 > 0.75 이면 켬"
+   },
+   "tris": 20,
+   "detail_tris": 0,
+   "origin": [
+    -221.0,
+    33.205,
+    80.0
+   ]
+  },
+  {
+   "name": "WinLit_t08",
+   "district": "Campus",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.85,
+    "panes": 7,
+    "note": "LightSpot(Kind=Window, Threshold=0.85): 켜짐 비율 > 0.85 이면 켬"
+   },
+   "tris": 14,
+   "detail_tris": 0,
+   "origin": [
+    -220.8,
+    31.82,
+    80.0
+   ]
+  },
+  {
+   "name": "WinLit_t09",
+   "district": "Campus",
+   "kind": "winlit",
+   "info": {
+    "threshold": 0.95,
+    "panes": 14,
+    "note": "LightSpot(Kind=Window, Threshold=0.95): 켜짐 비율 > 0.95 이면 켬"
+   },
+   "tris": 28,
+   "detail_tris": 0,
+   "origin": [
+    -221.0,
+    32.384,
+    80.0
+   ]
+  },
+  {
+   "name": "pavilion_046",
+   "district": "Waryong",
+   "kind": "building",
+   "info": {
+    "block": "전망 쉼터 정자",
+    "index": 46,
+    "btype": "pavilion",
+    "kind": "pavilion",
+    "center": [
+     -258.6,
+     47.25,
+     131.4
+    ],
+    "size": [
+     3.6,
+     5.9,
+     3.6
+    ],
+    "yaw": 0.0,
+    "floors": null,
+    "use": "정자(그레이박스는 상자, 쉼터 남쪽에 붙음). 공터·성곽길에서 서쪽 끝 목표로 보임",
+    "roles": {
+     "+x": "street",
+     "-x": "street",
+     "+z": "front",
+     "-z": "back"
+    },
+    "meta": {
+     "variant": "pyramid",
+     "y_floor": 46.5,
+     "ridge": 50.42
+    },
+    "lod_size": 6.43,
+    "lod_screen_heights": [
+     0.194,
+     0.0705,
+     0.006
+    ]
+   },
+   "tris": [
+    4130,
+    790,
+    250
+   ],
+   "detail_tris": 216,
+   "origin": [
+    -258.6,
+    44.638,
+    131.4
+   ]
+  },
+  {
+   "name": "Wall_0",
+   "district": "Wall",
+   "kind": "wall",
+   "info": {
+    "wall": "한양도성 성곽(와룡공원 구간)",
+    "points": [
+     0,
+     3
+    ],
+    "gate": false,
+    "lod_size": 17.22,
+    "lod_screen_heights": [
+     0.5196,
+     0.189,
+     0.006
+    ]
+   },
+   "tris": [
+    3794,
+    296,
+    200
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -258.0,
+    41.15,
+    143.852
+   ]
+  },
+  {
+   "name": "Wall_1",
+   "district": "Wall",
+   "kind": "wall",
+   "info": {
+    "wall": "한양도성 성곽(와룡공원 구간)",
+    "points": [
+     3,
+     6
+    ],
+    "gate": false,
+    "lod_size": 21.98,
+    "lod_screen_heights": [
+     0.6632,
+     0.2412,
+     0.006
+    ]
+   },
+   "tris": [
+    4770,
+    294,
+    198
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -239.285,
+    37.88,
+    142.145
+   ]
+  },
+  {
+   "name": "Wall_2",
+   "district": "Wall",
+   "kind": "wall",
+   "info": {
+    "wall": "한양도성 성곽(와룡공원 구간)",
+    "points": [
+     6,
+     9
+    ],
+    "gate": true,
+    "lod_size": 21.97,
+    "lod_screen_heights": [
+     0.6631,
+     0.2411,
+     0.006
+    ]
+   },
+   "tris": [
+    4497,
+    339,
+    243
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -217.854,
+    35.4,
+    146.43
+   ]
+  },
+  {
+   "name": "Wall_3",
+   "district": "Wall",
+   "kind": "wall",
+   "info": {
+    "wall": "한양도성 성곽(와룡공원 구간)",
+    "points": [
+     9,
+     12
+    ],
+    "gate": false,
+    "lod_size": 22.75,
+    "lod_screen_heights": [
+     0.6865,
+     0.2496,
+     0.006
+    ]
+   },
+   "tris": [
+    4895,
+    294,
+    198
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -196.038,
+    34.3,
+    151.153
+   ]
+  },
+  {
+   "name": "Wall_4",
+   "district": "Wall",
+   "kind": "wall",
+   "info": {
+    "wall": "한양도성 성곽(와룡공원 구간)",
+    "points": [
+     12,
+     15
+    ],
+    "gate": false,
+    "lod_size": 23.17,
+    "lod_screen_heights": [
+     0.6993,
+     0.2543,
+     0.006
+    ]
+   },
+   "tris": [
+    5260,
+    294,
+    198
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -173.749,
+    32.25,
+    156.565
+   ]
+  },
+  {
+   "name": "Wall_5",
+   "district": "Wall",
+   "kind": "wall",
+   "info": {
+    "wall": "한양도성 성곽(와룡공원 구간)",
+    "points": [
+     15,
+     18
+    ],
+    "gate": false,
+    "lod_size": 23.19,
+    "lod_screen_heights": [
+     0.6997,
+     0.2544,
+     0.006
+    ]
+   },
+   "tris": [
+    4921,
+    294,
+    198
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -151.243,
+    30.87,
+    162.19
+   ]
+  },
+  {
+   "name": "Wall_6",
+   "district": "Wall",
+   "kind": "wall",
+   "info": {
+    "wall": "한양도성 성곽(와룡공원 구간)",
+    "points": [
+     18,
+     20
+    ],
+    "gate": false,
+    "lod_size": 12.88,
+    "lod_screen_heights": [
+     0.3887,
+     0.1413,
+     0.006
+    ]
+   },
+   "tris": [
+    2719,
+    198,
+    134
+   ],
+   "detail_tris": 0,
+   "origin": [
+    -134.0,
+    30.4,
+    167.0
+   ]
+  },
+  {
+   "name": "Pole_0",
+   "district": "Wires",
+   "kind": "pole",
+   "info": {
+    "pole": "전봇대 1(성균관로)",
+    "pos": [
+     -196.0,
+     30.61287064012727,
+     102.87
+    ],
+    "height": 9.0,
+    "lod_size": 23.29,
+    "lod_screen_heights": [
+     0.703,
+     0.2556,
+     0.006
+    ]
+   },
+   "tris": [
+    1186,
+    396,
+    133
+   ],
+   "detail_tris": 48,
+   "origin": [
+    -190.084,
+    30.313,
+    105.723
+   ]
+  },
+  {
+   "name": "Pole_1",
+   "district": "Wires",
+   "kind": "pole",
+   "info": {
+    "pole": "전봇대 전단지 퀘스트 보드",
+    "pos": [
+     -184.0,
+     29.130059626251814,
+     103.5
+    ],
+    "height": 8.0,
+    "lod_size": 24.31,
+    "lod_screen_heights": [
+     0.7337,
+     0.2668,
+     0.006
+    ]
+   },
+   "tris": [
+    1234,
+    414,
+    109
+   ],
+   "detail_tris": 48,
+   "origin": [
+    -182.036,
+    28.83,
+    103.716
+   ]
+  },
+  {
+   "name": "Pole_2",
+   "district": "Wires",
+   "kind": "pole",
+   "info": {
+    "pole": "전봇대 1(명륜3가 골목)",
+    "pos": [
+     -174.61,
+     26.88,
+     113.37
+    ],
+    "height": 8.0,
+    "lod_size": 21.11,
+    "lod_screen_heights": [
+     0.6371,
+     0.2317,
+     0.006
+    ]
+   },
+   "tris": [
+    1602,
+    550,
+    181
+   ],
+   "detail_tris": 48,
+   "origin": [
+    -173.783,
+    26.58,
+    113.624
+   ]
+  },
+  {
+   "name": "Pole_3",
+   "district": "Wires",
+   "kind": "pole",
+   "info": {
+    "pole": "전봇대 2(성균관로)",
+    "pos": [
+     -170.0,
+     27.416771491044884,
+     100.09
+    ],
+    "height": 9.0,
+    "lod_size": 27.45,
+    "lod_screen_heights": [
+     0.8285,
+     0.3013,
+     0.006
+    ]
+   },
+   "tris": [
+    1186,
+    396,
+    133
+   ],
+   "detail_tris": 48,
+   "origin": [
+    -163.515,
+    27.117,
+    101.816
+   ]
+  },
+  {
+   "name": "Pole_4",
+   "district": "Wires",
+   "kind": "pole",
+   "info": {
+    "pole": "전봇대 2(명륜3가 골목)",
+    "pos": [
+     -164.09,
+     27.44588315649867,
+     123.76
+    ],
+    "height": 8.0,
+    "lod_size": 23.15,
+    "lod_screen_heights": [
+     0.6986,
+     0.254,
+     0.006
+    ]
+   },
+   "tris": [
+    1538,
+    526,
+    133
+   ],
+   "detail_tris": 48,
+   "origin": [
+    -160.214,
+    27.146,
+    121.902
+   ]
+  },
+  {
+   "name": "Pole_5",
+   "district": "Wires",
+   "kind": "pole",
+   "info": {
+    "pole": "전봇대 3(명륜3가 골목)",
+    "pos": [
+     -162.4,
+     28.99903916142964,
+     130.57
+    ],
+    "height": 8.0,
+    "lod_size": 11.25,
+    "lod_screen_heights": [
+     0.3394,
+     0.1234,
+     0.006
+    ]
+   },
+   "tris": [
+    758,
+    250,
+    13
+   ],
+   "detail_tris": 48,
+   "origin": [
+    -161.936,
+    28.699,
+    131.324
+   ]
+  },
+  {
+   "name": "Pole_6",
+   "district": "Wires",
+   "kind": "pole",
+   "info": {
+    "pole": "전봇대 3(성균관로)",
+    "pos": [
+     -150.0,
+     24.80933129099345,
+     93.89
+    ],
+    "height": 9.0,
+    "lod_size": 19.33,
+    "lod_screen_heights": [
+     0.5834,
+     0.2121,
+     0.006
+    ]
+   },
+   "tris": [
+    1218,
+    406,
+    133
+   ],
+   "detail_tris": 48,
+   "origin": [
+    -146.13,
+    24.509,
+    86.703
+   ]
+  },
+  {
+   "name": "Pole_7",
+   "district": "Wires",
+   "kind": "pole",
+   "info": {
+    "pole": "전봇대 4(성균관로)",
+    "pos": [
+     -138.0,
+     23.37610845908952,
+     90.22
+    ],
+    "height": 9.0,
+    "lod_size": 25.64,
+    "lod_screen_heights": [
+     0.7738,
+     0.2814,
+     0.006
+    ]
+   },
+   "tris": [
+    598,
+    190,
+    13
+   ],
+   "detail_tris": 48,
+   "origin": [
+    -136.859,
+    23.076,
+    93.483
+   ]
+  }
+ ]
+}

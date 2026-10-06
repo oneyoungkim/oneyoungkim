@@ -1,0 +1,33 @@
+{
+ "formula": "color = lerp(lerp(lerp(sky, far, R), mid, G), near, B) * lerp(1, detail, lines); alpha = A",
+ "times": {
+  "dawn": {
+   "sky": "#CBD1D6",
+   "far": "#A3AAB4",
+   "mid": "#B7BCC3",
+   "near": "#5B616C",
+   "lines": 0.6
+  },
+  "day": {
+   "sky": "#E9E0CC",
+   "far": "#A39C90",
+   "mid": "#C9C1B2",
+   "near": "#6E6A64",
+   "lines": 0.7
+  },
+  "sunset": {
+   "sky": "#EBC9A6",
+   "far": "#B48F86",
+   "mid": "#C9A493",
+   "near": "#5A4A4C",
+   "lines": 0.7
+  },
+  "night": {
+   "sky": "#222A44",
+   "far": "#323A57",
+   "mid": "#2A3150",
+   "near": "#151A2B",
+   "lines": 0.5
+  }
+ }
+}

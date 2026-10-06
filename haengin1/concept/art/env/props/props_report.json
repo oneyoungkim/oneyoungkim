@@ -1,0 +1,1322 @@
+{
+ "ac_outdoor_unit": {
+  "name": "ac_outdoor_unit",
+  "model": "hunyuan",
+  "faces_in": 497902,
+  "tris": 5880,
+  "w": 0.685,
+  "d": 0.353,
+  "h": 0.62,
+  "want": [
+   0.85,
+   0.4,
+   0.62
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    64.5,
+    68.2
+   ],
+   "ab_sat": [
+    1.8,
+    2.8
+   ]
+  },
+  "bytes": 1980912
+ },
+ "basin_planter_onion": {
+  "name": "basin_planter_onion",
+  "model": "hunyuan",
+  "faces_in": 499464,
+  "tris": 7840,
+  "w": 0.706,
+  "d": 0.706,
+  "h": 0.55,
+  "want": [
+   0.65,
+   0.65,
+   0.55
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    33.6,
+    34.5
+   ],
+   "ab_sat": [
+    8.7,
+    4.4
+   ]
+  },
+  "bytes": 2102692
+ },
+ "bus_stop_shelter": {
+  "name": "bus_stop_shelter",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 11760,
+  "w": 3.347,
+  "d": 1.705,
+  "h": 2.6,
+  "want": [
+   3.2,
+   1.4,
+   2.6
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    54.9,
+    66.2
+   ],
+   "ab_sat": [
+    6.2,
+    4.6
+   ]
+  },
+  "bytes": 5143044
+ },
+ "cardboard_boxes": {
+  "name": "cardboard_boxes",
+  "model": "hunyuan",
+  "faces_in": 499832,
+  "tris": 5880,
+  "w": 0.658,
+  "d": 0.594,
+  "h": 0.8,
+  "want": [
+   0.8,
+   0.6,
+   0.8
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    54.4,
+    56.7
+   ],
+   "ab_sat": [
+    29.4,
+    24.4
+   ]
+  },
+  "bytes": 1457948
+ },
+ "cat_loaf": {
+  "name": "cat_loaf",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 7840,
+  "w": 0.237,
+  "d": 0.443,
+  "h": 0.25,
+  "want": [
+   0.22,
+   0.4,
+   0.25
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    64.6,
+    77.2
+   ],
+   "ab_sat": [
+    33.0,
+    25.1
+   ]
+  },
+  "bytes": 4795104
+ },
+ "cement_bags": {
+  "name": "cement_bags",
+  "model": "hunyuan",
+  "faces_in": 499918,
+  "tris": 5880,
+  "w": 1.1,
+  "d": 1.174,
+  "h": 1.029,
+  "want": [
+   1.1,
+   1.1,
+   0.7
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    67.6,
+    66.8
+   ],
+   "ab_sat": [
+    10.5,
+    5.7
+   ]
+  },
+  "bytes": 1714460
+ },
+ "clay_pots_cluster": {
+  "name": "clay_pots_cluster",
+  "model": "hunyuan",
+  "faces_in": 498148,
+  "tris": 9800,
+  "w": 0.785,
+  "d": 0.799,
+  "h": 0.6,
+  "want": [
+   0.9,
+   0.5,
+   0.6
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    43.6,
+    46.7
+   ],
+   "ab_sat": [
+    30.8,
+    21.6
+   ]
+  },
+  "bytes": 2337656
+ },
+ "clothing_bin": {
+  "name": "clothing_bin",
+  "model": "hunyuan",
+  "faces_in": 499968,
+  "tris": 5880,
+  "w": 1.013,
+  "d": 0.941,
+  "h": 1.8,
+  "want": [
+   1.0,
+   0.8,
+   1.8
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    35.7,
+    49.0
+   ],
+   "ab_sat": [
+    25.4,
+    19.2
+   ]
+  },
+  "bytes": 1462956
+ },
+ "conv_table_set": {
+  "name": "conv_table_set",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 9800,
+  "w": 1.782,
+  "d": 1.776,
+  "h": 0.85,
+  "want": [
+   1.5,
+   1.5,
+   0.85
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    56.9,
+    52.0
+   ],
+   "ab_sat": [
+    21.5,
+    20.9
+   ]
+  },
+  "bytes": 2008740
+ },
+ "delivery_bicycle": {
+  "name": "delivery_bicycle",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 14700,
+  "w": 0.767,
+  "d": 1.595,
+  "h": 1.1,
+  "want": [
+   0.6,
+   1.75,
+   1.1
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 90.0,
+  "recolor_L_from_to": {
+   "L": [
+    28.2,
+    39.7
+   ],
+   "ab_sat": [
+    1.1,
+    0.6
+   ]
+  },
+  "bytes": 6051856
+ },
+ "delivery_scooter": {
+  "name": "delivery_scooter",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 14700,
+  "w": 0.833,
+  "d": 1.9,
+  "h": 1.199,
+  "want": [
+   0.75,
+   1.9,
+   1.35
+  ],
+  "fit": "d",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    39.2,
+    45.1
+   ],
+   "ab_sat": [
+    2.6,
+    4.6
+   ]
+  },
+  "bytes": 6278824
+ },
+ "electric_meter_box": {
+  "name": "electric_meter_box",
+  "model": "hunyuan",
+  "faces_in": 499550,
+  "tris": 4994,
+  "w": 0.262,
+  "d": 0.161,
+  "h": 0.6,
+  "want": [
+   0.45,
+   0.2,
+   0.6
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    61.2,
+    53.8
+   ],
+   "ab_sat": [
+    3.8,
+    4.6
+   ]
+  },
+  "bytes": 1397820
+ },
+ "euroform_stack": {
+  "name": "euroform_stack",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 1.2,
+  "d": 0.732,
+  "h": 0.497,
+  "want": [
+   1.2,
+   0.6,
+   0.9
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    62.6,
+    62.5
+   ],
+   "ab_sat": [
+    14.6,
+    11.5
+   ]
+  },
+  "bytes": 1907484
+ },
+ "exercise_machine": {
+  "name": "exercise_machine",
+  "model": "hunyuan",
+  "faces_in": 494570,
+  "tris": 9800,
+  "w": 1.405,
+  "d": 0.824,
+  "h": 1.6,
+  "want": [
+   1.4,
+   1.0,
+   1.6
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    60.2,
+    60.7
+   ],
+   "ab_sat": [
+    4.5,
+    4.4
+   ]
+  },
+  "bytes": 2350116
+ },
+ "fire_hydrant": {
+  "name": "fire_hydrant",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.575,
+  "d": 0.403,
+  "h": 0.9,
+  "want": [
+   0.45,
+   0.35,
+   0.9
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    52.1,
+    41.6
+   ],
+   "ab_sat": [
+    51.5,
+    40.4
+   ]
+  },
+  "bytes": 1739912
+ },
+ "gamasot_stove": {
+  "name": "gamasot_stove",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 9800,
+  "w": 0.818,
+  "d": 0.891,
+  "h": 0.95,
+  "want": [
+   0.9,
+   0.9,
+   0.95
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    55.7,
+    60.7
+   ],
+   "ab_sat": [
+    6.3,
+    5.4
+   ]
+  },
+  "bytes": 5413684
+ },
+ "gas_meter_pipe": {
+  "name": "gas_meter_pipe",
+  "model": "hunyuan",
+  "faces_in": 496732,
+  "tris": 4966,
+  "w": 0.531,
+  "d": 0.158,
+  "h": 0.6,
+  "want": [
+   0.45,
+   0.22,
+   0.6
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    70.7,
+    70.2
+   ],
+   "ab_sat": [
+    25.9,
+    26.3
+   ]
+  },
+  "bytes": 1898844
+ },
+ "ice_cream_freezer": {
+  "name": "ice_cream_freezer",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 1.222,
+  "d": 0.764,
+  "h": 0.85,
+  "want": [
+   1.2,
+   0.65,
+   0.85
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    60.8,
+    77.4
+   ],
+   "ab_sat": [
+    9.1,
+    5.0
+   ]
+  },
+  "bytes": 1855540
+ },
+ "jangdok_set": {
+  "name": "jangdok_set",
+  "model": "hunyuan",
+  "faces_in": 491200,
+  "tris": 9800,
+  "w": 0.958,
+  "d": 0.961,
+  "h": 0.8,
+  "want": [
+   1.4,
+   0.8,
+   0.8
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    37.4,
+    41.8
+   ],
+   "ab_sat": [
+    15.8,
+    9.1
+   ]
+  },
+  "bytes": 2385348
+ },
+ "laundry_rack": {
+  "name": "laundry_rack",
+  "model": "hunyuan",
+  "faces_in": 499242,
+  "tris": 9800,
+  "w": 1.7,
+  "d": 1.082,
+  "h": 0.775,
+  "want": [
+   1.7,
+   0.6,
+   1.0
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    58.5,
+    64.5
+   ],
+   "ab_sat": [
+    2.4,
+    1.0
+   ]
+  },
+  "bytes": 2250212
+ },
+ "lpg_cylinders": {
+  "name": "lpg_cylinders",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.836,
+  "d": 0.371,
+  "h": 1.3,
+  "want": [
+   0.8,
+   0.45,
+   1.3
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    61.7,
+    53.7
+   ],
+   "ab_sat": [
+    4.3,
+    6.5
+   ]
+  },
+  "bytes": 1687456
+ },
+ "mailbox_cluster": {
+  "name": "mailbox_cluster",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5000,
+  "w": 0.797,
+  "d": 0.098,
+  "h": 0.6,
+  "want": [
+   0.9,
+   0.2,
+   0.6
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    48.4,
+    57.8
+   ],
+   "ab_sat": [
+    1.3,
+    1.9
+   ]
+  },
+  "bytes": 1637508
+ },
+ "mixer_truck": {
+  "name": "mixer_truck",
+  "model": "hunyuan",
+  "faces_in": 497796,
+  "tris": 19600,
+  "w": 2.5,
+  "d": 8.6,
+  "h": 3.7,
+  "want": [
+   2.5,
+   8.6,
+   3.7
+  ],
+  "fit": "xyz",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    43.4,
+    55.8
+   ],
+   "ab_sat": [
+    1.5,
+    3.9
+   ]
+  },
+  "bytes": 7311736
+ },
+ "parasol_folded": {
+  "name": "parasol_folded",
+  "model": "hunyuan",
+  "faces_in": 500002,
+  "tris": 5000,
+  "w": 0.439,
+  "d": 0.436,
+  "h": 2.4,
+  "want": [
+   0.5,
+   0.5,
+   2.4
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    41.6,
+    47.9
+   ],
+   "ab_sat": [
+    24.2,
+    10.6
+   ]
+  },
+  "bytes": 1426412
+ },
+ "park_bench": {
+  "name": "park_bench",
+  "model": "hunyuan",
+  "faces_in": 499996,
+  "tris": 5880,
+  "w": 1.8,
+  "d": 0.65,
+  "h": 0.85,
+  "want": [
+   1.8,
+   0.65,
+   0.85
+  ],
+  "fit": "xyz",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    49.8,
+    42.8
+   ],
+   "ab_sat": [
+    14.0,
+    16.7
+   ]
+  },
+  "bytes": 1703672
+ },
+ "parking_barrier": {
+  "name": "parking_barrier",
+  "model": "hunyuan",
+  "faces_in": 498526,
+  "tris": 7840,
+  "w": 2.48,
+  "d": 0.506,
+  "h": 1.1,
+  "want": [
+   3.8,
+   0.5,
+   1.1
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    61.5,
+    57.8
+   ],
+   "ab_sat": [
+    5.8,
+    5.2
+   ]
+  },
+  "bytes": 5196584
+ },
+ "plastic_crates_stack": {
+  "name": "plastic_crates_stack",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 7840,
+  "w": 0.45,
+  "d": 0.399,
+  "h": 0.858,
+  "want": [
+   0.45,
+   0.35,
+   1.1
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    63.8,
+    60.1
+   ],
+   "ab_sat": [
+    31.8,
+    29.2
+   ]
+  },
+  "bytes": 2376452
+ },
+ "roll_container": {
+  "name": "roll_container",
+  "model": "hunyuan",
+  "faces_in": 500002,
+  "tris": 9800,
+  "w": 0.933,
+  "d": 0.801,
+  "h": 1.7,
+  "want": [
+   0.8,
+   0.6,
+   1.7
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    58.9,
+    58.8
+   ],
+   "ab_sat": [
+    0.9,
+    7.9
+   ]
+  },
+  "bytes": 2282640
+ },
+ "stockpot_burner": {
+  "name": "stockpot_burner",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 7840,
+  "w": 0.656,
+  "d": 0.721,
+  "h": 0.9,
+  "want": [
+   0.6,
+   0.6,
+   0.9
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    55.6,
+    51.7
+   ],
+   "ab_sat": [
+    2.5,
+    2.5
+   ]
+  },
+  "bytes": 1982420
+ },
+ "street_lamp_cobra": {
+  "name": "street_lamp_cobra",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.449,
+  "d": 2.523,
+  "h": 8.0,
+  "want": [
+   0.4,
+   2.0,
+   8.0
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": -90.0,
+  "recolor_L_from_to": {
+   "L": [
+    49.2,
+    55.6
+   ],
+   "ab_sat": [
+    7.1,
+    5.0
+   ]
+  },
+  "bytes": 1358320
+ },
+ "street_lamp_trail": {
+  "name": "street_lamp_trail",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.446,
+  "d": 0.448,
+  "h": 3.6,
+  "want": [
+   0.5,
+   0.5,
+   3.6
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    17.5,
+    35.8
+   ],
+   "ab_sat": [
+    13.2,
+    4.0
+   ]
+  },
+  "bytes": 1518216
+ },
+ "styrofoam_planter": {
+  "name": "styrofoam_planter",
+  "model": "hunyuan",
+  "faces_in": 499996,
+  "tris": 7840,
+  "w": 0.6,
+  "d": 0.448,
+  "h": 0.336,
+  "want": [
+   0.6,
+   0.4,
+   0.45
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    66.2,
+    76.7
+   ],
+   "ab_sat": [
+    16.8,
+    8.2
+   ]
+  },
+  "bytes": 2165936
+ },
+ "traffic_cones": {
+  "name": "traffic_cones",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 1.013,
+  "d": 1.019,
+  "h": 0.7,
+  "want": [
+   1.0,
+   0.6,
+   0.7
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    52.3,
+    55.8
+   ],
+   "ab_sat": [
+    57.9,
+    38.7
+   ]
+  },
+  "bytes": 1711820
+ },
+ "traffic_mirror": {
+  "name": "traffic_mirror",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.84,
+  "d": 0.235,
+  "h": 3.0,
+  "want": [
+   0.9,
+   0.4,
+   3.0
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    52.6,
+    59.8
+   ],
+   "ab_sat": [
+    28.9,
+    5.8
+   ]
+  },
+  "bytes": 1967540
+ },
+ "trash_bag_pile": {
+  "name": "trash_bag_pile",
+  "model": "hunyuan",
+  "faces_in": 499986,
+  "tris": 7840,
+  "w": 1.002,
+  "d": 0.999,
+  "h": 0.6,
+  "want": [
+   1.0,
+   0.8,
+   0.6
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    68.9,
+    80.9
+   ],
+   "ab_sat": [
+    10.4,
+    8.0
+   ]
+  },
+  "bytes": 1923456
+ },
+ "trash_bin_wheeled": {
+  "name": "trash_bin_wheeled",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.592,
+  "d": 0.684,
+  "h": 1.07,
+  "want": [
+   0.58,
+   0.73,
+   1.07
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    26.4,
+    39.6
+   ],
+   "ab_sat": [
+    26.9,
+    16.4
+   ]
+  },
+  "bytes": 1563252
+ },
+ "truck_1ton_box": {
+  "name": "truck_1ton_box",
+  "model": "hunyuan",
+  "faces_in": 498424,
+  "tris": 19600,
+  "w": 1.95,
+  "d": 5.1,
+  "h": 2.7,
+  "want": [
+   1.95,
+   5.1,
+   2.7
+  ],
+  "fit": "xyz",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    47.9,
+    67.5
+   ],
+   "ab_sat": [
+    5.1,
+    5.9
+   ]
+  },
+  "bytes": 6414060
+ },
+ "utility_pole": {
+  "name": "utility_pole",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 11760,
+  "w": 2.251,
+  "d": 1.676,
+  "h": 12.0,
+  "want": [
+   1.4,
+   0.8,
+   12.0
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    59.3,
+    60.7
+   ],
+   "ab_sat": [
+    2.9,
+    3.9
+   ]
+  },
+  "bytes": 5252296
+ },
+ "vending_machine": {
+  "name": "vending_machine",
+  "model": "hunyuan",
+  "faces_in": 499102,
+  "tris": 11760,
+  "w": 1.141,
+  "d": 0.539,
+  "h": 1.83,
+  "want": [
+   1.0,
+   0.75,
+   1.83
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    69.2,
+    72.4
+   ],
+   "ab_sat": [
+    8.6,
+    5.0
+   ]
+  },
+  "bytes": 5551052
+ },
+ "water_tank_roof": {
+  "name": "water_tank_roof",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.917,
+  "d": 0.924,
+  "h": 1.7,
+  "want": [
+   1.3,
+   1.3,
+   1.7
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    54.5,
+    59.2
+   ],
+   "ab_sat": [
+    28.0,
+    27.1
+   ]
+  },
+  "bytes": 1739488
+ }
+}

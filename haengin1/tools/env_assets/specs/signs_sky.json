@@ -1,0 +1,64 @@
+{
+  "note": "Signs, posters, decals (no letters: shop names go in as TMP text in Unity) and distant skyline cards (flat value layers -> sky_split.py -> per-layer masks tinted per time of day).",
+  "defaults": { "quality": "high", "resolution": "2k", "aspect": "16:9" },
+  "common": "Style: flat-colored anime background painting for a cel-shaded 3D game: flat color fills, thin warm-black ink outlines, muted low-saturation palette, no gradients, no photographic texture. Absolutely no readable text anywhere: no letters, no Korean or Latin characters, no numbers, no logos of real brands. No alcohol, no cigarettes.",
+  "items": [
+    {
+      "name": "sign_bands",
+      "out": "concept/art/env/signs/src/sign_bands.png",
+      "prompt": "A sheet of eight blank Korean shop fascia signboards (long horizontal sign bands above small shop fronts), front orthographic view, arranged in a 2-column by 4-row grid with wide white gaps between them, on a plain white background, each signboard about 6 times wider than tall: 1) brushed aluminum composite panel in muted navy with a thin silver trim frame; 2) old faded acrylic lightbox in cream with a red-brown edge stripe; 3) dark varnished wooden board with a simple carved border, for an old beef-soup restaurant; 4) slate-blue panel with a cream band and a small round sun shape at the left end, for a convenience store; 5) muted mustard-yellow panel with a grey trim, for a delivery office; 6) white panel with a pale green stripe, for a laundry; 7) red-brown panel with a cream inner frame, for a snack bar; 8) grey steel panel with rust stains and one sagging corner, for an old hardware store. Every signboard face is completely blank."
+    },
+    {
+      "name": "sign_vertical",
+      "out": "concept/art/env/signs/src/sign_vertical.png",
+      "prompt": "A sheet of eight blank Korean projecting shop signs, front orthographic view, standing side by side in one row with wide white gaps on a plain white background: six tall narrow vertical lightbox signs on small steel wall brackets in different muted colors (navy, cream, slate blue, red-brown, white, dull green), one round lightbox sign on a bracket, and one small square hanging wooden sign on two chains. Every sign face is completely blank."
+    },
+    {
+      "name": "shop_emblems",
+      "out": "concept/art/env/signs/src/shop_emblems.png",
+      "background": "transparent",
+      "prompt": "A sheet of eight simple flat icon emblems for fictional small neighborhood shops, arranged in a 4 by 2 grid with wide empty gaps, each emblem inside its own round or rounded-square badge: 1) a steaming soup bowl (beef-soup restaurant); 2) a small rising sun over a horizon line (convenience store); 3) a lightning bolt over a small delivery scooter (delivery office); 4) a pan of rice cakes in red sauce (snack bar); 5) a shirt on a hanger (laundry); 6) a screw and a wrench crossed (hardware store); 7) a computer monitor with a small wrench (PC repair); 8) an open book and a pencil (stationery and copy shop). Transparent background."
+    },
+    {
+      "name": "posters_flyers",
+      "out": "concept/art/env/signs/src/posters_flyers.png",
+      "prompt": "A sheet of eight Korean street posters and flyers as they appear taped on utility poles and alley walls, front view, arranged in a 4 by 2 grid with white gaps on a plain white background: a room-for-rent flyer with a tear-off strip fringe at the bottom; a lost-cat poster with a drawing of an orange cat; a boxing gym poster with a bold punching silhouette; a small-theater play poster with bold color shapes and a face drawing; a piano lesson flyer with a piano-key graphic; a moving-service flyer with a small truck drawing; a neighborhood notice sheet; a band concert poster with a guitar shape. All text areas are replaced by plain grey bars and blocks. Slightly worn paper edges and small tape pieces at the corners."
+    },
+    {
+      "name": "decals_grime",
+      "out": "concept/art/env/decals/src/decals_grime.png",
+      "background": "transparent",
+      "prompt": "A sheet of grime and wear decals for a stylized cel-shaded game, arranged in a loose grid with empty gaps, each a separate flat shape: two vertical rust drip streaks; two dark water-stain streaks as below a window sill; an oil-stain blot for asphalt; two hairline crack drawings; a moss patch for stone; a damp patch for the bottom of a wall; leftover tape and paper scraps from removed flyers; a round manhole cover seen from above; a rectangular storm-drain grate seen from above. Flat semi-transparent dark colors with hand-drawn ink edges. Transparent background."
+    },
+    {
+      "name": "decals_graffiti",
+      "out": "concept/art/env/decals/src/decals_graffiti.png",
+      "background": "transparent",
+      "prompt": "A sheet of six abstract street graffiti pieces for a concrete parking-lot wall, arranged with empty gaps: bubble-shaped blobs with thick outlines, paint drips, arrows, spray splatter, a simple cartoon eye, stars and zigzag lines, in muted pink, teal, mustard yellow and off-white with dark outlines. No words, no letters, nothing that looks like writing or a tag. Transparent background."
+    },
+    {
+      "name": "sky_north_bugaksan",
+      "out": "concept/art/env/sky/src/sky_north_bugaksan.png",
+      "aspect": "21:9",
+      "prompt": "A distant skyline layer card for a game background, looking north-west from a hillside in central Seoul. Drawn ONLY as flat solid grey silhouettes in exactly three value layers on a pure white background: the farthest layer is the ridge of Bugaksan mountain with the old stone fortress wall following its crest, in one flat light grey (#C8C8C8) with a few thin hatching lines in a slightly darker grey; the middle layer is a band of low city rooftops, small apartment blocks and trees in one flat medium grey (#8C8C8C); the nearest layer along the bottom is a strip of dark tiled rooftops and treetops in one flat dark grey (#4A4A4A). Crisp edges between layers, no gradients, no atmosphere, no sky color, no sun. Wide panorama: silhouettes fill the lower 55 percent, the top 45 percent is pure white."
+    },
+    {
+      "name": "sky_east_naksan",
+      "out": "concept/art/env/sky/src/sky_east_naksan.png",
+      "aspect": "21:9",
+      "prompt": "A distant skyline layer card for a game background, looking east from a hillside in central Seoul. Drawn ONLY as flat solid grey silhouettes in exactly three value layers on a pure white background: the farthest layer is the long low ridge of Naksan hill with the old stone fortress wall running along its top and a few apartment towers behind, in one flat light grey (#C8C8C8) with a few thin hatching lines in a slightly darker grey; the middle layer is a dense cluster of small houses climbing the slope in one flat medium grey (#8C8C8C); the nearest layer along the bottom is a strip of rooftops, utility poles and trees in one flat dark grey (#4A4A4A). Crisp edges between layers, no gradients, no atmosphere, no sky color, no sun. Wide panorama: silhouettes fill the lower 50 percent, the top half is pure white."
+    },
+    {
+      "name": "sky_south_city",
+      "out": "concept/art/env/sky/src/sky_south_city.png",
+      "aspect": "21:9",
+      "prompt": "A distant skyline layer card for a game background, looking south from a hillside in central Seoul. Drawn ONLY as flat solid grey silhouettes in exactly three value layers on a pure white background: the farthest layer is the downtown Seoul skyline of high-rise towers with Namsan mountain and its slender broadcast tower on top, in one flat light grey (#C8C8C8) with a few thin hatching lines in a slightly darker grey; the middle layer is a band of mid-rise buildings and campus roofs in one flat medium grey (#8C8C8C); the nearest layer along the bottom is a strip of tiled rooftops and trees in one flat dark grey (#4A4A4A). Crisp edges between layers, no gradients, no atmosphere, no sky color, no sun. Wide panorama: silhouettes fill the lower 55 percent, the top 45 percent is pure white."
+    },
+    {
+      "name": "sky_clouds",
+      "out": "concept/art/env/sky/src/sky_clouds.png",
+      "background": "transparent",
+      "prompt": "A sheet of flat stylized cloud shapes for a cel-shaded game sky, arranged with empty gaps: eight separate clouds of various sizes (long thin stratus bands, puffy cumulus, small wisps), each one flat cream-white fill with a single flat slightly darker underside band and thin warm-grey outlines, plus one crescent moon in pale cream. Transparent background."
+    }
+  ]
+}
