@@ -251,3 +251,40 @@ The reference images are black-and-white model sheets of this same character: ke
 | `duo_show` | `Both have realistic proportions and the size difference between them is clear.` | `Both have realistic proportions; the boy is only a little shorter than the judo athlete but much narrower and lighter, so the difference in width and mass between them is clear.` |
 | `poses_sheet` | `eight full-body figures at the same scale in two rows,` | `eight full-body figures at the same scale in two rows (the thin boy is 174 cm and the judo athlete 183 cm, so the boy is only slightly shorter but much narrower),` |
 | `duo_show`, `hands_sheet`, `poses_sheet` 첫 문장 (옛 그림을 참조로 둘 때만) | `keep their faces, hair, body proportions and outfits consistent with those references` | `keep their faces, hair and outfits consistent with those references, but follow the heights and body proportions written below` |
+
+---
+
+# M3 등장인물 (2026-10-06)
+
+> **AI 생성 이미지·모델입니다.** 색 설정화는 GPT Image 2.5(`gpt_image_2_5`, high 2k 2:3), A포즈 4방향 시트는 GPT Image 2.5(high 4k 16:9, 색 설정화를 참조로), 3D 모델은 Tripo H3.1 Multiview to 3D, 리깅은 Higgsfield 3D Rigging(대기 동작 Idle_3 = 243)으로 2026-10-06(KST)에 만들었습니다. 사람이 그리거나 조각한 것이 아니며, 출시 때 스팀 등 플랫폼의 AI 사용 공개 대상입니다.
+
+- 기준: `docs/09_M3_버티컬슬라이스_설계.md` 4-1(인물 표)·4-3(만드는 방법)·4-4(크레딧, 권장안), 원고 `story/시우루트/01~07화`, 바이블 `docs/02`, 이 폴더 위쪽 규칙과 `../../FUJIMOTO_STYLE.md` 부록 B 의 STYLE_COLOR·AVOID 문구.
+- 계절: 데모는 3/3~5/1(늦겨울~늦봄)이라 **3월 겨울 두께**(후드·패딩·누빔 조끼·니트)로 정했다. 원고에 외모 묘사가 없는 사람(엄마 머리·체형, 하늘 옷, 나리 옷, 할머니, 담임, 여학생 교복)은 아래처럼 새로 정했다.
+- 프롬프트 원문: `m3/prompts/<이름>_color.txt`, `m3/prompts/<이름>_apose.txt`(실제로 통과한 판). 금지 문구에 담배·술·글자·로고·실존 인물 닮음을 넣었고, 결과에서 읽을 수 있는 글자·로고·흡연·음주 소품은 보이지 않았다.
+- 순서: 인물마다 색 설정화 **한 장** → 눈으로 확인 → A포즈 시트 → `crop4.py` 로 4장 자르기 → **4장을 한 장으로 합쳐 팔·손 잘림 확인** → Tripo → Blender 정면 돌리기(+X → +Z) → 커밋·푸시 → **커밋 SHA 고정 raw 주소**로 리깅 → `posetest_front.py`(자세 시험) + 팔을 곧게 내린 자세 렌더(팔이 몸에 붙어 늘어나는지, 손 정점이 손 뼈를 따라가는지 수치로 확인). **12명 모두 통과.**
+
+| 이름(파일 앞부분) | 인물 | 나이·키 | 옷·머리 | Tripo | 리깅 키 | 크레딧 |
+|---|---|---|---|---|---:|---:|
+| `siwoo_delivery` | 반시우 2번째 의상(새벽 배달·현장) | 17 · 174 | 회색 후드(후드는 등에 내림) + **선셋 주황 배달 조끼**(#D2693A, 크림 반사띠 한 줄, 글자 없음) + 차콜 작업 바지 + 흰 하이탑(주황 밑창), 손마디 테이프. 참조: `siwoo_apose_v2`·`siwoo_face_v1` | detailed | 1.74 | 33 |
+| `ngunpar` | 응운 파(엄마) | 41 · 158 | 크림 긴소매 니트(소매 걷음) + 벽돌색 앞치마 + 짙은 회색 바지 + 검정 주방 고무신, 오른 손목 안쪽 파스, 낮게 묶은 쪽머리 | detailed | 1.58 | 33 |
+| `haneul` | 반하늘 | 11 · 142 | 라일락 플리스 집업 + 크림 긴팔 + 청바지 + 흰 찍찍이 운동화, 양갈래 세 가닥 땋기(남색 머리끈). 아이 비율 약 6.2등신 | detailed | 1.42 | 33 |
+| `minjae` | 황민재 | 17 · 176 | 검정 숏 패딩 + 왼가슴·왼소매에 **글자 없는 진홍 날개·불꽃 패치** + 교복 셔츠 깃·남색 교복 바지 + 로고 없는 흰 운동화, 왁스로 세운 갈색 앞머리 | detailed | 1.76 | 33 |
+| `gwak` | 곽춘식(곽반장) | 58 · 170 | 바랜 올리브 작업 점퍼 + 회색 맨투맨 + 목 수건 + 왼손목 시계 + 짙은 회색 작업 바지 + 검정 안전화. **안전모는 소품(TMP '곽')이라 모델에 씌우지 않음** — 실루엣 재활용(할아버지·경비·아빠)에도 맞음 | detailed | 1.70 | 33 |
+| `geonwoo` | 박건우 | 17 · 182(95kg) | `enemy/naengjanggo_color.png` 를 머리·얼굴·체형 참조로, 교복 재킷(열림)·흰 셔츠·학교 넥타이·남색 바지 + 검정 운동화, 까까머리 | standard | 1.82 | 24 |
+| `dokyungmin` | 도경민(담임, 국어) | 34 · 175 | 오트밀 꽈배기 카디건(소매 걷음) + 하늘색 옥스퍼드 셔츠 + 짙은 초록 니트 타이 + 차콜 슬랙스 + 갈색 구두 | standard | 1.75 | 24 |
+| `choi` | 최사장(하루편의점) | 63 · 165 | 갈색 스웨터 + 허리에 검정 **복대** + 베이지 누빔 조끼(열림) + 회색 바지 + 검정 슬립온. **돋보기는 소품이라 씌우지 않음** | standard | 1.65 | 24 |
+| `nari` | 유나리 | 17 · 162 | 세이지 그린 편의점 조끼(로고·명찰 없음) + 크림 니트 + 검정 일자 바지 + 흰 운동화, 턱선 단발·일자 앞머리, 오른손 날에 먹 자국. 노트는 소품 | standard | 1.62 | 24 |
+| `halmeoni` | 국밥집 사장 할머니 | 70대 초 · 150 | 자주 누빔 조끼 + 잔꽃무늬 블라우스 + 남색 토시 + 회갈색 고무줄 바지 + 검정 고무신, 짧은 회백 뽀글 파마 | standard | 1.50 | 24 |
+| `student_m` | 혜성고 남학생(군중) | 17 · 172 | 교복 재킷(잠금) + 흰 셔츠 + 남색 학교 넥타이(바랜 민트 사선) + 남색 바지 + 흰 운동화, 평범한 얼굴(얼굴 데칼용) | standard | 1.72 | 24 |
+| `student_f` | 혜성고 여학생(군중) | 17 · 162 | 교복 재킷(잠금) + 흰 블라우스 + 같은 넥타이 + 무릎길이 남색 주름치마 + 검정 불투명 스타킹 + 검정 로퍼, 낮은 포니테일 | standard | 1.62 | 24 |
+
+**파일**: 설정화 `m3/<이름>_color.png`, A포즈 시트 `m3/<이름>_apose.png`, 자른 4장 `../3d_input/<이름>_{front,left,back,right}.png`, 모델 `../3d/m3/<이름>_tripo.glb`(Tripo 원본, 정면 +X)·`<이름>_front.glb`(정면 +Z, 키 맞춤), 리깅 `../3d/m3/anim/<이름>_idle243.glb`(뼈 24개, 손가락 없음). 줄 세움 사진 `../3d/m3/m3_lineup.png`(**각자 자기 키에 맞춘 화면이라 키 비교용이 아님**). M3 동작은 `../3d/anim/m3/`, 판정은 `docs/anim_library.md` 「M3 동작 확인 결과」.
+
+**크레딧(실제 거래 내역 합계)**: 색 설정화 12 × 2.75 = 33 · A포즈 시트 12 × 4.25 = 51(검열 오판 4번은 자동 환불, 0) · Tripo detailed 5 × 18 = 90 · standard 7 × 9 = 63 · 리깅+대기 12 × 8 = 96 → **인물 333**. 동작 19 × 8 = 152(필수 16 + 비교 후보 3). **합계 485.00**(잔액 2,654.72 → 2,169.72).
+
+**주의·남은 것**
+- **검열 오판(nsfw)**: A포즈 프롬프트의 'legs clearly separated with a visible gap between the thighs' 문구가 나리(1차)·민재(1차)·건우(1·2차)에서 입력 단계 검열에 걸렸다(곧바로 자동 환불). 여성 5명과 민재·건우는 'legs straight and a little apart' + 'Modest, fully clothed everyday character design for a family-friendly game' 로 바꿔 통과. 건우는 셔츠 '단추 풂·밑단 빠짐·꽉 낌' 묘사도 빼야 통과했다. 다음 A포즈 시트는 처음부터 이 문구로 쓴다.
+- **민재 고개**: 색 설정화의 '턱을 들고 내려다보는' 자세가 A포즈에도 남아 모델 머리가 약 15° 뒤로 젖혀져 있다. 거만한 인물이라 그대로 두었다(바로잡으려면 Unity 에서 목·머리 뼈에 고정 보정).
+- **치마·앞치마**: 엄마 앞치마와 여학생 치마는 다리 사이를 잇는 한 덩어리라 무릎을 크게 굽히면(앉기·쪼그리기) 다리 따라 늘어난다. 앉는 장면은 카메라·각도로 가리거나, 필요하면 Blender 에서 치마 뼈를 더한다.
+- **시우 주황**: FUJIMOTO 6-1 은 시우 강조색을 '주황 밑창 하나'로 정했지만 원고·바이블(테마색 선셋 오렌지 + 크림)이 배달 조끼를 주황으로 정해, 채도를 낮춘 #D2693A 로 그렸다. 밑창(#E2582C)과 함께 주황이 두 곳이 된다(대표 확인).
+- 얼굴 데칼·손가락 뼈·부위 마스크·LOD(09 4-2·4-3 의 2~8단계)는 아직 하지 않았다(0크레딧 Blender 후처리 몫).
