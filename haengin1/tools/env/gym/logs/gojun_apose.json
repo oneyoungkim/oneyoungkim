@@ -1,0 +1,33 @@
+﻿[
+  {
+    "created_at": "2026-10-24T10:40:51.91609Z",
+    "display_name": "GPT Image 2.5",
+    "id": "92de6d82-2d15-46a9-a092-d084c2a3712a",
+    "job_type": "gpt_image_2_5",
+    "min_result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261024_104051_92de6d82-2d15-46a9-a092-d084c2a3712a_min.webp",
+    "params": {
+      "aspect_ratio": "16:9",
+      "height": 2160,
+      "medias": [
+        {
+          "data": {
+            "id": "6392ec9f-52a7-44f7-a1a2-88b313cd906b",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/6392ec9f-52a7-44f7-a1a2-88b313cd906b.png"
+          },
+          "role": "image"
+        }
+      ],
+      "model": "flare",
+      "prompt": "Use the attached reference image of this original character: keep his face, hair, body shape, outfit and colors exactly consistent with it. Create a clean 3D-modeling reference turnaround of the same character in color: four full-body views of him side by side in one row, evenly spaced, all at exactly the same scale, standing on one shared ground line, with wide empty white margins between the figures so nothing touches or overlaps: 1) front view, 2) left side view with the character facing the left edge of the image, 3) back view, 4) right side view with the character facing the right edge of the image. Orthographic camera at chest height, no perspective distortion. Strict A-pose for 3D rigging: standing perfectly straight, feet a little wider than shoulder-width apart and pointing forward, legs straight and a little apart, both arms raised away from the body at about 45 degrees from the torso, elbows straight, hands open and flat with fingers spread apart and palms facing down, so there is a large clear gap between each arm and the torso and hips; the hands are far away from the thighs; nothing in the hands. Neutral expression with a closed mouth. Modest, fully clothed everyday character design for a family-friendly game. The character is a 24-year-old Korean man, an amateur mixed-martial-arts fighter: 176 cm and 66 kg, about 7.4 heads tall with realistic proportions, an athletic lightweight build with wide shoulders, not bulky. Light warm skin. A round-jawed friendly face with thick straight eyebrows, bright wide eyes, a slightly wide nose, a small healing cut on his right eyebrow. Black hair cut short on top and shaved at the sides, slightly messy. Outfit: a plain black long-sleeved rash guard (#242426) with one muted blue stripe on the shoulders (#4A6B8A), black MMA fight shorts (#2A2A2C) with a thin blue trim reaching the knee, bare feet, athletic tape around his right wrist, a black elastic knee sleeve on his left knee. Plain unbranded clothing. Rendering: flat even studio lighting from the front with almost no cast shadows and no shadow on the ground, flat muted anime cel colors with only a very light single shadow tone, clean thin dark outlines, pure plain white background, no ground line. Avoid: perspective, dramatic lighting, hands touching the body, arms hanging down, crossed legs, props held in the hands, extra characters, text, letters, labels, grid lines, numbers, logos, watermarks, cigarettes, alcohol. Original character, not resembling any existing anime or manga character or any real person.",
+      "quality": "high",
+      "reference_elements": [],
+      "remove_bg": false,
+      "resolution": "4k",
+      "width": 3840
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261024_104051_92de6d82-2d15-46a9-a092-d084c2a3712a.png",
+    "status": "completed"
+  }
+]
+

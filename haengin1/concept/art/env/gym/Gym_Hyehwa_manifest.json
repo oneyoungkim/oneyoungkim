@@ -40,6 +40,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "케이지 캔버스·매트 테두리",
+   "texture": "concept/art/env/gym/textures/M_Cage_Canvas.png",
    "tiling": 0.5
   },
   "M_Cage_Mesh": {
@@ -48,6 +49,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "케이지 철망(알파 컷아웃, 양면)",
+   "texture": "concept/art/env/gym/textures/M_Cage_Mesh.png",
    "tiling": 1.0
   },
   "M_Concrete": {
@@ -65,6 +67,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "노출 천장",
+   "texture": "concept/art/env/gym/textures/M_Concrete_Ceiling.png",
    "tiling": 0.4167
   },
   "M_Fluorescent": {
@@ -73,6 +76,7 @@
    "uv": "unit",
    "owner": "gym",
    "note": "형광등 확산판(발광)",
+   "texture": "concept/art/env/gym/textures/M_Fluorescent.png",
    "tiling": 1.0
   },
   "M_Glass_Clear": {
@@ -81,6 +85,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "사무실 유리(투명 0.15)",
+   "texture": "concept/art/env/gym/textures/M_Glass_Clear.png",
    "tiling": 1.0
   },
   "M_Glass_Dark": {
@@ -98,6 +103,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "퍼즐 매트",
+   "texture": "concept/art/env/gym/textures/M_Mat_Vinyl.png",
    "tiling": 1.0
   },
   "M_Metal_Green": {
@@ -124,6 +130,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "거울(평면 반사 꺼질 때 판)",
+   "texture": "concept/art/env/gym/textures/M_Mirror.png",
    "tiling": 1.0
   },
   "M_Pad_Vinyl": {
@@ -132,6 +139,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "케이지 기둥 패드·벽 레슬링 패드",
+   "texture": "concept/art/env/gym/textures/M_Pad_Vinyl.png",
    "tiling": 1.0
   },
   "M_Paint_Gym": {
@@ -140,6 +148,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "벽 아랫 띠 1.2m",
+   "texture": "concept/art/env/gym/textures/M_Paint_Gym.png",
    "tiling": 0.5
   },
   "M_Plaster_Cream": {
@@ -157,6 +166,7 @@
    "uv": "unit",
    "owner": "gym",
    "note": "포스터 8칸(poster_atlas.json)",
+   "texture": "concept/art/env/gym/textures/M_Poster_Atlas.png",
    "tiling": 1.0
   },
   "M_Rubber_Floor": {
@@ -165,6 +175,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "고무 바닥",
+   "texture": "concept/art/env/gym/textures/M_Rubber_Floor.png",
    "tiling": 1.0
   },
   "M_Steel_Dark": {
@@ -173,6 +184,7 @@
    "uv": "world",
    "owner": "gym",
    "note": "케이지 틀·레일·트러스·체인·난간",
+   "texture": "concept/art/env/gym/textures/M_Steel_Dark.png",
    "tiling": 1.0
   },
   "M_Timer_Red": {
@@ -181,6 +193,7 @@
    "uv": "unit",
    "owner": "gym",
    "note": "라운드 타이머 숫자판(발광)·응급함 띠",
+   "texture": "concept/art/env/gym/textures/M_Timer_Red.png",
    "tiling": 1.0
   },
   "M_Wood_Dark": {
@@ -248,8 +261,8 @@
    288
   ],
   "Stair": [
-   536,
-   372
+   548,
+   384
   ],
   "Cage": [
    954,
@@ -297,7 +310,7 @@
   "Poster_cage_seoul_b_02": 2,
   "Poster_gym_banner_02": 2
  },
- "tris_total_lod0": 3346,
+ "tris_total_lod0": 3358,
  "sockets": [
   {
    "name": "Sock_Light_Stair",
@@ -2243,19 +2256,19 @@
    "kind": "camera",
    "pos": [
     0.9,
-    2.55,
-    9.4
+    2.45,
+    9.1
    ],
    "fwd": [
-    0.906,
-    -0.135,
-    -0.4
+    0.896,
+    -0.166,
+    -0.412
    ],
    "info": {
     "look_at": [
      12.0,
-     0.9,
-     4.5
+     0.4,
+     4.0
     ],
     "fov_v": 50
    }
@@ -2308,18 +2321,18 @@
    "name": "Sock_Cam_g04",
    "kind": "camera",
    "pos": [
-    9.2,
-    1.6,
-    8.3
+    10.8,
+    1.65,
+    7.4
    ],
    "fwd": [
-    -0.824,
-    -0.118,
-    0.555
+    -0.828,
+    -0.099,
+    0.552
    ],
    "info": {
     "look_at": [
-     4.3,
+     4.5,
      0.9,
      11.6
     ],
@@ -2372,6 +2385,6 @@
   }
  ],
  "files_bytes": {
-  "Gym_Hyehwa.fbx": 365084
+  "Gym_Hyehwa.fbx": 365196
  }
 }

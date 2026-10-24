@@ -1,3 +1,16 @@
 DONE barbell_rack hunyuan 24793380
 FAIL battle_rope_coil hunyuan :: node.exe : Error: Higgsfield API error (HTTP 520). failed to PUT media bytes to upload_url: 520 At C:\클로드\haengin1-repo\haengin1\tools\env\gym\gen_3d.ps1:29 char:8 +   $r = & node $cli @a 2>&1 | Out-String +        ~~~~~~~~~~~~~~~~~~~     + CategoryInfo          : NotSpecified: (Error: Higgsfie...upload_url: 520:String) [], RemoteException     + FullyQualifiedErrorId : NativeCommandError   
 DONE dumbbell_rack hunyuan 24190196
+DONE focus_mitts_pair hunyuan 25615408
+DONE folding_chair hunyuan 25115652
+DONE heavy_bag_long hunyuan 23644204
+DONE heavy_bag_short hunyuan 26993088
+DONE jump_rope_coiled hunyuan 26794832
+DONE kettlebell hunyuan 16257000
+SKIP locker_unit hunyuan
+SKIP mat_roll hunyuan
+SKIP mma_gloves_pair hunyuan
+SKIP speed_bag_platform hunyuan
+SKIP tractor_tire hunyuan
+SKIP weight_bench hunyuan
+ALL_DONE

@@ -131,7 +131,7 @@ def setup_kit_materials():
         if info is None:
             continue
         img = None
-        if info.get("texture"):
+        if info.get("texture") and mat.name != "M_Glass_Clear":     # 유리 결(사선 2줄)은 1m 타일이라 미리 보기에서 격자로 보임 → 평면 색 + 알파만
             p = os.path.join(ROOT, info["texture"])
             if os.path.exists(p):
                 img = bpy.data.images.load(p, check_existing=True)

@@ -1,0 +1,827 @@
+{
+ "barbell_rack": {
+  "name": "barbell_rack",
+  "model": "hunyuan",
+  "faces_in": 499982,
+  "tris": 11760,
+  "w": 2.12,
+  "d": 1.077,
+  "h": 1.8,
+  "want": [
+   1.2,
+   1.2,
+   1.8
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    12.4,
+    23.4
+   ],
+   "ab_sat": [
+    2.4,
+    0.6
+   ]
+  },
+  "bytes": 3676404
+ },
+ "battle_rope_coil": {
+  "name": "battle_rope_coil",
+  "model": "hunyuan",
+  "faces_in": 499892,
+  "tris": 5880,
+  "w": 0.6,
+  "d": 0.539,
+  "h": 0.221,
+  "want": [
+   0.6,
+   0.6,
+   0.3
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    2.9,
+    16.2
+   ],
+   "ab_sat": [
+    6.6,
+    2.0
+   ]
+  },
+  "bytes": 956168
+ },
+ "body_scale": {
+  "name": "body_scale",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5000,
+  "w": 0.35,
+  "d": 0.373,
+  "h": 0.048,
+  "want": [
+   0.35,
+   0.35,
+   0.05
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    38.9,
+    28.6
+   ],
+   "ab_sat": [
+    2.0,
+    1.1
+   ]
+  },
+  "bytes": 1665140
+ },
+ "dumbbell_rack": {
+  "name": "dumbbell_rack",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 9800,
+  "w": 1.4,
+  "d": 0.433,
+  "h": 0.813,
+  "want": [
+   1.4,
+   0.6,
+   0.8
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    13.5,
+    22.8
+   ],
+   "ab_sat": [
+    0.3,
+    1.1
+   ]
+  },
+  "bytes": 4176980
+ },
+ "focus_mitts_pair": {
+  "name": "focus_mitts_pair",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5000,
+  "w": 0.5,
+  "d": 0.378,
+  "h": 0.292,
+  "want": [
+   0.5,
+   0.25,
+   0.12
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    31.0,
+    31.2
+   ],
+   "ab_sat": [
+    4.4,
+    14.5
+   ]
+  },
+  "bytes": 1478516
+ },
+ "folding_chair": {
+  "name": "folding_chair",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5000,
+  "w": 0.453,
+  "d": 0.507,
+  "h": 0.8,
+  "want": [
+   0.45,
+   0.5,
+   0.8
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    20.7,
+    28.3
+   ],
+   "ab_sat": [
+    2.0,
+    2.1
+   ]
+  },
+  "bytes": 1454956
+ },
+ "grappling_dummy": {
+  "name": "grappling_dummy",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 7840,
+  "w": 0.61,
+  "d": 0.473,
+  "h": 1.5,
+  "want": [
+   0.45,
+   0.45,
+   1.5
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    19.9,
+    23.2
+   ],
+   "ab_sat": [
+    43.7,
+    10.5
+   ]
+  },
+  "bytes": 3160644
+ },
+ "heavy_bag_long": {
+  "name": "heavy_bag_long",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.427,
+  "d": 0.419,
+  "h": 2.0,
+  "want": [
+   0.35,
+   0.35,
+   2.0
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    30.6,
+    21.5
+   ],
+   "ab_sat": [
+    19.1,
+    4.9
+   ]
+  },
+  "bytes": 1470040
+ },
+ "heavy_bag_short": {
+  "name": "heavy_bag_short",
+  "model": "hunyuan",
+  "faces_in": 499908,
+  "tris": 5880,
+  "w": 0.363,
+  "d": 0.369,
+  "h": 1.4,
+  "want": [
+   0.4,
+   0.4,
+   1.4
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    33.7,
+    28.4
+   ],
+   "ab_sat": [
+    39.7,
+    16.6
+   ]
+  },
+  "bytes": 1638184
+ },
+ "jump_rope_coiled": {
+  "name": "jump_rope_coiled",
+  "model": "hunyuan",
+  "faces_in": 498274,
+  "tris": 4982,
+  "w": 0.3,
+  "d": 0.384,
+  "h": 0.053,
+  "want": [
+   0.3,
+   0.3,
+   0.06
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    67.0,
+    30.9
+   ],
+   "ab_sat": [
+    10.8,
+    3.9
+   ]
+  },
+  "bytes": 1536668
+ },
+ "kettlebell": {
+  "name": "kettlebell",
+  "model": "hunyuan",
+  "faces_in": 499984,
+  "tris": 4998,
+  "w": 0.178,
+  "d": 0.14,
+  "h": 0.3,
+  "want": [
+   0.25,
+   0.25,
+   0.3
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    21.8,
+    17.5
+   ],
+   "ab_sat": [
+    34.0,
+    1.3
+   ]
+  },
+  "bytes": 725164
+ },
+ "locker_unit": {
+  "name": "locker_unit",
+  "model": "hunyuan",
+  "faces_in": 500502,
+  "tris": 5880,
+  "w": 0.728,
+  "d": 0.504,
+  "h": 1.8,
+  "want": [
+   0.6,
+   0.45,
+   1.8
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    41.2,
+    36.9
+   ],
+   "ab_sat": [
+    8.8,
+    5.9
+   ]
+  },
+  "bytes": 1452340
+ },
+ "mat_roll": {
+  "name": "mat_roll",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5000,
+  "w": 0.547,
+  "d": 0.536,
+  "h": 1.8,
+  "want": [
+   0.5,
+   0.5,
+   1.8
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    41.3,
+    44.6
+   ],
+   "ab_sat": [
+    14.2,
+    19.7
+   ]
+  },
+  "bytes": 1573468
+ },
+ "mma_gloves_pair": {
+  "name": "mma_gloves_pair",
+  "model": "hunyuan",
+  "faces_in": 499820,
+  "tris": 4998,
+  "w": 0.3,
+  "d": 0.229,
+  "h": 0.076,
+  "want": [
+   0.3,
+   0.15,
+   0.1
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    30.5,
+    22.4
+   ],
+   "ab_sat": [
+    15.1,
+    3.8
+   ]
+  },
+  "bytes": 1681492
+ },
+ "office_chair": {
+  "name": "office_chair",
+  "model": "hunyuan",
+  "faces_in": 379008,
+  "tris": 17726,
+  "w": 0.663,
+  "d": 0.648,
+  "h": 1.0,
+  "want": [
+   0.6,
+   0.6,
+   1.0
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 180.0,
+  "recolor_L_from_to": {
+   "L": [
+    27.3,
+    28.4
+   ],
+   "ab_sat": [
+    3.6,
+    1.2
+   ]
+  },
+  "bytes": 5740960
+ },
+ "office_desk": {
+  "name": "office_desk",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 1.4,
+  "d": 0.728,
+  "h": 0.765,
+  "want": [
+   1.4,
+   0.7,
+   0.75
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    50.9,
+    49.7
+   ],
+   "ab_sat": [
+    6.0,
+    5.0
+   ]
+  },
+  "bytes": 1788668
+ },
+ "shoe_rack": {
+  "name": "shoe_rack",
+  "model": "hunyuan",
+  "faces_in": 500010,
+  "tris": 11016,
+  "w": 1.044,
+  "d": 0.549,
+  "h": 1.2,
+  "want": [
+   0.9,
+   0.35,
+   1.2
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    53.0,
+    48.1
+   ],
+   "ab_sat": [
+    2.0,
+    1.4
+   ]
+  },
+  "bytes": 2519588
+ },
+ "slippers_pile": {
+  "name": "slippers_pile",
+  "model": "hunyuan",
+  "faces_in": 499978,
+  "tris": 4998,
+  "w": 0.6,
+  "d": 0.592,
+  "h": 0.148,
+  "want": [
+   0.6,
+   0.5,
+   0.15
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    36.1,
+    29.3
+   ],
+   "ab_sat": [
+    8.8,
+    2.5
+   ]
+  },
+  "bytes": 1672192
+ },
+ "speaker_cabinet": {
+  "name": "speaker_cabinet",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5000,
+  "w": 0.274,
+  "d": 0.226,
+  "h": 0.5,
+  "want": [
+   0.3,
+   0.3,
+   0.5
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    18.1,
+    22.9
+   ],
+   "ab_sat": [
+    2.8,
+    1.5
+   ]
+  },
+  "bytes": 1345788
+ },
+ "speed_bag_platform": {
+  "name": "speed_bag_platform",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.6,
+  "d": 0.835,
+  "h": 0.517,
+  "want": [
+   0.6,
+   0.6,
+   0.45
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    44.0,
+    37.1
+   ],
+   "ab_sat": [
+    9.5,
+    7.4
+   ]
+  },
+  "bytes": 1845308
+ },
+ "stand_fan": {
+  "name": "stand_fan",
+  "model": "hunyuan",
+  "faces_in": 499256,
+  "tris": 5880,
+  "w": 0.448,
+  "d": 0.392,
+  "h": 1.25,
+  "want": [
+   0.45,
+   0.4,
+   1.25
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    51.1,
+    57.6
+   ],
+   "ab_sat": [
+    2.8,
+    1.9
+   ]
+  },
+  "bytes": 1882140
+ },
+ "tractor_tire": {
+  "name": "tractor_tire",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 7840,
+  "w": 1.3,
+  "d": 1.301,
+  "h": 0.469,
+  "want": [
+   1.3,
+   1.3,
+   0.45
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    12.0,
+    24.5
+   ],
+   "ab_sat": [
+    3.0,
+    0.6
+   ]
+  },
+  "bytes": 4231716
+ },
+ "water_cooler": {
+  "name": "water_cooler",
+  "model": "hunyuan",
+  "faces_in": 499974,
+  "tris": 5880,
+  "w": 0.338,
+  "d": 0.37,
+  "h": 1.05,
+  "want": [
+   0.32,
+   0.36,
+   1.05
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    68.2,
+    75.7
+   ],
+   "ab_sat": [
+    6.8,
+    5.9
+   ]
+  },
+  "bytes": 1703628
+ },
+ "weight_bench": {
+  "name": "weight_bench",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 0.488,
+  "d": 1.2,
+  "h": 0.413,
+  "want": [
+   0.3,
+   1.2,
+   0.45
+  ],
+  "fit": "d",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    47.5,
+    32.3
+   ],
+   "ab_sat": [
+    0.8,
+    1.8
+   ]
+  },
+  "bytes": 1618164
+ },
+ "whiteboard_stand": {
+  "name": "whiteboard_stand",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5880,
+  "w": 1.647,
+  "d": 0.863,
+  "h": 1.85,
+  "want": [
+   1.2,
+   0.5,
+   1.85
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    73.3,
+    79.9
+   ],
+   "ab_sat": [
+    3.0,
+    3.7
+   ]
+  },
+  "bytes": 1582840
+ }
+}

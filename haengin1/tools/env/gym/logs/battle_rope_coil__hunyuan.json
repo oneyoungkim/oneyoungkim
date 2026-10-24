@@ -1,8 +1,29 @@
-﻿node.exe : Error: Higgsfield API error (HTTP 520). failed to PUT media bytes to upload_url: 520
-At C:\클로드\haengin1-repo\haengin1\tools\env\gym\gen_3d.ps1:29 char:8
-+   $r = & node $cli @a 2>&1 | Out-String
-+        ~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (Error: Higgsfie...upload_url: 520:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
+﻿[
+  {
+    "created_at": "2026-10-24T10:38:11.078234Z",
+    "display_name": "Hunyuan3D v3 Image to 3D",
+    "id": "10547609-73f8-404b-997a-50eb34dcb1e3",
+    "job_type": "hunyuan3d_v3_image_to_3d",
+    "min_result_url": null,
+    "params": {
+      "enable_pbr": false,
+      "face_count": 500000,
+      "folder_id": null,
+      "generate_type": "Normal",
+      "medias": [
+        {
+          "data": {
+            "id": "58b132ce-0873-42cd-8321-d17ae8da90e3",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/58b132ce-0873-42cd-8321-d17ae8da90e3.png"
+          },
+          "role": "image"
+        }
+      ],
+      "polygon_type": "triangle"
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261024_103811_10547609-73f8-404b-997a-50eb34dcb1e3.glb",
+    "status": "completed"
+  }
+]
 
