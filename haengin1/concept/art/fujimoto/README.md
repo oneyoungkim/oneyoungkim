@@ -288,3 +288,12 @@ The reference images are black-and-white model sheets of this same character: ke
 - **치마·앞치마**: 엄마 앞치마와 여학생 치마는 다리 사이를 잇는 한 덩어리라 무릎을 크게 굽히면(앉기·쪼그리기) 다리 따라 늘어난다. 앉는 장면은 카메라·각도로 가리거나, 필요하면 Blender 에서 치마 뼈를 더한다.
 - **시우 주황**: FUJIMOTO 6-1 은 시우 강조색을 '주황 밑창 하나'로 정했지만 원고·바이블(테마색 선셋 오렌지 + 크림)이 배달 조끼를 주황으로 정해, 채도를 낮춘 #D2693A 로 그렸다. 밑창(#E2582C)과 함께 주황이 두 곳이 된다(대표 확인).
 - 얼굴 데칼·손가락 뼈·부위 마스크·LOD(09 4-2·4-3 의 2~8단계)는 아직 하지 않았다(0크레딧 Blender 후처리 몫).
+
+## 이윤준(혜화 MMA 관장, 실존 인물) 설정화 참조 — 2026-10-24
+`m3/yunjun_color.png`·`m3/yunjun_apose.png` 는 대표 허락으로 아래 공개 사진을 참조해 후지모토풍으로 스타일화했다. 참조 사진은 저장소에 두지 않는다(세션 scratchpad 에만). 확인되지 않은 신체 특징(흉터 등)은 넣지 않았다. 설계·확인된 이력은 `docs/02_세계관_스토리바이블.md`·`docs/12_체육관_설계.md`.
+- https://ko.wikipedia.org/wiki/%EC%9D%B4%EC%9C%A4%EC%A4%80
+- https://www.spotvnews.co.kr/news/articleView.html?idxno=639959 (2023 대담 사진 — 참조로 씀)
+- https://www.spotvnews.co.kr/news/articleView.html?idxno=638545 (벨트 사진 — 참조로 씀)
+- https://www.sportsseoul.com/news/read/652695
+- https://www.xportsnews.com/article/766653
+- https://www.artkoreatv.com/news/articleView.html?idxno=62396
