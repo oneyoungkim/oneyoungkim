@@ -10,7 +10,10 @@ namespace Haengin
         public string DrillId = "";
         public Interactable Interact;
         public TextMeshPro Label;
+        /// 바닥 스티커(늘 보임, 작게)
+        public TextMeshPro Sticker;
         public Renderer Ring;
+        public const float ShowDist = 1.9f;
         public GymManager Gym;
         Transform player;
         float blink;
@@ -29,6 +32,7 @@ namespace Haengin
             var ds = GymState.Current.Of(DrillId, false);
             string best = ds != null && ds.HasBest ? DrillGrader.Letter(ds.BestGrade) : "—";
             Label.text = def != null ? $"{def.NameKr}\n<size=70%>최고 {best}{(ds != null && ds.SimUnlocked ? " · 시뮬" : "")}{(def.Playable ? "" : " · 자리만")}</size>" : DrillId;
+            if (Sticker != null) Sticker.text = def != null ? $"{def.Id} {def.NameKr}  {best}" : DrillId;
             if (Interact != null) Interact.Prompt = def != null ? $"{def.NameKr}{(def.Playable ? "" : "(자리만)")}" : DrillId;
         }
 
@@ -36,7 +40,7 @@ namespace Haengin
         {
             if (player == null) { var m = FindAnyObjectByType<PlayerMotor>(); if (m != null) player = m.transform; }
             if (Label == null) return;
-            bool near = player != null && (new Vector2(player.position.x - transform.position.x, player.position.z - transform.position.z)).magnitude < 3.2f;
+            bool near = player != null && (new Vector2(player.position.x - transform.position.x, player.position.z - transform.position.z)).magnitude < ShowDist;
             bool show = near && (Gym == null || !Gym.Busy);
             if (Label.gameObject.activeSelf != show) Label.gameObject.SetActive(show);
             if (show && Camera.main != null)

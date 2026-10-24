@@ -3,6 +3,8 @@
 // URP 는 실시간 Area 가 없어 형광등은 아래로 향한 넓은 스포트(120°)로 대신하고 발광 재질(M_Fluorescent)의 색을 함께 바꾼다(베이크 없음 — 12 문서 '구현 결과').
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Haengin
 {
@@ -15,9 +17,12 @@ namespace Haengin
         public Light Stair, Office;
         public Material FluorMat;
         public static readonly Color FluorColor = new Color(0.918f, 0.941f, 0.925f);
-        public float FluorIntensity = 3.2f, SpotIntensity = 4.0f;
-        /// 실내 주변광(바탕 Zone1 의 시간대 주변광 대신 — 지하라 하늘빛 없음)
-        public Color AmbientDay = new Color(0.60f, 0.58f, 0.55f), AmbientNight = new Color(0.20f, 0.19f, 0.22f);
+        public float FluorIntensity = 2.8f, SpotIntensity = 2.0f;
+        /// 실내 주변광(바탕 Zone1 의 시간대 주변광 대신 — 지하라 하늘빛 없음). 2차 패스: 스타일 프레임 L* 34/46/40/28 · 채도 0.11~0.19 에 맞춤
+        public Color AmbientMorning = new Color(0.56f, 0.56f, 0.55f), AmbientDay = new Color(0.74f, 0.73f, 0.70f), AmbientEvening = new Color(0.66f, 0.63f, 0.58f), AmbientNight = new Color(0.40f, 0.40f, 0.43f);
+        [Tooltip("실내 볼륨 채도(Zone1 필름 볼륨 위에 덮음)")] public float Saturation = -38f, Contrast = -4f;
+        Volume vol; ColorAdjustments adjust; SplitToning split; LiftGammaGain lgg;
+        Light sun; float sunWas = -1f; bool fogWas; bool fogSaved;
         public GymPart Part { get; private set; } = GymPart.Day;
         public int LitCount { get; private set; }
         float flicker;
@@ -25,14 +30,41 @@ namespace Haengin
         public static GymPart PartOfHour(int hour) => hour >= 4 && hour < 7 ? GymPart.Dawn : hour >= 7 && hour < 11 ? GymPart.Morning : hour >= 11 && hour < 17 ? GymPart.Day : hour >= 17 && hour < 21 ? GymPart.Evening : GymPart.Night;
         public static string Name(GymPart p) => p switch { GymPart.Dawn => "새벽", GymPart.Morning => "아침", GymPart.Day => "낮", GymPart.Evening => "저녁", _ => "밤" };
 
+        void EnsureVolume()
+        {
+            if (vol != null) return;
+            vol = gameObject.AddComponent<Volume>();
+            vol.isGlobal = true; vol.priority = 50f; vol.weight = 1f;
+            var prof = ScriptableObject.CreateInstance<VolumeProfile>(); prof.name = "Gym_Film(runtime)";
+            adjust = prof.Add<ColorAdjustments>(true); split = prof.Add<SplitToning>(true); lgg = prof.Add<LiftGammaGain>(true);
+            split.shadows.Override(new Color(0.5f, 0.5f, 0.5f)); split.highlights.Override(new Color(0.5f, 0.5f, 0.5f)); split.balance.Override(0f);
+            lgg.lift.Override(new Vector4(1f, 1f, 1f, 0f)); lgg.gamma.Override(new Vector4(1f, 1f, 1f, 0f)); lgg.gain.Override(new Vector4(1f, 1f, 1f, 0f));
+            adjust.saturation.Override(Saturation); adjust.contrast.Override(Contrast); adjust.postExposure.Override(0f); adjust.colorFilter.Override(Color.white);
+            vol.profile = prof;
+        }
+
+        void FindSun()
+        {
+            if (sun != null) return;
+            foreach (var l in FindObjectsByType<Light>(FindObjectsSortMode.None)) if (l.type == LightType.Directional && l.gameObject.scene != gameObject.scene) { sun = l; sunWas = l.intensity; break; }
+        }
+
         public void Apply(GymPart p)
         {
             Part = p;
             LitCount = 0;
+            EnsureVolume();
+            FindSun();
+            if (!fogSaved) { fogWas = RenderSettings.fog; fogSaved = true; }
+            RenderSettings.fog = false;                       // 지하 — 바탕 장면 안개·해는 들어오지 않는다
+            if (sun != null) sun.intensity = 0f;
+            adjust.saturation.Override(p == GymPart.Night ? Saturation + 6f : Saturation);
+            adjust.postExposure.Override(p == GymPart.Night ? 0.45f : p == GymPart.Morning ? 0.3f : p == GymPart.Evening ? 0.35f : 0.4f);   // 2차 측정: 밤 L*24 → 28 목표
+            adjust.colorFilter.Override(p == GymPart.Evening ? new Color(1f, 0.97f, 0.92f) : p == GymPart.Night ? new Color(0.95f, 0.96f, 1f) : Color.white);
             foreach (var f in Fluors)
             {
                 bool on = p == GymPart.Day || p == GymPart.Evening || (p == GymPart.Morning && f.Row <= 1) || (p == GymPart.Night && f.Row == 1);
-                if (f.Light != null) { f.Light.enabled = on; f.Light.intensity = p == GymPart.Night ? FluorIntensity * 1.3f : FluorIntensity; }
+                if (f.Light != null) { f.Light.enabled = on; f.Light.intensity = p == GymPart.Night ? FluorIntensity * 1.5f : FluorIntensity; f.Light.color = FluorColor; }
                 if (f.Tube != null)
                 {
                     var mats = f.Tube.materials;
@@ -41,13 +73,21 @@ namespace Haengin
                 if (on) LitCount++;
             }
             bool spots = p == GymPart.Evening || p == GymPart.Night || p == GymPart.Day;
-            for (int i = 0; i < CageSpots.Count; i++) if (CageSpots[i] != null) { CageSpots[i].enabled = spots; CageSpots[i].intensity = p == GymPart.Night ? SpotIntensity * 1.3f : SpotIntensity; CageSpots[i].shadows = i == 0 ? LightShadows.Soft : LightShadows.None; }
+            for (int i = 0; i < CageSpots.Count; i++) if (CageSpots[i] != null) { CageSpots[i].enabled = spots; CageSpots[i].intensity = p == GymPart.Night ? SpotIntensity * 1.4f : SpotIntensity; CageSpots[i].shadows = i == 0 ? LightShadows.Soft : LightShadows.None; }
             if (Stair != null) Stair.enabled = p != GymPart.Dawn;
             if (Office != null) Office.enabled = p == GymPart.Day || p == GymPart.Morning || p == GymPart.Evening;
             if (spots) LitCount += CageSpots.Count;
-            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = p == GymPart.Night || p == GymPart.Dawn ? AmbientNight : p == GymPart.Morning ? Color.Lerp(AmbientNight, AmbientDay, 0.7f) : AmbientDay;
+            RenderSettings.ambientMode = AmbientMode.Flat;
+            RenderSettings.ambientLight = p == GymPart.Night || p == GymPart.Dawn ? AmbientNight : p == GymPart.Morning ? AmbientMorning : p == GymPart.Evening ? AmbientEvening : AmbientDay;
             Debug.Log($"[Gym] 조명 {Name(p)}: 형광등 {LitCount - (spots ? CageSpots.Count : 0)}/{Fluors.Count} · 케이지 스포트 {(spots ? CageSpots.Count : 0)} · 사무실 {(Office != null && Office.enabled)}");
+        }
+
+        void LateUpdate() { if (sun != null && sun.intensity > 0f) sun.intensity = 0f; if (RenderSettings.fog) RenderSettings.fog = false; }
+
+        void OnDestroy()
+        {
+            if (sun != null && sunWas >= 0f) sun.intensity = sunWas;
+            if (fogSaved) RenderSettings.fog = fogWas;
         }
 
         void Update()

@@ -51,7 +51,7 @@ namespace Haengin.Tests
             // 시우를 프레임 자리에: g01 계단 아래, g02 케이지 안(고준과), g03 매트 줄 끝, g04 벤치 옆, g05 사무실 앞, g06 매트 가장자리(미트)
             var siwooSpots = new Dictionary<string, (Vector3 local, float yaw)>
             {
-                ["g01"] = (new Vector3(3.5f, 0f, 7.0f), 150f), ["g02"] = (new Vector3(13.6f, 0.25f, 6.0f), 90f), ["g03"] = (new Vector3(9.0f, 0.03f, 3.3f), 180f),
+                ["g01"] = (new Vector3(3.5f, 0f, 7.0f), 150f), ["g02"] = (new Vector3(13.1f, 0.25f, 5.0f), 55f), /* g02: 시우를 비켜 세워 고준·케이지 안이 보이게 */ ["g03"] = (new Vector3(9.0f, 0.03f, 3.3f), 180f),
                 ["g04"] = (new Vector3(6.6f, 0f, 9.8f), 300f), ["g05"] = (new Vector3(16.0f, 0f, 9.2f), 0f), ["g06"] = (new Vector3(8.5f, 0.03f, 4.0f), 90f),
             };
             Directory.CreateDirectory(Path.Combine(dir, "compare"));
@@ -76,6 +76,26 @@ namespace Haengin.Tests
                 brain.enabled = true;
                 if (gym.Mirror != null) gym.Mirror.Set(false);
                 log.Add($"{key} {GymLights.Name(part)} 형광등 {gym.Lights.LitCount}");
+            }
+
+            // ①-2 시간대 4종 × 2곳(매트 쪽 g03 · 케이지 쪽 g02) — 톤 맞추기용
+            Directory.CreateDirectory(Path.Combine(dir, "tod"));
+            foreach (var (part, light) in new[] { (GymPart.Morning, DayPart.Day), (GymPart.Day, DayPart.Day), (GymPart.Evening, DayPart.Dusk), (GymPart.Night, DayPart.Night) })
+            {
+                r.Light.Apply(light, true);
+                gym.ApplyPart(part);
+                M3Lab.Motor.Teleport(gym.transform.TransformPoint(new Vector3(9.0f, 0.03f, 3.3f)), 180f);
+                yield return Lab.Frames(30);
+                foreach (var key in new[] { "g03", "g02" })
+                {
+                    var sock = gym.Sock("Sock_Cam_" + key);
+                    brain.enabled = false;
+                    cam.transform.SetPositionAndRotation(sock.position, sock.rotation);
+                    float fw = cam.fieldOfView; cam.fieldOfView = 50f;
+                    yield return null;
+                    Shots.Shot(cam, Path.Combine(dir, "tod", $"{(int)part}_{GymLights.Name(part)}_{key}.png"), 1920, 1080, 2, false);
+                    cam.fieldOfView = fw; brain.enabled = true;
+                }
             }
 
             // ② 드릴 10종 결과 카드(라운드를 20초로 줄인 사본으로 — 등급은 봇 실력대로)

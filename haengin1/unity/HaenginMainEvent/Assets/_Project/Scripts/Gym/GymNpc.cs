@@ -14,7 +14,7 @@ namespace Haengin
         public string DisplayName = "";
         public Animator Anim;
         /// 반복 동작: 샌드백 치기 · 섀도 · 줄넘기 · 스트레칭 · 앉기 · 팔짱 · 없음
-        public enum Routine { None, Bag, Shadow, Rope, Stretch, Sit, Watch, Mitts }
+        public enum Routine { None, Bag, Shadow, Rope, Stretch, Sit, Watch, Mitts, Kettlebell }
         public Routine Now = Routine.None;
         public string Current { get; private set; } = "";
         float clock, next;
@@ -31,7 +31,7 @@ namespace Haengin
             if (forward.sqrMagnitude > 1e-4f) transform.rotation = Quaternion.LookRotation(new Vector3(forward.x, 0f, forward.z).normalized, Vector3.up);
             basePos = feet;
             Now = r; clock = 0f; next = 0.2f; step = 0;
-            Play(r == Routine.Sit ? "ChairSit" : r == Routine.Stretch ? "Kneel" : "Stance", 0.05f);
+            Play(r == Routine.Sit ? "ChairSit" : r == Routine.Stretch ? "Kneel" : r == Routine.Rope ? "JumpRope" : r == Routine.Kettlebell ? "Kettlebell" : "Stance", 0.05f);
         }
 
         public void Play(string state, float fade = 0.08f)
@@ -45,12 +45,13 @@ namespace Haengin
 
         void Update()
         {
-            if (Now == Routine.None || Now == Routine.Sit || Now == Routine.Watch || Now == Routine.Mitts) return;
+            if (Now == Routine.None || Now == Routine.Sit || Now == Routine.Watch || Now == Routine.Mitts || Now == Routine.Kettlebell) return;
             float dt = TimeFx.Dt;
             if (dt <= 0f) return;
             clock += dt;
             if (Now == Routine.Rope)
             {
+                if (Current == "JumpRope") return;                       // 전용 클립이 있으면 그대로(점프는 클립에)
                 hop = Mathf.Abs(Mathf.Sin(clock * Mathf.PI * 2f)) * 0.10f;
                 transform.position = basePos + Vector3.up * hop;
                 if (Current != "Stance") Play("Stance");

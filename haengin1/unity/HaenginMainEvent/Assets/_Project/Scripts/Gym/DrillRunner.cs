@@ -77,6 +77,9 @@ namespace Haengin
         public MoveSet Moves;
         public GameObject GojunFighterPrefab;
         public EnemyDef SparDef;
+        /// 전용 동작 표(없으면 대체 동작)
+        public GymClips Clips;
+        public bool HasClip(string state) => Clips != null && Clips.Has(state);
         public Transform Station;                  // 지금 드릴 자리(소켓)
         public Action<string, string> Say;         // (누가, 말) → HUD 큐
         public Action<string> Toast;               // 짧은 알림("걸림!" "팡!")
@@ -112,7 +115,9 @@ namespace Haengin
         public DrillInput Input => inp;
         public int Presses { get; private set; }
 
-        InputAction aLight, aHeavy, aGrab, aDodge, aGuard, aMove, aRun, aKick, aPause;
+        InputAction aLight, aHeavy, aGrab, aDodge, aGuard, aMove, aRun, aKick, aPause, aLookPad, aLookMouse;
+        /// 드릴 중 카메라 좌우 밀기(−1~1 → ±15°, 2장 '좌우 ±15° 만')
+        public float Nudge { get; private set; }
         bool pL, pH, pG, pD, pK, pPause, mapOn;
         DrillInput inp;
         struct Pending { public DrillBtn B; public double T; public double Age; public bool StickDown; }
@@ -124,7 +129,7 @@ namespace Haengin
         {
             if (Actions == null || aLight != null) return;
             InputAction C(string n) => Actions.FindAction("Combat/" + n, false);
-            aLight = C("Light"); aHeavy = C("Heavy"); aGrab = C("Grab"); aDodge = C("Dodge"); aGuard = C("Guard"); aMove = C("Move"); aRun = C("Run"); aKick = C("Kick"); aPause = C("Pause");
+            aLight = C("Light"); aHeavy = C("Heavy"); aGrab = C("Grab"); aDodge = C("Dodge"); aGuard = C("Guard"); aMove = C("Move"); aRun = C("Run"); aKick = C("Kick"); aPause = C("Pause"); aLookPad = C("LookPad"); aLookMouse = C("LookMouse");
         }
 
         /// 드릴 시작. station = 구현(null 이면 자리만 → 바로 끝). 플레이어 입력(PInput)은 끈다(D11 은 켠 채)
@@ -134,7 +139,7 @@ namespace Haengin
             Def = def; Actors = actors; Station = station; IsSim = sim;
             Log = new DrillLog { DrillId = def.Id, Rounds = def.Rounds, RoundSec = def.RoundSec };
             Result = null; Reward = default;
-            Round = 0; T = 0; phaseT = 0; Presses = 0;
+            Round = 0; T = 0; phaseT = 0; Presses = 0; Nudge = 0f;
             pending.Clear();
             pL = pH = pG = pD = pK = false;
             Bind();
@@ -254,6 +259,8 @@ namespace Haengin
         {
             if (mapOn && Bot <= 0f)
             {
+                float look = (aLookPad != null ? aLookPad.ReadValue<Vector2>().x : 0f) + (aLookMouse != null ? Mathf.Clamp(aLookMouse.ReadValue<Vector2>().x * 0.02f, -1f, 1f) : 0f);
+                Nudge = Mathf.Clamp(Mathf.MoveTowards(Nudge, Mathf.Clamp(look, -1f, 1f), dt * 4f) * (Mathf.Abs(look) < 0.05f ? 0.92f : 1f), -1f, 1f);
                 inp.Stick = aMove != null ? Vector2.ClampMagnitude(aMove.ReadValue<Vector2>(), 1f) : Vector2.zero;
                 inp.Guard = aGuard != null && aGuard.IsPressed();
                 inp.Run = aRun != null && aRun.IsPressed();

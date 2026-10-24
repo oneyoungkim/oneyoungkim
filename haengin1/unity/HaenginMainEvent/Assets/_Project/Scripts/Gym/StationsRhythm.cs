@@ -39,7 +39,16 @@ namespace Haengin
         double lastBeatT = -9; int beats;
         float tripFreeze; double freezeUntil = -1;
         LineRenderer rope;
+        bool useClip;
         public JumpRopeStation(bool du) { doubleUnder = du; }
+        /// 전용 클립: 점프 1회 = 박자 1개가 되게 재생 배율(ScriptRate = 클립 점프 속도 ÷ BPM 속도의 역)
+        void SetJumpAnim(bool on)
+        {
+            var me = Actors.Me; if (me == null) return;
+            if (!on || !useClip) { me.ScriptAnim = "Stance"; me.ScriptRate = 1f; return; }
+            float cyc = Actors.Clips.CycleSec("JumpRope");
+            me.ScriptAnim = "JumpRope"; me.ScriptRate = cyc > 0.01f ? Mathf.Clamp((float)(cyc / Beat.Interval) * (doubleUnder ? 1f : 1f), 0.5f, 2.5f) : 1f;
+        }
         public override string Hint => doubleUnder ? "박자에 × 점프 · △ 표시에는 △ 더블언더" : "박자에 × 점프 — 발끝";
 
         public override void RoundStart(int round)
@@ -48,7 +57,8 @@ namespace Haengin
             Beat = new BeatTrack(bpm, 1.0) { Window = BeatTrack.WindowFor(R.Speed) };
             if (doubleUnder) { int every = round >= 3 ? 2 : round == 2 ? 3 : 4; Beat.MarkOf = b => b > 0 && b % every == 0 ? 1 : 0; }
             Beat.Reset(); beats = 0; tripFreeze = 0f; freezeUntil = -1;
-            if (Actors.Player != null && Actors.Me != null) Actors.Me.ScriptAnim = "Stance";
+            useClip = Actors.HasClip("JumpRope") && Actors.Me != null;
+            if (Actors.Player != null && Actors.Me != null) SetJumpAnim(true);
             EnsureRope();
         }
 
@@ -76,9 +86,15 @@ namespace Haengin
                 tripFreeze = 0.8f; freezeUntil = t + 0.8;
                 R.Toast("걸림!"); Actors.Say?.Invoke("이윤준", "다시.");
             }
-            // 연출: 박자마다 발 떼기 + 줄 돌리기
+            // 연출: 전용 클립이면 클립이 뛰고(걸리면 0.8초 서 있음), 없으면 박자마다 발 떼기. 줄은 LineRenderer
             double since = t - lastBeatT;
-            if (Actors.Visual != null)
+            if (useClip)
+            {
+                bool frozen = tripFreeze > 0f;
+                if (frozen && Actors.Me != null && Actors.Me.ScriptAnim != "Stance") SetJumpAnim(false);
+                else if (!frozen && Actors.Me != null && Actors.Me.ScriptAnim != "JumpRope") SetJumpAnim(true);
+            }
+            else if (Actors.Visual != null)
             {
                 float h = tripFreeze > 0f ? 0f : DrillStations.Hop(since, Beat.Interval, doubleUnder ? 0.22f : 0.13f);
                 Actors.Visual.localPosition = new Vector3(0f, h, 0f);
@@ -124,6 +140,7 @@ namespace Haengin
         {
             if (rope != null) UnityEngine.Object.Destroy(rope.gameObject);
             rope = null;
+            if (Actors.Me != null) { Actors.Me.ScriptAnim = null; Actors.Me.ScriptRate = 1f; }
         }
 
         int botNext;

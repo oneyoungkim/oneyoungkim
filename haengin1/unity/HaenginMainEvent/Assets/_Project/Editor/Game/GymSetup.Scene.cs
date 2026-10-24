@@ -34,6 +34,7 @@ namespace Haengin.EditorGame
             gym.Actions = AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(M1Setup.InputPath);
             gym.Fonts = AssetDatabase.LoadAssetAtPath<UiFonts>(StorySetup.FontsPath) ?? StorySetup.Fonts();
             gym.Book = AssetDatabase.LoadAssetAtPath<DrillBook>(BookPath);
+            gym.Clips = AssetDatabase.LoadAssetAtPath<GymClips>(ClipsPath);
             gym.SparDef = AssetDatabase.LoadAssetAtPath<EnemyDef>(SparDefPath) ?? SparDefAsset();
             gym.GojunFighterPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(GojunFighterPrefab);
             root.AddComponent<DrillRunner>().Actions = gym.Actions;
@@ -208,7 +209,10 @@ namespace Haengin.EditorGame
                 var labelGo = new GameObject("이름표"); labelGo.transform.SetParent(mk.transform, false); labelGo.transform.localPosition = new Vector3(0f, 1.35f, 0f);
                 var tmp = labelGo.AddComponent<TextMeshPro>(); tmp.font = fonts != null ? fonts.B : null; tmp.fontSize = 1.5f; tmp.alignment = TextAlignmentOptions.Center; tmp.color = UiKit.Ink; tmp.rectTransform.sizeDelta = new Vector2(3f, 1f);
                 var ia = mk.AddComponent<Interactable>(); ia.Radius = 1.7f;
-                var dm = mk.AddComponent<DrillMarker>(); dm.DrillId = id; dm.Interact = ia; dm.Label = tmp; dm.Ring = qr; dm.Gym = gym;
+                // 바닥 스티커(먹 원 옆, 늘 보임)
+                var stGo = new GameObject("스티커"); stGo.transform.SetParent(mk.transform, false); stGo.transform.localPosition = new Vector3(0f, pos.y + 0.014f, -0.78f); stGo.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                var st = stGo.AddComponent<TextMeshPro>(); st.font = fonts != null ? fonts.B : null; st.fontSize = 1.1f; st.alignment = TextAlignmentOptions.Center; st.color = new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.85f); st.rectTransform.sizeDelta = new Vector2(2.2f, 0.3f);
+                var dm = mk.AddComponent<DrillMarker>(); dm.DrillId = id; dm.Interact = ia; dm.Label = tmp; dm.Sticker = st; dm.Ring = qr; dm.Gym = gym;
                 markerList.Add(dm);
                 seen.Add(id);
             }
@@ -218,7 +222,7 @@ namespace Haengin.EditorGame
             var timer = timerGo.AddComponent<TextMeshPro>(); timer.font = fonts != null ? fonts.Br : null; timer.fontSize = 4f; timer.alignment = TextAlignmentOptions.Center; timer.color = new Color(1f, 0.25f, 0.2f); timer.text = "3:00"; timer.rectTransform.sizeDelta = new Vector2(1.6f, 0.6f);
             gym.WallTimer = timer;
             // 체육관 이름 현수막 글자(글자는 TMP — 포스터 아틀라스에는 글자 없음)
-            var banner = new GameObject("현수막 글자"); banner.transform.SetParent(root.transform, false); banner.transform.localPosition = new Vector3(14.2f, 2.2f, 12.9f); banner.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            var banner = new GameObject("현수막 글자"); banner.transform.SetParent(root.transform, false); banner.transform.localPosition = new Vector3(11.3f, 2.35f, 12.95f); banner.transform.localRotation = Quaternion.identity;   // 북벽(의자 위), 남쪽에서 읽힘
             var bt = banner.AddComponent<TextMeshPro>(); bt.font = fonts != null ? fonts.Br : null; bt.fontSize = 5f; bt.alignment = TextAlignmentOptions.Center; bt.color = UiKit.Paper; bt.text = "혜화 MMA"; bt.rectTransform.sizeDelta = new Vector2(4f, 0.8f);
             // 오디오 소켓(자리): 스피커 2 + 대학로 소음
             foreach (var so in sockList)
@@ -227,6 +231,9 @@ namespace Haengin.EditorGame
                 var go = new GameObject("소리 " + S(sd, "name")); go.transform.SetParent(root.transform, false); go.transform.localPosition = V3(G(sd, "pos"));
                 var a = go.AddComponent<AudioSource>(); a.playOnAwake = false; a.spatialBlend = 1f; a.maxDistance = 14f; a.volume = 0f;
             }
+
+            // ⑥-2 공간 채우기(2차 패스): 천장 배관·케이블 트레이·바닥 테이프·사무실 집기·포스터 2
+            int decor = Decor(root.transform, fonts);
 
             // ⑦ NPC(프리팹 인스턴스, 처음엔 꺼 둠 — GymManager 가 시간대별로 켬)
             var npcRoot = new GameObject("NPC").transform; npcRoot.SetParent(root.transform, false);
@@ -258,14 +265,67 @@ namespace Haengin.EditorGame
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             StableIds.RewriteScene(SceneLoader.GymScene, "", new Dictionary<long, long>());
             AssetDatabase.ImportAsset(SceneLoader.GymScene, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
-            string msg = $"{Tag} 장면 {SceneLoader.GymScene}: 키트 렌더러 {renderers} · LOD 묶음 {lodGroups} · 포스터 {posters} · 충돌 상자 {boxes} · 소켓 {sockBy.Count} · 소품 {placed}(없음 {missing}) · 샌드백 {bags.Count} · 형광등 {fl} + 스포트 {lights.CageSpots.Count} · 마커 {markerList.Count}(드릴 {seen.Count}종) · NPC {(gym.Yunjun != null ? 1 : 0) + (gym.Gojun != null ? 1 : 0) + gym.Members.Count}";
+            string msg = $"{Tag} 장면 {SceneLoader.GymScene}: 키트 렌더러 {renderers} · LOD 묶음 {lodGroups} · 포스터 {posters} · 장식 {decor} · 충돌 상자 {boxes} · 소켓 {sockBy.Count} · 소품 {placed}(없음 {missing}) · 샌드백 {bags.Count} · 형광등 {fl} + 스포트 {lights.CageSpots.Count} · 마커 {markerList.Count}(드릴 {seen.Count}종) · NPC {(gym.Yunjun != null ? 1 : 0) + (gym.Gojun != null ? 1 : 0) + gym.Members.Count}";
             Debug.Log(msg); Notes.Add(msg);
+        }
+
+        /// 2차 패스 장식: 배관 3 · 케이블 트레이 1 · 전선관 2 · 바닥 테이프(케이지 둘레 8 · 매트 경계 4) · 사무실 집기(서류 상자 2 · 노트북 · 컵 · 선반) · 포스터 2. 충돌 없음
+        static int Decor(Transform root, UiFonts fonts)
+        {
+            int n = 0;
+            var d = new GameObject("Decor").transform; d.SetParent(root, false);
+            var steel = Mat("M_Steel_Dark"); var grey = Mat("M_Metal_Grey"); var wood = Mat("M_Wood_Dark") ?? grey;
+            string tapePath = $"{MatDir}/M_Tape.mat";
+            var tape = AssetDatabase.LoadAssetAtPath<Material>(tapePath);
+            if (tape == null) { tape = new Material(Shader.Find("Universal Render Pipeline/Unlit")) { name = "M_Tape" }; AssetDatabase.CreateAsset(tape, tapePath); }
+            tape.SetColor("_BaseColor", new Color(0.86f, 0.80f, 0.52f)); EditorUtility.SetDirty(tape);
+            GameObject Prim(PrimitiveType t, string name, Vector3 pos, Vector3 scale, Quaternion rot, Material m)
+            {
+                var go = GameObject.CreatePrimitive(t); go.name = name; Object.DestroyImmediate(go.GetComponent<Collider>());
+                go.transform.SetParent(d, false); go.transform.localPosition = pos; go.transform.localRotation = rot; go.transform.localScale = scale;
+                var r = go.GetComponent<Renderer>(); if (m != null) r.sharedMaterial = m; r.shadowCastingMode = ShadowCastingMode.Off; r.receiveShadows = true;
+                GameObjectUtility.SetStaticEditorFlags(go, StaticEditorFlags.BatchingStatic | StaticEditorFlags.OccludeeStatic);
+                n++; return go;
+            }
+            // 천장 배관(x 방향 3) · 케이블 트레이(z 방향, 기둥 옆) · 전선관 드롭 2
+            foreach (var z in new[] { 1.1f, 4.6f, 11.9f }) Prim(PrimitiveType.Cylinder, $"배관 z{z}", new Vector3(RoomW / 2f, 3.05f, z), new Vector3(0.12f, RoomW / 2f - 0.2f, 0.12f), Quaternion.Euler(0f, 0f, 90f), steel);
+            Prim(PrimitiveType.Cube, "케이블 트레이", new Vector3(10.4f, 2.95f, RoomD / 2f), new Vector3(0.3f, 0.08f, RoomD - 0.4f), Quaternion.identity, grey);
+            Prim(PrimitiveType.Cylinder, "전선관 1", new Vector3(14.05f, 1.6f, 12.95f), new Vector3(0.05f, 1.6f, 0.05f), Quaternion.identity, grey);
+            Prim(PrimitiveType.Cylinder, "전선관 2", new Vector3(19.95f, 1.6f, 0.5f), new Vector3(0.05f, 1.6f, 0.05f), Quaternion.identity, grey);
+            // 바닥 테이프: 케이지 둘레 팔각(apothem + 0.35) · 매트 경계
+            var cage = D(G(D(Manifest()["room"]), "cage")); var cc = L(G(cage, "center")); float cx = cc != null ? F(cc[0]) : 14.5f, cz = cc != null ? F(cc[1]) : 6.0f; float R = F(G(cage, "circumradius"), 3.1f);
+            float ap = R * Mathf.Cos(Mathf.PI / 8f) + 0.35f, side = 2f * ap * Mathf.Tan(Mathf.PI / 8f);
+            for (int k = 0; k < 8; k++) { float a = 45f * k; var dir = HitResolver.YawDir(a); Prim(PrimitiveType.Cube, $"테이프 케이지 {k}", new Vector3(cx, 0.006f, cz) + dir * ap, new Vector3(side + 0.06f, 0.004f, 0.06f), Quaternion.Euler(0f, a, 0f), tape); }
+            float mx0 = 1.5f, mx1 = 10.3f, mz0 = 0.5f, mz1 = 6.1f;
+            Prim(PrimitiveType.Cube, "테이프 매트 남", new Vector3((mx0 + mx1) / 2f, 0.036f, mz0), new Vector3(mx1 - mx0, 0.004f, 0.05f), Quaternion.identity, tape);
+            Prim(PrimitiveType.Cube, "테이프 매트 북", new Vector3((mx0 + mx1) / 2f, 0.036f, mz1), new Vector3(mx1 - mx0, 0.004f, 0.05f), Quaternion.identity, tape);
+            Prim(PrimitiveType.Cube, "테이프 매트 서", new Vector3(mx0, 0.036f, (mz0 + mz1) / 2f), new Vector3(0.05f, 0.004f, mz1 - mz0), Quaternion.identity, tape);
+            Prim(PrimitiveType.Cube, "테이프 매트 동", new Vector3(mx1, 0.036f, (mz0 + mz1) / 2f), new Vector3(0.05f, 0.004f, mz1 - mz0), Quaternion.identity, tape);
+            // 사무실 집기(책상 위 y 0.75): 서류 상자 2 · 노트북 · 컵 · 벽 선반
+            Prim(PrimitiveType.Cube, "서류 상자 1", new Vector3(16.45f, 0.81f, 12.2f), new Vector3(0.3f, 0.12f, 0.24f), Quaternion.Euler(0f, 8f, 0f), grey);
+            Prim(PrimitiveType.Cube, "서류 상자 2", new Vector3(16.45f, 0.93f, 12.22f), new Vector3(0.28f, 0.12f, 0.22f), Quaternion.Euler(0f, -5f, 0f), wood);
+            Prim(PrimitiveType.Cube, "노트북", new Vector3(17.1f, 0.765f, 12.15f), new Vector3(0.33f, 0.02f, 0.23f), Quaternion.Euler(0f, 12f, 0f), steel);
+            Prim(PrimitiveType.Cube, "노트북 화면", new Vector3(17.1f, 0.87f, 12.26f), new Vector3(0.33f, 0.21f, 0.015f), Quaternion.Euler(-12f, 12f, 0f), steel);
+            Prim(PrimitiveType.Cylinder, "컵", new Vector3(17.55f, 0.795f, 12.0f), new Vector3(0.08f, 0.045f, 0.08f), Quaternion.identity, Mat("M_Plaster_Cream") ?? grey);
+            Prim(PrimitiveType.Cube, "선반", new Vector3(16.0f, 1.25f, 12.93f), new Vector3(1.2f, 0.04f, 0.24f), Quaternion.identity, wood);
+            for (int i = 0; i < 4; i++) Prim(PrimitiveType.Cube, $"파일 {i + 1}", new Vector3(15.55f + 0.26f * i, 1.4f, 12.93f), new Vector3(0.2f, 0.26f, 0.2f), Quaternion.identity, i % 2 == 0 ? grey : wood);
+            // 포스터 2(아틀라스 칸 재질): 북벽 규칙판 · 동벽 세로 현수막
+            Quad(d, "포스터 규칙판", new Vector3(9.4f, 1.75f, RoomD - 0.03f), Quaternion.Euler(0f, 180f, 0f), new Vector3(0.7f, 1.0f, 1f), Mat("M_Poster_rules_board")); n++;
+            Quad(d, "포스터 현수막", new Vector3(RoomW - 0.03f, 1.7f, 12.0f), Quaternion.Euler(0f, 90f, 0f), new Vector3(0.6f, 1.6f, 1f), Mat("M_Poster_gym_banner")); n++;
+            return n;
+        }
+
+        static void Quad(Transform parent, string name, Vector3 pos, Quaternion rot, Vector3 scale, Material m)
+        {
+            var go = new GameObject(name); go.transform.SetParent(parent, false); go.transform.localPosition = pos; go.transform.localRotation = rot; go.transform.localScale = scale;
+            go.AddComponent<MeshFilter>().sharedMesh = MirrorQuad(0.5f, 0.5f);
+            var r = go.AddComponent<MeshRenderer>(); if (m != null) r.sharedMaterial = m; r.shadowCastingMode = ShadowCastingMode.Off;
         }
 
         /// +Z 를 보는 사각형(UV u = −x → +x, v = 아래 → 위)
         static Mesh MirrorQuad(float hw, float hh)
         {
-            string p = GymDir + "/MirrorQuad.asset";
+            string p = GymDir + (hw < 1f ? "/UnitQuad.asset" : "/MirrorQuad.asset");
             var m = AssetDatabase.LoadAssetAtPath<Mesh>(p);
             if (m == null) { m = new Mesh { name = "MirrorQuad" }; AssetDatabase.CreateAsset(m, p); }
             m.Clear();

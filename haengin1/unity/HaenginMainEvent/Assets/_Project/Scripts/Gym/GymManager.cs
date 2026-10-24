@@ -16,6 +16,7 @@ namespace Haengin
         public static GymManager Instance { get; private set; }
 
         public DrillBook Book;
+        public GymClips Clips;
         public InputActionAsset Actions;
         public UiFonts Fonts;
         public GymLights Lights;
@@ -31,7 +32,7 @@ namespace Haengin
         public GameObject GojunFighterPrefab;
         public ReflectionProbe Probe;
         public MirrorPlane Mirror;
-        [Tooltip("시뮬 몽타주 길이(초, 4-5: 15초 3컷). 시험·봇은 줄임")] public float SimMontageSec = 15f;
+        [Tooltip("시뮬 몽타주 길이(초, 결정: 6초 3컷). 시험·봇은 줄임")] public float SimMontageSec = 6f;
         /// 시험·스모크: 시간대 강제(-1 = 게임 시계)
         public int ForcePart = -1;
 
@@ -49,6 +50,9 @@ namespace Haengin
         public event Action<DrillDef, DrillResult, DrillReward> DrillFinished;
 
         readonly Dictionary<string, Transform> sock = new Dictionary<string, Transform>();
+        string camPreset; Transform camAt; CamRig camRig; float roomRadius = 3.0f;
+        /// 사무실 안(14.2~19.5 × 10.2~13): 카메라 2.2(2장)
+        public bool InOffice { get; private set; }
         bool simRunning, waitingClose;
         InputAction submit, dodge;
         bool pSub, pDodge;
@@ -93,7 +97,7 @@ namespace Haengin
                 Visual = motor != null ? motor.transform.Find("Visual") : null,
                 Yunjun = Yunjun, Gojun = Gojun, Bags = Bags, Dummy = Dummy, SpeedBag = SpeedBag,
                 Mode = FindAnyObjectByType<CombatMode>(), Tuning = pc != null ? pc.T : null, Moves = pc != null ? pc.Moves : null,
-                GojunFighterPrefab = GojunFighterPrefab, SparDef = SparDef,
+                GojunFighterPrefab = GojunFighterPrefab, SparDef = SparDef, Clips = Clips,
                 Say = (who, line) => { LastCoachLine = line; Hud.Say(who, line); },
                 Toast = s => Hud.ShowToast(s),
             };
@@ -123,12 +127,14 @@ namespace Haengin
                     Put(Yunjun, "Sock_NPC_Coach_Weight", GymNpc.Routine.Sit);
                     Put(Member(0), "Sock_Drill_D05_01", GymNpc.Routine.Bag);
                     Put(Member(1), "Sock_NPC_Member_Stretch", GymNpc.Routine.Stretch);
+                    Put(Member(4), "Sock_Drill_D12", GymNpc.Routine.Kettlebell);
                     break;
                 case GymPart.Day:
                     Put(Yunjun, "Sock_NPC_Coach_Desk", GymNpc.Routine.Sit);
                     Put(Gojun, "Sock_NPC_Gojun_Bag", GymNpc.Routine.Bag);
                     Put(Member(2), "Sock_NPC_Member_Mirror", GymNpc.Routine.Shadow);
                     Put(Member(3), "Sock_Drill_D05_04", GymNpc.Routine.Bag);
+                    Put(Member(5), "Sock_Drill_D12", GymNpc.Routine.Kettlebell);
                     break;
                 case GymPart.Evening:
                     Put(Yunjun, "Sock_NPC_Coach_CageDoor", GymNpc.Routine.Watch);
@@ -227,6 +233,20 @@ namespace Haengin
 
         void Update()
         {
+            // 드릴 카메라 ±15°(오른스틱·마우스)
+            if (camPreset != null && camAt != null && DrillCam != null && DrillCam.Priority.Value >= 30) Pose(camPreset, camAt, Runner != null ? Runner.Nudge * 15f : 0f);
+            // 사무실 카메라
+            if (Actors != null && Actors.Motor != null)
+            {
+                if (camRig == null) camRig = FindAnyObjectByType<CamRig>();
+                var l = transform.InverseTransformPoint(Actors.Motor.Position);
+                bool office = l.x > 14.2f && l.x < 19.5f && l.z > 10.2f && l.z < 13f;
+                if (office != InOffice && camRig != null && camRig.Tuning != null)
+                {
+                    InOffice = office;
+                    camRig.Tuning.radius = office ? 2.2f : roomRadius; camRig.Tuning.radiusRun = camRig.Tuning.radius + 0.2f;
+                }
+            }
             if (!waitingClose || Card.ShownFor < 0.6f) return;
             if (Runner.Bot > 0f && Card.ShownFor > 2.5f) { CloseCard(); return; }
             bool s = submit != null && submit.enabled && GameUi.Edge(submit, ref pSub);
@@ -264,7 +284,11 @@ namespace Haengin
                 {
                     t += UiKit.RealDt;
                     if (me != null && me.State == Fighter.Phase.Free && Actors.Moves != null && def.Category == DrillCategory.Striking && Mathf.Repeat(t, 0.7f) < UiKit.RealDt) me.StartAttack(c % 2 == 0 ? Actors.Moves.Jab : Actors.Moves.Cross, null);
-                    else if (me != null && def.Category != DrillCategory.Striking) me.ScriptAnim = "Stance";
+                    else if (me != null && def.Category != DrillCategory.Striking)
+                    {
+                        string st = def.Id == "D01" || def.Id == "D02" ? "JumpRope" : def.Id == "D12" || def.Id == "D13" ? "Kettlebell" : def.Id == "D07" ? "Burpee" : "Stance";
+                        me.ScriptAnim = Actors.HasClip(st) ? st : "Stance"; me.ScriptRate = 1f;
+                    }
                     int target = Mathf.RoundToInt(w.Sweat * (c * per + t) / (3f * per));
                     if (target != sweatShown) { sweatShown = target; Hud.ShowToast($"땀 {sweatShown}"); }
                     yield return null;
@@ -286,24 +310,33 @@ namespace Haengin
         public void SetCam(string preset, Transform at)
         {
             if (DrillCam == null) return;
-            if (string.IsNullOrEmpty(preset) || at == null || preset == "combat") { DrillCam.Priority = 0; return; }
+            if (string.IsNullOrEmpty(preset) || at == null || preset == "combat") { DrillCam.Priority = 0; camPreset = null; camAt = null; return; }
+            camPreset = preset; camAt = at;
+            Pose(preset, at, 0f);
+            DrillCam.Lens.FieldOfView = preset == "mitt" ? 52f : 50f;
+            DrillCam.Priority = 30;
+        }
+
+        /// 프리셋 자세(yawOff = 보는 점 둘레로 카메라를 돌리는 각)
+        void Pose(string preset, Transform at, float yawOff)
+        {
             var f = new Vector3(at.forward.x, 0f, at.forward.z).normalized; var r = Vector3.Cross(Vector3.up, f); var p = at.position;
             Vector3 pos, look;
             switch (preset)
             {
                 case "mirror": pos = p + f * 2.6f + r * 1.5f + Vector3.up * 1.55f; look = p + Vector3.up * 1.05f; break;
+                case "mitt": pos = p + r * 3.1f + f * 0.55f + Vector3.up * 1.5f; look = p + f * 0.6f + Vector3.up * 1.1f; break;   // 시우 주먹과 이윤준 미트가 한 화면
                 case "side": pos = p + r * 3.0f + f * 0.8f + Vector3.up * 1.55f; look = p + f * 0.5f + Vector3.up * 1.05f; break;
                 case "shoulder": pos = p - f * 2.2f + r * 0.7f + Vector3.up * 1.75f; look = p + f * 1.1f + Vector3.up * 1.15f; break;
                 case "low": pos = p + r * 3.0f + f * 0.4f + Vector3.up * 0.9f; look = p + f * 0.4f + Vector3.up * 0.55f; break;
                 default: pos = p + f * 2.8f + r * 1.2f + Vector3.up * 1.55f; look = p + Vector3.up * 1.0f; break;
             }
             // 벽 안으로 들어가지 않게(실내 20×13): 방 안쪽으로 당김
+            if (Mathf.Abs(yawOff) > 0.01f) pos = look + Quaternion.Euler(0f, yawOff, 0f) * (pos - look);
             var local = transform.InverseTransformPoint(pos);
             local.x = Mathf.Clamp(local.x, 0.4f, 19.6f); local.z = Mathf.Clamp(local.z, 0.4f, 12.6f); local.y = Mathf.Clamp(local.y, 0.5f, 2.6f);
             pos = transform.TransformPoint(local);
             DrillCam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(look - pos, Vector3.up));
-            DrillCam.Lens.FieldOfView = 50f;
-            DrillCam.Priority = 30;
         }
 
         // ───────────────────────── 시험·스모크 도우미

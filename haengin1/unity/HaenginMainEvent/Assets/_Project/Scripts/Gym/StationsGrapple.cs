@@ -56,10 +56,10 @@ namespace Haengin
                 {
                     Log.Add("recover", t, (t - recoverFrom) * 1000.0, R.Round);
                     sprawled = false;
-                    if (Actors.Me != null) Actors.Me.ScriptAnim = "Stance";
+                    if (Actors.Me != null) { Actors.Me.ScriptAnim = "Stance"; Actors.Me.ScriptRate = 1f; }
                     if (Actors.Visual != null) Actors.Visual.localPosition = Vector3.zero;
                 }
-                else if (Actors.Visual != null) Actors.Visual.localPosition = new Vector3(0f, -0.28f, 0.12f);
+                else if (!Actors.HasClip("Burpee") && Actors.Visual != null) Actors.Visual.localPosition = new Vector3(0f, -0.28f, 0.12f);
             }
         }
 
@@ -80,7 +80,8 @@ namespace Haengin
                 s.Reacted = true; s.SprawlAt = t; shots[cur] = s;
                 Log.Add("react", t, ms, R.Round);
                 sprawled = true; recoverFrom = t;
-                if (Actors.Me != null) Actors.Me.ScriptAnim = "Dodge";
+                // 전용 동작: 버피 앞 절반(다리 뒤로 차며 가슴 바닥) — 없으면 Dodge + 몸 낮춤
+                if (Actors.Me != null) { bool bp = Actors.HasClip("Burpee"); Actors.Me.ScriptAnim = bp ? "Burpee" : "Dodge"; Actors.Me.ScriptRate = bp ? 1.4f : 1f; }
                 R.Toast("스프롤");
             }
             else if (b == DrillBtn.Guard)

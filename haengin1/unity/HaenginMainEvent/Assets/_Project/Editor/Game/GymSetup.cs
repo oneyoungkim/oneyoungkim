@@ -30,6 +30,10 @@ namespace Haengin.EditorGame
         public const string CharDir = Root + "/Art/Characters/M3", ClipDir = Root + "/Art/Clips/M3";
         public const string GymCtrl = Root + "/Anim/Gym.controller";
         public const string BookPath = Root + "/Settings/DrillBook.asset";
+        public const string ClipsPath = Root + "/Settings/GymClips.asset";
+        public const string GymClipDir = Root + "/Art/Clips/Gym";
+        /// 전용 동작(파일 · 상태 · Meshy 번호 · 반복 클립인가)
+        static readonly (string file, string state, int id, bool loop)[] GymClipFiles = { ("JumpRope", "JumpRope", 46, true), ("Kettlebell", "Kettlebell", 327, true), ("Burpee", "Burpee", 396, true) };
         public const string SparDefPath = Root + "/Settings/Enemy_Gojun.asset";
         public const string DrillJson = Root + "/Data/Drill/drills.json";
         public const string RingTex = GymDir + "/T_DrillRing.png";
@@ -157,7 +161,7 @@ namespace Haengin.EditorGame
                             var ush = Shader.Find("Universal Render Pipeline/Unlit");
                             m = AssetDatabase.LoadAssetAtPath<Material>(path);
                             if (m == null) { m = new Material(ush) { name = "M_Mirror" }; AssetDatabase.CreateAsset(m, path); }
-                            m.shader = ush; m.SetTexture("_BaseMap", tex); m.SetColor("_BaseColor", new Color(0.86f, 0.88f, 0.90f, 1f)); EditorUtility.SetDirty(m);
+                            m.shader = ush; m.SetTexture("_BaseMap", tex); m.SetColor("_BaseColor", new Color(0.50f, 0.52f, 0.55f, 1f)); EditorUtility.SetDirty(m);
                             break;
                         }
                     case "M_Fluorescent":
@@ -167,6 +171,7 @@ namespace Haengin.EditorGame
                         m = EnvSetup.Toon(path, tex, Vector2.one, Vector2.zero, Color.white);
                         m.EnableKeyword("_EMISSIVE_SIMPLE"); m.SetTexture("_Emissive_Tex", tex); m.SetColor("_Emissive_Color", new Color(1.2f, 0.25f, 0.2f)); break;
                     case "M_Poster_Atlas": m = EnvSetup.Toon(path, tex, Vector2.one, Vector2.zero, Color.white); break;
+                    case "M_Cage_Canvas": m = EnvSetup.Toon(path, tex, Vector2.one * tiling, Vector2.zero, new Color(0.84f, 0.83f, 0.81f)); break;   // 스포트 아래 하얗게 날아가지 않게
                     default:
                         bool unit = S(info, "uv") == "unit";
                         m = EnvSetup.Toon(path, tex, unit ? Vector2.one : Vector2.one * tiling, Vector2.zero, tex != null ? Color.white : col); break;
@@ -282,6 +287,7 @@ namespace Haengin.EditorGame
         public static string MemberPrefab(int i) => $"{PrefabDir}/Npc_Member_{i + 1:00}.prefab";
         public const string GojunFighterPrefab = PrefabDir + "/Gojun_Fighter.prefab";
         static readonly string[] GymStates = { "Stance", "Jab", "Cross", "Hook", "Upper", "Dodge", "Kneel", "Taunt", "Tackle", "Block", "Breath", "Charge", "FwdWalk" };
+        static readonly string[] LoopStates = { "Stance", "Idle", "ChairSit", "Breath", "FwdWalk", "Kneel", "JumpRope", "Kettlebell", "Burpee" };
 
         static AnimationClip Clip(string fbx, string name) => AssetDatabase.LoadAllAssetsAtPath(fbx).OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview__") && (name == null || c.name == name));
 
@@ -312,12 +318,36 @@ namespace Haengin.EditorGame
             St("Stance", Clip($"{ClipSetup.ClipDir}/Stance.fbx", null));
             foreach (var s in GymStates.Skip(1)) { var c = Clip($"{ClipSetup.ClipDir}/{s}.fbx", null); if (c != null) St(s, c); }
             var sitClip = Clip(sit, "ChairSit"); if (sitClip != null) St("ChairSit", sitClip);
+            // 전용 동작 3종(있을 때만): Gym.controller(NPC) + Siwoo.controller(플레이어 ScriptAnim)
+            var clipsAsset = AssetDatabase.LoadAssetAtPath<GymClips>(ClipsPath);
+            if (clipsAsset == null) { clipsAsset = ScriptableObject.CreateInstance<GymClips>(); AssetDatabase.CreateAsset(clipsAsset, ClipsPath); }
+            var entries = new List<GymClips.Entry>();
+            var siwooCtrl = AssetDatabase.LoadAssetAtPath<AnimatorController>(CharSetup.SiwooCtrl);
+            foreach (var (file, state, id, loop) in GymClipFiles)
+            {
+                string fbx = $"{GymClipDir}/{file}.fbx";
+                if (AssetDatabase.LoadAssetAtPath<GameObject>(fbx) == null) { Notes.Add($"전용 동작 없음(보류): {fbx}"); continue; }
+                CharSetup.Human(fbx, state, -1, -1, false, null);
+                var clip = Clip(fbx, state); if (clip == null) continue;
+                St(state, clip);
+                if (siwooCtrl != null)
+                {
+                    var ssm = siwooCtrl.layers[0].stateMachine;
+                    var st2 = ssm.states.Select(s => s.state).FirstOrDefault(s => s.name == state) ?? ssm.AddState(state);
+                    st2.motion = clip; st2.writeDefaultValues = true; st2.speedParameter = "AtkRate"; st2.speedParameterActive = true; st2.iKOnFeet = false;
+                    EditorUtility.SetDirty(siwooCtrl);
+                }
+                int cycles = Cycles(clip);
+                entries.Add(new GymClips.Entry { State = state, Id = id, Length = clip.length, Cycles = cycles });
+                Notes.Add($"전용 동작 {state}({id}): {clip.length:F2}s · 반복 {cycles}");
+            }
+            clipsAsset.Entries = entries.ToArray(); EditorUtility.SetDirty(clipsAsset);
             sm.defaultState = sm.states.Select(s => s.state).First(s => s.name == "Stance");
             EditorUtility.SetDirty(ctrl);
             // 비반복 동작은 끝나면 Stance 로(전이: 종료 시간)
             foreach (var s in sm.states.Select(x => x.state))
             {
-                if (s.name == "Stance" || s.name == "Idle" || s.name == "ChairSit" || s.name == "Breath" || s.name == "FwdWalk" || s.name == "Kneel") continue;
+                if (System.Array.IndexOf(LoopStates, s.name) >= 0) continue;
                 if (s.transitions.Any(t => t.destinationState != null && t.destinationState.name == "Stance")) continue;
                 var tr = s.AddTransition(sm.states.Select(x => x.state).First(x => x.name == "Stance"));
                 tr.hasExitTime = true; tr.exitTime = 0.95f; tr.duration = 0.1f;
@@ -367,6 +397,22 @@ namespace Haengin.EditorGame
             }
             SparDefAsset();
             Notes.Add($"캐릭터: {string.Join("·", Npcs)} Humanoid+툰 · Gym.controller 상태 {sm.states.Length} · 관원 8 · 고준 전투 몸 · 스파링 정의");
+        }
+
+        /// 클립 안 반복 수: 골반 높이(RootT.y) 곡선의 '아래 극소' 개수(줄넘기 점프 1회 = 극소 1). 곡선이 없으면 1
+        static int Cycles(AnimationClip clip)
+        {
+            var bindings = AnimationUtility.GetCurveBindings(clip);
+            var b = bindings.FirstOrDefault(x => x.propertyName == "RootT.y");
+            if (string.IsNullOrEmpty(b.propertyName)) return 1;
+            var c = AnimationUtility.GetEditorCurve(clip, b);
+            int n = 120; var v = new float[n];
+            for (int i = 0; i < n; i++) v[i] = c.Evaluate(clip.length * i / n);
+            float min = v.Min(), max = v.Max(); if (max - min < 0.01f) return 1;
+            float th = min + (max - min) * 0.35f;
+            int cycles = 0; bool below = false;
+            for (int i = 0; i < n; i++) { if (v[i] < th && !below) { cycles++; below = true; } else if (v[i] >= th) below = false; }
+            return Mathf.Max(1, cycles);
         }
 
         static GameObject NpcInstance(GameObject model, string matPath, RuntimeAnimatorController ctrl, Avatar avatar)
