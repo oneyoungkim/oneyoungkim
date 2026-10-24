@@ -18,7 +18,7 @@ namespace Haengin
         public static DayLight Instance { get; private set; }
         /// 편집 모드 촬영(EnvSetup.Shots)에서도 필름 볼륨 스플릿 톤을 바꿀 때 켬(에셋은 그대로 — 복제본)
         public static bool EditModeFilm;
-        static readonly int IdSignsOn = Shader.PropertyToID("_HaenginSignsOn"), IdNight = Shader.PropertyToID("_HaenginNight");
+        static readonly int IdSignsOn = Shader.PropertyToID("_HaenginSignsOn"), IdNight = Shader.PropertyToID("_HaenginNight"), IdRim = Shader.PropertyToID("_HaenginRim"), IdRimColor = Shader.PropertyToID("_HaenginRimColor");
         public LightingPreset Current { get; private set; }
         public DayPart Part => Current != null ? Current.Part : DayPart.Day;
         public int Applied { get; private set; }
@@ -136,6 +136,15 @@ namespace Haengin
             // 5차(2026-10-25): 간판 면 조명 상자·빛 번짐(노을·밤) · 밤 전용 효과(날벌레·창 커튼 그림자) — 셰이더 전역 값
             Shader.SetGlobalFloat(IdSignsOn, p.ShopSigns ? 1f : 0f);
             Shader.SetGlobalFloat(IdNight, part == DayPart.Night ? 1f : 0f);
+            // 7차: 하늘 역광 테두리(Haengin/ScreenRim) — 시간대마다 하늘 지평선 쪽 빛 색·세기
+            var (rimC, rimK) = part switch
+            {
+                DayPart.Dawn => (new Color(0.93f, 0.86f, 0.80f), 0.55f),
+                DayPart.Dusk => (new Color(1.0f, 0.78f, 0.52f), 0.8f),
+                DayPart.Night => (new Color(0.52f, 0.58f, 0.80f), 0.28f),
+                _ => (new Color(1.0f, 0.96f, 0.86f), 0.5f),
+            };
+            Shader.SetGlobalColor(IdRimColor, rimC); Shader.SetGlobalFloat(IdRim, rimK);
             Debug.Log($"[M3] 조명: {p.name} ({part}) · {(instant ? "바로" : BlendSecs + "초")} · 켠 빛 {CountLit()}");
         }
 

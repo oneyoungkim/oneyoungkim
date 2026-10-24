@@ -94,7 +94,7 @@ Shader "Haengin/ToonLeafCard"
                     Light l = GetAdditionalLight(lightIndex, i.wp);
                     half anl = saturate(dot(n, l.direction) * 0.5 + 0.5);
                     half a = smoothstep(0.35, 0.5, anl * l.distanceAttenuation);   // 툰 램프: 빛 웅덩이 경계 또렷
-                    col += albedo * l.color * a * 0.9;
+                    col += albedo * l.color * a * 0.45;   // 7차: 0.9 → 0.45(가로등 옆 감나무 수관이 형광 노랑으로 타던 것)
                 LIGHT_LOOP_END
                 #endif
                 // 먹선: 알파 경계 띠(컷오프 바로 안쪽) × 덩어리 가장자리(둥근 법선 ⟂ 시선)

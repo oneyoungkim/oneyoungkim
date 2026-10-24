@@ -40,7 +40,7 @@ namespace Haengin.EditorGame
         static void CopyClumpTextures()
         {
             int n = 0;
-            foreach (var k in new[] { "broad", "pine", "cherry", "weed", "flower" })   // 6차: 잡초·흰 꽃 관목
+            foreach (var k in new[] { "broad", "pine", "cherry", "weed", "flower", "ivy" })   // 6차: 잡초·흰 꽃 관목
             {
                 string src = Path.GetFullPath(Path.Combine(Application.dataPath, "../../../concept/art/env/veg", $"clump_{k}.png"));
                 string dst = $"{TexDir}/Clump_{k}.png";

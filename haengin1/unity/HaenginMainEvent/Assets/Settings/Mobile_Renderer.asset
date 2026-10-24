@@ -66,9 +66,10 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
   - {fileID: -5921158434204265649}
+  - {fileID: 5300331318428315836}
   - {fileID: -1456960323742323427}
   - {fileID: 6353671167165534516}
-  m_RendererFeatureMap: 4f537296c6d1d3ad1d2d800b4ed6c7eb34118b6a43c62c58
+  m_RendererFeatureMap: 4f537296c6d1d3adbc30cc72408f8e491d2d800b4ed6c7eb34118b6a43c62c58
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -97,6 +98,26 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
+--- !u!114 &5300331318428315836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
+  m_Name: Rim
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
+  m_Active: 1
+  injectionPoint: 550
+  fetchColorBuffer: 1
+  requirements: 5
+  passMaterial: {fileID: 2100000, guid: d2a8557118c5f8a4aa9366cbc30c9bdb, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+  m_Version: 1
 --- !u!114 &6353671167165534516
 MonoBehaviour:
   m_ObjectHideFlags: 0

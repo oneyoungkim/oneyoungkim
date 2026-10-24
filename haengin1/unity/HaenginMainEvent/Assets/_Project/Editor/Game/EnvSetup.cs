@@ -405,6 +405,45 @@ namespace Haengin.EditorGame
                 data.SetDirty(); EditorUtility.SetDirty(data);
                 Notes.Add($"Outline 전체 화면 패스 붙임: {path}");
             }
+            RimFeature();
+        }
+
+        /// 7차: 하늘 역광 테두리(Haengin/ScreenRim) — 외곽선 바로 뒤, 스텐실 없음(인물·잎 덩어리에도)
+        static void RimFeature()
+        {
+            var sh = Shader.Find("Haengin/ScreenRim");
+            if (sh == null) { Notes.Add("ScreenRim 셰이더 없음 — 역광 건너뜀"); return; }
+            string mp = Root + "/Materials/Fx/M_Rim.mat";
+            var m = AssetDatabase.LoadAssetAtPath<Material>(mp);
+            if (m == null) { m = new Material(sh) { name = "M_Rim" }; AssetDatabase.CreateAsset(m, mp); }
+            if (m.shader != sh) m.shader = sh;
+            m.SetFloat("_NearWidth", 2.4f); m.SetFloat("_WidthPow", 0.55f); m.SetFloat("_RimPx", 3.2f); m.SetFloat("_SkyDepth", 1500f); m.SetFloat("_MaxDepth", 90f);
+            EditorUtility.SetDirty(m);
+            foreach (var path in Renderers)
+            {
+                var data = AssetDatabase.LoadAssetAtPath<ScriptableRendererData>(path);
+                if (data == null) continue;
+                var have = data.rendererFeatures.FirstOrDefault(f => f is FullScreenPassRendererFeature fs && fs.name == "Rim") as FullScreenPassRendererFeature;
+                if (have != null) { if (have.passMaterial != m) { have.passMaterial = m; EditorUtility.SetDirty(have); EditorUtility.SetDirty(data); } continue; }
+                var feat = ScriptableObject.CreateInstance<FullScreenPassRendererFeature>();
+                feat.name = "Rim"; feat.passMaterial = m;
+                feat.injectionPoint = FullScreenPassRendererFeature.InjectionPoint.BeforeRenderingPostProcessing;
+                feat.fetchColorBuffer = true; feat.bindDepthStencilAttachment = false;
+                feat.requirements = ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Color; feat.passIndex = 0;
+                AssetDatabase.AddObjectToAsset(feat, data);
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(feat, out _, out long localId);
+                var so = new SerializedObject(data);
+                var list = so.FindProperty("m_RendererFeatures"); var map = so.FindProperty("m_RendererFeatureMap");
+                list.arraySize++; map.arraySize++;
+                list.GetArrayElementAtIndex(list.arraySize - 1).objectReferenceValue = feat;
+                map.GetArrayElementAtIndex(map.arraySize - 1).longValue = localId;
+                int outline = -1;
+                for (int i = 0; i < list.arraySize - 1; i++) if (list.GetArrayElementAtIndex(i).objectReferenceValue is FullScreenPassRendererFeature fo && fo.name == "Outline") { outline = i; break; }
+                if (outline >= 0) { list.MoveArrayElement(list.arraySize - 1, outline + 1); map.MoveArrayElement(map.arraySize - 1, outline + 1); }
+                so.ApplyModifiedPropertiesWithoutUndo();
+                data.SetDirty(); EditorUtility.SetDirty(data);
+                Notes.Add($"Rim 전체 화면 패스 붙임: {path}");
+            }
         }
 
         // ───────────────────────── 5) 그림자 캐스케이드 2단 · 60m(09 3-5)
@@ -452,7 +491,7 @@ namespace Haengin.EditorGame
             });
             Set(DayPart.Dusk, a =>
             {
-                a.SunPitch = 8f; a.SunYaw = 275f; a.SunColor = H("#F4B27A"); a.SunIntensity = 0.9f; a.ShadowStrength = 0.65f;
+                a.SunPitch = 8f; a.SunYaw = 70f; a.SunColor = H("#F4B27A");   // 7차: f02 처럼 주차장 B 카메라의 왼쪽 뒤에서(275 → 70) a.SunIntensity = 0.9f; a.ShadowStrength = 0.65f;
                 a.AmbientSky = new Color(0.72f, 0.60f, 0.56f); a.AmbientEquator = new Color(0.60f, 0.50f, 0.49f); a.AmbientGround = new Color(0.36f, 0.30f, 0.32f);
                 a.Sky = H("#EBC9A6"); a.Fog = H("#CFAC8A"); a.FogStart = 50f; a.FogEnd = 340f;
                 a.SplitShadows = new Color(0.30f, 0.22f, 0.38f); a.SplitHighlights = new Color(1.0f, 0.78f, 0.55f); a.SplitBalance = 10f;
@@ -462,11 +501,11 @@ namespace Haengin.EditorGame
             Set(DayPart.Night, a =>
             {
                 a.SunPitch = 50f; a.SunYaw = 200f; a.SunColor = H("#8FA3C8"); a.SunIntensity = 0.30f; a.ShadowStrength = 0.3f;     // D07: 웅덩이 위 L* ≥ 22 · 웅덩이 사이 ≥ 8(완전한 검정 금지)
-                a.AmbientSky = new Color(0.42f, 0.46f, 0.64f); a.AmbientEquator = new Color(0.33f, 0.36f, 0.50f); a.AmbientGround = new Color(0.19f, 0.20f, 0.28f);
-                a.Sky = H("#2A3345"); a.Fog = H("#182030"); a.FogStart = 30f; a.FogEnd = 240f;   // 3차: 짙은 청회색 하늘
-                a.SplitShadows = new Color(0.14f, 0.18f, 0.36f); a.SplitHighlights = new Color(0.95f, 0.70f, 0.45f); a.SplitBalance = -15f;
-                a.StreetLamps = a.SecurityLamps = a.Vending = a.ConvAwning = a.GukbapWindow = a.ShopSigns = true; a.LampIntensity = 10f; a.Windows = 0.55f;   // 3차: 창문 불 ↑
-                a.Saturation = -2f; a.Contrast = 3f; a.Lift = new Vector4(0.97f, 0.98f, 1.06f, 0.006f);   // D07 밤 하한 6(주차장 아스팔트 5.0 → Lift +0.006; +0.02 는 18 로 너무 밝아짐) a.Gamma = new Vector4(1f, 1f, 1.03f, 0f); a.Gain = new Vector4(1.06f, 0.99f, 0.90f, 0f); a.Zenith = H("#151B2C");
+                a.AmbientSky = new Color(0.42f, 0.42f, 0.50f); a.AmbientEquator = new Color(0.36f, 0.34f, 0.37f); a.AmbientGround = new Color(0.24f, 0.21f, 0.21f);   // 7차: 지면·벽 간접광 청회 → 중성 회갈(하늘·안개색은 그대로)
+                a.Sky = H("#2A3345"); a.Fog = H("#221F2A"); a.FogStart = 30f; a.FogEnd = 240f;   // 3차: 짙은 청회색 하늘 · 7차: 땅·건물에 덮이는 안개는 남색 #182030 → 어두운 중성 #221F2A(하늘 카드는 그대로)
+                a.SplitShadows = new Color(0.20f, 0.21f, 0.32f); a.SplitHighlights = new Color(0.98f, 0.72f, 0.44f); a.SplitBalance = -4f;   // 7차: 그늘 남색 덜고 빛 쪽 주황
+                a.StreetLamps = a.SecurityLamps = a.Vending = a.ConvAwning = a.GukbapWindow = a.ShopSigns = true; a.LampIntensity = 12f; a.Windows = 0.68f;   // 3차: 창문 불 ↑ · 7차: 프레임 f01·f08 처럼 더(0.55 → 0.68, 가로등 10 → 12)
+                a.Saturation = 0f; a.Contrast = 3f; a.Lift = new Vector4(1.0f, 0.99f, 1.02f, 0.006f);   // 7차: 들어올림 청색 1.06 → 1.02   // D07 밤 하한 6(주차장 아스팔트 5.0 → Lift +0.006; +0.02 는 18 로 너무 밝아짐) a.Gamma = new Vector4(1f, 1f, 1.03f, 0f); a.Gain = new Vector4(1.06f, 0.99f, 0.90f, 0f); a.Zenith = H("#151B2C");
             });
             Set(DayPart.Day, a =>
             {
@@ -636,7 +675,7 @@ namespace Haengin.EditorGame
             int ground = GroundMaterials(zoneRoot);
             // 6차: 정류장 광고 · 맨땅 초록 · 밤 빛 웅덩이 · 계단 손잡이 · 간판 점검 · 그리기 합침
             Physics.SyncTransforms();
-            Notes.Add(Pass6(d, zoneRoot, env, objs));
+            Notes.Add(Pass6(d, zoneRoot, env, objs, Prefab));
             // 원경 카드
             SkyRig(zoneRoot);
             Physics.SyncTransforms();
@@ -947,7 +986,7 @@ namespace Haengin.EditorGame
         {
             var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(ArcMeshPath);
             if (mesh == null) { Notes.Add("원경 호 메시 없음 — 건너뜀"); return; }
-            var sky = new GameObject("Sky").transform; sky.SetParent(zoneRoot, false);
+            var sky = new GameObject("Sky").transform; sky.SetParent(zoneRoot, false); sky.localRotation = Quaternion.Euler(0f, SkyYaw7, 0f);   // 7차: 남산이 주차장(f02) 하늘 틈에
             var cards = sky.gameObject.AddComponent<SkyCards>();
             cards.Radius = SkyRadius;
             var arcs = new List<Renderer>();
@@ -1008,6 +1047,7 @@ namespace Haengin.EditorGame
                 DayLight.EditModeFilm = true;
                 if (LightSpot.All.Count == 0) foreach (var s in Object.FindObjectsByType<LightSpot>(FindObjectsInactive.Include, FindObjectsSortMode.None)) LightSpot.All.Add(s);
                 var sky = Object.FindFirstObjectByType<SkyCards>();
+                if (sky != null && Arg("-skyYaw") != null) sky.transform.rotation = Quaternion.Euler(0f, float.Parse(Arg("-skyYaw")), 0f);   // 개발용: 원경 돌려 보기
                 var player = GameObject.Find("Player");
                 // 게임 화면이 아닌 것 숨김: 체크포인트·스폰 표시·전투 무대 표시·이름표·HUD
                 foreach (var n in new[] { "Zone1/Route", "Zone1/Spawn", "Zone1/Landmarks/arena", "Zone1/Landmarks/npc_spot", "Zone1/Shots", "Stages" })

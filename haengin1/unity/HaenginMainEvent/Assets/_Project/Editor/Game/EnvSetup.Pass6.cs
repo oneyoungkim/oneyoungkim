@@ -508,6 +508,7 @@ namespace Haengin.EditorGame
                     if (gn[i, j].y < 0.93f) a += 0.2f;
                     if (dist[i, j] <= 1) a *= 0.8f;
                     a *= Mathf.Lerp(0.3f, 1f, Mathf.InverseLerp(1.5f, 7f, dB[i, j]));
+                    if (InPlaza7(w, 0.4f)) a = 0f;
                     a = Mathf.Clamp01(a) * 0.95f;
                 }
                 al[k] = a;
@@ -564,6 +565,7 @@ namespace Haengin.EditorGame
                 {
                     if (!free[i, j]) continue;
                     int dd = dist[i, j]; var p0 = gp[i, j];
+                    if (InPlaza7(p0, 0.5f)) continue;
                     float pr = dd <= 1 ? 0.8f : dd == 2 ? 0.4f : 0.10f + 0.32f * Pn(p0, 0.09f, 5.5f);
                     if (gn[i, j].y < 0.93f) pr += 0.2f;
                     int cnt = Rnd() < pr ? (dd <= 1 ? 2 : 1) : 0;
@@ -600,6 +602,7 @@ namespace Haengin.EditorGame
                 for (int j = 1; j < nz - 1; j++)
                 {
                     if (!free[i, j] || dist[i, j] < 2) continue;
+                    if (InPlaza7(gp[i, j], 1.6f)) continue;
                     var p0 = gp[i, j]; bool slope = gn[i, j].y < 0.92f; float dt = DistTrail(p0);
                     bool trailEdge = dt > 0.6f && dt < 3.5f;
                     float pr = (slope ? 0.10f : 0.012f) + (trailEdge ? 0.10f : 0f);
@@ -653,7 +656,7 @@ namespace Haengin.EditorGame
             return m;
         }
 
-        static string Pools6(Transform zoneRoot, Transform env, Dictionary<string, Dictionary<string, object>> objs)
+        static string Pools6(Zone1Data d, Transform zoneRoot, Transform env, Dictionary<string, Dictionary<string, object>> objs)
         {
             var root = new GameObject("Pools6").transform; root.SetParent(env, false);
             var acc = new Dictionary<(int, int), MB6>();
@@ -687,7 +690,7 @@ namespace Haengin.EditorGame
                 var lp = s.transform.position; var g = GroundAt(lp, 0.5f, 14f);
                 if (Mathf.Abs(g.y - lp.y) < 0.6f) continue;   // 땅을 못 찾음
                 bool street = s.Kind == LightKind.Street;
-                Pool(g, Vector3.forward, street ? 4.4f : 3.4f, 0f, false, new Color(1.0f, 0.72f, 0.42f), street ? 0.62f : 0.5f);
+                Pool(g, Vector3.forward, street ? 5.4f : 4.2f, 0f, false, new Color(1.0f, 0.72f, 0.42f), street ? 0.8f : 0.66f);   // 7차: 더 넓고 진하게(f01)
                 lamps++;
             }
             foreach (var kv in objs.OrderBy(x => x.Key, StringComparer.Ordinal))
@@ -701,13 +704,24 @@ namespace Haengin.EditorGame
                 if (c.y - foot.y > 4.6f) continue;   // 1층 가게만
                 string tenant = S(inf, "tenant") ?? "";
                 var col = tenant.Contains("편의점") ? new Color(0.95f, 0.95f, 0.86f) : new Color(1.0f, 0.76f, 0.46f);
-                Pool(foot + n * 0.1f, n, w * 0.6f, 4.6f, true, col, 0.62f);
+                Pool(foot + n * 0.1f, n, w * 0.75f, 6.0f, true, col, 0.85f);   // 7차: 가게 앞 번짐 반경·세기 ↑
                 shops++;
+            }
+            // 7차: 성균관로 전봇대 아래 길 쪽(프레임 f01 처럼 큰길이 주황으로 읽히게 — 전봇대 등 자리)
+            int poles = 0;
+            var main = d.Roads[0];
+            foreach (var lm in d.Landmarks.Where(x => (x.Kind == "pole" || x.Kind == "board") && (x.Name.Contains("성균관로") || x.Name.Contains("전단지"))))
+            {
+                float best = 1e9f; Vector3 near = lm.Pos;
+                for (int k = 0; k < main.Points.Length - 1; k++) { var a = main.Points[k]; var b = main.Points[k + 1]; var ab = Flat(b - a); float t = Mathf.Clamp01(Vector3.Dot(Flat(lm.Pos - a), ab) / Mathf.Max(ab.sqrMagnitude, 1e-4f)); var q = a + (b - a) * t; float dd = Flat(q - lm.Pos).magnitude; if (dd < best) { best = dd; near = q; } }
+                var toRoad = Flat(near - lm.Pos).normalized;
+                var gp = GroundAt(lm.Pos + toRoad * 1.6f, 2f, 6f);
+                Pool(gp, Vector3.forward, 5.0f, 0f, false, new Color(1.0f, 0.70f, 0.40f), 0.55f); poles++;
             }
             var mat = PoolMat();
             foreach (var kv in acc.OrderBy(x => x.Key.Item1).ThenBy(x => x.Key.Item2))
                 Obj6($"빛 웅덩이 {kv.Key.Item1}_{kv.Key.Item2}", root, kv.Value.Save($"p6_pool_{kv.Key.Item1}_{kv.Key.Item2}"), mat, ShadowCastingMode.Off, false);
-            return $"밤 빛 웅덩이(6차): 가로등·보안등 {lamps} · 가게 앞 {shops} · {acc.Count}조각";
+            return $"밤 빛 웅덩이(6차): 가로등·보안등 {lamps} · 가게 앞 {shops} · 큰길 전봇대 {poles}(7차) · {acc.Count}조각";
         }
 
         // ═════════════════════════ ④ 계단 손잡이(골목 계단·와룡공원 계단 — 프레임 f03)
@@ -808,7 +822,7 @@ namespace Haengin.EditorGame
                     var (pp, dir) = Along(trail.Points, sAt);
                     var rt = Vector3.Cross(Vector3.up, dir.normalized);
                     var p = GroundAt(pp + rt * (sd * (trail.Width / 2 + 0.35f)), 3f, 8f);
-                    if (DistOther(p) < 0.6f) { prev = null; continue; }   // 갈림길 입구는 비움
+                    if (DistOther(p) < 0.6f || InPlaza7(p, 1.4f)) { prev = null; continue; }   // 갈림길 입구·7차 둥근 광장 입구는 비움
                     Box("나무 난간 기둥", root, p + Vector3.up * 0.45f, new Vector3(0.09f, 0.9f, 0.09f), Quaternion.LookRotation(dir, Vector3.up), wood, true);
                     if (prev.HasValue)
                         foreach (float hh in new[] { 0.42f, 0.82f })
@@ -861,7 +875,7 @@ namespace Haengin.EditorGame
         {
             canon6.Clear();
             var holders = new List<(Transform scan, Transform holder)>();
-            foreach (var nm in new[] { "Decor", "Signs5", "Street5", "Surface5", "Motion5", "Rails6", "BusAds6", "Lot" })
+            foreach (var nm in new[] { "Decor", "Signs5", "Street5", "Surface5", "Motion5", "Rails6", "BusAds6", "Lot", "Plaza7" })
             { var t = env.Find(nm); if (t != null) holders.Add((t, t)); }
             // 구역 바탕(길·패드·계단): Zone1 을 새로 지을 때만(이미 합친 게 있으면 그 메시를 지키고 건너뜀)
             foreach (var nm in new[] { "Roads", "Ground", "Stairs" })
@@ -1117,13 +1131,15 @@ namespace Haengin.EditorGame
         }
 
         // ═════════════════════════ 6차 묶음(AttachKit 끝에서)
-        static string Pass6(Zone1Data d, Transform zoneRoot, Transform env, Dictionary<string, Dictionary<string, object>> objs)
+        static string Pass6(Zone1Data d, Transform zoneRoot, Transform env, Dictionary<string, Dictionary<string, object>> objs, Func<string, GameObject> prefab)
         {
             var t0 = DateTime.Now;
             int ads = BusAds6(env);
+            PlanPlaza7(d, zoneRoot);   // 7차: 둥근 흙 광장 자리를 먼저(풀·관목·난간이 비켜 감)
             string green = Green6(d, zoneRoot, env);
-            string pools = Pools6(zoneRoot, env, objs);
+            string pools = Pools6(d, zoneRoot, env, objs);
             int rails = Rails6(d, env);
+            string p7 = Pass7(d, zoneRoot, env, prefab);
             // 점검(합치기 전 — 면 이름이 남아 있을 때)
             var faces = SignAudit.Faces(env);
             var ov = SignAudit.Overlaps(faces);
@@ -1141,7 +1157,7 @@ namespace Haengin.EditorGame
             string propm = PropMergeOn ? PropMerge6(env) : "소품 합침 끔";   // 6차 실측: 그리기 −26 이지만 소품 메시가 인스턴스마다 복제돼 빌드 614MB → 1.73GB — 끔
             string baked = BakeText6(env);
             int pruned = Mesh6Prune();
-            return $"6차: 정류장 광고 {ads}면 · {green} · {pools} · 계단 손잡이 {rails}곳 · 작은 것 그림자 끔 {noShadow} · 간판 점검 면 {faces.Count}(겹침 {ov.Count} · 가림 {oc.Count}/{checkedN}) · TMP {texts}개 빠진 글자 {miss} · {merge} · {propm} · {baked} · 안 쓴 메시 {pruned} 지움 · {(DateTime.Now - t0).TotalSeconds:F1}초";
+            return $"6차: 정류장 광고 {ads}면 · {green} · {pools} · 계단 손잡이 {rails}곳 · 작은 것 그림자 끔 {noShadow} · 간판 점검 면 {faces.Count}(겹침 {ov.Count} · 가림 {oc.Count}/{checkedN}) · TMP {texts}개 빠진 글자 {miss} · {merge} · {propm} · {baked} · [{p7}] · 안 쓴 메시 {pruned} 지움 · {(DateTime.Now - t0).TotalSeconds:F1}초";
         }
     }
 }
