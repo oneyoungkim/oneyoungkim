@@ -1,0 +1,188 @@
+{
+ "totals": {
+  "lod0": 127513,
+  "lod1": 36199,
+  "lod2": 19507,
+  "detail": 45698,
+  "winlit": 1166,
+  "signs": 40
+ },
+ "districts": {
+  "HoomunN": {
+   "lod0": 16788,
+   "lod1": 6636,
+   "lod2": 4032,
+   "detail": 12466,
+   "winlit": 342,
+   "signs": 26,
+   "objects": 7,
+   "sockets": 8
+  },
+  "HoomunS": {
+   "lod0": 13954,
+   "lod1": 5654,
+   "lod2": 3500,
+   "detail": 12692,
+   "winlit": 272,
+   "signs": 4,
+   "objects": 7,
+   "sockets": 3
+  },
+  "Alley": {
+   "lod0": 45674,
+   "lod1": 12492,
+   "lod2": 6582,
+   "detail": 19860,
+   "winlit": 402,
+   "signs": 4,
+   "objects": 15,
+   "sockets": 0
+  },
+  "Campus": {
+   "lod0": 12966,
+   "lod1": 5490,
+   "lod2": 2926,
+   "detail": 80,
+   "winlit": 150,
+   "signs": 6,
+   "objects": 5,
+   "sockets": 2
+  },
+  "Waryong": {
+   "lod0": 4754,
+   "lod1": 790,
+   "lod2": 250,
+   "detail": 216,
+   "winlit": 0,
+   "signs": 0,
+   "objects": 1,
+   "sockets": 0
+  },
+  "Wall": {
+   "lod0": 24057,
+   "lod1": 2009,
+   "lod2": 1369,
+   "detail": 0,
+   "winlit": 0,
+   "signs": 0,
+   "objects": 7,
+   "sockets": 0
+  },
+  "Wires": {
+   "lod0": 9320,
+   "lod1": 3128,
+   "lod2": 848,
+   "detail": 384,
+   "winlit": 0,
+   "signs": 0,
+   "objects": 8,
+   "sockets": 0
+  }
+ },
+ "views": [
+  {
+   "name": "1_후문상가거리",
+   "view": 66364,
+   "shadow_2casc": 125538,
+   "by_lod": [
+    48078,
+    17236,
+    0,
+    0
+   ],
+   "shadow_4casc": 251076,
+   "props": 297268.0
+  },
+  {
+   "name": "2_뒷골목주차장",
+   "view": 27652,
+   "shadow_2casc": 167468,
+   "by_lod": [
+    24174,
+    2382,
+    0,
+    0
+   ],
+   "shadow_4casc": 334936,
+   "props": 73333.0
+  },
+  {
+   "name": "3_골목계단",
+   "view": 45706,
+   "shadow_2casc": 161570,
+   "by_lod": [
+    43880,
+    1080,
+    0,
+    0
+   ],
+   "shadow_4casc": 323140,
+   "props": 170477.0
+  },
+  {
+   "name": "4_와룡오르막",
+   "view": 39867,
+   "shadow_2casc": 123882,
+   "by_lod": [
+    33078,
+    5793,
+    0,
+    0
+   ],
+   "shadow_4casc": 247764,
+   "props": 88607.6
+  },
+  {
+   "name": "5_성곽길",
+   "view": 35369,
+   "shadow_2casc": 81082,
+   "by_lod": [
+    7391,
+    26942,
+    0,
+    0
+   ],
+   "shadow_4casc": 162164,
+   "props": 79521.2
+  },
+  {
+   "name": "6_한옥골목",
+   "view": 64476,
+   "shadow_2casc": 164270,
+   "by_lod": [
+    59248,
+    4206,
+    0,
+    0
+   ],
+   "shadow_4casc": 328540,
+   "props": 220488.59999999998
+  },
+  {
+   "name": "7_명륜3가골목",
+   "view": 80602,
+   "shadow_2casc": 153454,
+   "by_lod": [
+    74916,
+    4688,
+    0,
+    0
+   ],
+   "shadow_4casc": 306908,
+   "props": 253508.2
+  },
+  {
+   "name": "8_성곽아래빈집",
+   "view": 37466,
+   "shadow_2casc": 133858,
+   "by_lod": [
+    35666,
+    1078,
+    0,
+    0
+   ],
+   "shadow_4casc": 267716,
+   "props": 77956.8
+  }
+ ]
+}
