@@ -1,0 +1,42 @@
+{
+ "note": "체육관 결 텍스처 5(→ seamless.py) + 포스터 아틀라스 1(4×2 칸, 글자 없음). GPT Image 2.5 high 2k 1:1, 2.75cr/장.",
+ "defaults": {
+  "quality": "high",
+  "resolution": "2k",
+  "aspect": "1:1"
+ },
+ "common": "Seamless tileable texture swatch for a stylized cel-shaded 3D game. The surface fills the entire square image edge to edge, seen perfectly flat and straight-on (orthographic), no perspective, no lighting, no shadows, no vignette, no border, no frame, no objects. Style: flat-colored anime background painting: flat base color fills, pattern drawn with thin hand-drawn warm-dark ink lines, a few sparse ink dots or short hatching strokes, muted low-saturation colors, no photographic detail, no noise, no gradients, even brightness everywhere. The pattern continues seamlessly past all four edges. No text, no letters, no logos.",
+ "items": [
+  {
+   "name": "M_Mat_Vinyl",
+   "out": "concept/art/env/gym/textures/src/M_Mat_Vinyl.png",
+   "prompt": "SURFACE: interlocking EVA foam puzzle gym mats seen from above: a 2 by 2 arrangement of square mat tiles each 50 cm, with the jigsaw interlocking teeth drawn as thin ink lines along the joints, a very fine embossed texture suggested by a few sparse tiny ink dots. COLORS: muted blue #4A6B8A with slight variation between tiles (#486685, #4E6F8E), joints a slightly darker blue #3E5C78. SCALE: the square shows 1.0 m by 1.0 m."
+  },
+  {
+   "name": "M_Cage_Canvas",
+   "out": "concept/art/env/gym/textures/src/M_Cage_Canvas.png",
+   "prompt": "SURFACE: an off-white MMA cage canvas floor seen from above: a tightly woven vinyl canvas with a faint cross-hatch weave suggested by sparse short ink strokes, a few pale scuff marks and faint grey smudges, two faint seam lines. COLORS: off-white #E8E2D6 with scuffs in #D6CFC2 and ink marks #8A847B. SCALE: the square shows 2.0 m by 2.0 m."
+  },
+  {
+   "name": "M_Rubber_Floor",
+   "out": "concept/art/env/gym/textures/src/M_Rubber_Floor.png",
+   "prompt": "SURFACE: a black rubber gym floor tile seen from above: matte near-black rubber speckled with sparse small pale grey and off-white rubber granules drawn as tiny flat dots, evenly scattered, no shine. COLORS: base #3A3A3A, speckles #8C8F93 and #C9C4B8, a few #7A3A32 red flecks. SCALE: the square shows 1.0 m by 1.0 m."
+  },
+  {
+   "name": "M_Concrete_Ceiling",
+   "out": "concept/art/env/gym/textures/src/M_Concrete_Ceiling.png",
+   "prompt": "SURFACE: a raw exposed concrete ceiling slab seen flat-on: formwork panel joints as thin straight ink lines forming a grid of about 2 by 2 panels, small round form-tie holes at regular points, a few faint pale patches and sparse hatching, flat matte. COLORS: base grey #B9B6AF, slightly darker panels #B0ADA6, joints and holes #7E7B75. SCALE: the square shows 2.4 m by 2.4 m."
+  },
+  {
+   "name": "M_Pad_Vinyl",
+   "out": "concept/art/env/gym/textures/src/M_Pad_Vinyl.png",
+   "prompt": "SURFACE: quilted padded vinyl wall and post padding seen flat-on: a grid of about 4 by 4 puffy diamond-stitched squares, the stitch lines drawn as thin ink lines, each puff a flat fill with one slightly darker shadow tone at its lower edge. COLORS: dark red vinyl #7A3A32 with the shadow tone #63302A and stitch lines #3A2220. SCALE: the square shows 1.0 m by 1.0 m."
+  },
+  {
+   "name": "M_Poster_Atlas",
+   "out": "concept/art/env/gym/textures/src/M_Poster_Atlas.png",
+   "aspect": "1:1",
+   "prompt": "A flat graphic design sheet: a grid of exactly 4 columns and 2 rows of eight separate vertical poster panels on a pure white background, each panel a tall rectangle (1:2) with wide empty white gutters between all panels and around the edge, nothing crossing the gutters. The eight panels, left to right then top row then bottom row: 1) a fight event poster: dark navy background, two silhouetted fighters facing each other in orange-red backlight, a thin octagon outline in gold; 2) a second fight event poster: deep red background with a black octagon shape and a single fighter silhouette throwing a kick, gold accent bars; 3) a gym rules board: cream background with six horizontal rows, each row a small dark pictogram circle on the left (a shoe, a drop of water, a clock, a glove, a bow, a heart) and a blank grey bar on the right; 4) a weight class chart: pale grey background with eight horizontal striped bars alternating dark grey and off-white, a small scale pictogram at the top; 5) an old vintage fight poster: faded sepia paper background, a single fighter silhouette in a victory pose with arms raised in a spotlight, a worn border, no faces; 6) a wall plaque with a championship belt: a dark wood plaque panel holding a black leather belt with a large round ornate metal plate in brushed gold with abstract laurel pattern and two smaller side plates, no lettering; 7) a plain sign panel: flat grey-green background with a single white rounded rectangle; 8) a vertical banner: flat dark red background with a thin cream border line and a cream brush-stroke shape in the middle. Style: flat-colored anime poster illustration, flat fills, thin ink lines, muted low-saturation colors, no gradients, no photographic detail. Absolutely no text, no letters, no numbers, no logos, no brand marks, no readable words anywhere, no faces."
+  }
+ ]
+}

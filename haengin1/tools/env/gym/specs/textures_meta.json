@@ -1,0 +1,22 @@
+{
+ "M_Mat_Vinyl": {
+  "kind": "grid",
+  "meters": 1.0
+ },
+ "M_Cage_Canvas": {
+  "kind": "free",
+  "meters": 2.0
+ },
+ "M_Rubber_Floor": {
+  "kind": "free",
+  "meters": 1.0
+ },
+ "M_Concrete_Ceiling": {
+  "kind": "grid",
+  "meters": 2.4
+ },
+ "M_Pad_Vinyl": {
+  "kind": "grid",
+  "meters": 1.0
+ }
+}

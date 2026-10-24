@@ -1,0 +1,68 @@
+{
+ "M_Cage_Canvas": {
+  "meters": 2.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Cage_Canvas.jpg"
+ },
+ "M_Cage_Mesh": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: 체인링크 마름모 5cm, 알파 컷아웃·양면"
+ },
+ "M_Concrete_Ceiling": {
+  "meters": 2.4,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Concrete_Ceiling.jpg"
+ },
+ "M_Fluorescent": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: 발광 확산판(unit UV)"
+ },
+ "M_Glass_Clear": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: 투명 유리(알파 0.15)"
+ },
+ "M_Mat_Vinyl": {
+  "meters": 1.0,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Mat_Vinyl.jpg"
+ },
+ "M_Mirror": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: 거울 판 + 사선 2"
+ },
+ "M_Pad_Vinyl": {
+  "meters": 1.0,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Pad_Vinyl.jpg"
+ },
+ "M_Paint_Gym": {
+  "meters": 2.0,
+  "kind": "procedural",
+  "source": "make_textures.py: 유성 페인트 띠"
+ },
+ "M_Poster_Atlas": {
+  "meters": 1.0,
+  "kind": "atlas",
+  "source": "generated (GPT Image 2.5) 4x2 panels, src/M_Poster_Atlas.jpg",
+  "detected": true
+ },
+ "M_Rubber_Floor": {
+  "meters": 1.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Rubber_Floor.jpg"
+ },
+ "M_Steel_Dark": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: 검은 철"
+ },
+ "M_Timer_Red": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: 발광 빨강(라운드 타이머·응급함 띠)"
+ }
+}

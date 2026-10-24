@@ -1,0 +1,9 @@
+﻿param : The term '﻿param' is not recognized as the name of a cmdlet, function, script file, or operable program. Check
+ the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At C:\클로드\haengin1-repo\haengin1\tools\env\gym\char\yunjun_color.ps1:1 char:1
++ ﻿param([string[]]$Refs)   # 참조 사진 경로(scratchpad, 커밋 안 함). 비우면 글만으로 생성
++ ~~~~~~
+    + CategoryInfo          : ObjectNotFound: (﻿param:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+DONE yunjun_color 3830974

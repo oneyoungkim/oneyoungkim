@@ -1,0 +1,8 @@
+Exception calling "Substring" with "2" argument(s): "Index and length must refer to a location within the string.
+Parameter name: length"
+At C:\클로드\haengin1-repo\haengin1\tools\env\gym\char\yunjun_color.ps1:17 char:8
++ else { "FAIL yunjun_color :: " + ($r -replace "`r?`n", ' ').Substring ...
++        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [], MethodInvocationException
+    + FullyQualifiedErrorId : ArgumentOutOfRangeException
+ 

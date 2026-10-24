@@ -1,0 +1,161 @@
+{
+ "note": "체육관 소품 참조 그림(흰 배경, 3/4 뷰) → Hunyuan3D v3. 2.75cr/장.",
+ "defaults": {
+  "quality": "high",
+  "resolution": "2k",
+  "aspect": "1:1"
+ },
+ "common": "Reference image for building a 3D game prop. Single isolated object in a three-quarter front view from slightly above (camera about 35 degrees to the left of the front and 20 degrees above), the whole object fully visible and centered with generous margin, on a pure white background, no floor, no cast shadow, nothing else in the image. Stylized hand-painted look for a cel-shaded game: flat matte base colors only (albedo), even shadowless lighting, no specular highlights, no reflections, no ambient occlusion, no gradients, no black outlines. Simple clean readable shapes with crisp edges and correct real-world proportions. Muted low-saturation palette that fits a basement MMA gym drawn in a flat-colored anime background style: matte black (#2A2A2C), dark red (#7A3A32), grey-green (#4F5B55), off-white (#E8E2D6), grey steel (#8C8F93). No text, no letters, no numbers, no logos, no brand marks.",
+ "items": [
+  {
+   "name": "heavy_bag_long",
+   "out": "concept/art/env/gym/props/ref/heavy_bag_long.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a long cylindrical MMA heavy bag hanging straight down: the bag itself 1.5 m tall and 35 cm thick in matte black synthetic leather with a dark red band at the top and bottom caps, four black straps at the top meeting a short dark steel chain with a swivel hook above (chain and hook included, about 50 cm), slightly worn seams"
+  },
+  {
+   "name": "heavy_bag_short",
+   "out": "concept/art/env/gym/props/ref/heavy_bag_short.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a short fat uppercut heavy bag hanging straight down: the bag 90 cm tall and 40 cm thick in dark red synthetic leather with matte black end caps, four straps meeting a short dark steel chain with a hook above (about 50 cm of chain included)"
+  },
+  {
+   "name": "speed_bag_platform",
+   "out": "concept/art/env/gym/props/ref/speed_bag_platform.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a boxing speed bag platform: a round wooden rebound board about 60 cm across (plywood edge, flat matte top) held by a black steel wall bracket at its back, and a small teardrop-shaped dark red leather speed bag hanging from a swivel under the center of the board"
+  },
+  {
+   "name": "focus_mitts_pair",
+   "out": "concept/art/env/gym/props/ref/focus_mitts_pair.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a pair of curved boxing focus mitts lying flat side by side touching each other, forming one object: matte black synthetic leather with a dark red striking face and a small off-white target circle on each, padded wrist cuffs"
+  },
+  {
+   "name": "mma_gloves_pair",
+   "out": "concept/art/env/gym/props/ref/mma_gloves_pair.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a pair of open-finger MMA sparring gloves lying flat side by side touching each other, forming one object: matte black with dark red trim, a wrist strap, padded knuckles, open fingers"
+  },
+  {
+   "name": "jump_rope_coiled",
+   "out": "concept/art/env/gym/props/ref/jump_rope_coiled.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a boxing speed jump rope neatly coiled into a flat loose loop about 30 cm across lying flat, its dark grey cable wound three times, two short black plastic handles resting across the top of the coil"
+  },
+  {
+   "name": "mat_roll",
+   "out": "concept/art/env/gym/props/ref/mat_roll.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a rolled-up vinyl gym mat standing upright on its end: 50 cm thick and 1.8 m tall, muted blue vinyl outside (#4A6B8A), the roll spiral visible on the top end with a cream inner layer, slightly flattened"
+  },
+  {
+   "name": "barbell_rack",
+   "out": "concept/art/env/gym/props/ref/barbell_rack.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a black steel squat half-rack: two upright square posts 1.8 m tall joined by a top crossbar, J-hooks holding a loaded olympic barbell with a black rubber bumper plate on each end, three more black plates stacked on a side peg, flat steel base feet"
+  },
+  {
+   "name": "dumbbell_rack",
+   "out": "concept/art/env/gym/props/ref/dumbbell_rack.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a two-tier black steel dumbbell rack 1.4 m wide and 80 cm tall with slanted shelves holding ten pairs of black hexagonal rubber dumbbells of increasing size from left to right, flat matte"
+  },
+  {
+   "name": "weight_bench",
+   "out": "concept/art/env/gym/props/ref/weight_bench.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a flat gym weight bench: a black vinyl padded top about 1.2 m long and 30 cm wide on a black steel frame with two welded legs and rubber feet"
+  },
+  {
+   "name": "kettlebell",
+   "out": "concept/art/env/gym/props/ref/kettlebell.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a cast-iron kettlebell 30 cm tall with a wide rounded handle, matte black body with a dark red painted band around the base of the handle, flat bottom"
+  },
+  {
+   "name": "tractor_tire",
+   "out": "concept/art/env/gym/props/ref/tractor_tire.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a large worn tractor tire lying flat on its side, 1.3 m across and 45 cm tall, matte black rubber with thick worn diagonal lugs on the tread, the hollow center opening visible from above"
+  },
+  {
+   "name": "battle_rope_coil",
+   "out": "concept/art/env/gym/props/ref/battle_rope_coil.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a thick black battle rope 5 cm thick loosely coiled into a flat round pile about 60 cm across and 30 cm high, both rope ends with dark grey rubber grips sticking out of the pile"
+  },
+  {
+   "name": "locker_unit",
+   "out": "concept/art/env/gym/props/ref/locker_unit.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a tall two-door steel gym locker 60 cm wide, 45 cm deep and 1.8 m tall, painted muted grey-green (#4F5B55), two narrow vertical doors side by side each with three louver vent slots near the top and a small grey latch, standing on a low dark base"
+  },
+  {
+   "name": "folding_chair",
+   "out": "concept/art/env/gym/props/ref/folding_chair.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a plain steel folding chair, unfolded, with a dark grey padded seat and back, black powder-coated tube frame"
+  },
+  {
+   "name": "water_cooler",
+   "out": "concept/art/env/gym/props/ref/water_cooler.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a Korean office water dispenser: a slim upright floor-standing cabinet 1.05 m tall in off-white with a small dark grey top section, two push taps on the front (one with a small red mark, one with a small blue mark) above a grey drip tray, no bottle on top"
+  },
+  {
+   "name": "whiteboard_stand",
+   "out": "concept/art/env/gym/props/ref/whiteboard_stand.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a mobile whiteboard on a rolling stand: a blank white board 1.2 m wide and 90 cm tall in a slim aluminium frame with a marker tray along the bottom, mounted on a grey steel tube frame with four small black casters, 1.85 m tall overall"
+  },
+  {
+   "name": "stand_fan",
+   "out": "concept/art/env/gym/props/ref/stand_fan.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a tall Korean pedestal stand fan: a round grey wire guard about 45 cm across with pale blades inside, a telescopic grey pole, a round grey plastic base, a small blank control box on the pole, 1.25 m tall"
+  },
+  {
+   "name": "speaker_cabinet",
+   "out": "concept/art/env/gym/props/ref/speaker_cabinet.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a small black PA loudspeaker cabinet: a plain rectangular box 50 cm tall and 30 cm wide with a dark grey fabric mesh front grille, slightly rounded corners, a small handle recess on the side"
+  },
+  {
+   "name": "body_scale",
+   "out": "concept/art/env/gym/props/ref/body_scale.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a flat square digital bathroom body scale 35 cm square and 5 cm thick, dark grey tempered glass top with four pale round corner pads and a small blank rectangular display window near the front edge"
+  },
+  {
+   "name": "grappling_dummy",
+   "out": "concept/art/env/gym/props/ref/grappling_dummy.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a grappling training dummy: a stuffed vinyl human-shaped practice dummy 1.5 m tall standing upright, dark red torso and black limbs, arms bent forward at the elbows, legs slightly apart, a plain round head with no face, thick stitched seams, flat matte"
+  },
+  {
+   "name": "office_desk",
+   "out": "concept/art/env/gym/props/ref/office_desk.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a plain office desk 1.4 m wide and 70 cm deep: a light oak laminate top on a dark grey steel frame, a closed dark grey laptop and a small stack of papers on top, a three-drawer unit under the right side"
+  },
+  {
+   "name": "office_chair",
+   "out": "concept/art/env/gym/props/ref/office_chair.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a black mesh-back office swivel chair with a padded black seat, two armrests, a gas lift and a five-star black base with casters, 1 m tall"
+  },
+  {
+   "name": "shoe_rack",
+   "out": "concept/art/env/gym/props/ref/shoe_rack.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a four-tier open steel shoe rack 90 cm wide, 35 cm deep and 1.2 m tall, grey powder-coated wire shelves, holding a few pairs of plain black and grey sneakers on the shelves"
+  },
+  {
+   "name": "slippers_pile",
+   "out": "concept/art/env/gym/props/ref/slippers_pile.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a messy low heap of about eight pairs of plain black and dark grey rubber gym slippers (slides and flip flops) lying on top of each other, about 60 cm across and 15 cm high, forming one object"
+  }
+ ]
+}
