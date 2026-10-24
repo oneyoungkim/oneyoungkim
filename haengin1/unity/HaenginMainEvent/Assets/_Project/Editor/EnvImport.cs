@@ -57,7 +57,7 @@ namespace Haengin.EditorTools
             imp.isReadable = false;
             if (tex)
             {
-                bool atlas = name.EndsWith("_Atlas") || name == "M_Cage_Mesh" || name == "M_Glass_Clear";   // 체육관: 철망 알파 컷아웃 · 유리 알파(둘은 Repeat)
+                bool atlas = name.EndsWith("_Atlas") || name == "M_Cage_Mesh" || name == "M_Glass_Clear" || name.StartsWith("Leaf_");   // Leaf_* = 잎 카드(3차)   // 체육관: 철망 알파 컷아웃 · 유리 알파(둘은 Repeat)
                 imp.sRGBTexture = true;
                 imp.wrapMode = name.EndsWith("_Atlas") ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
                 imp.alphaIsTransparency = atlas;

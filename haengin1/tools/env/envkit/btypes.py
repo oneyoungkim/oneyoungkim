@@ -405,24 +405,40 @@ def _piloti(o, P, b, r, y0, W, bay, nb, main):
             pbox(mb, P, u - 0.2, u + 0.2, y0, yc, -0.45, -0.05, "M_Concrete", skip=("+y", "-y"))
     Pin = Panel(P.p(0, 0, -Dp)[0::2], P.t, P.n, W, "front", [(0, y0), (W, y0)], y0, yc)
     emit_openings(o, Pin, [Op("door", W / 2 - 0.6, W / 2 + 0.6, y0, y0 + 2.2, rev="M_Plaster_White", leaf="glass")])
-    # 앞 철책(높이 1.5): 기둥 + 위아래 가로대 + 세로살
+    # 앞 철책(높이 1.5): 기둥 + 위아래 가로대 + 세로살 — 가운데 1.3m 는 통로(2026-10-24 3차: 걸어 들어갈 수 있게, 콜라이더는 Unity EnvSetup 이 meta 로 다시 짬)
     mg = "M_Metal_Green"
     hgt = 1.5
+    g0, g1 = W / 2 - 0.65, W / 2 + 0.65
+    spans = [(0.4, g0), (g1, W - 0.4)]
     for L in (0, 1, 2):
         mb = o.lod[L]
-        pbox(mb, P, 0.4, W - 0.4, y0 + hgt - 0.05, y0 + hgt, -0.08, -0.02, mg)
-        pbox(mb, P, 0.4, W - 0.4, y0 + 0.08, y0 + 0.13, -0.08, -0.02, mg)
-        for k in range(nb + 1):
-            u = min(W - 0.45, max(0.45, k * bay))
+        for a, c in spans:
+            pbox(mb, P, a, c, y0 + hgt - 0.05, y0 + hgt, -0.08, -0.02, mg)
+            pbox(mb, P, a, c, y0 + 0.08, y0 + 0.13, -0.08, -0.02, mg)
+        posts = sorted(set([min(W - 0.45, max(0.45, k * bay)) for k in range(nb + 1)] + [g0 - 0.04, g1 + 0.04]))
+        for u in posts:
+            if g0 - 0.1 < u < g1 + 0.1 and u not in (g0 - 0.04, g1 + 0.04):
+                continue
             pbox(mb, P, u - 0.04, u + 0.04, y0, y0 + hgt, -0.09, -0.01, mg)
         if L < 2:
             step = 0.15 if L == 0 else 0.3
             n = int((W - 0.9) / step)
             for k in range(1, n):
                 u = 0.45 + (W - 0.9) * k / n
+                if g0 - 0.02 < u < g1 + 0.02:
+                    continue
                 pbox(mb, P, u - 0.012, u + 0.012, y0 + 0.13, y0 + hgt - 0.05, -0.06, -0.035, mg, skip=("+y", "-y"))
     o.sockets.append(dict(kind="ceiling_light", pos=P.p(W / 2, yc - 0.05, -Dp / 2), n=(0, -1, 0)))
     o.meta["piloti_depth"] = round(Dp, 2)
+    # Unity 콜라이더용(월드 좌표): 기둥(앞줄, 중심) · 앞선·뒷선 끝점 · 통로 가운데 · 천장 높이 · 바닥 · 바깥 법선
+    o.meta["piloti_cols"] = [[round(c, 3) for c in P.p(k * bay, y0, -0.25)] for k in range(1, nb)]
+    o.meta["piloti_front"] = [[round(c, 3) for c in P.p(0, y0, 0)], [round(c, 3) for c in P.p(W, y0, 0)]]
+    o.meta["piloti_back"] = [[round(c, 3) for c in P.p(0, y0, -Dp)], [round(c, 3) for c in P.p(W, y0, -Dp)]]
+    o.meta["piloti_gate"] = [round(c, 3) for c in P.p(W / 2, y0, 0)]
+    o.meta["piloti_gap"] = 1.3
+    o.meta["piloti_yc"] = round(yc, 3)
+    o.meta["piloti_y0"] = round(y0, 3)
+    o.meta["piloti_out"] = [round(c, 4) for c in P.out]
 
 
 def _roof_rail(o, F, hw, hd, top, h=0.5, mat="M_Metal_Green"):

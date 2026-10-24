@@ -21,8 +21,8 @@ MonoBehaviour:
   AmbientSky: {r: 0.42, g: 0.46, b: 0.64, a: 1}
   AmbientEquator: {r: 0.33, g: 0.36, b: 0.5, a: 1}
   AmbientGround: {r: 0.19, g: 0.2, b: 0.28, a: 1}
-  Sky: {r: 0.13333334, g: 0.16470589, b: 0.26666668, a: 1}
-  Fog: {r: 0.078431375, g: 0.09411765, b: 0.16078432, a: 1}
+  Sky: {r: 0.16470589, g: 0.2, b: 0.27058825, a: 1}
+  Fog: {r: 0.09411765, g: 0.1254902, b: 0.1882353, a: 1}
   FogStart: 30
   FogEnd: 240
   SplitShadows: {r: 0.14, g: 0.18, b: 0.36, a: 1}
@@ -37,7 +37,7 @@ MonoBehaviour:
   Sodium: {r: 1, g: 0.62, b: 0.28, a: 1}
   ConvTeal: {r: 0.55, g: 0.95, b: 0.88, a: 1}
   LampIntensity: 10
-  Windows: 0.4
+  Windows: 0.55
   Saturation: -2
   Contrast: 3
   Lift: {x: 0.97, y: 0.98, z: 1.06, w: 0.006}

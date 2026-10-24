@@ -277,9 +277,15 @@ namespace Haengin.Tests
             {
                 ("밤 상가거리 걷기", DayPart.Night, new Vector3(-199.0f, 31.0f, 103.2f), new Vector3(-176.0f, 28.4f, 103.6f)),
                 ("새벽 와룡공원길 걷기(오르막 대용)", DayPart.Dawn, new Vector3(-206.0f, 31.4f, 97.8f), new Vector3(-236.0f, 34.7f, 94.8f)),
+                // 2026-10-24 맵 아트 패스 3차: 이야기 모드에선 M2 무대(Stages — 인카운터 적 3·구경꾼·야차)가 꺼진다(09 2-1). 이 시험은 이야기 없이 Zone1 을 열어 무대가 켜져 있어
+                // 적·구경꾼(헐 외곽선·그림자 포함) 약 1.9M 이 같이 세어진다 → 같은 경로를 무대 끈 채로 한 번 더 재서 맵 몫을 따로 남긴다
+                ("밤 상가거리 걷기 · 이야기 모드(M2 무대 꺼짐)", DayPart.Night, new Vector3(-199.0f, 31.0f, 103.2f), new Vector3(-176.0f, 28.4f, 103.6f)),
             };
+            var stagesRoot = GameObject.Find("Stages");
             foreach (var (name, part, a, b) in routes)
             {
+                bool storyMode = name.Contains("이야기 모드");
+                if (stagesRoot != null) stagesRoot.SetActive(!storyMode);
                 r.Light.Apply(part, true);
                 var dirv = new Vector3(b.x - a.x, 0f, b.z - a.z);
                 M3Lab.Motor.Teleport(a, Mathf.Atan2(dirv.x, dirv.z) * Mathf.Rad2Deg);
@@ -311,7 +317,45 @@ namespace Haengin.Tests
                 }
                 var sorted = ms.OrderBy(x => x).ToList();
                 double p95 = sorted[(int)(sorted.Count * 0.95)], p99 = sorted[Math.Min(sorted.Count - 1, (int)(sorted.Count * 0.99))];
+                if (stagesRoot != null) stagesRoot.SetActive(true);
                 summary.Add($"{name}: 1080p 렌더 한 번 평균 {ms.Average():F2}ms · 95% {p95:F2} · 99% {p99:F2} · 삼각형 최대 {tris.Max():N0} · SetPass 최대 {sps.Max()} · 그리기 최대 {dcs.Max()} · 빛 자리 {r.Light.CountLit()}");
+            }
+            // -tribreak 를 주면: 밤 상가거리 시작 자리에서 묶음별로 꺼 보며 한 화면 삼각형 몫(맵 아트 패스 예산 점검용)
+            if (Shots.Arg("-tribreak") != null)
+            {
+                var (_, part0, a0, b0) = routes[0];
+                r.Light.Apply(part0, true);
+                var dv = new Vector3(b0.x - a0.x, 0f, b0.z - a0.z);
+                M3Lab.Motor.Teleport(a0, Mathf.Atan2(dv.x, dv.z) * Mathf.Rad2Deg); M3Lab.Cam.SnapBehind();
+                for (int i = 0; i < 40; i++) { M3Lab.Motor.SetMoveInput(dv.normalized, 1f, false); yield return null; }
+                // UnityStats 는 프레임이 끝나야 갱신 → 묶음마다 끄고 1080p 로 그린 뒤 한 프레임 넘겨서 읽는다
+                var lines = new List<string>();
+                var groups = new List<(string name, System.Action off, System.Action on)>();
+                groups.Add(("전부", () => { }, () => { }));
+                var sun = UnityEngine.Object.FindObjectsByType<Light>(FindObjectsSortMode.None).FirstOrDefault(l => l.type == LightType.Directional);
+                if (sun != null) { var sh0 = sun.shadows; groups.Add(("그림자", () => sun.shadows = LightShadows.None, () => sun.shadows = sh0)); }
+                foreach (var path in new[] { "Zone1/Env/Veg", "Zone1/Env/Decor", "Zone1/Env/Props", "Zone1/Env/Lot", "Zone1/Sky", "Player", "Stages", "Zone1/Env/Z1_HoomunN", "Zone1/Env/Z1_HoomunS", "Zone1/Env/Z1_Alley", "Zone1/Env/Z1_Campus", "Zone1/Env/Z1_Wires", "Zone1/Env/Z1_Wall", "Zone1/Ground", "Zone1/Roads", "Zone1/Blocks", "Zone1/Landmarks" })
+                {
+                    var g = GameObject.Find(path); if (g == null) continue;
+                    groups.Add((path, () => g.SetActive(false), () => g.SetActive(true)));
+                }
+                var props = UnityEngine.Object.FindObjectsByType<LODGroup>(FindObjectsSortMode.None).Where(l => l.transform.parent != null && l.transform.parent.name.StartsWith("Prop_")).Select(l => l.gameObject).ToList();
+                groups.Add(($"소켓 소품 {props.Count}", () => { foreach (var pg in props) pg.SetActive(false); }, () => { foreach (var pg in props) pg.SetActive(true); }));
+                long all = 0;
+                foreach (var (gname, off, on) in groups)
+                {
+                    off();
+                    cam.targetTexture = rt; cam.Render(); cam.targetTexture = null;
+                    yield return null;
+                    long t = 0;
+#if UNITY_EDITOR
+                    t = UnityEditor.UnityStats.triangles;
+#endif
+                    on();
+                    if (gname == "전부") { all = t; lines.Add($"전부 {t:N0}"); }
+                    else lines.Add($"{gname} 몫 {all - t:N0}");
+                }
+                Debug.Log("[M3] 삼각형 내역(밤 상가거리 시작):" + System.Environment.NewLine + string.Join(System.Environment.NewLine, lines));
             }
             cam.enabled = camWasEnabled;
             tri.Dispose(); setp.Dispose(); draw.Dispose();

@@ -18,7 +18,7 @@ namespace Haengin.EditorGame
     {
         public const string DecalMatDir = MatDir + "/Decals";
         static readonly string[] VegNames = { "pine_tree", "cherry_tree", "zelkova_tree", "shrub_bush", "ivy_patch", "potted_plant_a", "potted_plant_b", "grass_tuft" };
-        static bool IsVeg(string name) => Array.IndexOf(VegNames, name) >= 0;
+        static bool IsVeg(string name) => Array.IndexOf(VegNames, name) >= 0 || name == "plane_tree";
 
         static int Hash(string s) { unchecked { int h = 17; foreach (char c in s) h = h * 31 + c; return h; } }
         static Vector3 GroundAt(Vector3 p, float up = 4f, float down = 12f)
@@ -146,7 +146,7 @@ namespace Haengin.EditorGame
             var ground = new GameObject("바닥").transform; ground.SetParent(root, false);
             var walls = new GameObject("벽").transform; walls.SetParent(root, false);
             var clutter = new GameObject("잡동사니").transform; clutter.SetParent(root, false);
-            var concrete = AssetDatabase.LoadAssetAtPath<Material>($"{MatDir}/M_Concrete.mat");
+            var concrete = Flat("M_Curb", new Color(0.86f, 0.85f, 0.81f));   // 3차: 연석은 밝은 콘크리트 평면색(아스팔트와 대비)
             var paint = Flat("M_Paint_White", new Color(0.93f, 0.92f, 0.88f));
             var iron = Flat("M_Iron_Dark", new Color(0.30f, 0.30f, 0.31f));
             int curbs = 0, marks = 0, decals = 0, posters = 0, items = 0, swapped = 0;
@@ -160,8 +160,8 @@ namespace Haengin.EditorGame
                     var side = Vector3.Cross(Vector3.up, Flat(dir).normalized).normalized;
                     foreach (float sg in new[] { 1f, -1f })
                     {
-                        var c = (a + b) * 0.5f + side * sg * (r.Width * 0.5f - 0.07f) + Vector3.up * 0.03f;
-                        Box($"연석 {r.Name} {i}{(sg > 0 ? "R" : "L")}", ground, c, new Vector3(0.14f, 0.07f, len), Quaternion.LookRotation(dir.normalized, Vector3.up), concrete);
+                        var c = (a + b) * 0.5f + side * sg * (r.Width * 0.5f - 0.08f) + Vector3.up * 0.045f;
+                        Box($"연석 {r.Name} {i}{(sg > 0 ? "R" : "L")}", ground, c, new Vector3(0.16f, 0.11f, len), Quaternion.LookRotation(dir.normalized, Vector3.up), concrete, true);
                         curbs++;
                     }
                 }
@@ -215,6 +215,7 @@ namespace Haengin.EditorGame
             }
             // 3) 얼룩(벽 밑)·낙서(주차장 옹벽)·포스터(전봇대)
             var rects = DecalRects();
+            string marks3 = GroundMarks(d, ground, rects);
             var grime = rects.Keys.Where(k => k.StartsWith("decals_grime")).OrderBy(k => k, StringComparer.Ordinal).ToList();
             var graffiti = rects.Keys.Where(k => k.StartsWith("decals_graffiti")).OrderBy(k => k, StringComparer.Ordinal).ToList();
             var signRects = SignRects();
@@ -239,7 +240,7 @@ namespace Haengin.EditorGame
                         float w = 0.7f + (float)rng.NextDouble() * 0.6f;
                         var pos = new Vector3(c.x, y0, c.z) + n * depth + t * u + Vector3.up * (0.25f + w * 0.3f);
                         var key = grime[rng.Next(grime.Count)];
-                        Quad($"얼룩 {kv.Key} {face.Key}", walls, pos, n, w, w * 0.6f, DecalMat("M_Decal_Atlas", key, rects[key], new Color(1f, 1f, 1f, 0.5f)), 0.03f);
+                        Quad($"얼룩 {kv.Key} {face.Key}", walls, pos, n, w, w * 0.6f, DecalMat3("M_Decal_Atlas", key, rects[key], new Color(1f, 1f, 1f, 0.6f), true, 0f, 0.6f, "_mul"), 0.03f);
                         decals++;
                     }
                 }
@@ -251,11 +252,11 @@ namespace Haengin.EditorGame
                 {
                     var local = new Vector3(-4.5f + k * 4.5f, 1.1f, -pad.Size.y * 0.5f - 0.05f);
                     var key = graffiti[k % graffiti.Count];
-                    Quad($"낙서 옹벽(남) {k}", walls, pad.Center + rot * local, rot * Vector3.forward, 2.2f, 1.65f, DecalMat("M_Decal_Atlas", key, rects[key], new Color(1f, 1f, 1f, 0.9f)), 0.03f);
+                    Quad($"낙서 옹벽(남) {k}", walls, pad.Center + rot * local, rot * Vector3.forward, 2.2f, 1.65f, DecalMat3("M_Decal_Atlas", key, rects[key], new Color(1f, 1f, 1f, 0.78f), false, 0.45f, 0.7f, "_aged"), 0.03f);
                     decals++;
                 }
                 var keyE = graffiti[3 % graffiti.Count];
-                Quad("낙서 옹벽(동)", walls, pad.Center + rot * new Vector3(pad.Size.x * 0.5f + 0.05f, 0.75f, -2.0f), rot * Vector3.left, 1.8f, 1.1f, DecalMat("M_Decal_Atlas", keyE, rects[keyE], new Color(1f, 1f, 1f, 0.9f)), 0.03f);
+                Quad("낙서 옹벽(동)", walls, pad.Center + rot * new Vector3(pad.Size.x * 0.5f + 0.05f, 0.75f, -2.0f), rot * Vector3.left, 1.8f, 1.1f, DecalMat3("M_Decal_Atlas", keyE, rects[keyE], new Color(1f, 1f, 1f, 0.78f), false, 0.45f, 0.7f, "_aged"), 0.03f);
                 decals++;
             }
             var poles = objs.Where(x => S(x.Value, "kind") == "pole").OrderBy(x => x.Key, StringComparer.Ordinal).ToList();
@@ -268,7 +269,7 @@ namespace Haengin.EditorGame
                     {
                         var key = posterKeys[rng.Next(posterKeys.Count)];
                         var rotY = Quaternion.Euler(0f, (k == 0 ? -25f : 30f), 0f) * n;
-                        Quad($"포스터 {kv.Key} {k}", walls, basePos + Vector3.up * (1.25f + k * 0.62f) + rotY * 0.19f, rotY, 0.42f, 0.58f, DecalMat("M_Sign_Atlas", key, signRects[key], Color.white), 0.0f);
+                        Quad($"포스터 {kv.Key} {k}", walls, basePos + Vector3.up * (1.25f + k * 0.62f) + rotY * 0.19f, rotY, 0.42f, 0.58f, DecalMat3("M_Sign_Atlas", key, signRects[key], new Color(1f, 1f, 1f, 0.85f), false, 0.5f, 0.8f, "_aged"), 0.0f);
                         posters++;
                     }
                 // 전봇대 밑 쓰레기 봉투(배출 장소)
@@ -332,7 +333,7 @@ namespace Haengin.EditorGame
                         {
                             var key = posterKeys[rng.Next(posterKeys.Count)];
                             var rotY = Quaternion.Euler(0f, k * 90f, 0f) * n;
-                            Quad($"포스터 {m.name} {k}", walls, basePos + Vector3.up * (1.3f + (k % 2) * 0.5f) + rotY * 0.22f, rotY, 0.42f, 0.58f, DecalMat("M_Sign_Atlas", key, signRects[key], Color.white), 0f);
+                            Quad($"포스터 {m.name} {k}", walls, basePos + Vector3.up * (1.3f + (k % 2) * 0.5f) + rotY * 0.22f, rotY, 0.42f, 0.58f, DecalMat3("M_Sign_Atlas", key, signRects[key], new Color(1f, 1f, 1f, 0.85f), false, 0.5f, 0.8f, "_aged"), 0f);
                             posters++;
                         }
                 }
@@ -360,7 +361,7 @@ namespace Haengin.EditorGame
                     go.AddComponent<LightSpot>().Kind = LightKind.Security;
                 }
             }
-            return $"연석 {curbs} · 노면 표시 {marks} · 얼룩·낙서 {decals} · 포스터 {posters} · 잡동사니 {items} · 회색 교체 {swapped} · 보안등 +1";
+            return $"연석 {curbs} · 노면 표시 {marks} · {marks3} · 얼룩·낙서 {decals} · 포스터 {posters} · 잡동사니 {items} · 회색 교체 {swapped} · 보안등 +1";
         }
 
         static void AddText(Transform parent, Vector3 pos, Vector3 n, string text, float w, float h, Color col, TMP_FontAsset font)
@@ -438,7 +439,7 @@ namespace Haengin.EditorGame
                     if (bt.StartsWith("retaining") && sz.x > 2f)
                     {
                         float topY = c.y + sz.y * 0.5f;
-                        for (float u = -sz.x * 0.5f + 1f; u < sz.x * 0.5f - 0.8f; u += 2.2f + (float)rng.NextDouble())
+                        for (float u = -sz.x * 0.5f + 0.8f; u < sz.x * 0.5f - 0.6f; u += 1.5f + (float)rng.NextDouble() * 0.6f)
                         {
                             var p = c + along * u - n * (sz.z * 0.5f - 0.25f); p.y = topY;
                             PutProp(prefab, rng.NextDouble() < 0.7 ? "grass_tuft" : "shrub_bush", root, p, (float)rng.NextDouble() * 360f, $"축대 위 풀 ← {S(bd, "block")}", rng.NextDouble() < 0.7 ? Vector3.one : Vector3.one * 0.55f);
@@ -447,6 +448,7 @@ namespace Haengin.EditorGame
                     }
                 }
             }
+            string rows = VegetationRows(d, zoneRoot, root, objs, prefab);
             // 성곽 아래 초록: 성곽 폴리라인 안쪽(남) 1.8m 띠에 관목·풀 7m 마다
             if (d.Walls.Count > 0)
             {
@@ -462,7 +464,7 @@ namespace Haengin.EditorGame
                     wall++;
                 }
             }
-            return $"나무 {trees} · 관목 {bushes} · 담쟁이 {ivy} · 풀 {grass} · 성곽 아래 {wall}";
+            return $"나무 {trees} · 관목 {bushes} · 담쟁이 {ivy} · 풀 {grass} · 성곽 아래 {wall} · {rows}";
         }
     }
 }

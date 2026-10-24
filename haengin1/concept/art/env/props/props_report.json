@@ -989,6 +989,39 @@
   },
   "bytes": 5864308
  },
+ "plane_tree": {
+  "name": "plane_tree",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 13720,
+  "w": 7.559,
+  "d": 6.901,
+  "h": 11.0,
+  "want": [
+   7.0,
+   7.0,
+   11.0
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    57.8,
+    60.5
+   ],
+   "ab_sat": [
+    34.1,
+    30.3
+   ]
+  },
+  "bytes": 6409768
+ },
  "plastic_crates_stack": {
   "name": "plastic_crates_stack",
   "model": "hunyuan",

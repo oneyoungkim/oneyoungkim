@@ -4,7 +4,7 @@
  "zone": "unity/HaenginMainEvent/Assets/_Project/Data/zone1.json",
  "zone_version": "0.2.0",
  "seed": 20261006,
- "geometry_sha1": "86662bc9a57b48a2ae969f1a5e9b575cbe857e20",
+ "geometry_sha1": "dfd94977f4b5a16b37c5755cb50c3d9bc6b3f2c0",
  "axes": "Unity 좌표 그대로(X 동, Y 위, Z 북). 프리팹을 원점·회전 0·배율 1 로 놓음",
  "lod": {
   "distances_m": [
@@ -19,9 +19,9 @@
   "HoomunN": {
    "desc": "성균관로 북쪽 줄(후문 상가거리·명륜3가 다세대)",
    "stats": {
-    "lod0": 16788,
-    "lod1": 6636,
-    "lod2": 4032,
+    "lod0": 16764,
+    "lod1": 6652,
+    "lod2": 4080,
     "detail": 12466,
     "winlit": 342,
     "signs": 26,
@@ -33,9 +33,9 @@
   "HoomunS": {
    "desc": "성균관로 남쪽 줄 + 후문 뒷골목 주차장 둘레",
    "stats": {
-    "lod0": 13954,
-    "lod1": 5654,
-    "lod2": 3500,
+    "lod0": 13930,
+    "lod1": 5670,
+    "lod2": 3548,
     "detail": 12692,
     "winlit": 272,
     "signs": 4,
@@ -116,8 +116,8 @@
   }
  },
  "files_bytes": {
-  "HoomunN.fbx": 1171820,
-  "HoomunS.fbx": 1048012,
+  "HoomunN.fbx": 1172828,
+  "HoomunS.fbx": 1049052,
   "Alley.fbx": 2308124,
   "Campus.fbx": 494236,
   "Waryong.fbx": 196876,
@@ -2052,7 +2052,56 @@
      "floors": 4,
      "y0": 25.71,
      "top": 38.31,
-     "piloti_depth": 5.6
+     "piloti_depth": 5.6,
+     "piloti_cols": [
+      [
+       -157.855,
+       25.71,
+       98.352
+      ],
+      [
+       -154.994,
+       25.71,
+       97.453
+      ]
+     ],
+     "piloti_front": [
+      [
+       -160.792,
+       25.71,
+       99.014
+      ],
+      [
+       -152.207,
+       25.71,
+       96.315
+      ]
+     ],
+     "piloti_back": [
+      [
+       -159.113,
+       25.71,
+       104.356
+      ],
+      [
+       -150.527,
+       25.71,
+       101.657
+      ]
+     ],
+     "piloti_gate": [
+      -156.499,
+      25.71,
+      97.664
+     ],
+     "piloti_gap": 1.3,
+     "piloti_yc": 28.41,
+     "piloti_y0": 25.71,
+     "piloti_out": [
+      -0.2999,
+      0.0,
+      -0.954
+     ]
     },
     "lod_size": 15.59,
     "lod_screen_heights": [
@@ -2062,9 +2111,9 @@
     ]
    },
    "tris": [
-    3448,
-    1422,
-    814
+    3424,
+    1438,
+    862
    ],
    "detail_tris": 4298,
    "origin": [
@@ -4807,7 +4856,56 @@
      "floors": 4,
      "y0": 23.91,
      "top": 36.52,
-     "piloti_depth": 5.6
+     "piloti_depth": 5.6,
+     "piloti_cols": [
+      [
+       -144.136,
+       23.915,
+       82.041
+      ],
+      [
+       -147.009,
+       23.915,
+       82.903
+      ]
+     ],
+     "piloti_front": [
+      [
+       -141.19,
+       23.915,
+       81.418
+      ],
+      [
+       -149.811,
+       23.915,
+       84.004
+      ]
+     ],
+     "piloti_back": [
+      [
+       -142.8,
+       23.915,
+       76.054
+      ],
+      [
+       -151.42,
+       23.915,
+       78.641
+      ]
+     ],
+     "piloti_gate": [
+      -145.501,
+      23.915,
+      82.711
+     ],
+     "piloti_gap": 1.3,
+     "piloti_yc": 26.615,
+     "piloti_y0": 23.915,
+     "piloti_out": [
+      0.2874,
+      0.0,
+      0.9578
+     ]
     },
     "lod_size": 15.5,
     "lod_screen_heights": [
@@ -4817,9 +4915,9 @@
     ]
    },
    "tris": [
-    3670,
-    1514,
-    876
+    3646,
+    1530,
+    924
    ],
    "detail_tris": 3884,
    "origin": [

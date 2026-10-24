@@ -34,10 +34,10 @@ namespace Haengin
 
         public static Palette[] Default() => new[]
         {
-            new Palette { Part = DayPart.Dawn, Sky = Hex("#CBD1D6"), Zenith = Hex("#9FA9BB"), Far = Hex("#A3AAB4"), Mid = Hex("#B7BCC3"), Near = Hex("#5B616C"), Lines = 0.6f, Dots = 0.35f, Cloud = new Color(0.85f, 0.87f, 0.92f, 0.6f), Clouds = false, Moon = false },
-            new Palette { Part = DayPart.Day,  Sky = Hex("#E9E0CC"), Zenith = Hex("#D3C9B0"), Far = Hex("#A39C90"), Mid = Hex("#C9C1B2"), Near = Hex("#6E6A64"), Lines = 0.7f, Dots = 0f, Cloud = new Color(0.98f, 0.97f, 0.95f, 0.9f), Clouds = true, Moon = false },
-            new Palette { Part = DayPart.Dusk, Sky = Hex("#EBC9A6"), Zenith = Hex("#B59A96"), Far = Hex("#B48F86"), Mid = Hex("#C9A493"), Near = Hex("#5A4A4C"), Lines = 0.7f, Dots = 0.2f, Cloud = new Color(1f, 0.84f, 0.68f, 0.85f), Clouds = true, Moon = false },
-            new Palette { Part = DayPart.Night, Sky = Hex("#222A44"), Zenith = Hex("#121728"), Far = Hex("#323A57"), Mid = Hex("#2A3150"), Near = Hex("#151A2B"), Lines = 0.5f, Dots = 1f, Cloud = new Color(0.3f, 0.34f, 0.5f, 0.5f), Clouds = false, Moon = true },
+            new Palette { Part = DayPart.Dawn, Sky = Hex("#CBD1D6"), Zenith = Hex("#9FA9BB"), Far = Hex("#8E97A6"), Mid = Hex("#AAB0B9"), Near = Hex("#5B616C"), Lines = 0.6f, Dots = 0.35f, Cloud = new Color(0.85f, 0.87f, 0.92f, 0.6f), Clouds = false, Moon = false },
+            new Palette { Part = DayPart.Day,  Sky = Hex("#E9E0CC"), Zenith = Hex("#D3C9B0"), Far = Hex("#8F877A"), Mid = Hex("#BBB2A2"), Near = Hex("#6E6A64"), Lines = 0.7f, Dots = 0f, Cloud = new Color(0.98f, 0.97f, 0.95f, 0.9f), Clouds = true, Moon = false },
+            new Palette { Part = DayPart.Dusk, Sky = Hex("#EBC9A6"), Zenith = Hex("#B59A96"), Far = Hex("#9E7A72"), Mid = Hex("#BC957F"), Near = Hex("#5A4A4C"), Lines = 0.7f, Dots = 0.2f, Cloud = new Color(1f, 0.84f, 0.68f, 0.85f), Clouds = true, Moon = false },
+            new Palette { Part = DayPart.Night, Sky = Hex("#2A3345"), Zenith = Hex("#151B2C"), Far = Hex("#3A4360"), Mid = Hex("#303956"), Near = Hex("#151A2B"), Lines = 0.5f, Dots = 1f, Cloud = new Color(0.3f, 0.34f, 0.5f, 0.5f), Clouds = false, Moon = true },
         };
 
         public Palette Of(DayPart p)

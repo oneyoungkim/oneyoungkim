@@ -1,0 +1,32 @@
+{
+ "note": "3rd pass: plane street tree + leaf card alpha textures (2026-10-24)",
+ "defaults": {
+  "quality": "high",
+  "resolution": "2k",
+  "aspect": "1:1"
+ },
+ "common": "",
+ "items": [
+  {
+   "name": "plane_tree",
+   "out": "concept/art/env/props/ref/plane_tree.png",
+   "aspect": "3:4",
+   "prompt": "OBJECT: a London plane street tree about 11 meters tall in late spring: a straight trunk with mottled grey, cream and olive bark patches, pollarded stubby main branches, and a broad rounded crown made of layered yellow-green rounded leaf masses with a clear silhouette. Reference image for building a 3D game prop. Single isolated object in a three-quarter front view from slightly above (camera about 35 degrees to the left of the front and 20 degrees above), the whole object fully visible and centered with generous margin, on a pure white background, no floor, no cast shadow, nothing else in the image. Stylized hand-painted look for a cel-shaded game: flat matte base colors only (albedo), even shadowless lighting, no specular highlights, no reflections, no ambient occlusion, no gradients, no black outlines. Simple clean readable shapes with crisp edges and correct real-world proportions. Muted low-saturation palette that fits a Seoul hillside neighborhood drawn in a flat-colored anime background style. No text, no letters, no numbers, no logos, no brand marks. Foliage is simplified into a few big rounded clumps and layered masses with a clear silhouette, not individual leaves; the trunk and branches are solid chunky shapes; everything is a closed solid volume suitable for a low-poly 3D model."
+  },
+  {
+   "name": "leaf_card_pine",
+   "out": "concept/art/env/veg/leaf_card_pine.png",
+   "prompt": "Texture reference for a leaf card in a cel-shaded game. A single flat cluster viewed straight on, centered, filling about 80% of the frame, on a pure white background, no floor, no cast shadow, nothing else. Flat matte colors in two or three tones only (base color plus one darker shade), hand-painted anime background style, crisp edges, no gradients, no black outlines, no text. SUBJECT: one tuft of Korean red pine needles: a radiating bundle of long dark green needles with a few small brown twig ends, roughly round."
+  },
+  {
+   "name": "leaf_card_broad",
+   "out": "concept/art/env/veg/leaf_card_broad.png",
+   "prompt": "Texture reference for a leaf card in a cel-shaded game. A single flat cluster viewed straight on, centered, filling about 80% of the frame, on a pure white background, no floor, no cast shadow, nothing else. Flat matte colors in two or three tones only (base color plus one darker shade), hand-painted anime background style, crisp edges, no gradients, no black outlines, no text. SUBJECT: one cluster of fresh green zelkova leaves on a thin twig: about fifteen small oval serrated leaves in two shades of yellow-green, roughly round."
+  },
+  {
+   "name": "leaf_card_cherry",
+   "out": "concept/art/env/veg/leaf_card_cherry.png",
+   "prompt": "Texture reference for a leaf card in a cel-shaded game. A single flat cluster viewed straight on, centered, filling about 80% of the frame, on a pure white background, no floor, no cast shadow, nothing else. Flat matte colors in two or three tones only (base color plus one darker shade), hand-painted anime background style, crisp edges, no gradients, no black outlines, no text. SUBJECT: one cluster of pale pink cherry blossoms on a short dark twig: about twelve five-petal flowers in two shades of pink with tiny red centers, roughly round."
+  }
+ ]
+}
