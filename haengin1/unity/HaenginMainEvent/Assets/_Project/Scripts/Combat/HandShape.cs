@@ -1,5 +1,6 @@
 // 행인1의 메인이벤트 — 손 모양(셰이프 키) (docs/08_M2_전투_설계.md 9-3)
 // 모델의 셰이프 키 Fist_L · Fist_R · Grip_L · Grip_R(tools/hand_keys.py 가 만듦)를 상태에 따라 0.08초 보간(게임 시간).
+// 정식 모델(손가락 뼈, 09 4-2 — 시우·태오)은 셰이프 키 대신 HandPoser 를 몬다: 무게 Fist = 손 자세 '주먹', Grip = '멱살 잡기'(같은 0~100 · 같은 0.08초).
 //   탐색 0 / 전투 대기·이동·공격·막기 Fist 100 / 잡기 중 Grip_L 100 · Fist_R 100 / 피격·다운 Fist 40 / 승리 Fist 100
 using UnityEngine;
 
@@ -15,10 +16,13 @@ namespace Haengin
         [Tooltip("승리·연출에서 강제(음수 = 상태대로)")] public float ForceFist = -1f;
 
         SkinnedMeshRenderer smr;
+        HandPoser poser;
         int iFL = -1, iFR = -1, iGL = -1, iGR = -1;
         float fl, fr, gl, gr;
 
-        public bool Ready => smr != null && iFL >= 0 && iFR >= 0 && iGL >= 0 && iGR >= 0;
+        public bool Ready => (smr != null && iFL >= 0 && iFR >= 0 && iGL >= 0 && iGR >= 0) || (smr == null && poser != null && poser.Ready);
+        /// 손가락 뼈로 모는 중(정식 모델)
+        public bool UsesPoser => smr == null && poser != null && poser.Ready;
         public float FistL => fl;
         public float FistR => fr;
         public float GripL => gl;
@@ -36,6 +40,7 @@ namespace Haengin
                 int a = m.GetBlendShapeIndex("Fist_L"), b = m.GetBlendShapeIndex("Fist_R"), c = m.GetBlendShapeIndex("Grip_L"), d = m.GetBlendShapeIndex("Grip_R");
                 if (a >= 0 && b >= 0) { smr = r; iFL = a; iFR = b; iGL = c; iGR = d; break; }
             }
+            if (smr == null && poser == null) poser = GetComponentInChildren<HandPoser>(true) ?? GetComponentInParent<HandPoser>();
             if (Me == null) Me = GetComponentInParent<Fighter>();
             if (Player == null) Player = GetComponentInParent<PlayerCombat>();
             if (Brain == null) Brain = GetComponentInParent<EnemyBrain>();
@@ -74,6 +79,12 @@ namespace Haengin
                 gl = Mathf.MoveTowards(gl, c, step);
                 gr = Mathf.MoveTowards(gr, d, step);
             }
+            if (smr == null)
+            {
+                poser.Drive(false, HandPoseLib.Fist, fl / 100f, HandPoseLib.Collar, gl / 100f);
+                poser.Drive(true, HandPoseLib.Fist, fr / 100f, HandPoseLib.Collar, gr / 100f);
+                return;
+            }
             smr.SetBlendShapeWeight(iFL, fl);
             smr.SetBlendShapeWeight(iFR, fr);
             if (iGL >= 0) smr.SetBlendShapeWeight(iGL, gl);
@@ -83,7 +94,11 @@ namespace Haengin
         /// 지금 렌더러에 들어간 무게(테스트)
         public float Weight(string name)
         {
-            if (smr == null) return -1f;
+            if (smr == null)
+            {
+                if (poser == null) return -1f;
+                switch (name) { case "Fist_L": return fl; case "Fist_R": return fr; case "Grip_L": return gl; case "Grip_R": return gr; default: return -1f; }
+            }
             int i = smr.sharedMesh.GetBlendShapeIndex(name);
             return i >= 0 ? smr.GetBlendShapeWeight(i) : -1f;
         }

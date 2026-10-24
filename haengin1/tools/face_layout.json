@@ -1,0 +1,6 @@
+{
+ "_설명": "tools/face_tex.py 가 쓰는 인물별 얼굴 배치값(데칼 UV — u 왼쪽 0→오른쪽 1, v 아래 0→위 1, 얼굴 상자 기준). 작업 폴더의 front.png 에 격자를 대고 적었다(2026-10-06). mid = 얼굴 가운데선, eye_off = 가운데선에서 눈 가운데까지, eye_v = 눈 높이, eye_rx·eye_ry = 지울 타원 반지름(눈썹은 밖에 남게), mouth = 입 [u, v], mouth_rx·ry = 지울 타원. eye_w(그릴 눈 폭)를 빼면 바이블 규칙(눈 가운데 사이의 반).",
+ "Siwoo": {"mid": 0.505, "eye_off": 0.14, "eye_v": 0.482, "eye_rx": 0.115, "eye_ry": 0.036, "mouth": [0.505, 0.243], "mouth_rx": 0.075, "mouth_ry": 0.035},
+ "Taeo": {"mid": 0.5025, "eye_off": 0.2075, "eye_v": 0.657, "eye_rx": 0.125, "eye_ry": 0.03, "mouth": [0.51, 0.49], "mouth_rx": 0.21, "mouth_ry": 0.035},
+ "SiwooDelivery": {"mid": 0.5225, "eye_off": 0.1225, "eye_v": 0.393, "eye_rx": 0.11, "eye_ry": 0.034, "mouth": [0.52, 0.14], "mouth_rx": 0.09, "mouth_ry": 0.04}
+}
