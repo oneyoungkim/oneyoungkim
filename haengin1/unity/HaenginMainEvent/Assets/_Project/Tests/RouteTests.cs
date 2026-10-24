@@ -215,14 +215,15 @@ namespace Haengin.Tests
             // (4) 목표 이름표가 길잡이 판에 가리지 않음: 목표 기둥 가까이에서(이름표가 화면 위쪽으로 올라감) 거리를 바꿔 가며
             var tag = t.Tag.GetComponent<TextMeshPro>();
             int moved = 0, views = 0;
-            foreach (float extra in new[] { 0.6f, 1.2f, 2f, 3f, 4.5f })
+            // 2026-10-24 탐색 B(FOV 53·피치 3°): 기본 피치에선 이름표가 판까지 안 올라감 → 오른스틱으로 카메라를 올려 내려다본 자세(피치 22°)도 같이 본다
+            foreach (var (extra, lookUp) in new[] { (0.6f, false), (1.2f, false), (2f, false), (3f, false), (4.5f, false), (0.6f, true), (1.2f, true), (2f, true), (3f, true) })
             {
                 float d = t.Radius + extra;   // 도착 반경 밖(안이면 다음 목표로 넘어감)
                 var flat = new Vector3(to.x, 0f, to.z).normalized;
                 var feet = t.Pos - flat * d;
                 if (Physics.Raycast(feet + Vector3.up * 3f, Vector3.down, out var hit, 8f, 1 << Layers.Ground)) feet.y = hit.point.y;
                 motor.Teleport(feet, face);
-                if (rig != null) rig.SnapBehind();
+                if (rig != null) { rig.SnapBehind(); if (lookUp && rig.Orbit != null) rig.Orbit.VerticalAxis.Value = 22f; }
                 yield return Frames(15);
                 Canvas.ForceUpdateCanvases();
                 tags.Apply(cam);
@@ -232,7 +233,7 @@ namespace Haengin.Tests
                 if (!NameTags.IsShown(tag) || !tags.TryGetRect(tag, out var rr)) { log.Add($"목표 {d}m 앞: 이름표 안 보임(가림·화면 밖)"); continue; }
                 views++;
                 if (tags.TargetShift.sqrMagnitude > 1f) moved++;
-                log.Add($"목표 {d}m 앞: 이름표 ({rr.xMin:F0}~{rr.xMax:F0}, {rr.yMin:F0}~{rr.yMax:F0}) · 판 ({plate.xMin:F0}~{plate.xMax:F0}, {plate.yMin:F0}~{plate.yMax:F0}) · 옮김 {tags.TargetShift}");
+                log.Add($"목표 {d}m 앞{(lookUp ? "(내려다봄 22°)" : "")}: 이름표 ({rr.xMin:F0}~{rr.xMax:F0}, {rr.yMin:F0}~{rr.yMax:F0}) · 판 ({plate.xMin:F0}~{plate.xMax:F0}, {plate.yMin:F0}~{plate.yMax:F0}) · 옮김 {tags.TargetShift}");
                 Assert.IsFalse(rr.Overlaps(plate), $"목표 {d}m 앞: 이름표가 길잡이 판과 겹침");
                 Assert.That(rr.yMax, Is.LessThanOrEqualTo(cam.pixelHeight + 0.5f), $"목표 {d}m 앞: 이름표 위가 화면 안");
                 Assert.That(rr.xMin, Is.GreaterThanOrEqualTo(-0.5f), $"목표 {d}m 앞: 이름표 왼쪽이 화면 안");

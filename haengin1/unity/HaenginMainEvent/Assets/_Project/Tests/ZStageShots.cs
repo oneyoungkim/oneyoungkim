@@ -157,6 +157,10 @@ namespace Haengin.Tests
             FightBot bot = null;
             float t = 0f;
             var motor = pc.Motor;
+            // 2026-10-24 탐색 카메라 B: 탐색 ↔ 전투 전환 때 카메라가 튀는지 — 프레임당 이동(m)·회전(°) 최대값을 단계 바뀐 뒤 1.5초 안에서 잰다
+            var camLog = new List<string>();
+            Vector3 lastPos = main.transform.position; Quaternion lastRot = main.transform.rotation;
+            var lastPhase = enc.State; float sincePhase = 0f; float maxMove = 0f, maxTurn = 0f, allMove = 0f;
             while (t < 240f)
             {
                 if (enc.State == Encounter.Phase.Armed)
@@ -168,14 +172,27 @@ namespace Haengin.Tests
                 if (enc.State == Encounter.Phase.Fight && bot == null) bot = FightBot.On(pc, false);
                 yield return null;
                 t += Dt; i++;
+                {
+                    float mv = Vector3.Distance(main.transform.position, lastPos), tr = Quaternion.Angle(main.transform.rotation, lastRot);
+                    lastPos = main.transform.position; lastRot = main.transform.rotation;
+                    if (enc.State != lastPhase) { camLog.Add($"{lastPhase}→{enc.State} @ {t:F1}s"); lastPhase = enc.State; sincePhase = 0f; maxMove = maxTurn = 0f; }
+                    sincePhase += Dt; allMove = Mathf.Max(allMove, mv);
+                    if (camLog.Count > 0 && sincePhase <= 1.5f)
+                    {
+                        maxMove = Mathf.Max(maxMove, mv); maxTurn = Mathf.Max(maxTurn, tr);
+                        if (mv > 0.15f || tr > 5f) camLog[camLog.Count - 1] += $" [+{sincePhase:F2}s 튐 {mv:F2}m·{tr:F1}° · 전투 옆 컷 {UnityEngine.Object.FindAnyObjectByType<CombatCamRig>()?.SideCuts}]";
+                        if (sincePhase + Dt > 1.5f) camLog[camLog.Count - 1] += $" — 1.5초 안 프레임당 최대 이동 {maxMove:F3}m · 회전 {maxTurn:F2}°";
+                    }
+                }
                 if (i % 3 == 0) { Shot(main, Path.Combine(sd, $"f_{n:0000}.png"), 960, 540, 1); n++; }
                 if (!sTaunt && enc.State == Encounter.Phase.Taunt && enc.PhaseT > 0.3) { sTaunt = true; notes.Add("시비 자막: " + Shot(main, Path.Combine(dir, "enc_taunt.png"), 1920, 1080, 2)); }
                 if (!sBanner && enc.State == Encounter.Phase.Fight && enc.PhaseT > 0.5) { sBanner = true; notes.Add("전투 시작 배너: " + Shot(main, Path.Combine(dir, "enc_banner.png"), 1920, 1080, 2)); }
                 if (!sHeat && pc.InHeatAction && pc.HeatAct.T > 1.0) { sHeat = true; notes.Add($"인카운터 기세 액션({pc.HeatAct.Kind}): " + Shot(main, Path.Combine(dir, "enc_heat.png"), 1920, 1080, 2)); }
                 if (!sFinish && enc.State == Encounter.Phase.Finish && enc.PhaseT > 0.4) { sFinish = true; notes.Add("마무리 「정리.」: " + Shot(main, Path.Combine(dir, "enc_finish.png"), 1920, 1080, 2)); }
                 if (!sResult && enc.State == Encounter.Phase.Result && enc.PhaseT > 0.6) { sResult = true; notes.Add("결과 카드: " + Shot(main, Path.Combine(dir, "enc_result.png"), 1920, 1080, 2)); }
-                if (enc.State == Encounter.Phase.Cleared && enc.PhaseT > 1.2) break;
+                if (enc.State == Encounter.Phase.Cleared && enc.PhaseT > 3.0) break;   // 탐색 카메라로 돌아오는 것까지
             }
+            notes.Add("탐색 ↔ 전투 카메라 전환(프레임당): " + string.Join(" | ", camLog) + $" | 전체 최대 이동 {allMove:F3}m");
             if (bot != null) UnityEngine.Object.Destroy(bot);
             notes.Add($"인카운터 한 판: {sd} {n}장 · {t:F1}초 · 결과 {enc.State} · 탈락 {enc.Eliminated}/3 · 시우 HP {pc.Me.Hp}/{pc.Me.MaxHp} · 봇 누름 {bot?.Presses} 막기 {bot?.GuardFrames}f 회피 {bot?.Dodges} 기세 액션 {bot?.HeatActions}");
             // 패배 화면

@@ -1187,7 +1187,9 @@ def fence_wall(zone, b, o):
         D.barbed(o.det, P, 0.05, P.W - 0.05, top, -ht)
     if r.random() < 0.45 and gap_ok(zone, P, P.W / 2, 0.2):
         D.pot_row(o, P, 0.2, P.W - 0.2, P.ground, 0.17, r, 0.55)
-    o.meta = dict(variant="giwa_cap" if giwa_cap else "coping", main=mat, barbed=barbed)
+    from . import dense
+    fn = dense.fence_clutter(zone, b, o, P, rng(b.key, "fence5"))   # 5차: 담장 가스관·계량기·주소판
+    o.meta = dict(variant="giwa_cap" if giwa_cap else "coping", main=mat, barbed=barbed, **({"clutter": fn} if any(fn.values()) else {}))
 
 
 def fence_grille(zone, b, o):

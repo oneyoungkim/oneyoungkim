@@ -28,7 +28,7 @@ namespace Haengin
             if (Rig == null) Rig = GetComponent<CamRig>();
             if (Rig == null || Rig.CamTarget == null || Rig.Motor == null) { Pull = 0f; return; }
             var t = Rig.T;
-            var tgt = Rig.CamTarget.position;
+            var tgt = Rig.TrackPoint;   // 탐색 표적(오프셋 포함) — 그 선 위에서만 당겨 구도가 그대로
             var v = state.GetCorrectedPosition() - tgt;
             float dist = v.magnitude;
             if (dist < 1e-3f) { Pull = 0f; return; }

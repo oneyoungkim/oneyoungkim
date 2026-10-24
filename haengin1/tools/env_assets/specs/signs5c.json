@@ -1,0 +1,10 @@
+{
+ "note": "5th pass: shop interiors seen through storefront glass (lit at dusk/night), no text (2026-10-25)",
+ "defaults": { "quality": "high", "resolution": "2k", "background": "opaque", "aspect": "21:9" },
+ "common": "Flat orthographic straight-on front view that fills the whole image edge to edge, as if the shop front glass were removed, no window frames, no glass reflections, no people, no readable text, no letters, no logos, no brand names. Flat cel-shaded hand-painted anime background style with clean shapes and a little texture.",
+ "items": [
+  {"name":"int_conv","out":"concept/art/env/signs5/int_conv.png","prompt":"Interior of a small Korean neighborhood convenience store at night: rows of low shelves full of colorful snack bags and instant noodle cups, a tall drinks fridge with glowing doors on the right, a small counter with a register on the left, bright cool white fluorescent ceiling light, light grey tiled floor. Only milk, juice and soft drinks in the fridge, no alcohol, no cigarettes."},
+  {"name":"int_food","out":"concept/art/env/signs5/int_food.png","prompt":"Interior of a small Korean gukbap soup restaurant at night: a few square tables with steel chairs, big steel soup pots steaming on a back counter, menu boards on the back wall shown only as plain colored rectangles, warm orange incandescent light, worn wooden wall panels, a water dispenser."},
+  {"name":"int_shop","out":"concept/art/env/signs5/int_shop.png","prompt":"Interior of a small Korean neighborhood stationery and repair shop at night: wall shelves crowded with boxes, notebooks, tools and small appliances, a glass display counter in the middle, a photocopier on the left, warm yellowish fluorescent light, cluttered but tidy."}
+ ]
+}

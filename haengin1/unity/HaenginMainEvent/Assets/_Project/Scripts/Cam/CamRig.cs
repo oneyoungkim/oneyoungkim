@@ -28,8 +28,10 @@ namespace Haengin
         public float BasisYaw => (Orbit != null ? Orbit.HorizontalAxis.Value : 0f) - (latched ? basisOffset : 0f);
         public float Yaw => Orbit != null ? Orbit.HorizontalAxis.Value : 0f;
         public float Pitch => Orbit != null ? Orbit.VerticalAxis.Value : 0f;
+        /// 따라가고 겨누는 점 = CamTarget + 탐색 오프셋(B: −0.25 → 1.15m)
+        public Vector3 TrackPoint => CamTarget != null ? CamTarget.position + Vector3.up * T.exploreTargetOffset : transform.position;
         /// 카메라 최종 위치 ↔ 따라가는 점 거리(지난 프레임)
-        public float Distance => Cam != null && CamTarget != null ? Vector3.Distance(Cam.State.GetFinalPosition(), CamTarget.position) : 99f;
+        public float Distance => Cam != null && CamTarget != null ? Vector3.Distance(Cam.State.GetFinalPosition(), TrackPoint) : 99f;
         public Vector3 CameraPosition => Cam != null ? Cam.State.GetFinalPosition() : transform.position;
         public CamClearance Clearance;
         /// 벽 간격·다리 가림 때문에 당긴 거리(CamClearance, 0 이면 안 당김)
@@ -77,7 +79,18 @@ namespace Haengin
             var lens = Cam.Lens;
             lens.FieldOfView = T.fov;
             Cam.Lens = lens;
+            ApplyTargetOffset();
             Cam.PreviousStateIsValid = false;
+        }
+
+        CinemachineRotationComposer composer;
+        /// 탐색 표적 오프셋(조정값이 실내·무대 것으로 바뀌어도 매 프레임 따라감)
+        void ApplyTargetOffset()
+        {
+            var off = new Vector3(0f, T.exploreTargetOffset, 0f);
+            if (Orbit != null && Orbit.TargetOffset != off) Orbit.TargetOffset = off;
+            if (composer == null && Cam != null) composer = Cam.GetComponent<CinemachineRotationComposer>();
+            if (composer != null && composer.TargetOffset != off) composer.TargetOffset = off;
         }
 
         void Update()
@@ -87,6 +100,7 @@ namespace Haengin
             if (dt <= 0f) return;
             var M = Motor.T;
             float run01 = Mathf.InverseLerp(M.walkSpeed, M.runSpeed, Motor.PlanarSpeed);
+            ApplyTargetOffset();
 
             // 달리기 FOV — 버튼이 아니라 실제 속도에 묶는다(벽에 막혀 못 뛰면 안 바뀜)
             var lens = Cam.Lens;

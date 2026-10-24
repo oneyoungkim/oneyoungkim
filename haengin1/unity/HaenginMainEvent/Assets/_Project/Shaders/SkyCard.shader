@@ -82,6 +82,7 @@ Shader "Haengin/SkyCard"
                 float3 dir = normalize(i.dir);
                 float el = asin(clamp(dir.y, -1.0, 1.0));                  // 고도(라디안)
                 float az = atan2(dir.x, dir.z);
+                float azc = az + _Time.y * 0.0025;   // 5차: 구름만 천천히 흐름(산·도시 카드는 그대로)
                 float elD = degrees(el);
                 // 하늘 그라데이션: 지평선 띠 → 하늘 → 천정, 붓 띠 7단
                 float t = saturate(elD / 55.0);
@@ -97,19 +98,19 @@ Shader "Haengin/SkyCard"
                 float cover = _Cover;
                 // 층운: 가로로 길게 끌린 붓질(2~14°)
                 float bandS = smoothstep(1.5, 3.5, elD) * (1.0 - smoothstep(9.0, 15.0, elD));
-                float2 ps = float2(0, elD * 0.55) + Circ(az, 3.2);
-                float ns = Fbm(float2(ps.x * 1.0 + ps.y * 0.15, ps.y * 1.0) * float2(1.0, 1.0) + Circ(az, 1.1));
-                float streak = Noise(float2(az * 140.0, elD * 3.2));                          // 마른 붓 결(가로 줄)
+                float2 ps = float2(0, elD * 0.55) + Circ(azc, 3.2);
+                float ns = Fbm(float2(ps.x * 1.0 + ps.y * 0.15, ps.y * 1.0) * float2(1.0, 1.0) + Circ(azc, 1.1));
+                float streak = Noise(float2(azc * 140.0, elD * 3.2));                          // 마른 붓 결(가로 줄)
                 float ms = smoothstep(0.62 - cover * 0.16, 0.66 - cover * 0.16, ns + (streak - 0.5) * 0.10) * bandS;
                 // 적운: 뭉게 덩어리(6~30°), 아랫면은 평평하게 잘림
                 float bandC = smoothstep(5.0, 9.0, elD) * (1.0 - smoothstep(24.0, 32.0, elD));
-                float2 pc = Circ(az, 2.4) + float2(0, elD * 0.16);
+                float2 pc = Circ(azc, 2.4) + float2(0, elD * 0.16);
                 float nc = Fbm(pc * 1.6 + float2(4.2, 1.3));
-                float base = smoothstep(0.0, 4.0, elD - 7.0 - Noise(Circ(az, 5.0)) * 6.0);   // 아랫면
+                float base = smoothstep(0.0, 4.0, elD - 7.0 - Noise(Circ(azc, 5.0)) * 6.0);   // 아랫면
                 float mc = smoothstep(0.60 - cover * 0.14, 0.63 - cover * 0.14, nc * (0.55 + 0.45 * base) + 0.08 * base) * bandC;
                 float m = saturate(max(ms, mc));
                 // 2톤: 같은 잡음을 조금 아래(고도 −)에서 다시 재서 위가 더 진하면 = 아랫면 → 그늘
-                float ncL = Fbm((Circ(az, 2.4) + float2(0, (elD - 1.6) * 0.16)) * 1.6 + float2(4.2, 1.3));
+                float ncL = Fbm((Circ(azc, 2.4) + float2(0, (elD - 1.6) * 0.16)) * 1.6 + float2(4.2, 1.3));
                 float shadeC = step(ncL + 0.015, nc) * mc;
                 float shadeS = ms * (1.0 - smoothstep(0.66 - cover * 0.16, 0.74 - cover * 0.16, ns)) * 0.7;   // 층운은 얇은 가장자리가 그늘색
                 float shade = saturate(max(shadeC, shadeS));

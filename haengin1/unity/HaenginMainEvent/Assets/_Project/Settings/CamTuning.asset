@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52f426a239a3a594f943e5491109e0f6, type: 3}
   m_Name: CamTuning
   m_EditorClassIdentifier: Haengin.Game::Haengin.CamTuning
-  fov: 45
-  fovRun: 49
+  fov: 53
+  fovRun: 57
   fovUpTime: 0.6
   fovDownTime: 0.4
   near: 0.08
   far: 600
-  radius: 4
-  radiusRun: 4.3
+  radius: 5.5
+  radiusRun: 5.9
   targetHeight: 1.4
-  pitchDefault: 8
+  exploreTargetOffset: -0.25
+  pitchDefault: 3
   pitchMin: -10
   pitchMax: 50
   screen: {x: -0.06, y: 0}

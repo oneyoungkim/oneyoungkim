@@ -392,7 +392,7 @@ namespace Haengin.Tests
             var r = Lab.Rig(new Vector3(0f, 0f, -35f), 0f);
             var m = r.Motor;
             yield return Lab.Seconds(1f);
-            var vp = r.Main.WorldToViewportPoint(r.CamTarget.position);
+            var vp = r.Main.WorldToViewportPoint(r.CamRig.TrackPoint);   // 2026-10-24 탐색 B: 겨누는 점 = CamTarget − 0.25(1.15m)
             var feet = r.Main.WorldToViewportPoint(m.Position);
             var head = r.Main.WorldToViewportPoint(m.Position + Vector3.up * m.T.height);
             yield return Lab.Hold(m, Vector3.forward, 2f, true);
@@ -404,8 +404,10 @@ namespace Haengin.Tests
             Debug.Log($"[M1Test] T12 구도 뷰포트 ({vp.x:F3}, {vp.y:F3}) · 발 {feet.y:F3} 정수리 {head.y:F3} → 인물 {(head.y - feet.y) * 100f:F0}% · 거리 {r.CamRig.Distance:F2}m · FOV 달리기 2초 {fovRun:F2} 멈춘 뒤 1초 {fovStop:F2}");
             Assert.That(vp.x, Is.EqualTo(0.44f).Within(0.01f), "인물 가로 위치(중앙에서 6% 왼쪽)");
             Assert.That(vp.y, Is.EqualTo(0.50f).Within(0.01f), "인물 세로 위치");
-            Assert.That(fovRun, Is.EqualTo(49f).Within(0.3f), "달리기 FOV 49 ± 0.3");
-            Assert.That(fovStop, Is.EqualTo(45f).Within(0.3f), "정지 FOV 45 ± 0.3");
+            Assert.That(fovRun, Is.EqualTo(57f).Within(0.3f), "달리기 FOV 57 ± 0.3(탐색 B)");
+            Assert.That(fovStop, Is.EqualTo(53f).Within(0.3f), "정지 FOV 53 ± 0.3(탐색 B)");
+            Assert.That(head.y - feet.y, Is.EqualTo(0.32f).Within(0.04f), "인물 화면 높이 32 ± 4%(탐색 B)");
+            Assert.That(feet.y, Is.EqualTo(0.29f).Within(0.04f), "발 위치 29 ± 4%(탐색 B)");
         }
 
         [UnityTest]

@@ -276,7 +276,7 @@ namespace Haengin.Tests
             return NavMesh.AddNavMeshData(data);
         }
 
-        // ───────────────────────── T21 시작 구도 (07 4-3: 인물 화면 높이 약 50%, 발 아래 여백 10%) + 달리기 구도
+        // ───────────────────────── T21 시작 구도 (07 4-3, 2026-10-24 탐색 B: 거리 5.5 · 인물 화면 높이 약 32% · 발 위치 약 29%) + 달리기 구도
         [UnityTest, Timeout(900000)]
         public IEnumerator T21_Start_Framing()
         {
@@ -299,12 +299,12 @@ namespace Haengin.Tests
             Debug.Log($"[M1Test] T21 시작 구도: 시우 ({p.x:F1},{p.z:F1}) · 카메라 거리 {dist:F2}m · 당김 {pull:F2}m · 발 {feet * 100f:F0}% · 정수리 {head * 100f:F0}% → 인물 {(head - feet) * 100f:F0}% · 가로 {vx:F2} | " +
                       $"달리기 3초: 거리 {rDist:F2}m · 당김 {rPull:F2}m · FOV {rFov:F1} · 발 {rFeet * 100f:F0}% · 정수리 {rHead * 100f:F0}% → 인물 {(rHead - rFeet) * 100f:F0}% · 카메라-인물 방향 차 {rGap:F1}°");
             Assert.That(pull, Is.LessThanOrEqualTo(0.05f), "시작: 벽·펜스 때문에 카메라를 당기지 않음");
-            Assert.That(dist, Is.EqualTo(4.0f).Within(0.1f), "시작: 카메라 거리 4.0m");
-            Assert.That(head - feet, Is.EqualTo(0.50f).Within(0.04f), "시작: 인물 화면 높이 약 50%");
-            Assert.That(feet, Is.EqualTo(0.10f).Within(0.03f), "시작: 발 아래 여백 약 10%");
+            Assert.That(dist, Is.InRange(5.1f, 5.6f), "시작: 카메라 거리 약 5.5m(탐색 B — 등 뒤 펜스 때문에 Deoccluder 가 0.2m 쯤 당김)");
+            Assert.That(head - feet, Is.EqualTo(0.32f).Within(0.04f), "시작: 인물 화면 높이 약 32%(탐색 B)");
+            Assert.That(feet, Is.EqualTo(0.29f).Within(0.04f), "시작: 발 위치 약 29%(탐색 B)");
             Assert.That(rPull, Is.LessThanOrEqualTo(0.05f), "달리기: 카메라를 당기지 않음");
             Assert.That(rGap, Is.LessThanOrEqualTo(15f), "달리기: 자동 정렬로 등 뒤");
-            Assert.That(rHead - rFeet, Is.InRange(0.38f, 0.48f), "달리기: 인물 화면 높이 약 43%");
+            Assert.That(rHead - rFeet, Is.InRange(0.24f, 0.32f), "달리기: 인물 화면 높이 약 28%(탐색 B — FOV 57·5.9m)");
         }
 
         /// 지금 화면에서 시우 발·정수리 뷰포트 높이, 가로 위치(카메라 최종 자세 기준)

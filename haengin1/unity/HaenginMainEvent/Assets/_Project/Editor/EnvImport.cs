@@ -48,6 +48,7 @@ namespace Haengin.EditorTools
             string name = System.IO.Path.GetFileNameWithoutExtension(assetPath);
             bool tex = assetPath.StartsWith(Root + "/Textures/") || assetPath.StartsWith(Root + "/Props/Tex/") || assetPath.StartsWith(Root + "/Gym/Textures/") || assetPath.StartsWith(Root + "/Gym/Props/Tex/");
             bool sky = assetPath.StartsWith(Root + "/Sky/");
+            bool signs5 = assetPath.StartsWith(Root + "/Signs5/");   // 5차: 간판 면(힉스필드 그림, 알파 컷아웃) · 현수막 · 표면 데칼 · 벽화
             imp.textureType = TextureImporterType.Default;
             imp.mipmapEnabled = true;
             imp.filterMode = FilterMode.Trilinear;
@@ -55,6 +56,15 @@ namespace Haengin.EditorTools
             imp.maxTextureSize = 2048;
             imp.textureCompression = TextureImporterCompression.CompressedHQ;
             imp.isReadable = false;
+            if (signs5)
+            {
+                imp.sRGBTexture = true;
+                imp.wrapMode = name.StartsWith("Face_led") || name.StartsWith("Face_cyl") ? TextureWrapMode.Repeat : TextureWrapMode.Clamp;
+                imp.alphaIsTransparency = true;
+                imp.alphaSource = TextureImporterAlphaSource.FromInput;
+                imp.mipMapsPreserveCoverage = true; imp.alphaTestReferenceValue = 0.5f;
+                return;
+            }
             if (tex)
             {
                 bool clump = name.StartsWith("Clump_");   // 4차: 카드 전용 수관의 잎 덩어리 2×2 아틀라스

@@ -268,6 +268,8 @@ namespace Haengin.EditorGame
                 n++;
                 report.Add($"{name} {size:F2}m LOD{lods.Count} ({string.Join("/", lods.Select(l => l.screenRelativeTransitionHeight.ToString("F3")))}){(cards > 0 ? " 잎카드 " + cards : "")}");
             }
+            // 5차: GLB 없는 카드 나무(감나무 — f04) — 크기는 직접
+            if (CardTreeReady("persimmon_tree")) { var ct = BuildCardTree("persimmon_tree", 6.0f, 5.4f); report.Add(ct); Notes.Add(ct); n++; }
             Notes.Add($"소품 프리팹 {n}개: {string.Join(" · ", report.Take(6))} …");
         }
 
@@ -442,7 +444,7 @@ namespace Haengin.EditorGame
             Set(DayPart.Dawn, a =>
             {
                 a.SunPitch = 10f; a.SunYaw = 70f; a.SunColor = H("#C9D3E0"); a.SunIntensity = 0.75f; a.ShadowStrength = 0.3f;     // D07: 걷는 면 L* ≥ 28(그늘진 시우네 앞 포함 — docs/10 9장 값(.35)보다 밝음)
-                a.AmbientSky = new Color(0.85f, 0.89f, 0.96f); a.AmbientEquator = new Color(0.76f, 0.79f, 0.87f); a.AmbientGround = new Color(0.57f, 0.58f, 0.63f);
+                a.AmbientSky = new Color(0.87f, 0.91f, 1.0f); a.AmbientEquator = new Color(0.78f, 0.82f, 0.92f); a.AmbientGround = new Color(0.60f, 0.61f, 0.68f);   // 2026-10-24 탐색 B: 골목 바닥이 화면에 더 많이 들어와 명륜3가 27.2 → 주변광 조금 ↑(푸른 기 유지)
                 a.Sky = H("#CBD1D6"); a.Fog = H("#A9B0B9"); a.FogStart = 40f; a.FogEnd = 300f;
                 a.SplitShadows = new Color(0.25f, 0.40f, 0.45f); a.SplitHighlights = H("#D8C9B8"); a.SplitBalance = -10f;
                 a.StreetLamps = a.SecurityLamps = a.Vending = a.ConvAwning = a.GukbapWindow = true; a.ShopSigns = false; a.LampIntensity = 7f; a.Windows = 0.15f;
@@ -504,6 +506,8 @@ namespace Haengin.EditorGame
             var lights = zoneRoot.Find("Lights");
             if (lights == null) { lights = new GameObject("Lights").transform; lights.SetParent(zoneRoot, false); }
             var atlas = SignRects();
+            socks5.Clear(); faces5 = null; signs5 = 0; signMeshRoot = null; signMeshes = null;   // 5차
+            var winLitMat = WindowLitMat();
             int buildings = 0, lodGroups = 0, props = 0, missingProps = 0, winlit = 0, panes = 0, signs = 0, socks = 0, renderers = 0;
             var propPrefabs = new Dictionary<string, GameObject>();
             GameObject Prefab(string prop)
@@ -541,6 +545,7 @@ namespace Haengin.EditorGame
                     }
                     if (t.name.StartsWith("Sock_"))
                     {
+                        if (Sock5Kinds.Contains(S(inf, "sock_kind") ?? "")) { socks5.Add((t, inf)); continue; }   // 5차: 간판·데칼·천 자리
                         AddSocketLight(t, inf, lights); socks++;
                         continue;
                     }
@@ -549,13 +554,14 @@ namespace Haengin.EditorGame
                         var r = t.GetComponent<Renderer>();
                         var s = t.gameObject.AddComponent<LightSpot>();
                         s.Kind = LightKind.Window; s.Threshold = F(G(inf, "threshold"), 0.5f); s.Weight = Mathf.Max(1, (int)F(G(inf, "panes"), 1)); s.KeepColor = true;
-                        if (r != null) { r.enabled = false; r.shadowCastingMode = ShadowCastingMode.Off; r.receiveShadows = false; }
+                        if (r != null) { r.enabled = false; r.shadowCastingMode = ShadowCastingMode.Off; r.receiveShadows = false; if (winLitMat != null) r.sharedMaterial = winLitMat; }
                         winlit++; panes += s.Weight;
                         continue;
                     }
                     if (t.name.StartsWith("Sign_"))
                     {
-                        MakeSign(t, inf, atlas); signs++;
+                        if (!MakeSign5(t, inf)) MakeSign(t, inf, atlas);   // 5차: 몸체 + 디자인된 면(그림 없으면 예전 TMP)
+                        signs++;
                         continue;
                     }
                     // 건물·담·성곽·전봇대: LOD 묶음
@@ -605,6 +611,9 @@ namespace Haengin.EditorGame
             string decor = Decor(d, zoneRoot, env, objs, Prefab);
             string veg = Vegetation(d, zoneRoot, env, objs, Prefab);
             int piloti = PilotiColliders(zoneRoot, objs);
+            // 5차: 간판 규칙 배치 · 거리 데코 · 표면 디테일 · 움직임
+            string s5 = Signs5Rules(d, zoneRoot, env, objs, Prefab), st5 = Street5(d, zoneRoot, env, objs, Prefab), sf5 = Surface5(d, zoneRoot, env, objs), mo5 = Motion5(d, zoneRoot, env, Prefab);
+            Notes.Add(s5); Notes.Add(st5); Notes.Add(sf5); Notes.Add(mo5);
             // 가로등·보안등 빛 반지름(빛 웅덩이 지름 6~8m)
             foreach (var s in zoneRoot.GetComponentsInChildren<LightSpot>(true))
             {
@@ -996,6 +1005,7 @@ namespace Haengin.EditorGame
                 foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)) c.gameObject.SetActive(false);
                 var unpose = BatchTools.PoseAnimators(1.0f);
                 var spots = PreviewSpots(d);
+                bool camB = Arg("-camA") == null;
                 var only = (Arg("-only") ?? "").Split(',').Where(x => x.Length > 0).ToHashSet();
                 var list = new List<(string file, int spot, DayPart part)>();
                 var frameParts = new Dictionary<int, DayPart> { [1] = DayPart.Day, [2] = DayPart.Dusk, [3] = DayPart.Dawn, [4] = DayPart.Dawn, [5] = DayPart.Day, [6] = DayPart.Day, [7] = DayPart.Day, [8] = DayPart.Day };
@@ -1007,14 +1017,17 @@ namespace Haengin.EditorGame
                 {
                     if (only.Count > 0 && !only.Contains(sp.ToString())) continue;
                     var (name, feet, yaw, pitch, dist, fov) = spots[sp - 1];
+                    float th = 1.40f;
+                    if (camB) { pitch = 3f; dist = 5.5f; fov = 53f; th = 1.15f; }   // 5차: 탐색 카메라 B(2026-10-24 대표 확정)로 비교
                     if (player != null) player.transform.SetPositionAndRotation(feet, Quaternion.Euler(0f, yaw, 0f));
                     var r = Quaternion.Euler(pitch, yaw, 0f);
-                    var tgt = feet + Vector3.up * 1.40f;
+                    var tgt = feet + Vector3.up * th;
                     var back = -(r * Vector3.forward);
                     Physics.SyncTransforms();
                     float dd = dist;
                     if (Physics.SphereCast(tgt, 0.1f, back, out var hit, dist, (1 << Layers.Ground) | (1 << Layers.Wall), QueryTriggerInteraction.Ignore)) dd = Mathf.Max(0.6f, hit.distance - 0.05f);
                     cam.transform.SetPositionAndRotation(tgt + back * dd, r);
+                    if (camB) cam.transform.position += (r * Vector3.right) * (Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) * dd * 0.06f * 16f / 9f);
                     cam.fieldOfView = fov; cam.nearClipPlane = 0.08f; cam.farClipPlane = 900f;
                     day.Apply(part, true);
                     if (sky != null) { sky.Follow(cam); sky.Apply(part); }

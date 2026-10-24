@@ -202,7 +202,7 @@ namespace Haengin
 
             // 에디터에서 보기 좋게 처음 자리(실행하면 Cinemachine 이 다시 계산)
             var rot = Quaternion.Euler(ct.pitchDefault, yawDeg, 0f);
-            go.transform.SetPositionAndRotation(r.CamTarget.position + rot * new Vector3(0f, 0f, -ct.radius), rot);
+            go.transform.SetPositionAndRotation(r.CamTarget.position + Vector3.up * ct.exploreTargetOffset + rot * new Vector3(0f, 0f, -ct.radius), rot);
             r.Main.transform.SetPositionAndRotation(go.transform.position, go.transform.rotation);
 
             r.Hud = r.Main.GetComponent<DebugHud>();

@@ -61,6 +61,7 @@ namespace Haengin
             indoor.name = "CamTuning(실내)";
             indoor.radius = 2.8f; indoor.radiusRun = 3.0f;
             indoor.fov = 50f; indoor.fovRun = 52f;
+            indoor.pitchDefault = 8f; indoor.exploreTargetOffset = 0f;   // 2026-10-24: 탐색 B(피치 3°·표적 1.15)는 야외만 — 실내는 예전 값 그대로
             return indoor;
         }
 

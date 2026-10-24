@@ -22,6 +22,7 @@ namespace Haengin.EditorGame
         sealed class TreeSpec
         {
             public string Clump; public Color Bark; public float Base, Center, Rv; public int Clumps; public bool Pads, Bush; public float Wind = 0.07f; public Color Tint = Color.white;
+            public int Fruits; public Color Fruit;   // 5차: 감나무 열매
         }
         static Color C(string h) { ColorUtility.TryParseHtmlString(h, out var c); return c; }
         static readonly Dictionary<string, TreeSpec> CardTrees = new Dictionary<string, TreeSpec>
@@ -30,6 +31,7 @@ namespace Haengin.EditorGame
             ["plane_tree"] = new TreeSpec { Clump = "broad", Bark = C("#9A947F"), Base = 0.34f, Center = 0.65f, Rv = 0.30f, Clumps = 15 },
             ["cherry_tree"] = new TreeSpec { Clump = "cherry", Bark = C("#4D3933"), Base = 0.26f, Center = 0.60f, Rv = 0.30f, Clumps = 14 },
             ["pine_tree"] = new TreeSpec { Clump = "pine", Bark = C("#7A4B36"), Base = 0.50f, Center = 0.75f, Rv = 0.25f, Clumps = 6, Pads = true, Wind = 0.06f },
+            ["persimmon_tree"] = new TreeSpec { Clump = "broad", Bark = C("#56443A"), Base = 0.32f, Center = 0.62f, Rv = 0.3f, Clumps = 13, Tint = new Color(0.86f, 0.92f, 0.80f), Fruits = 54, Fruit = C("#E8822E") },   // 5차: f04 감나무
             ["shrub_bush"] = new TreeSpec { Clump = "broad", Bark = C("#4E4434"), Clumps = 6, Bush = true, Wind = 0.03f, Tint = new Color(0.74f, 0.83f, 0.72f) },
         };
         public static bool CardTreeReady(string tree) => CardTrees.TryGetValue(tree, out var sp) && File.Exists($"{TexDir}/Clump_{sp.Clump}.png");
@@ -115,7 +117,7 @@ namespace Haengin.EditorGame
             float R = W * 0.46f, Rv = sp.Rv * H;
             var bark0 = new MB4(); var bark1 = new MB4(); var cards0 = new MB4(); var cards1 = new MB4();
             float r0 = Mathf.Clamp(H * 0.026f, 0.11f, 0.3f);
-            var lean = new Vector3(Rf(rng, -1f, 1f), 0f, Rf(rng, -1f, 1f)).normalized * H * (sp.Pads ? 0.07f : 0.025f);
+            var lean = new Vector3(Rf(rng, -1f, 1f), 0f, Rf(rng, -1f, 1f)).normalized * H * (sp.Pads ? 0.16f : 0.025f);   // 5차: 소나무는 더 기울게(프레임 수형)
             // 줄기(소나무는 굽은 줄기)
             var trunk = new List<Vector3>(); var tr = new List<float>();
             int segs = 6;
@@ -124,7 +126,7 @@ namespace Haengin.EditorGame
             {
                 float t = i / (float)segs;
                 var p = new Vector3(0f, trunkTop * t, 0f) + lean * t * t;
-                if (sp.Pads) p += new Vector3(Mathf.Sin(t * 5.1f + 0.7f), 0f, Mathf.Cos(t * 4.3f)) * H * 0.035f * t;
+                if (sp.Pads) p += new Vector3(Mathf.Sin(t * 5.1f + 0.7f), 0f, Mathf.Cos(t * 4.3f)) * H * 0.07f * t;   // 5차: 굽이 2배
                 trunk.Add(p); tr.Add(Mathf.Lerp(r0 * 1.15f, r0 * 0.35f, t));
             }
             if (!sp.Bush) { bark0.Tube(trunk, tr, 8); bark1.Tube(new[] { trunk[0], trunk[3], trunk[6] }, new[] { tr[0], tr[3], tr[6] }, 5); }
@@ -240,6 +242,32 @@ namespace Haengin.EditorGame
                     clumps++;
                 }
             }
+            // 감나무 열매: 수관 겉면에 작은 공(6×4 UV 구, 48 삼각형) — 따로 재질(주황 평면색)
+            var fruit = new MB4();
+            if (sp.Fruits > 0 && !sp.Pads && !sp.Bush)
+            {
+                var Cc = new Vector3(lean.x, H * sp.Center, lean.z);
+                for (int k = 0; k < sp.Fruits; k++)
+                {
+                    var dir = Rnd(rng); dir.y = Mathf.Abs(dir.y) * 0.6f - 0.15f; dir.Normalize();
+                    var fc = Cc + Vector3.Scale(dir, new Vector3(R, Rv, R)) * Rf(rng, 0.85f, 1.02f);
+                    float fr = Rf(rng, 0.07f, 0.1f);
+                    int b0 = fruit.V.Count;
+                    for (int i = 0; i <= 4; i++)
+                        for (int j = 0; j <= 6; j++)
+                        {
+                            float th = Mathf.PI * i / 4f, ph = Mathf.PI * 2f * j / 6f;
+                            var nn = new Vector3(Mathf.Sin(th) * Mathf.Cos(ph), Mathf.Cos(th), Mathf.Sin(th) * Mathf.Sin(ph));
+                            fruit.V.Add(fc + nn * fr); fruit.N.Add(nn); fruit.UV.Add(new Vector2(j / 6f, i / 4f));
+                        }
+                    for (int i = 0; i < 4; i++)
+                        for (int j = 0; j < 6; j++)
+                        {
+                            int a = b0 + i * 7 + j, bb = a + 7;
+                            fruit.T.AddRange(new[] { a, a + 1, bb, a + 1, bb + 1, bb });
+                        }
+                }
+            }
             // 에셋·재질
             string mdir = PropDir + "/CardTrees"; EnsureFolder(mdir);
             var mB0 = bark0.Save($"{mdir}/{tree}_bark0.asset"); var mB1 = bark1.Save($"{mdir}/{tree}_bark1.asset");
@@ -269,6 +297,7 @@ namespace Haengin.EditorGame
                 return r;
             }
             var l0 = sp.Bush ? new[] { Part("LOD0 수관", mC0, cm, true) } : new[] { Part("LOD0 줄기", mB0, barkMat, true), Part("LOD0 수관", mC0, cm, true) };
+            if (fruit.V.Count > 0) l0 = l0.Concat(new[] { Part("LOD0 열매", fruit.Save($"{mdir}/{tree}_fruit0.asset"), Flat("M_Fruit_Persimmon", sp.Fruit), false) }).ToArray();
             var l1 = sp.Bush ? new[] { Part("LOD1 수관", mC1, cm, false) } : new[] { Part("LOD1 줄기", mB1, barkMat, false), Part("LOD1 수관", mC1, cm, false) };
             float size = Mathf.Max(H, W);
             float Hs(float dist) => Mathf.Clamp(size / (dist * 0.8284f), 0.002f, 0.95f);

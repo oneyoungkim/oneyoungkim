@@ -18,6 +18,7 @@ namespace Haengin
         public static DayLight Instance { get; private set; }
         /// 편집 모드 촬영(EnvSetup.Shots)에서도 필름 볼륨 스플릿 톤을 바꿀 때 켬(에셋은 그대로 — 복제본)
         public static bool EditModeFilm;
+        static readonly int IdSignsOn = Shader.PropertyToID("_HaenginSignsOn"), IdNight = Shader.PropertyToID("_HaenginNight");
         public LightingPreset Current { get; private set; }
         public DayPart Part => Current != null ? Current.Part : DayPart.Day;
         public int Applied { get; private set; }
@@ -132,6 +133,9 @@ namespace Haengin
             // 원경 카드·구름·달(docs/10 8장) — 하늘색과 같은 팔레트
             var sky = SkyCards.Instance ?? FindFirstObjectByType<SkyCards>();
             if (sky != null) sky.Apply(part, p.Sky, p.Zenith);
+            // 5차(2026-10-25): 간판 면 조명 상자·빛 번짐(노을·밤) · 밤 전용 효과(날벌레·창 커튼 그림자) — 셰이더 전역 값
+            Shader.SetGlobalFloat(IdSignsOn, p.ShopSigns ? 1f : 0f);
+            Shader.SetGlobalFloat(IdNight, part == DayPart.Night ? 1f : 0f);
             Debug.Log($"[M3] 조명: {p.name} ({part}) · {(instant ? "바로" : BlendSecs + "초")} · 켠 빛 {CountLit()}");
         }
 

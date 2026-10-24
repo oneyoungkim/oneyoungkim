@@ -97,16 +97,19 @@ def _put(o, name, P, u, y, gap=0.0):
     D.add_prop(o, name, P.p(u, y, gap + d / 2), P.out, note="dense")
 
 
-def _fabric(det, P, a, b, y, n, r, w=0.14):
-    """방범창·발코니 앞 빨랫줄 + 빨래 n 장(얇은 판)."""
+def _fabric(det, P, a, b, y, n, r, w=0.14, o=None):
+    """방범창·발코니 앞 빨랫줄(키트) + 빨래 n 장. 5차: 빨래는 '천 자리'(cloth 소켓)로 넘겨 Unity 가 ToonCloth(바람에 흔들림)로 만든다."""
     A, B = P.p(a, y, w), P.p(b, y, w)
     pipe(det, [A, B], 0.012, "M_Wire_Black", n=4)
     for k in range(n):
         t = (k + 0.5 + (r.random() - 0.5) * 0.4) / n
         u = a + (b - a) * t
         hw, hh = r.uniform(0.13, 0.24), r.uniform(0.2, 0.36)
-        c = P.p(u, y - hh - 0.02, w + 0.01 * (k % 2))
-        obox(det, c, P.t3, UP, P.n3, hw, hh, 0.006, r.choice(FABRICS))
+        fab = r.choice(FABRICS)
+        if o is not None:
+            o.sockets.append(dict(kind="cloth", pos=P.p(u, y - 0.01, w + 0.01 * (k % 2)), n=P.out, size=(round(hw * 2, 3), round(hh * 2, 3)), tenant=fab))
+        else:
+            obox(det, P.p(u, y - hh - 0.02, w + 0.01 * (k % 2)), P.t3, UP, P.n3, hw, hh, 0.006, fab)
 
 
 def densify(zone, b, o):
@@ -122,11 +125,35 @@ def densify(zone, b, o):
     fys = [y0 + FLOOR * k for k in range(fl)]
     n = dict(gas=0, branch=0, ac=0, flue=0, laundry=0, bars=0, pots=0, meters=0, anchors=0)
     gas_panels = getattr(o, "gas_panels", set())
+    # 5차: 혜화 MMA 1층 계단 출입구(대학로 = 동쪽) — 명륜1가 방면 상가주택의 동쪽 옆면에 문 자리를 먼저 비워 둔다(Unity 가 문틀·간판)
+    gym_pid = None
+    if "명륜1가 방면" in (b.name or ""):
+        side = [(P.n[0], pid) for pid, (P, ops) in plog.items() if P.role in ("street", "back") and P.W > 3.0]
+        if side:
+            gym_pid = max(side)[1]
     for pid, (P, ops) in sorted(plog.items(), key=lambda kv: (kv[1][0].face, kv[1][0].W)):
         role = P.role
+        if role == "yard":
+            gate_clutter(zone, b, o, P, ops, r, n)
+            continue
         if role not in ("front", "street", "back") or P.W < 2.0:
             continue
         occ = occupancy(o, P, ops, meta)
+        if pid == gym_pid:
+            best = None
+            u = 1.1
+            while u < P.W - 1.1:
+                g = P.ground(u)
+                if occ.free(u - 0.85, u + 0.85, g - 0.1, g + 3.1) and abs(P.ground(u - 0.6) - P.ground(u + 0.6)) < 0.3:
+                    sc = abs(u - 1.6)
+                    if best is None or sc < best[0]:
+                        best = (sc, u)
+                u += 0.1
+            if best:
+                u = best[1]; g = P.ground(u)
+                o.sockets.append(dict(kind="gym_door", pos=P.p(u, g, 0.0), n=P.out, size=(1.1, 2.25), tenant="혜화 MMA"))
+                occ.add(u - 1.3, u + 1.3, g - 0.2, g + 4.9)
+                n["gym_door"] = 1
         wins = [op for op in ops if op.kind in ("win", "small", "stair", "balc")]
         doors = [op for op in ops if op.kind in ("door", "gate") and op.y0 < P.ground((op.u0 + op.u1) / 2) + 0.6]
         p_vis = {"front": 1.0, "street": 0.9, "back": 0.6}[role]
@@ -237,7 +264,7 @@ def densify(zone, b, o):
             k = int((w.y0 - y0 + 0.3) // FLOOR)
             if w.kind == "balc":
                 if r.random() < 0.45:
-                    _fabric(o.det, P, w.u0 + 0.1, w.u1 - 0.1, w.y1 - 0.25, r.randint(3, 5), r, w=0.45)   # 발코니 안쪽 빨랫줄
+                    _fabric(o.det, P, w.u0 + 0.1, w.u1 - 0.1, w.y1 - 0.25, r.randint(3, 5), r, w=0.45, o=o)   # 발코니 안쪽 빨랫줄
                     n["laundry"] += 1
                 continue
             if w.kind not in ("win",):
@@ -266,7 +293,7 @@ def densify(zone, b, o):
                 w.bars = True
                 n["bars"] += 1
             if w.bars and r.random() < 0.18 and w.u1 - w.u0 > 0.9:
-                _fabric(o.det, P, w.u0 + 0.02, w.u1 - 0.02, w.y1 - 0.12, r.randint(2, 4), r)
+                _fabric(o.det, P, w.u0 + 0.02, w.u1 - 0.02, w.y1 - 0.12, r.randint(2, 4), r, o=o)
                 n["laundry"] += 1
 
         # ---- 3) 1층: 땅 위 실외기(옆·뒷면) · 출입구 둘레 화분 · 문 옆 계량기 · 벽 밑 화분 줄
@@ -342,6 +369,22 @@ def densify(zone, b, o):
                     n["meters"] += 1
                     break
 
+        # ---- 3c) 5차: 창 아래 빗물·녹물 자국 자리(Unity 데칼) · 상가 위층 창 시트지 자리(Unity TMP 글자)
+        shopish = b.btype == "shop" or meta.get("variant") == "shop"
+        for w in wins:
+            if w.kind not in ("win", "small"):
+                continue
+            uc = (w.u0 + w.u1) / 2
+            if r.random() < 0.45:
+                o.sockets.append(dict(kind="streak", pos=P.p(uc, w.y0 - 0.07, 0.012), n=P.out, size=(round(w.u1 - w.u0, 3), round(min(1.6, w.y0 - P.ground(uc) - 0.3), 3)),
+                                      tenant="rust" if (w.bars or r.random() < 0.35) else "rain"))
+                n["streaks"] = n.get("streaks", 0) + 1
+            if shopish and role in ("front", "street") and w.kind == "win" and w.y0 > y0 + FLOOR - 0.2 and w.u1 - w.u0 > 0.95 and r.random() < 0.6:
+                k = int((w.y0 - y0 + 0.3) // FLOOR) + 1
+                o.sockets.append(dict(kind="win_sheet", pos=P.p(uc, (w.y0 + w.y1) / 2, -w.depth + 0.02), n=P.out,
+                                      size=(round(w.u1 - w.u0 - 0.06, 3), round(w.y1 - w.y0 - 0.06, 3)), tenant="%dF" % k))
+                n["sheets"] = n.get("sheets", 0) + 1
+
         # ---- 4) 인입선 받는 자리(반대쪽 끝)
         if role in ("front", "street") and P.W > 3.0:
             have = [uw(P, s["pos"])[0] for s in o.sockets if s["kind"] == "wire_anchor" and abs(uw(P, s["pos"])[1]) < 0.3]
@@ -352,4 +395,71 @@ def densify(zone, b, o):
                     n["anchors"] += 1
                     break
     o.dense = n
+    return n
+
+
+# ---------------------------------------------------------------- 5차: 대문 둘레(마당 담) · 담장
+def _addr(o, P, u, y, tenant="addr"):
+    """도로명 주소판 자리(Unity 가 파란 판 + 흰 글자) + 초인종(작은 상자, 키트)."""
+    o.sockets.append(dict(kind="addr_plate", pos=P.p(u, y, 0.02), n=P.out, size=(0.36, 0.16), tenant=tenant))
+    pbox(o.det, P, u - 0.045, u + 0.045, y - 0.42, y - 0.30, 0.0, 0.035, "M_AC_White", skip=("-z",))
+    pbox(o.det, P, u - 0.015, u + 0.015, y - 0.38, y - 0.34, 0.035, 0.045, "M_Metal_Grey", skip=("-z",))
+
+
+def gate_clutter(zone, b, o, P, ops, r, n):
+    """마당 담(대문 있는 면): 대문 옆 주소판·초인종·우편함·전기 계량기, 담 위쪽 따라 가스관(대문 기둥 쪽으로 꺾여 들어감)."""
+    gates = [op for op in ops if op.kind in ("gate", "door")]
+    if not gates:
+        return
+    g = gates[0]
+    occ = occupancy(o, P, ops, getattr(o, "meta", {}) or {})
+    for ua in (g.u1 + 0.45, g.u0 - 0.45, g.u1 + 0.95, g.u0 - 0.95, g.u1 + 1.4, g.u0 - 1.4):
+        gy = P.ground(ua)
+        if 0.3 < ua < P.W - 0.3 and occ.free(ua - 0.25, ua + 0.25, gy + 1.0, gy + 1.75):
+            _addr(o, P, ua, gy + 1.62)
+            occ.add(ua - 0.25, ua + 0.25, gy + 1.15, gy + 1.75)
+            n["addr"] = n.get("addr", 0) + 1
+            if r.random() < 0.6 and occ.free(ua - 0.45, ua + 0.45, gy + 0.85, gy + 1.15):
+                _put(o, "mailbox_cluster", P, ua, gy + 0.55)
+                n["meters"] += 1
+            break
+    # 담 위쪽 가스관: 대문 반대쪽 끝에서 대문 기둥까지 가로로, 대문 쪽 끝은 아래로 꺾여 벽 속으로
+    top = P.top
+    yb = top - 0.3
+    if P.W > 2.5 and r.random() < 0.7:
+        ue = g.u0 - 0.35 if g.u0 > P.W - g.u1 else g.u1 + 0.35
+        us = 0.25 if ue > P.W / 2 else P.W - 0.25
+        if abs(ue - us) > 1.0:
+            pipe(o.det, [P.p(us, yb, 0.0), P.p(us, yb, GW), P.p(ue, yb, GW), P.p(ue, yb - 0.35, GW), P.p(ue, yb - 0.35, 0.0)], D.PIPE_W, "M_Pipe_Yellow")
+            n["gas"] += 1
+
+
+def fence_clutter(zone, b, o, P, r):
+    """담장(fence_wall): 길 쪽 면에 가스관(담 위쪽 가로 + 끝에서 계량기로 내려옴)·전기 계량기·우편함·주소판(5차, 4차 남은 차이)."""
+    n = dict(gas=0, meters=0, addr=0)
+    if P.W < 2.2:
+        return n
+    h = P.top - P.ground(P.W / 2)
+    if h < 1.3:
+        return n
+    yb = P.top - 0.28
+    if r.random() < 0.55 and P.W > 3.0:
+        a = r.uniform(0.3, 0.45) * P.W
+        u0, u1 = (0.25, a) if r.random() < 0.5 else (P.W - a, P.W - 0.25)
+        um = u0 if u1 > P.W - 0.3 else u1
+        g = P.ground(um)
+        ym = g + 0.85
+        pipe(o.det, [P.p(u0 if um == u1 else u1, yb, 0.0), P.p(u0 if um == u1 else u1, yb, GW), P.p(um, yb, GW), P.p(um, ym + 0.58, GW)], D.PIPE_W, "M_Pipe_Yellow")
+        _put(o, "gas_meter_pipe", P, um, ym)
+        pipe(o.det, [P.p(um + 0.36, g - 0.05, GW), P.p(um + 0.36, ym + 0.22, GW), P.p(um + 0.27, ym + 0.22, GW)], D.PIPE_W, "M_Pipe_Yellow")
+        n["gas"] += 1
+        n["meters"] += 1
+    if r.random() < 0.3:
+        u = r.uniform(0.6, P.W - 0.6)
+        _put(o, "electric_meter_box", P, u, P.ground(u) + 1.05)
+        n["meters"] += 1
+    if r.random() < 0.45:
+        u = r.uniform(0.5, P.W - 0.5)
+        _addr(o, P, u, min(P.top - 0.15, P.ground(u) + 1.6))
+        n["addr"] += 1
     return n

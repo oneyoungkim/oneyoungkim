@@ -83,7 +83,9 @@ namespace Haengin.Tests
                 if (s.Kind != SceneKind.Card)
                 {
                     if (!grounded) fails.Add(s.Id + " 접지 아님");
-                    if (Mathf.Abs(dist - want) > 0.1f) fails.Add($"{s.Id} 카메라 거리 {dist:F2} ≠ {want:F2}");
+                    // 2026-10-24 탐색 B(5.5m): 야외는 골목·담장에서 벽 당김(CamClearance)·가림 당김(Deoccluder)이 정상 → 실내 값(2.8~3.0)과 갈리는지만 본다
+                    bool okDist = ld.Indoor ? Mathf.Abs(dist + pull - want) <= 0.1f : dist <= want + 0.1f && dist >= want - 1.6f;
+                    if (!okDist) fails.Add($"{s.Id} 카메라 거리 {dist:F2}(+당김 {pull:F2}) ≠ {want:F2}{(ld.Indoor ? "" : "(야외 −1.6m 까지 허용)")}");
                     if (hudOn != wantHud) fails.Add($"{s.Id} HUD {(hudOn ? "보임" : "숨김")} — 데이터는 {(wantHud ? "보임" : "숨김")}");
                     if (!stageOk) fails.Add($"{s.Id} 무대 장면 [{string.Join(",", stages)}] (기대 {(want1 == "" ? "없음" : want1)})");
                 }

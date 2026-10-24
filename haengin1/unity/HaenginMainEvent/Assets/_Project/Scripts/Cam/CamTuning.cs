@@ -1,4 +1,7 @@
 // 행인1의 메인이벤트 — 카메라 조정값 (docs/07_M1_조작_설계.md 4-3·7-3). 기본값 = 문서 숫자.
+// 2026-10-24 탐색 카메라 B 확정(대표, docs/09 6-5-3 4차): 거리 5.5(달리기 5.9) · 피치 3° · FOV 53(달리기 57) · 표적 1.15m(= CamTarget 1.40 − 0.25).
+//   예전 A(4.0·8°·45·1.40)에서 바뀜. CamTarget(1.40)은 전투 카메라·벽 당김이 같이 쓰므로 그대로 두고, 탐색 카메라만 exploreTargetOffset 으로 내려 본다.
+//   실내(SceneLoader.Indoors: 2.8·FOV 50·피치 8·오프셋 0)·체육관(무대 값 3.0·FOV 50)·전투(CM_Combat)·컷신 프리셋은 그대로.
 using UnityEngine;
 
 namespace Haengin
@@ -9,18 +12,19 @@ namespace Haengin
         public enum Auto { Off, RunOnly, Always }
 
         [Header("렌즈")]
-        public float fov = 45f;
-        public float fovRun = 49f;
+        public float fov = 53f;
+        public float fovRun = 57f;
         public float fovUpTime = 0.6f;
         public float fovDownTime = 0.4f;
         public float near = 0.08f;
         public float far = 600f;
 
         [Header("궤도")]
-        public float radius = 4.0f;
-        public float radiusRun = 4.3f;
-        [Tooltip("따라가는 점(CamTarget) 높이")] public float targetHeight = 1.40f;
-        public float pitchDefault = 8f;
+        public float radius = 5.5f;
+        public float radiusRun = 5.9f;
+        [Tooltip("따라가는 점(CamTarget) 높이 — 전투 카메라·벽 당김도 이 점을 쓴다")] public float targetHeight = 1.40f;
+        [Tooltip("탐색 카메라만: 따라가고 겨누는 점을 CamTarget 에서 위아래로(B = −0.25 → 1.15m). 실내·체육관은 0")] public float exploreTargetOffset = -0.25f;
+        public float pitchDefault = 3f;
         public float pitchMin = -10f;
         public float pitchMax = 50f;
         [Tooltip("화면 구도. x 음수 = 인물이 화면 왼쪽")] public Vector2 screen = new Vector2(-0.06f, 0f);

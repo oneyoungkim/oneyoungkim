@@ -18,9 +18,9 @@ MonoBehaviour:
   SunColor: {r: 0.7882353, g: 0.827451, b: 0.8784314, a: 1}
   SunIntensity: 0.75
   ShadowStrength: 0.3
-  AmbientSky: {r: 0.85, g: 0.89, b: 0.96, a: 1}
-  AmbientEquator: {r: 0.76, g: 0.79, b: 0.87, a: 1}
-  AmbientGround: {r: 0.57, g: 0.58, b: 0.63, a: 1}
+  AmbientSky: {r: 0.87, g: 0.91, b: 1, a: 1}
+  AmbientEquator: {r: 0.78, g: 0.82, b: 0.92, a: 1}
+  AmbientGround: {r: 0.6, g: 0.61, b: 0.68, a: 1}
   Sky: {r: 0.79607844, g: 0.81960785, b: 0.8392157, a: 1}
   Fog: {r: 0.6627451, g: 0.6901961, b: 0.7254902, a: 1}
   FogStart: 40
