@@ -15,19 +15,19 @@ MonoBehaviour:
   Part: 3
   SunPitch: 50
   SunYaw: 200
-  SunColor: {r: 0.62, g: 0.7, b: 0.95, a: 1}
-  SunIntensity: 0.75
-  ShadowStrength: 0.4
-  AmbientSky: {r: 0.56, g: 0.61, b: 0.78, a: 1}
-  AmbientEquator: {r: 0.45, g: 0.48, b: 0.6, a: 1}
-  AmbientGround: {r: 0.27, g: 0.27, b: 0.32, a: 1}
-  Sky: {r: 0.16470589, g: 0.19215687, b: 0.2509804, a: 1}
-  Fog: {r: 0.11, g: 0.13, b: 0.18, a: 1}
-  FogStart: 20
-  FogEnd: 220
-  SplitShadows: {r: 0.12, g: 0.25, b: 0.3, a: 1}
-  SplitHighlights: {r: 0.95, g: 0.75, b: 0.5, a: 1}
-  SplitBalance: -20
+  SunColor: {r: 0.56078434, g: 0.6392157, b: 0.78431374, a: 1}
+  SunIntensity: 0.3
+  ShadowStrength: 0.3
+  AmbientSky: {r: 0.42, g: 0.46, b: 0.64, a: 1}
+  AmbientEquator: {r: 0.33, g: 0.36, b: 0.5, a: 1}
+  AmbientGround: {r: 0.19, g: 0.2, b: 0.28, a: 1}
+  Sky: {r: 0.13333334, g: 0.16470589, b: 0.26666668, a: 1}
+  Fog: {r: 0.078431375, g: 0.09411765, b: 0.16078432, a: 1}
+  FogStart: 30
+  FogEnd: 240
+  SplitShadows: {r: 0.14, g: 0.18, b: 0.36, a: 1}
+  SplitHighlights: {r: 0.95, g: 0.7, b: 0.45, a: 1}
+  SplitBalance: -15
   StreetLamps: 1
   SecurityLamps: 1
   Vending: 1
@@ -36,5 +36,5 @@ MonoBehaviour:
   ShopSigns: 1
   Sodium: {r: 1, g: 0.62, b: 0.28, a: 1}
   ConvTeal: {r: 0.55, g: 0.95, b: 0.88, a: 1}
-  LampIntensity: 7
+  LampIntensity: 10
   Windows: 0.4

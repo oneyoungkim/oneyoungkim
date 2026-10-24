@@ -406,9 +406,11 @@ namespace Haengin.EditorGame
             if (bung != Vector3.zero) Point("빛 번개배달 간판", bung + new Vector3(0f, 3.2f, -0.8f), 6f, LightKind.ShopSign, Color.white);
 
             // 창문 불: 집·상가·한옥 블록 면마다 층마다 하나(시드 고정 자리·켜짐 문턱)
+            // 건물 키트가 있으면 만들지 않는다 — 키트의 WinLit_* 발광 판(583장, 39묶음)이 대신한다(docs/11 7장 7, EnvSetup.AttachKit)
             windows = 0;
             var mat = WindowMat();
-            var blocks = zoneRoot.Find("Blocks");
+            var blocks = EnvSetup.KitAvailable ? null : zoneRoot.Find("Blocks");
+            if (EnvSetup.KitAvailable) Notes.Add("창문 불: 키트 WinLit 묶음을 쓰므로 상자 창 판은 만들지 않음");
             if (blocks != null)
             {
                 foreach (var kind in new[] { "house", "shop", "hanok" })

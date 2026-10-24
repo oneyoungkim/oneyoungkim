@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Sky_North
+  m_Shader: {fileID: 4800000, guid: 45ef21ed278c08445981aab3e819cea1, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _DetailTex:
+        m_Texture: {fileID: 2800000, guid: fa02e9064a56f3d489e56802b3094bdd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LayersTex:
+        m_Texture: {fileID: 2800000, guid: 31504a51b32c17444bda4b9703a55656, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Dots: 0
+    - _Flip: 0
+    - _Lines: 0.7
+    m_Colors:
+    - _FarColor: {r: 0.639, g: 0.6119999, b: 0.56499994, a: 1}
+    - _MidColor: {r: 0.788, g: 0.75699997, b: 0.698, a: 1}
+    - _NearColor: {r: 0.43099996, g: 0.41599998, b: 0.39199996, a: 1}
+    - _SkyColor: {r: 0.914, g: 0.878, b: 0.8, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

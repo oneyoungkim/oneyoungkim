@@ -1,0 +1,132 @@
+{
+ "M_AC_White": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: off-white AC unit / appliance body"
+ },
+ "M_Asphalt": {
+  "meters": 4.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Asphalt.jpg"
+ },
+ "M_Brick_Brown": {
+  "meters": 1.0,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Brick_Brown.jpg"
+ },
+ "M_Brick_Red": {
+  "meters": 1.0,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Brick_Red.jpg"
+ },
+ "M_Concrete": {
+  "meters": 2.4,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Concrete.jpg"
+ },
+ "M_Decal_Atlas": {
+  "meters": null,
+  "kind": "atlas",
+  "source": "cut_sheets.py from decals/src (GPT Image 2.5), rects in decals/decal_atlas.json"
+ },
+ "M_Dirt": {
+  "meters": 3.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Dirt.jpg"
+ },
+ "M_Giwa_Dark": {
+  "meters": 1.2,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Giwa_Dark.jpg"
+ },
+ "M_Glass_Dark": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: dark window glass: flat blue-grey with two diagonal reflection bands"
+ },
+ "M_Glass_Lit": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: lit window at night: warm flat light, darker blind band at the top"
+ },
+ "M_Granite": {
+  "meters": 3.0,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Granite.jpg"
+ },
+ "M_Metal_Green": {
+  "meters": 1.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Metal_Green.jpg"
+ },
+ "M_Metal_Grey": {
+  "meters": 1.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Metal_Grey.jpg"
+ },
+ "M_Metal_Rust": {
+  "meters": 1.0,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Metal_Rust.jpg"
+ },
+ "M_Paint_SchoolZone": {
+  "meters": 2.0,
+  "kind": "procedural",
+  "source": "make_textures.py: red-brown anti-slip road paint of a school safety zone"
+ },
+ "M_Paving": {
+  "meters": 1.2,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Paving.jpg"
+ },
+ "M_Pipe_Yellow": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: yellow painted gas pipe"
+ },
+ "M_Plaster_Cream": {
+  "meters": 2.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Plaster_Cream.jpg"
+ },
+ "M_Plaster_White": {
+  "meters": 2.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Plaster_White.jpg"
+ },
+ "M_Roof_Green": {
+  "meters": 2.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Roof_Green.jpg"
+ },
+ "M_Sign_Atlas": {
+  "meters": null,
+  "kind": "atlas",
+  "source": "cut_sheets.py from signs/src (GPT Image 2.5), rects in signs/sign_atlas.json"
+ },
+ "M_Stone_Base": {
+  "meters": 1.5,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Stone_Base.jpg"
+ },
+ "M_Stone_Rubble": {
+  "meters": 2.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Stone_Rubble.jpg"
+ },
+ "M_Tile_Beige": {
+  "meters": 1.0,
+  "kind": "procedural",
+  "source": "make_textures.py: shop facade ceramic tiles 20 x 10 cm, stack bond, 5 x 10 per meter (the generated swatch had uneven columns)"
+ },
+ "M_Wood_Dark": {
+  "meters": 1.0,
+  "kind": "grid",
+  "source": "generated (GPT Image 2.5), src/M_Wood_Dark.jpg"
+ },
+ "M_Wood_Red": {
+  "meters": 1.0,
+  "kind": "free",
+  "source": "generated (GPT Image 2.5), src/M_Wood_Red.jpg"
+ }
+}

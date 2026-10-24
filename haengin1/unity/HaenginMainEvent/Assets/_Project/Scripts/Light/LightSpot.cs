@@ -16,6 +16,8 @@ namespace Haengin
         public float Threshold;
         /// 프리셋 색을 따르지 않는 고정 색(편의점 청록 등은 프리셋 값)
         public bool KeepColor;
+        /// 창문 묶음(키트 WinLit)이 품은 판 수 — D07 창문 불 비율은 이 가중치로 센다(기본 1)
+        public int Weight = 1;
 
         public static readonly List<LightSpot> All = new List<LightSpot>();
         void OnEnable() { if (!All.Contains(this)) All.Add(this); }

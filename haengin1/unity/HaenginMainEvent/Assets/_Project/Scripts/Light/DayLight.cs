@@ -16,6 +16,8 @@ namespace Haengin
         public float BlendSecs = 1f;
 
         public static DayLight Instance { get; private set; }
+        /// 편집 모드 촬영(EnvSetup.Shots)에서도 필름 볼륨 스플릿 톤을 바꿀 때 켬(에셋은 그대로 — 복제본)
+        public static bool EditModeFilm;
         public LightingPreset Current { get; private set; }
         public DayPart Part => Current != null ? Current.Part : DayPart.Day;
         public int Applied { get; private set; }
@@ -52,7 +54,7 @@ namespace Haengin
                 foreach (var v in FindObjectsByType<Volume>(FindObjectsSortMode.None))
                     if (v.isGlobal && v.gameObject.scene == gameObject.scene) { Film = v; break; }
             }
-            if (Film != null && !profileCloned && Application.isPlaying)
+            if (Film != null && !profileCloned && (Application.isPlaying || EditModeFilm))
             {
                 // volume.profile = 실행 중 복제본(sharedProfile 에셋은 그대로)
                 var prof = Film.profile;
@@ -116,6 +118,9 @@ namespace Haengin
                 }
                 s.Set(on, c, i);
             }
+            // 원경 카드·구름·달(docs/10 8장) — 하늘색과 같은 팔레트
+            var sky = SkyCards.Instance ?? FindFirstObjectByType<SkyCards>();
+            if (sky != null) sky.Apply(part);
             Debug.Log($"[M3] 조명: {p.name} ({part}) · {(instant ? "바로" : BlendSecs + "초")} · 켠 빛 {CountLit()}");
         }
 

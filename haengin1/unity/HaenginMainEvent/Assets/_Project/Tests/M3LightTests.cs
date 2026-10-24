@@ -1,6 +1,6 @@
 // 행인1의 메인이벤트 — M3 3단계 테스트 D07 (docs/09_M3_버티컬슬라이스_설계.md 6-2)
 //   D07 Lighting_Presets : 4종 적용 — 값 = 에셋(방향광·주변광·하늘·안개·빛 자리 켜짐·창문 불 비율), 하늘 ↔ 안개 L* 차 ≥ 6,
-//                          (그래픽이 있을 때) 걷는 면 화면 L* 밤 ≥ 22 · 새벽 ≥ 28(Zone1 다섯 자리, 실제 게임 카메라),
+//                          (그래픽이 있을 때) 걷는 면 화면 L* 밤 = 빛 웅덩이 위 최대 ≥ 22·최소 ≥ 6(2026-10-24 아트 패스: 밤은 가로등 빛 웅덩이로 어둡게) · 새벽 ≥ 28(Zone1 다섯 자리, 실제 게임 카메라),
 //                          프리셋을 바꿔도 Zone1 장면·필름 볼륨·프리셋 에셋 파일이 그대로(결정적 저장 같음)
 using System.Collections;
 using System.Collections.Generic;
@@ -69,7 +69,8 @@ namespace Haengin.Tests
             var before = files2.Select(Hash).ToArray();
             var log = new StringBuilder();
             var fails = new List<string>();
-            int windowsTotal = LightSpot.All.Count(s => s.Kind == LightKind.Window);
+            // 창문 불은 판 수 가중(키트 WinLit 묶음 = 판 여러 장, 상자 창 판 = 1)
+            int windowsTotal = LightSpot.All.Where(s => s.Kind == LightKind.Window).Sum(s => Mathf.Max(1, s.Weight));
             foreach (DayPart part in new[] { DayPart.Dawn, DayPart.Day, DayPart.Dusk, DayPart.Night })
             {
                 var p = day.Of(part);
@@ -85,7 +86,7 @@ namespace Haengin.Tests
                 bool Want(LightKind k) => k switch { LightKind.Street => p.StreetLamps, LightKind.Security => p.SecurityLamps, LightKind.Vending => p.Vending, LightKind.ConvAwning => p.ConvAwning, LightKind.GukbapWindow => p.GukbapWindow, LightKind.ShopSign => p.ShopSigns, _ => false };
                 foreach (var s in LightSpot.All.Where(x => x.Kind != LightKind.Window))
                     if (s.Lit != Want(s.Kind)) fails.Add($"{part} {s.name} 켜짐 {s.Lit} ≠ {Want(s.Kind)}");
-                int lit = LightSpot.All.Count(s => s.Kind == LightKind.Window && s.Lit);
+                int lit = LightSpot.All.Where(s => s.Kind == LightKind.Window && s.Lit).Sum(s => Mathf.Max(1, s.Weight));
                 float ratio = windowsTotal > 0 ? lit / (float)windowsTotal : 0f;
                 if (Mathf.Abs(ratio - p.Windows) > 0.08f) fails.Add($"{part} 창문 불 {ratio:P0} ≠ {p.Windows:P0}");
                 float lSky = DayLight.LStar(p.Sky), lFog = DayLight.LStar(p.Fog);
@@ -94,7 +95,7 @@ namespace Haengin.Tests
                 if (Shots.Graphics && (part == DayPart.Night || part == DayPart.Dawn || part == DayPart.Dusk))
                 {
                     var vals = new List<string>();
-                    float min = 999f;
+                    float min = 999f, max = -1f;
                     foreach (var (name, pos, yaw) in Spots)
                     {
                         M3Lab.Motor.Teleport(pos, yaw);
@@ -102,11 +103,21 @@ namespace Haengin.Tests
                         yield return Lab.Frames(8);
                         float l = GroundL(Camera.main, out int n);
                         vals.Add($"{name} {l:F1}({n})");
-                        if (n > 20) min = Mathf.Min(min, l);
+                        if (n > 20) { min = Mathf.Min(min, l); max = Mathf.Max(max, l); }
                     }
-                    float need = part == DayPart.Night ? 22f : part == DayPart.Dawn ? 28f : 0f;
-                    lstar = $"걷는 면 L* 최소 {min:F1}(기준 {need}) — {string.Join(" · ", vals)}";
-                    if (min < need) fails.Add($"{part} 걷는 면 L* {min:F1} < {need}");
+                    if (part == DayPart.Night)
+                    {
+                        // 밤 = 가로등 빛 웅덩이(docs/10 9장): 웅덩이가 있는 자리(상가거리 등)는 L* ≥ 22, 웅덩이 사이 평면 어둠은 L* ≥ 6 만(완전한 검정 금지 — 가장 어두운 시우네 앞 골목 6.7)
+                        lstar = $"걷는 면 L* 최대 {max:F1}(웅덩이 기준 22) · 최소 {min:F1}(어둠 하한 6) — {string.Join(" · ", vals)}";
+                        if (max < 22f) fails.Add($"{part} 빛 웅덩이 위 걷는 면 L* 최대 {max:F1} < 22");
+                        if (min < 6f) fails.Add($"{part} 걷는 면 L* 최소 {min:F1} < 6");
+                    }
+                    else
+                    {
+                        float need = part == DayPart.Dawn ? 28f : 0f;
+                        lstar = $"걷는 면 L* 최소 {min:F1}(기준 {need}) — {string.Join(" · ", vals)}";
+                        if (min < need) fails.Add($"{part} 걷는 면 L* {min:F1} < {need}");
+                    }
                 }
                 log.AppendLine($"{part}: 해 {p.SunPitch:F0}°/{p.SunYaw:F0}° ×{p.SunIntensity:F2} · 하늘 L* {lSky:F1} / 안개 {lFog:F1} · 빛 자리 {day.CountLit()}곳 · 창문 {lit}/{windowsTotal}({ratio:P0}) · {lstar}");
             }

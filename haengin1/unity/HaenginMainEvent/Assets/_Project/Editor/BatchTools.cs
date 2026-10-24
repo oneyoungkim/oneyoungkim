@@ -191,7 +191,7 @@ namespace Haengin.EditorTools
             return vcam.name;
         }
 
-        internal static void RenderToPng(Camera cam, int w, int h, int ss, string path)
+        public static void RenderToPng(Camera cam, int w, int h, int ss, string path)
         {
             var desc = new RenderTextureDescriptor(w * ss, h * ss, RenderTextureFormat.ARGB32, 24) { sRGB = true, msaaSamples = 1 };
             var big = new RenderTexture(desc) { name = "BatchShot_Big" };
@@ -329,7 +329,7 @@ namespace Haengin.EditorTools
 
         /// 편집 모드 촬영(-batchmode, 플레이 아님)에서는 Animator 가 돌지 않아 스킨 메시가 바인드 자세(A포즈)로 찍힌다
         /// → 장면의 Humanoid Animator 마다 첫 클립(대기)을 t 초 자세로 샘플링해 둔다. 되돌리기 함수를 돌려준다.
-        internal static Action PoseAnimators(float t)
+        public static Action PoseAnimators(float t)
         {
             var anims = UnityEngine.Object.FindObjectsByType<Animator>(FindObjectsSortMode.None)
                 .Where(a => a.isActiveAndEnabled && a.runtimeAnimatorController != null && a.avatar != null).ToList();

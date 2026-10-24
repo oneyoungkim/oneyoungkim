@@ -248,6 +248,8 @@ namespace Haengin.EditorGame
             StageSetup.AddCombatToZone1(rig, d, zoneRoot);
             // M3(09 2-1): 이야기 루트(StoryRunner·화면들) · 빛 자리 · 창문 불
             StorySetup.AddStoryToZone1(rig, zoneRoot);
+            // 맵 아트 패스(docs/11 7장·docs/10 P3): 건물 키트·소품·간판·창문 불·원경 — 회색 상자는 보이지만 않게(충돌 그대로)
+            EnvSetup.AttachKit(d, zoneRoot);
 
             EditorSceneManager.MarkSceneDirty(scene);
             Debug.Log($"{Tag} 리그 붙임: Player @ ({feet.x:F2}, {feet.y:F2}, {feet.z:F2}) yaw {d.SpawnYaw}° (데이터 y {d.SpawnPos.y:F2}) · " +
