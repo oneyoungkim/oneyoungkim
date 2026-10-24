@@ -333,29 +333,43 @@ namespace Haengin.Tests
                 // UnityStats 는 프레임이 끝나야 갱신 → 묶음마다 끄고 1080p 로 그린 뒤 한 프레임 넘겨서 읽는다
                 var lines = new List<string>();
                 var groups = new List<(string name, System.Action off, System.Action on)>();
+                groups.Add(("전부(데우기)", () => { }, () => { }));
                 groups.Add(("전부", () => { }, () => { }));
                 var sun = UnityEngine.Object.FindObjectsByType<Light>(FindObjectsSortMode.None).FirstOrDefault(l => l.type == LightType.Directional);
                 if (sun != null) { var sh0 = sun.shadows; groups.Add(("그림자", () => sun.shadows = LightShadows.None, () => sun.shadows = sh0)); }
-                foreach (var path in new[] { "Zone1/Env/Veg", "Zone1/Env/Decor", "Zone1/Env/Props", "Zone1/Env/Lot", "Zone1/Sky", "Player", "Stages", "Zone1/Env/Z1_HoomunN", "Zone1/Env/Z1_HoomunS", "Zone1/Env/Z1_Alley", "Zone1/Env/Z1_Campus", "Zone1/Env/Z1_Wires", "Zone1/Env/Z1_Wall", "Zone1/Ground", "Zone1/Roads", "Zone1/Blocks", "Zone1/Landmarks" })
+                foreach (var path in new[] { "Zone1/Env/Veg", "Zone1/Env/Decor", "Zone1/Env/Props", "Zone1/Env/Lot", "Zone1/Sky", "Player", "Stages", "Zone1/Env/Z1_HoomunN", "Zone1/Env/Z1_HoomunS", "Zone1/Env/Z1_Alley", "Zone1/Env/Z1_Campus", "Zone1/Env/Z1_Wires", "Zone1/Env/Z1_Wall", "Zone1/Env/Signs5", "Zone1/Env/Street5", "Zone1/Env/Surface5", "Zone1/Env/Motion5", "Zone1/Env/Green6", "Zone1/Env/Pools6", "Zone1/Ground", "Zone1/Roads", "Zone1/Blocks", "Zone1/Landmarks" })
                 {
                     var g = GameObject.Find(path); if (g == null) continue;
                     groups.Add((path, () => g.SetActive(false), () => g.SetActive(true)));
                 }
                 var props = UnityEngine.Object.FindObjectsByType<LODGroup>(FindObjectsSortMode.None).Where(l => l.transform.parent != null && l.transform.parent.name.StartsWith("Prop_")).Select(l => l.gameObject).ToList();
                 groups.Add(($"소켓 소품 {props.Count}", () => { foreach (var pg in props) pg.SetActive(false); }, () => { foreach (var pg in props) pg.SetActive(true); }));
-                long all = 0;
+                // 6차: 키트 건물 렌더러 종류별(LOD0 · Detail · LOD1/2) 몫
+                var kitR = UnityEngine.Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(x => x.enabled && x.transform.parent != null && x.transform.parent.parent != null && x.transform.parent.parent.name.StartsWith("Z1_") && !x.transform.parent.name.StartsWith("Prop_")).ToList();
+                foreach (var (kn, pred) in new (string, System.Func<MeshRenderer, bool>)[] { ("키트 LOD0", x => x.name.EndsWith("_LOD0") && !x.name.Contains("_Detail_")), ("키트 Detail", x => x.name.Contains("_Detail_")), ("키트 LOD1·2", x => x.name.EndsWith("_LOD1") || x.name.EndsWith("_LOD2")) })
+                {
+                    var set = kitR.Where(pred).ToList();
+                    groups.Add(($"{kn} {set.Count}", () => { foreach (var x in set) x.enabled = false; }, () => { foreach (var x in set) x.enabled = true; }));
+                }
+                var smallShadow = UnityEngine.Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(x => x.enabled && x.shadowCastingMode != UnityEngine.Rendering.ShadowCastingMode.Off && x.bounds.size.magnitude < 1.2f).ToList();
+                groups.Add(($"작은 것 그림자 {smallShadow.Count}", () => { foreach (var x in smallShadow) x.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; }, () => { foreach (var x in smallShadow) x.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On; }));
+                // 6차: 글자(TMP) 몫 — 그리기 호출 예산 점검용
+                var tmps = UnityEngine.Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).SelectMany(x => x.GetComponentsInChildren<Renderer>()).Where(x => x.enabled).ToList();
+                groups.Add(($"글자(TMP) {tmps.Count}", () => { foreach (var x in tmps) x.enabled = false; }, () => { foreach (var x in tmps) x.enabled = true; }));
+                long all = 0, allDc = 0, allSp = 0;
                 foreach (var (gname, off, on) in groups)
                 {
                     off();
                     cam.targetTexture = rt; cam.Render(); cam.targetTexture = null;
                     yield return null;
-                    long t = 0;
+                    long t = 0, dc = 0, sp = 0;
 #if UNITY_EDITOR
-                    t = UnityEditor.UnityStats.triangles;
+                    t = UnityEditor.UnityStats.triangles; dc = UnityEditor.UnityStats.drawCalls; sp = UnityEditor.UnityStats.setPassCalls;
 #endif
                     on();
-                    if (gname == "전부") { all = t; lines.Add($"전부 {t:N0}"); }
-                    else lines.Add($"{gname} 몫 {all - t:N0}");
+                    if (gname == "전부(데우기)") continue;
+                    if (gname == "전부") { all = t; allDc = dc; allSp = sp; lines.Add($"전부 {t:N0} · 그리기 {dc} · SetPass {sp}"); }
+                    else lines.Add($"{gname} 몫 {all - t:N0} · 그리기 {allDc - dc} · SetPass {allSp - sp}");
                 }
                 Debug.Log("[M3] 삼각형 내역(밤 상가거리 시작):" + System.Environment.NewLine + string.Join(System.Environment.NewLine, lines));
             }

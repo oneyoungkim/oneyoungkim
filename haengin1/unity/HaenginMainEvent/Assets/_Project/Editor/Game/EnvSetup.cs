@@ -507,6 +507,7 @@ namespace Haengin.EditorGame
             if (lights == null) { lights = new GameObject("Lights").transform; lights.SetParent(zoneRoot, false); }
             var atlas = SignRects();
             socks5.Clear(); faces5 = null; signs5 = 0; signMeshRoot = null; signMeshes = null;   // 5차
+            Mesh6Reset(); var signList = new List<(Transform t, Dictionary<string, object> inf)>();   // 6차: 간판은 배치 점검 뒤에 짓는다
             var winLitMat = WindowLitMat();
             int buildings = 0, lodGroups = 0, props = 0, missingProps = 0, winlit = 0, panes = 0, signs = 0, socks = 0, renderers = 0;
             var propPrefabs = new Dictionary<string, GameObject>();
@@ -560,7 +561,7 @@ namespace Haengin.EditorGame
                     }
                     if (t.name.StartsWith("Sign_"))
                     {
-                        if (!MakeSign5(t, inf)) MakeSign(t, inf, atlas);   // 5차: 몸체 + 디자인된 면(그림 없으면 예전 TMP)
+                        signList.Add((t, inf));   // 6차: 짓기 전에 겹침·창 점검(PlanSigns) — 아래에서 짓는다
                         signs++;
                         continue;
                     }
@@ -601,7 +602,14 @@ namespace Haengin.EditorGame
                 }
             }
 
-            // 겹치는 간판 띠(1층 띠 위에 2층 띠가 같은 높이로 온 곳)는 위로 올림
+            // 6차: 간판 배치 점검(같은 면 겹친 띠 올림 · 창과 겹치는 띠 줄이기/빼기) 뒤에 짓기 — 5차: 몸체 + 디자인된 면(그림 없으면 예전 TMP)
+            Notes.Add(PlanSigns(env, signList));
+            foreach (var (t, inf) in signList)
+            {
+                if (inf.ContainsKey("hidden")) { var r0 = t.GetComponent<MeshRenderer>(); if (r0 != null) r0.enabled = false; continue; }
+                if (!MakeSign5(t, inf)) MakeSign(t, inf, atlas);
+            }
+            // 겹치는 간판 띠는 위로 올림 — 6차부터는 PlanSigns 가 짓기 전에 처리(여기선 0 이어야 함)
             int lifted = LiftOverlappingSigns(env, objs);
             // 회색 상자 보이지 않게(충돌은 그대로 — 09 결정 11)
             int hidden = HideGreyBoxes(zoneRoot);
@@ -626,6 +634,9 @@ namespace Haengin.EditorGame
             string lot = ParkingLot(d, zoneRoot, env, Prefab);
             // 바닥·길 재질 = 아트 텍스처 + 툰(빛 웅덩이가 또렷하게 끊기도록)
             int ground = GroundMaterials(zoneRoot);
+            // 6차: 정류장 광고 · 맨땅 초록 · 밤 빛 웅덩이 · 계단 손잡이 · 간판 점검 · 그리기 합침
+            Physics.SyncTransforms();
+            Notes.Add(Pass6(d, zoneRoot, env, objs));
             // 원경 카드
             SkyRig(zoneRoot);
             Physics.SyncTransforms();

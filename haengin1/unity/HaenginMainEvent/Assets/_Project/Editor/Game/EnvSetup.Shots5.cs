@@ -15,6 +15,95 @@ namespace Haengin.EditorGame
 {
     public static partial class EnvSetup
     {
+        /// 그리기 호출 어림(개발용, 6차): D08 밤 상가거리 시작 자리(이야기 모드)에서 보이는 렌더러를 LOD 고른 뒤 서브메시 수로 센다(앞 패스 + 그림자 38m).
+        /// -executeMethod Haengin.EditorGame.EnvSetup.DrawBreak5 [-at x,y,z -yaw deg]
+        public static void DrawBreak5()
+        {
+            int code = 0;
+            try
+            {
+                EditorSceneManager.OpenScene(Root + "/Scenes/Zone1.unity", OpenSceneMode.Single);
+                var cam = Camera.main;
+                var st = GameObject.Find("Stages"); if (st != null) st.SetActive(false);
+                var feet = new Vector3(-199.0f, 31.0f, 103.2f); float yaw = Mathf.Atan2(-176f + 199f, 103.6f - 103.2f) * Mathf.Rad2Deg;
+                var at = Arg("-at"); if (at != null) { var p = at.Split(','); feet = new Vector3(float.Parse(p[0]), float.Parse(p[1]), float.Parse(p[2])); }
+                var ya = Arg("-yaw"); if (ya != null) yaw = float.Parse(ya);
+                var r = Quaternion.Euler(3f, yaw, 0f); var tgt = feet + Vector3.up * 1.15f;
+                cam.transform.SetPositionAndRotation(tgt - r * Vector3.forward * 5.5f, r); cam.fieldOfView = 53f; cam.aspect = 16f / 9f;
+                var cp = cam.transform.position; float tanH = Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
+                var planes = GeometryUtility.CalculateFrustumPlanes(cam);
+                var chosen = new HashSet<Renderer>(); var inLod = new HashSet<Renderer>();
+                foreach (var lg in Object.FindObjectsByType<LODGroup>(FindObjectsSortMode.None))
+                {
+                    if (!lg.enabled || !lg.gameObject.activeInHierarchy) continue;
+                    var lods = lg.GetLODs(); var wp = lg.transform.TransformPoint(lg.localReferencePoint);
+                    float size = lg.size * Mathf.Max(Mathf.Abs(lg.transform.lossyScale.x), Mathf.Abs(lg.transform.lossyScale.y), Mathf.Abs(lg.transform.lossyScale.z));
+                    float rel = size / (2f * Mathf.Max(0.01f, Vector3.Distance(cp, wp)) * tanH) * QualitySettings.lodBias;
+                    int pick = -1; for (int i = 0; i < lods.Length; i++) if (rel >= lods[i].screenRelativeTransitionHeight) { pick = i; break; }
+                    for (int i = 0; i < lods.Length; i++) foreach (var rr in lods[i].renderers) if (rr != null) { inLod.Add(rr); if (i == pick) chosen.Add(rr); }
+                }
+                var groups = new Dictionary<string, int[]>(); int tf = 0, ts = 0;
+                foreach (var rr in Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
+                {
+                    if (!rr.enabled || !rr.gameObject.activeInHierarchy) continue;
+                    if (inLod.Contains(rr) && !chosen.Contains(rr)) continue;
+                    var mf = rr.GetComponent<MeshFilter>(); int subs = mf != null && mf.sharedMesh != null ? mf.sharedMesh.subMeshCount : (rr.GetComponent<TMPro.TMP_Text>() != null ? 1 : 0);
+                    if (subs == 0 && rr.GetComponent<TMPro.TMP_Text>() == null) continue;
+                    if (subs == 0) subs = 1;
+                    bool vis = GeometryUtility.TestPlanesAABB(planes, rr.bounds) && rr.shadowCastingMode != ShadowCastingMode.ShadowsOnly;
+                    float d = Mathf.Sqrt(rr.bounds.SqrDistance(cp));
+                    bool sh = rr.shadowCastingMode != ShadowCastingMode.Off && d < 38f;
+                    if (!vis && !sh) continue;
+                    var t = rr.transform; var path = new List<string>(); while (t != null) { path.Insert(0, t.name); t = t.parent; }
+                    string key = string.Join("/", path.Take(Mathf.Min(3, path.Count - 1)));
+                    if (path.Count > 2 && path[1] == "Env" && path[2].StartsWith("Z1_"))
+                        key += rr.name.Contains("_Detail_") ? " [Detail]" : rr.name.EndsWith("_LOD0") ? " [LOD0]" : rr.name.EndsWith("_LOD1") ? " [LOD1]" : rr.name.EndsWith("_LOD2") ? " [LOD2]" : path.Any(x => x.StartsWith("Prop_")) ? " [소품]" : " [기타]";
+                    if (rr.GetComponent<TMPro.TMP_Text>() != null) key = "(TMP) " + key;
+                    if (!groups.TryGetValue(key, out var g)) groups[key] = g = new int[3];
+                    if (vis) { g[0] += subs; tf += subs; }
+                    if (sh) { g[1] += subs; ts += subs; }
+                    g[2]++;
+                }
+                var lines = groups.OrderByDescending(x => x.Value[0] + x.Value[1]).Take(45).Select(x => $"{x.Value[0],5} 앞 · {x.Value[1],4} 그림자 · 렌더러 {x.Value[2],4} · {x.Key}");
+                Debug.Log($"{Tag} 그리기 어림(밤 상가거리 시작·이야기 모드): 앞 {tf} · 그림자(38m, 캐스케이드 1회) {ts}" + Environment.NewLine + string.Join(Environment.NewLine, lines));
+            }
+            catch (Exception e) { Debug.LogError($"{Tag} DrawBreak5 실패: {e}"); code = 1; }
+            if (Application.isBatchMode) EditorApplication.Exit(code);
+        }
+
+        /// 개발용: 이름에 -name 글자가 든 렌더러의 재질·색·메시 정보
+        public static void Probe6()
+        {
+            EditorSceneManager.OpenScene(Root + "/Scenes/Zone1.unity", OpenSceneMode.Single);
+            string q = Arg("-name") ?? "Fence";
+            foreach (var r in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID))
+            {
+                if (!r.name.Contains(q) && !(r.sharedMaterial != null && r.sharedMaterial.name.Contains(q))) continue;
+                var mf = r.GetComponent<MeshFilter>(); var m = r.sharedMaterial;
+                Debug.Log($"{Tag} 살핌 {SignAudit.Path(r.transform)} · 재질 {(m != null ? m.name + " " + m.shader.name + " " + (m.HasProperty("_BaseColor") ? m.GetColor("_BaseColor").ToString() : "") : "없음")} · 메시 {(mf != null && mf.sharedMesh != null ? mf.sharedMesh.name + " v" + mf.sharedMesh.vertexCount + " col" + mf.sharedMesh.colors.Length : "없음")} · 켬 {r.enabled}/{r.gameObject.activeInHierarchy}");
+            }
+            if (Application.isBatchMode) EditorApplication.Exit(0);
+        }
+
+        /// 개발용: -name 재질을 쓰는 첫 합친 메시 앞 3m 에서 한 장(+ 같은 재질 새 상자를 위에 하나) → -out png
+        public static void ProbeShot6()
+        {
+            EditorSceneManager.OpenScene(Root + "/Scenes/Zone1.unity", OpenSceneMode.Single);
+            ShaderUtil.allowAsyncCompilation = false;
+            string q = Arg("-name") ?? "M_Fence_Wood"; string outp = Arg("-out") ?? "probe6.png";
+            var day = Object.FindFirstObjectByType<DayLight>(); DayLight.EditModeFilm = true; day.Apply(DayPart.Day, true);
+            var r = Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.InstanceID).FirstOrDefault(x => x.sharedMaterial != null && x.sharedMaterial.name == q);
+            if (r == null) { Debug.Log($"{Tag} 살핌 없음 {q}"); if (Application.isBatchMode) EditorApplication.Exit(0); return; }
+            var mf = r.GetComponent<MeshFilter>(); var v = mf.sharedMesh.vertices; var p0 = r.transform.TransformPoint(v[0]);
+            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube); cube.transform.position = p0 + Vector3.up * 1.3f; cube.transform.localScale = Vector3.one * 0.5f; cube.GetComponent<MeshRenderer>().sharedMaterial = r.sharedMaterial;
+            var cam = Camera.main; var from = p0 + new Vector3(2.2f, 1.2f, 2.2f);
+            cam.transform.SetPositionAndRotation(from, Quaternion.LookRotation(p0 + Vector3.up * 0.8f - from)); cam.fieldOfView = 50f;
+            BatchTools.RenderToPng(cam, 960, 540, 1, outp);
+            var ns = mf.sharedMesh.normals; var tg = mf.sharedMesh.tangents;
+            Debug.Log($"{Tag} 살핌 {SignAudit.Path(r.transform)} 정점0 {p0} 법선0 {(ns.Length > 0 ? ns[0].ToString() : "없음")} 탄젠트 {tg.Length} uv2 {mf.sharedMesh.uv2.Length} 색 {mf.sharedMesh.colors.Length}");
+            if (Application.isBatchMode) EditorApplication.Exit(0);
+        }
+
         public static void Closeups5()
         {
             int code = 0;

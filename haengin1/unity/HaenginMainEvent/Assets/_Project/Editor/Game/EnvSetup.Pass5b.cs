@@ -116,22 +116,8 @@ namespace Haengin.EditorGame
                 [("명륜1가 방면 상가주택", 2)] = ("명륜 부동산", "원룸 · 전세 · 매매", new Color(0.90f, 0.45f, 0.15f), Color.white, false),
                 [("명륜1가 방면 상가주택", 3)] = ("로그인 PC방", "고사양 · 24시간", new Color(0.10f, 0.15f, 0.30f), new Color(0.55f, 0.92f, 1f), false),
             };
-            foreach (var (t, inf) in socks5.Where(s => S(s.inf, "sock_kind") == "win_sheet"))
-            {
-                var p = V3(G(inf, "pos")); var n = V3(G(inf, "normal")).normalized; var sz = L(G(inf, "size"));
-                float w = sz != null ? F(sz[0]) : 1.2f, h = sz != null ? F(sz[1]) : 1.3f;
-                int floor = int.TryParse((S(inf, "tenant") ?? "2F").TrimEnd('F'), out var fl) ? fl : 2;
-                string blk = BldgAt(objs, p);
-                var key = sheetT.Keys.FirstOrDefault(k => blk.Contains(k.Item1) && k.Item2 == floor);
-                (string a, string b, Color band, Color text, bool hand) st = key.Item1 != null ? sheetT[key] : ("하숙 · 원룸 있음", "문의 02-012-1180", new Color(0.95f, 0.95f, 0.92f), new Color(0.15f, 0.20f, 0.35f), true);
-                var g = new GameObject("창 시트지 " + st.a).transform; g.SetParent(root, false);
-                float bandH = h * 0.24f;
-                var bandM = Flat("M_Vinyl_" + Mathf.RoundToInt(st.band.r * 9) + Mathf.RoundToInt(st.band.g * 9) + Mathf.RoundToInt(st.band.b * 9), st.band);
-                Box("비닐 띠", g, p + Vector3.up * (h / 2 - bandH / 2) + n * 0.004f, new Vector3(w, bandH, 0.006f), Quaternion.LookRotation(-n, Vector3.up), bandM);
-                Text3D(g, p + Vector3.up * (h / 2 - bandH / 2) + n * 0.009f, n, st.a, w * 0.92f, bandH * 0.8f, st.text, st.hand ? FontHand : FontBold);
-                Text3D(g, p - Vector3.up * (h * 0.18f) + n * 0.006f, n, st.b, w * 0.85f, h * 0.16f, Color.Lerp(st.band, Color.white, 0.55f), st.hand ? FontHand : FontBold, "글자 아래");
-                sheets++;
-            }
+            var (sheetsMade, sheetsSkip) = Sheets6(root, env, objs, sheetT);   // 6차: 창살 사이 칸마다 글자 · 간판 몸 앞이면 안 붙임
+            sheets = sheetsMade;
             // 입간판(A형) 4 · 원통 회전 입간판 · LED 띠 · 어닝 2 · 셔터 — 키트 간판 띠 자리 기준
             var signInfo = objs.Where(x => S(x.Value, "kind") == "sign").ToDictionary(x => x.Key, x => D(G(x.Value, "info")));
             (Vector3 c, Vector3 n, float w, float h)? Band(string sign) { if (!signInfo.TryGetValue(sign, out var inf)) return null; var sz = L(G(inf, "size_m")); return (V3(G(inf, "center")), V3(G(inf, "normal")).normalized, F(sz[0]), F(sz[1])); }
@@ -176,7 +162,7 @@ namespace Haengin.EditorGame
                 Text3D(g, p + n * 0.009f - Vector3.up * 0.035f, n, (11 + rng.Next(70)).ToString(), 0.2f, 0.07f, Color.white, FontBold, "글자 번지");
                 addr++;
             }
-            return $"간판 5차: 키트 자리 {signs5}개 몸체·면 · 모서리 층별 {corners} · 창 시트지 {sheets} · 입간판 {aframes} · 원통·LED·어닝·셔터·체육관 {misc} · 주소판 {addr}";
+            return $"간판 5차: 키트 자리 {signs5}개 몸체·면 · 모서리 층별 {corners} · 창 시트지 {sheets}(간판 앞이라 뺌 {sheetsSkip}) · 입간판 {aframes} · 원통·LED·어닝·셔터·체육관 {misc} · 주소판 {addr}";
         }
 
         /// 가게 안 판: 간판 띠(면 가운데 c — 벽에서 0.123) 아래, 유리(벽에서 −0.10) 바로 앞 0.015 에. 높이 = 땅 위 0.05 ~ 띠 아래 셔터 박스(0.42) 밑

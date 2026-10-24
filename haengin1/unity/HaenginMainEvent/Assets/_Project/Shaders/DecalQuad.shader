@@ -12,6 +12,7 @@ Shader "Haengin/DecalQuad"
         _Multiply ("Multiply mode", Float) = 0
         _Fade ("Fade (desaturate + paper)", Range(0, 1)) = 0
         _EdgeRough ("Edge roughness", Range(0, 1)) = 0
+        _AtlasUV ("Merged: atlas uv = uv2, tint x vertex color (6th pass)", Float) = 0
     }
     SubShader
     {
@@ -29,19 +30,19 @@ Shader "Haengin/DecalQuad"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             CBUFFER_START(UnityPerMaterial)
-            float4 _MainTex_ST; half4 _Tint; float _Cull, _SrcBlend, _DstBlend, _Multiply, _Fade, _EdgeRough;
+            float4 _MainTex_ST; half4 _Tint; float _Cull, _SrcBlend, _DstBlend, _Multiply, _Fade, _EdgeRough, _AtlasUV;
             CBUFFER_END
-            struct A { float4 pos : POSITION; float3 n : NORMAL; float2 uv : TEXCOORD0; };
-            struct V { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; float2 uv0 : TEXCOORD3; float3 n : TEXCOORD1; float fog : TEXCOORD2; };
+            struct A { float4 pos : POSITION; float3 n : NORMAL; float2 uv : TEXCOORD0; float2 uv1 : TEXCOORD1; half4 col : COLOR; };
+            struct V { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; float2 uv0 : TEXCOORD3; float3 n : TEXCOORD1; float fog : TEXCOORD2; half4 col : TEXCOORD4; };
             float Hash(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
             V Vert(A a)
             {
-                V o; o.pos = TransformObjectToHClip(a.pos.xyz); o.uv = TRANSFORM_TEX(a.uv, _MainTex); o.uv0 = a.uv;
+                V o; o.pos = TransformObjectToHClip(a.pos.xyz); o.uv = TRANSFORM_TEX(_AtlasUV > 0.5 ? a.uv1 : a.uv, _MainTex); o.uv0 = a.uv; o.col = _AtlasUV > 0.5 ? a.col : half4(1, 1, 1, 1);   // 6차: 합친 판은 아틀라스 칸·알파를 정점에
                 o.n = TransformObjectToWorldNormal(a.n); o.fog = ComputeFogFactor(o.pos.z); return o;
             }
             half4 Frag(V i) : SV_Target
             {
-                half4 t = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv) * _Tint;
+                half4 t = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv) * _Tint * i.col;
                 // 바랜 톤: 채도 ↓, 종이색(#EFE8DA) 쪽으로
                 half lum = dot(t.rgb, half3(0.299, 0.587, 0.114));
                 half3 faded = lerp(t.rgb, lerp(half3(lum, lum, lum), half3(0.94, 0.91, 0.85), 0.45), _Fade);

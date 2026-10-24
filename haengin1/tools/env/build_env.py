@@ -85,6 +85,7 @@ def main():
             blend.export_glb(base + ".glb", made)
             files[dist + ".glb"] = os.path.getsize(base + ".glb")
         print("[env] %s: %d 오브젝트 → %s" % (dist, len(made), base))
+    print("[env] 6차 먼 LOD 재질 줄임: 서브메시 %d → %d" % (blend.REDUCE_STATS["before"], blend.REDUCE_STATS["after"]))
     if o.get("blend"):
         bpy.ops.wm.save_as_mainfile(filepath=o["blend"])
     st = build.stats(objs)

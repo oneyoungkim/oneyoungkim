@@ -379,10 +379,10 @@ def densify(zone, b, o):
                 o.sockets.append(dict(kind="streak", pos=P.p(uc, w.y0 - 0.07, 0.012), n=P.out, size=(round(w.u1 - w.u0, 3), round(min(1.6, w.y0 - P.ground(uc) - 0.3), 3)),
                                       tenant="rust" if (w.bars or r.random() < 0.35) else "rain"))
                 n["streaks"] = n.get("streaks", 0) + 1
-            if shopish and role in ("front", "street") and w.kind == "win" and w.y0 > y0 + FLOOR - 0.2 and w.u1 - w.u0 > 0.95 and r.random() < 0.6:
+            if shopish and role in ("front", "street") and w.kind == "win" and not w.bars and w.y0 > y0 + FLOOR - 0.2 and w.u1 - w.u0 > 0.95 and r.random() < 0.6:   # 6차: 방범창 창엔 시트지 없음
                 k = int((w.y0 - y0 + 0.3) // FLOOR) + 1
                 o.sockets.append(dict(kind="win_sheet", pos=P.p(uc, (w.y0 + w.y1) / 2, -w.depth + 0.02), n=P.out,
-                                      size=(round(w.u1 - w.u0 - 0.06, 3), round(w.y1 - w.y0 - 0.06, 3)), tenant="%dF" % k))
+                                      size=(round(w.u1 - w.u0 - 0.06, 3), round(w.y1 - w.y0 - 0.06, 3)), tenant="%dF" % k, mull=w.mull))
                 n["sheets"] = n.get("sheets", 0) + 1
 
         # ---- 4) 인입선 받는 자리(반대쪽 끝)

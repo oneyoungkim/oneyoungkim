@@ -224,7 +224,7 @@ def villa(zone, b, o):
                     if fy + 2.15 - s0 > 0.35:
                         ops.append(Op("base", uc - 0.6, uc + 0.6, s0, fy + 2.15, rev=rev, bars=True, bar_mat=bar_mat, lit=lit))
                     continue
-                if f == ff and i == balc_bay and k >= 1:
+                if f == ff and i == balc_bay and k >= (2 if variant == "shop" else 1):   # 6차: 상가 변형은 2층 발코니 없음(1층 간판 띠를 가림)
                     bw = bay * 0.62
                     ops.append(Op("balc", uc - bw / 2, uc + bw / 2, fy + 0.08, fy + 2.2, rev=rev, mull=1, lit=lit, transom=fy + 1.95,
                                   frame=frame_mat))

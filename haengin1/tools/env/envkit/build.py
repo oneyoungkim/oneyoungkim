@@ -190,7 +190,7 @@ def generate(zone_path, log=print):
                 final.append(Obj("Sock_%s_%03d" % (s["kind"], sock_no), dist, "socket", empty=(s["pos"], s["n"]),
                                  info=dict(sock_kind=s["kind"], pos=[round(v, 3) for v in s["pos"]],
                                            normal=[round(v, 4) for v in s["n"]], tenant=s.get("tenant"),
-                                           **({"size": list(s["size"])} if s.get("size") else {}))))
+                                           **({"size": list(s["size"])} if s.get("size") else {}), **({"mull": s["mull"]} if "mull" in s else {}))))
         for k, mb in enumerate(buckets):
             if mb.empty():
                 continue

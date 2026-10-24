@@ -26,7 +26,15 @@ namespace Haengin.EditorGame
             if (Physics.Raycast(p + Vector3.up * up, Vector3.down, out var h, up + down, 1 << Layers.Ground, QueryTriggerInteraction.Ignore)) p.y = h.point.y;
             return p;
         }
-        static Material Flat(string name, Color c) => Toon($"{MatDir}/{name}.mat", null, Vector2.one, Vector2.zero, c);
+        // 6차: UTS 의 1단 그늘 색 = _1st_ShadeColor × 텍스처(_BaseColor 는 안 곱함) — 텍스처 없는 평면색 재질은 그늘 면이 밝은 회색으로 바래 보였다
+        //      (나무 난간이 크림색으로 보여 찾음). 그늘 색에 평면색을 곱해 둔다(텍스처 재질과 같은 결과)
+        static Material Flat(string name, Color c)
+        {
+            var m = Toon($"{MatDir}/{name}.mat", null, Vector2.one, Vector2.zero, c);
+            var sh = new Color(c.r * ShadeMul.r, c.g * ShadeMul.g, c.b * ShadeMul.b, 1f);
+            m.SetColor("_1st_ShadeColor", sh); m.SetColor("_2nd_ShadeColor", sh); EditorUtility.SetDirty(m);
+            return m;
+        }
 
         /// 식생 재질(ToonLeaf — 바람 흔들림). amp = 흔들림 m, height = 흔들림이 최대가 되는 높이
         static Material Leaf(string path, Texture tex, float amp, float height)

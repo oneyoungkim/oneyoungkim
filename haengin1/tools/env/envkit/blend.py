@@ -101,6 +101,49 @@ def new_obj(name, me, parent, loc, coll):
     return ob
 
 
+REDUCE_STATS = dict(before=0, after=0)
+MERGE_DETAIL = True   # 6차(2026-10-25): 디테일을 LOD0 에 합침(그리기 호출 ↓)
+
+
+def reduce_mats(mb, k, keep=()):
+    """6차(2026-10-25): 먼 LOD(1·2)의 재질을 넓이 큰 k 개로 줄인다 — 나머지 면은 기본색이 가장 가까운 남은 재질로.
+    그리기 호출은 재질(서브메시) 수만큼이라 먼 건물이 화면에 많을 때 크게 준다. LOD0·디테일은 그대로."""
+    from .geom import MB, newell
+    area = {}
+    for f, m in zip(mb.F, mb.M):
+        _, a = newell([mb.V[i] for i in f])
+        area[m] = area.get(m, 0.0) + (a or 0.0)
+    REDUCE_STATS["before"] += len(area)
+    if len(area) <= k:
+        REDUCE_STATS["after"] += len(area)
+        return mb
+    order = sorted(area, key=lambda m: -area[m])
+    kept = [m for m in order if m in keep][:k]
+    for m in order:
+        if len(kept) >= k:
+            break
+        if m not in kept:
+            kept.append(m)
+    def rgb(m):
+        c = MATS.get(m, {}).get("color", "#808080")
+        return hex_rgb(c)
+    remap = {}
+    for m in area:
+        if m in kept:
+            remap[m] = m
+            continue
+        c = rgb(m)
+        remap[m] = min(kept, key=lambda q: sum((x - y) ** 2 for x, y in zip(c, rgb(q))))
+    out = MB()
+    out.V = mb.V
+    out.F = mb.F
+    out.M = [remap[m] for m in mb.M]
+    out.UV = mb.UV
+    out.S = mb.S
+    REDUCE_STATS["after"] += len(kept)
+    return out
+
+
 def build_district(objs, district, coll, props=True):
     """구역 하나의 오브젝트 트리. 맨 위 노드 = 건물 묶음(빈 오브젝트, 원점)·간판·창문 불·자리 표시.
     뿌리 노드를 따로 두지 않는다: Blender 5.2 FBX 내보내기는 bake_space_transform 일 때 '뿌리의 손자' 메시 변환을
@@ -159,9 +202,13 @@ def build_district(objs, district, coll, props=True):
             for L, mb in enumerate(ob.lods):
                 if mb is None or mb.empty():
                     continue
-                me = mesh_from_mbs("%s_LOD%d" % (ob.name, L), [mb], o)
+                if L >= 1:
+                    mb = reduce_mats(mb, 4 if L == 1 else 2, keep=("M_Glass_Dark",) if L == 1 else ())   # 6차: 먼 LOD 재질 수 줄여 그리기 호출 ↓
+                # 6차: LOD0 + 디테일(가스관·실외기·계량기 …)을 한 메시로 — 같은 재질이 많아 서브메시(그리기 호출)가 준다. 디테일도 그림자를 드리움
+                mbs = [mb] + ([ob.det] if (L == 0 and MERGE_DETAIL and ob.det is not None and not ob.det.empty()) else [])
+                me = mesh_from_mbs("%s_LOD%d" % (ob.name, L), mbs, o)
                 made.append(new_obj("%s_LOD%d" % (ob.name, L), me, grp, loc, coll))
-            if ob.det is not None and not ob.det.empty():
+            if ob.det is not None and not ob.det.empty() and not MERGE_DETAIL:
                 me = mesh_from_mbs("%s_Detail_LOD0" % ob.name, [ob.det], o)
                 made.append(new_obj("%s_Detail_LOD0" % ob.name, me, grp, loc, coll))
             made.append(grp)

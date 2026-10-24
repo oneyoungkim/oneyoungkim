@@ -21,6 +21,7 @@ Shader "Haengin/ToonLeafCard"
         _InkWidth ("Ink alpha band", Range(0.01, 0.6)) = 0.22
         _InkColor ("Ink", Color) = (0.102, 0.078, 0.09, 1)
         _StencilRef ("Stencil ref (1 = skip screen outline)", Float) = 0
+        _SwayUV ("Sway weight from uv2.y (merged ground cover, 6th pass)", Float) = 0
     }
     SubShader
     {
@@ -28,13 +29,13 @@ Shader "Haengin/ToonLeafCard"
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
         CBUFFER_START(UnityPerMaterial)
-        float4 _BaseMap_ST; half4 _BaseColor, _ShadeColor, _InkColor; float _Step, _Feather, _WindAmp, _WindFreq, _Height, _Cutoff, _Sphere, _Ink, _InkWidth, _StencilRef;
+        float4 _BaseMap_ST; half4 _BaseColor, _ShadeColor, _InkColor; float _Step, _Feather, _WindAmp, _WindFreq, _Height, _Cutoff, _Sphere, _Ink, _InkWidth, _StencilRef, _SwayUV;
         CBUFFER_END
         TEXTURE2D(_BaseMap); SAMPLER(sampler_BaseMap);
-        float3 Sway(float3 posOS)
+        float3 Sway(float3 posOS, float2 uv1)
         {
             float3 wp = TransformObjectToWorld(posOS);
-            float w = saturate(posOS.y / max(_Height, 0.01));
+            float w = _SwayUV > 0.5 ? saturate(uv1.y) : saturate(posOS.y / max(_Height, 0.01));   // 6차: 합친 풀·관목 덮개는 정점마다 높이 비율(uv2.y)
             float t = _Time.y * _WindFreq + wp.x * 0.35 + wp.z * 0.27;
             float2 off = float2(sin(t), cos(t * 0.7 + 1.3)) * _WindAmp * w * w;
             return float3(wp.x + off.x, wp.y, wp.z + off.y);
@@ -57,12 +58,12 @@ Shader "Haengin/ToonLeafCard"
             #pragma multi_compile_fog
             #pragma multi_compile_instancing
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            struct A { float4 pos : POSITION; float3 n : NORMAL; float2 uv : TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID };
+            struct A { float4 pos : POSITION; float3 n : NORMAL; float2 uv : TEXCOORD0; float2 uv1 : TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID };
             struct V { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; float3 wp : TEXCOORD1; float3 n : TEXCOORD2; float fog : TEXCOORD3; UNITY_VERTEX_INPUT_INSTANCE_ID };
             V Vert(A a)
             {
                 V o; UNITY_SETUP_INSTANCE_ID(a); UNITY_TRANSFER_INSTANCE_ID(a, o);
-                o.wp = Sway(a.pos.xyz);
+                o.wp = Sway(a.pos.xyz, a.uv1);
                 o.pos = TransformWorldToHClip(o.wp);
                 o.uv = TRANSFORM_TEX(a.uv, _BaseMap);
                 o.n = TransformObjectToWorldNormal(a.n);
@@ -116,12 +117,12 @@ Shader "Haengin/ToonLeafCard"
             #pragma multi_compile_instancing
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
             float3 _LightDirection;
-            struct A { float4 pos : POSITION; float3 n : NORMAL; float2 uv : TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID };
+            struct A { float4 pos : POSITION; float3 n : NORMAL; float2 uv : TEXCOORD0; float2 uv1 : TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID };
             struct V { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; };
             V VertS(A a)
             {
                 V o; UNITY_SETUP_INSTANCE_ID(a); o.uv = TRANSFORM_TEX(a.uv, _BaseMap);
-                float3 wp = Sway(a.pos.xyz);
+                float3 wp = Sway(a.pos.xyz, a.uv1);
                 float3 n = TransformObjectToWorldNormal(a.n);
                 float4 p = TransformWorldToHClip(ApplyShadowBias(wp, n, _LightDirection));
                 #if UNITY_REVERSED_Z
@@ -143,9 +144,9 @@ Shader "Haengin/ToonLeafCard"
             #pragma vertex VertD
             #pragma fragment FragD
             #pragma multi_compile_instancing
-            struct A { float4 pos : POSITION; float2 uv : TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID };
+            struct A { float4 pos : POSITION; float2 uv : TEXCOORD0; float2 uv1 : TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID };
             struct V { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; };
-            V VertD(A a) { V o; UNITY_SETUP_INSTANCE_ID(a); o.pos = TransformWorldToHClip(Sway(a.pos.xyz)); o.uv = TRANSFORM_TEX(a.uv, _BaseMap); return o; }
+            V VertD(A a) { V o; UNITY_SETUP_INSTANCE_ID(a); o.pos = TransformWorldToHClip(Sway(a.pos.xyz, a.uv1)); o.uv = TRANSFORM_TEX(a.uv, _BaseMap); return o; }
             half4 FragD(V i) : SV_Target { clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv).a - _Cutoff); return 0; }
             ENDHLSL
         }
