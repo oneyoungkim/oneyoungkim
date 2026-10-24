@@ -25,14 +25,20 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _DepthAbs: 0.04
-    - _DepthRel: 0.035
+    - _CreaseInv: 0.0045
+    - _DepthAbs: 0.03
+    - _DepthRel: 0.022
     - _FadeEnd: 80
     - _FadeStart: 55
-    - _FarWidth: 0.75
-    - _NearWidth: 1.5
+    - _FarWidth: 0.55
+    - _Grain: 0.035
+    - _HandFar: 22
+    - _HandNear: 8
+    - _NearWidth: 2.4
     - _NormalEdge: 0.42
+    - _Stain: 0.05
     - _Strength: 1
+    - _WidthPow: 0.55
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

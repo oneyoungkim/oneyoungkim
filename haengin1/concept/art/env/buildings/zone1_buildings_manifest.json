@@ -4,7 +4,7 @@
  "zone": "unity/HaenginMainEvent/Assets/_Project/Data/zone1.json",
  "zone_version": "0.2.0",
  "seed": 20261006,
- "geometry_sha1": "dfd94977f4b5a16b37c5755cb50c3d9bc6b3f2c0",
+ "geometry_sha1": "96c92c68ecb7e1e5e0ee3fb1bee5e955ce5f174f",
  "axes": "Unity 좌표 그대로(X 동, Y 위, Z 북). 프리팹을 원점·회전 0·배율 1 로 놓음",
  "lod": {
   "distances_m": [
@@ -20,9 +20,9 @@
    "desc": "성균관로 북쪽 줄(후문 상가거리·명륜3가 다세대)",
    "stats": {
     "lod0": 16764,
-    "lod1": 6652,
+    "lod1": 7276,
     "lod2": 4080,
-    "detail": 12466,
+    "detail": 20102,
     "winlit": 342,
     "signs": 26,
     "objects": 7,
@@ -34,9 +34,9 @@
    "desc": "성균관로 남쪽 줄 + 후문 뒷골목 주차장 둘레",
    "stats": {
     "lod0": 13930,
-    "lod1": 5670,
+    "lod1": 6258,
     "lod2": 3548,
-    "detail": 12692,
+    "detail": 18762,
     "winlit": 272,
     "signs": 4,
     "objects": 7,
@@ -48,9 +48,9 @@
    "desc": "명륜3가 골목·시우네·꼭대기 계단·한옥",
    "stats": {
     "lod0": 45674,
-    "lod1": 12492,
+    "lod1": 13140,
     "lod2": 6582,
-    "detail": 19860,
+    "detail": 26900,
     "winlit": 402,
     "signs": 4,
     "objects": 15,
@@ -103,10 +103,10 @@
   "Wires": {
    "desc": "전봇대·전선(구역 전체)",
    "stats": {
-    "lod0": 9320,
-    "lod1": 3128,
+    "lod0": 11800,
+    "lod1": 4058,
     "lod2": 848,
-    "detail": 384,
+    "detail": 640,
     "winlit": 0,
     "signs": 0,
     "objects": 8,
@@ -116,13 +116,13 @@
   }
  },
  "files_bytes": {
-  "HoomunN.fbx": 1172828,
-  "HoomunS.fbx": 1049052,
-  "Alley.fbx": 2308124,
+  "HoomunN.fbx": 1465404,
+  "HoomunS.fbx": 1296428,
+  "Alley.fbx": 2550476,
   "Campus.fbx": 494236,
   "Waryong.fbx": 196876,
   "Wall.fbx": 788508,
-  "Wires.fbx": 605868
+  "Wires.fbx": 743804
  },
  "materials": {
   "M_Brick_Red": {
@@ -405,6 +405,22 @@
    "note": "빨랫줄 빨래·(--prop-geometry 때) 건조대 빨래",
    "tiling": 1.0
   },
+  "M_Fabric_White": {
+   "color": "#E9E4DA",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "kit",
+   "note": "4차: 흰 빨래",
+   "tiling": 1.0
+  },
+  "M_Fabric_Red": {
+   "color": "#B5655A",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "kit",
+   "note": "4차: 붉은 빨래·이불",
+   "tiling": 1.0
+  },
   "M_Tank_Blue": {
    "color": "#7FB2C9",
    "tile": 1.0,
@@ -462,9 +478,9 @@
     952,
     612
    ],
-   "detail_tris": 794,
+   "detail_tris": 1672,
    "origin": [
-    -190.261,
+    -190.197,
     28.8,
     109.718
    ]
@@ -973,6 +989,282 @@
    ]
   },
   {
+   "name": "Prop_ac_outdoor_unit_016",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -185.578,
+     36.74,
+     108.497
+    ],
+    "yaw_deg": 84.29,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -185.578,
+    36.74,
+    108.497
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_017",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -185.437,
+     29.451,
+     107.091
+    ],
+    "yaw_deg": 84.29,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -185.437,
+    29.451,
+    107.091
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_018",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -185.559,
+     29.69,
+     108.388
+    ],
+    "yaw_deg": 84.29,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -185.559,
+    29.69,
+    108.388
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_019",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -185.69,
+     30.12,
+     110.992
+    ],
+    "yaw_deg": 84.29,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -185.69,
+    30.12,
+    110.992
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_020",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -186.048,
+     31.417,
+     111.627
+    ],
+    "yaw_deg": 84.29,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -186.048,
+    31.417,
+    111.627
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_021",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -186.077,
+     31.417,
+     111.925
+    ],
+    "yaw_deg": 84.29,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -186.077,
+    31.417,
+    111.925
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_022",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -189.405,
+     36.74,
+     114.47
+    ],
+    "yaw_deg": -5.71,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -189.405,
+    36.74,
+    114.47
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_023",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -194.773,
+     31.345,
+     110.198
+    ],
+    "yaw_deg": -95.71,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -194.773,
+    31.345,
+    110.198
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_a_024",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_a",
+    "glb": "concept/art/env/props/potted_plant_a.glb",
+    "pos": [
+     -194.573,
+     31.151,
+     109.012
+    ],
+    "yaw_deg": -95.71,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -194.573,
+    31.151,
+    109.012
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_025",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -188.45,
+     36.74,
+     105.045
+    ],
+    "yaw_deg": 174.29,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -188.45,
+    36.74,
+    105.045
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_026",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -190.969,
+     29.981,
+     104.785
+    ],
+    "yaw_deg": 174.29,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -190.969,
+    29.981,
+    104.785
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_027",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -186.342,
+     29.414,
+     105.248
+    ],
+    "yaw_deg": 174.29,
+    "host": "후문상가 A동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -186.342,
+    29.414,
+    105.248
+   ]
+  },
+  {
    "name": "shop_001",
    "district": "HoomunN",
    "kind": "building",
@@ -1018,13 +1310,13 @@
    },
    "tris": [
     1532,
-    632,
+    644,
     402
    ],
-   "detail_tris": 512,
+   "detail_tris": 692,
    "origin": [
     -179.873,
-    26.838,
+    26.809,
     108.4
    ]
   },
@@ -1239,7 +1531,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_016",
+   "name": "Prop_ac_outdoor_unit_028",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1262,7 +1554,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_017",
+   "name": "Prop_gas_meter_pipe_029",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1285,7 +1577,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_018",
+   "name": "Prop_water_tank_roof_030",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1308,7 +1600,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_019",
+   "name": "Prop_ac_outdoor_unit_031",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1328,6 +1620,351 @@
     -176.126,
     34.885,
     111.839
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_032",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -175.332,
+     27.639,
+     110.414
+    ],
+    "yaw_deg": 102.31,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -175.332,
+    27.639,
+    110.414
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_033",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -175.806,
+     28.038,
+     108.235
+    ],
+    "yaw_deg": 102.31,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -175.806,
+    28.038,
+    108.235
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_034",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -176.08,
+     27.089,
+     105.61
+    ],
+    "yaw_deg": 102.31,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -176.08,
+    27.089,
+    105.61
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_035",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -176.354,
+     27.432,
+     104.956
+    ],
+    "yaw_deg": 102.31,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -176.354,
+    27.432,
+    104.956
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_036",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -176.593,
+     27.764,
+     104.281
+    ],
+    "yaw_deg": 102.31,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -176.593,
+    27.764,
+    104.281
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_037",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -175.46,
+     26.805,
+     108.449
+    ],
+    "yaw_deg": 102.31,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -175.46,
+    26.805,
+    108.449
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_038",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -175.438,
+     26.821,
+     109.158
+    ],
+    "yaw_deg": 102.31,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -175.438,
+    26.821,
+    109.158
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_039",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -175.141,
+     26.846,
+     109.915
+    ],
+    "yaw_deg": 102.31,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -175.141,
+    26.846,
+    109.915
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_040",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -174.989,
+     26.878,
+     111.213
+    ],
+    "yaw_deg": 102.31,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -174.989,
+    26.878,
+    111.213
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_041",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -184.108,
+     29.645,
+     109.842
+    ],
+    "yaw_deg": -77.69,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.108,
+    29.645,
+    109.842
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_042",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -184.748,
+     29.195,
+     106.304
+    ],
+    "yaw_deg": -77.69,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.748,
+    29.195,
+    106.304
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_043",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -184.142,
+     30.646,
+     108.314
+    ],
+    "yaw_deg": -77.69,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.142,
+    30.646,
+    108.314
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_044",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -184.206,
+     30.646,
+     108.021
+    ],
+    "yaw_deg": -77.69,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.206,
+    30.646,
+    108.021
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_045",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -181.735,
+     28.898,
+     104.448
+    ],
+    "yaw_deg": -167.69,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -181.735,
+    28.898,
+    104.448
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_046",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -181.145,
+     28.828,
+     104.319
+    ],
+    "yaw_deg": -167.69,
+    "host": "후문상가 B동"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -181.145,
+    28.828,
+    104.319
    ]
   },
   {
@@ -1374,12 +2011,12 @@
    },
    "tris": [
     4180,
-    1572,
+    1752,
     946
    ],
-   "detail_tris": 4032,
+   "detail_tris": 5910,
    "origin": [
-    -165.75,
+    -165.814,
     26.02,
     104.734
    ]
@@ -1418,7 +2055,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_020",
+   "name": "Prop_ac_outdoor_unit_047",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1441,7 +2078,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_021",
+   "name": "Prop_ac_outdoor_unit_048",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1464,7 +2101,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_022",
+   "name": "Prop_ac_outdoor_unit_049",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1487,7 +2124,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_023",
+   "name": "Prop_ac_outdoor_unit_050",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1510,7 +2147,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_024",
+   "name": "Prop_ac_outdoor_unit_051",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1533,7 +2170,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_025",
+   "name": "Prop_ac_outdoor_unit_052",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1556,7 +2193,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_026",
+   "name": "Prop_ac_outdoor_unit_053",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1579,7 +2216,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_027",
+   "name": "Prop_ac_outdoor_unit_054",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1602,7 +2239,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_028",
+   "name": "Prop_ac_outdoor_unit_055",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1625,7 +2262,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_029",
+   "name": "Prop_ac_outdoor_unit_056",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1648,7 +2285,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_030",
+   "name": "Prop_ac_outdoor_unit_057",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1671,7 +2308,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_031",
+   "name": "Prop_ac_outdoor_unit_058",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1694,7 +2331,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_032",
+   "name": "Prop_ac_outdoor_unit_059",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1717,7 +2354,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_033",
+   "name": "Prop_electric_meter_box_060",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1740,7 +2377,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_034",
+   "name": "Prop_electric_meter_box_061",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1763,7 +2400,7 @@
    ]
   },
   {
-   "name": "Prop_mailbox_cluster_035",
+   "name": "Prop_mailbox_cluster_062",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1786,7 +2423,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_036",
+   "name": "Prop_ac_outdoor_unit_063",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1809,7 +2446,7 @@
    ]
   },
   {
-   "name": "Prop_clay_pots_cluster_037",
+   "name": "Prop_clay_pots_cluster_064",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1832,7 +2469,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_038",
+   "name": "Prop_ac_outdoor_unit_065",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1855,7 +2492,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_039",
+   "name": "Prop_ac_outdoor_unit_066",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1904,7 +2541,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_040",
+   "name": "Prop_gas_meter_pipe_067",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1927,7 +2564,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_041",
+   "name": "Prop_water_tank_roof_068",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1950,7 +2587,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_042",
+   "name": "Prop_ac_outdoor_unit_069",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1973,7 +2610,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_043",
+   "name": "Prop_ac_outdoor_unit_070",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -1996,7 +2633,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_044",
+   "name": "Prop_ac_outdoor_unit_071",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2016,6 +2653,397 @@
     -168.283,
     39.15,
     102.156
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_072",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -161.692,
+     31.08,
+     102.037
+    ],
+    "yaw_deg": 107.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -161.692,
+    31.08,
+    102.037
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_073",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -160.862,
+     31.08,
+     104.745
+    ],
+    "yaw_deg": 107.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -160.862,
+    31.08,
+    104.745
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_074",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -161.713,
+     34.08,
+     101.971
+    ],
+    "yaw_deg": 107.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -161.713,
+    34.08,
+    101.971
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_075",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -160.857,
+     34.08,
+     104.761
+    ],
+    "yaw_deg": 107.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -160.857,
+    34.08,
+    104.761
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_076",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -161.588,
+     37.08,
+     102.378
+    ],
+    "yaw_deg": 107.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -161.588,
+    37.08,
+    102.378
+   ]
+  },
+  {
+   "name": "Prop_clay_pots_cluster_077",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "clay_pots_cluster",
+    "glb": "concept/art/env/props/clay_pots_cluster.glb",
+    "pos": [
+     -161.758,
+     26.466,
+     101.198
+    ],
+    "yaw_deg": 107.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -161.758,
+    26.466,
+    101.198
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_078",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -161.52,
+     26.548,
+     102.574
+    ],
+    "yaw_deg": 107.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -161.52,
+    26.548,
+    102.574
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_a_079",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_a",
+    "glb": "concept/art/env/props/potted_plant_a.glb",
+    "pos": [
+     -160.566,
+     26.626,
+     105.962
+    ],
+    "yaw_deg": 107.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -160.566,
+    26.626,
+    105.962
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_080",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -160.938,
+     27.755,
+     105.027
+    ],
+    "yaw_deg": 107.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -160.938,
+    27.755,
+    105.027
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_081",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -166.197,
+     31.08,
+     109.79
+    ],
+    "yaw_deg": 17.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -166.197,
+    31.08,
+    109.79
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_082",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -162.772,
+     34.08,
+     108.739
+    ],
+    "yaw_deg": 17.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -162.772,
+    34.08,
+    108.739
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_083",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -166.196,
+     37.08,
+     109.789
+    ],
+    "yaw_deg": 17.05,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -166.196,
+    37.08,
+    109.789
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_084",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -170.48,
+     27.945,
+     105.155
+    ],
+    "yaw_deg": -72.95,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -170.48,
+    27.945,
+    105.155
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_085",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -169.688,
+     27.909,
+     107.737
+    ],
+    "yaw_deg": -72.95,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -169.688,
+    27.909,
+    107.737
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_086",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -170.752,
+     37.08,
+     104.803
+    ],
+    "yaw_deg": -72.95,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -170.752,
+    37.08,
+    104.803
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_087",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -169.706,
+     27.117,
+     107.935
+    ],
+    "yaw_deg": -72.95,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -169.706,
+    27.117,
+    107.935
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_088",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -167.928,
+     27.198,
+     100.927
+    ],
+    "yaw_deg": -162.95,
+    "host": "명륜3가 다세대 1(벽돌)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -167.928,
+    27.198,
+    100.927
    ]
   },
   {
@@ -2112,18 +3140,18 @@
    },
    "tris": [
     3424,
-    1438,
+    1618,
     862
    ],
-   "detail_tris": 4298,
+   "detail_tris": 6168,
    "origin": [
-    -155.315,
+    -155.276,
     24.67,
-    101.48
+    101.565
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_045",
+   "name": "Prop_ac_outdoor_unit_089",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2146,7 +3174,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_046",
+   "name": "Prop_ac_outdoor_unit_090",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2169,7 +3197,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_047",
+   "name": "Prop_ac_outdoor_unit_091",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2192,7 +3220,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_048",
+   "name": "Prop_ac_outdoor_unit_092",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2215,7 +3243,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_049",
+   "name": "Prop_ac_outdoor_unit_093",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2238,7 +3266,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_050",
+   "name": "Prop_ac_outdoor_unit_094",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2261,7 +3289,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_051",
+   "name": "Prop_ac_outdoor_unit_095",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2284,7 +3312,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_052",
+   "name": "Prop_ac_outdoor_unit_096",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2307,7 +3335,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_053",
+   "name": "Prop_ac_outdoor_unit_097",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2330,7 +3358,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_054",
+   "name": "Prop_ac_outdoor_unit_098",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2353,7 +3381,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_055",
+   "name": "Prop_ac_outdoor_unit_099",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2376,7 +3404,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_056",
+   "name": "Prop_ac_outdoor_unit_100",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2399,7 +3427,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_057",
+   "name": "Prop_ac_outdoor_unit_101",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2422,7 +3450,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_058",
+   "name": "Prop_ac_outdoor_unit_102",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2445,7 +3473,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_059",
+   "name": "Prop_ac_outdoor_unit_103",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2468,7 +3496,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_060",
+   "name": "Prop_ac_outdoor_unit_104",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2491,7 +3519,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_061",
+   "name": "Prop_ac_outdoor_unit_105",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2514,7 +3542,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_062",
+   "name": "Prop_ac_outdoor_unit_106",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2537,7 +3565,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_063",
+   "name": "Prop_ac_outdoor_unit_107",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2560,7 +3588,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_064",
+   "name": "Prop_ac_outdoor_unit_108",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2583,7 +3611,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_065",
+   "name": "Prop_ac_outdoor_unit_109",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2606,7 +3634,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_066",
+   "name": "Prop_ac_outdoor_unit_110",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2629,7 +3657,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_067",
+   "name": "Prop_ac_outdoor_unit_111",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2678,7 +3706,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_068",
+   "name": "Prop_gas_meter_pipe_112",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2701,7 +3729,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_069",
+   "name": "Prop_water_tank_roof_113",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2724,7 +3752,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_070",
+   "name": "Prop_ac_outdoor_unit_114",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2744,6 +3772,282 @@
     -159.591,
     37.76,
     99.502
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_115",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -150.961,
+     32.69,
+     99.488
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -150.961,
+    32.69,
+    99.488
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_116",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -150.971,
+     35.69,
+     99.458
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -150.971,
+    35.69,
+    99.458
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_117",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -150.653,
+     35.69,
+     100.469
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -150.653,
+    35.69,
+    100.469
+   ]
+  },
+  {
+   "name": "Prop_clay_pots_cluster_118",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "clay_pots_cluster",
+    "glb": "concept/art/env/props/clay_pots_cluster.glb",
+    "pos": [
+     -151.169,
+     25.121,
+     98.217
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -151.169,
+    25.121,
+    98.217
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_119",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -149.876,
+     25.613,
+     102.916
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -149.876,
+    25.613,
+    102.916
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_120",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -155.595,
+     29.69,
+     106.014
+    ],
+    "yaw_deg": 17.45,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -155.595,
+    29.69,
+    106.014
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_121",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -155.641,
+     32.69,
+     106.028
+    ],
+    "yaw_deg": 17.45,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -155.641,
+    32.69,
+    106.028
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_122",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -152.266,
+     35.69,
+     104.967
+    ],
+    "yaw_deg": 17.45,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -152.266,
+    35.69,
+    104.967
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_123",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -159.203,
+     27.249,
+     104.332
+    ],
+    "yaw_deg": -72.55,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -159.203,
+    27.249,
+    104.332
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_124",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -159.348,
+     35.69,
+     104.397
+    ],
+    "yaw_deg": -72.55,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -159.348,
+    35.69,
+    104.397
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_125",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -160.155,
+     35.69,
+     101.83
+    ],
+    "yaw_deg": -72.55,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -160.155,
+    35.69,
+    101.83
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_126",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -155.048,
+     35.69,
+     96.96
+    ],
+    "yaw_deg": -162.55,
+    "host": "명륜3가 원룸 2"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -155.048,
+    35.69,
+    96.96
    ]
   },
   {
@@ -2790,10 +4094,10 @@
    },
    "tris": [
     2814,
-    1102,
+    1234,
     672
    ],
-   "detail_tris": 1936,
+   "detail_tris": 3264,
    "origin": [
     -145.261,
     23.46,
@@ -2834,7 +4138,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_071",
+   "name": "Prop_ac_outdoor_unit_127",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2857,7 +4161,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_072",
+   "name": "Prop_ac_outdoor_unit_128",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2880,7 +4184,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_073",
+   "name": "Prop_ac_outdoor_unit_129",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2903,7 +4207,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_074",
+   "name": "Prop_ac_outdoor_unit_130",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2926,7 +4230,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_075",
+   "name": "Prop_electric_meter_box_131",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2949,7 +4253,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_076",
+   "name": "Prop_electric_meter_box_132",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2972,7 +4276,7 @@
    ]
   },
   {
-   "name": "Prop_mailbox_cluster_077",
+   "name": "Prop_mailbox_cluster_133",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -2995,7 +4299,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_078",
+   "name": "Prop_ac_outdoor_unit_134",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3018,7 +4322,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_079",
+   "name": "Prop_ac_outdoor_unit_135",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3067,7 +4371,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_080",
+   "name": "Prop_gas_meter_pipe_136",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3090,7 +4394,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_081",
+   "name": "Prop_water_tank_roof_137",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3113,7 +4417,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_082",
+   "name": "Prop_ac_outdoor_unit_138",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3136,7 +4440,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_083",
+   "name": "Prop_styrofoam_planter_139",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3159,7 +4463,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_084",
+   "name": "Prop_styrofoam_planter_140",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3182,7 +4486,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_085",
+   "name": "Prop_styrofoam_planter_141",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3205,7 +4509,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_086",
+   "name": "Prop_styrofoam_planter_142",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3225,6 +4529,213 @@
     -148.248,
     33.42,
     95.965
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_143",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -141.204,
+     28.4,
+     95.575
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 다세대 3"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -141.204,
+    28.4,
+    95.575
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_144",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -140.458,
+     31.4,
+     97.95
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 다세대 3"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.458,
+    31.4,
+    97.95
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_a_145",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_a",
+    "glb": "concept/art/env/props/potted_plant_a.glb",
+    "pos": [
+     -141.497,
+     23.954,
+     94.889
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 다세대 3"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -141.497,
+    23.954,
+    94.889
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_146",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -140.226,
+     24.45,
+     98.231
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 다세대 3"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.226,
+    24.45,
+    98.231
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_147",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -141.303,
+     25.322,
+     95.782
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 다세대 3"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -141.303,
+    25.322,
+    95.782
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_148",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -141.213,
+     25.322,
+     96.068
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 다세대 3"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -141.213,
+    25.322,
+    96.068
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_149",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -142.316,
+     28.4,
+     101.843
+    ],
+    "yaw_deg": 17.45,
+    "host": "명륜3가 다세대 3"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -142.316,
+    28.4,
+    101.843
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_150",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -142.431,
+     31.4,
+     101.879
+    ],
+    "yaw_deg": 17.45,
+    "host": "명륜3가 다세대 3"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -142.431,
+    31.4,
+    101.879
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_151",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -150.272,
+     31.4,
+     98.319
+    ],
+    "yaw_deg": -72.55,
+    "host": "명륜3가 다세대 3"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -150.272,
+    31.4,
+    98.319
    ]
   },
   {
@@ -3271,10 +4782,10 @@
    },
    "tris": [
     2240,
-    890,
+    1010,
     520
    ],
-   "detail_tris": 798,
+   "detail_tris": 2300,
    "origin": [
     -135.35,
     22.305,
@@ -3341,7 +4852,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_087",
+   "name": "Prop_ac_outdoor_unit_152",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3364,7 +4875,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_088",
+   "name": "Prop_ac_outdoor_unit_153",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3387,7 +4898,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_089",
+   "name": "Prop_ac_outdoor_unit_154",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3410,7 +4921,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_090",
+   "name": "Prop_gas_meter_pipe_155",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3433,7 +4944,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_091",
+   "name": "Prop_ac_outdoor_unit_156",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3456,7 +4967,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_092",
+   "name": "Prop_ac_outdoor_unit_157",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3479,7 +4990,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_093",
+   "name": "Prop_ac_outdoor_unit_158",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3502,7 +5013,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_094",
+   "name": "Prop_water_tank_roof_159",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3525,7 +5036,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_095",
+   "name": "Prop_ac_outdoor_unit_160",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3548,7 +5059,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_096",
+   "name": "Prop_ac_outdoor_unit_161",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3571,7 +5082,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_097",
+   "name": "Prop_ac_outdoor_unit_162",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3591,6 +5102,420 @@
     -132.906,
     32.305,
     97.9
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_163",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -131.201,
+     27.235,
+     92.666
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -131.201,
+    27.235,
+    92.666
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_164",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -130.441,
+     27.235,
+     95.2
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -130.441,
+    27.235,
+    95.2
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_165",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -131.255,
+     30.235,
+     92.486
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -131.255,
+    30.235,
+    92.486
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_166",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -130.813,
+     23.449,
+     93.959
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -130.813,
+    23.449,
+    93.959
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_167",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -131.486,
+     22.799,
+     92.001
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -131.486,
+    22.799,
+    92.001
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_168",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -130.368,
+     23.65,
+     95.415
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -130.368,
+    23.65,
+    95.415
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_169",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -137.578,
+     25.351,
+     100.247
+    ],
+    "yaw_deg": 16.7,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -137.578,
+    25.351,
+    100.247
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_170",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -132.963,
+     30.235,
+     99.027
+    ],
+    "yaw_deg": 16.7,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -132.963,
+    30.235,
+    99.027
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_171",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -140.038,
+     24.862,
+     95.63
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.038,
+    24.862,
+    95.63
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_172",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -139.562,
+     30.235,
+     97.763
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -139.562,
+    30.235,
+    97.763
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_173",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -140.653,
+     23.735,
+     94.127
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.653,
+    23.735,
+    94.127
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_a_174",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_a",
+    "glb": "concept/art/env/props/potted_plant_a.glb",
+    "pos": [
+     -138.88,
+     24.569,
+     99.78
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -138.88,
+    24.569,
+    99.78
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_175",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -139.7,
+     25.383,
+     96.761
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -139.7,
+    25.383,
+    96.761
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_176",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -139.786,
+     25.383,
+     96.474
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -139.786,
+    25.383,
+    96.474
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_177",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -138.275,
+     30.235,
+     91.775
+    ],
+    "yaw_deg": -163.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -138.275,
+    30.235,
+    91.775
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_178",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -135.365,
+     30.235,
+     90.901
+    ],
+    "yaw_deg": -163.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -135.365,
+    30.235,
+    90.901
+   ]
+  },
+  {
+   "name": "Prop_clay_pots_cluster_179",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "clay_pots_cluster",
+    "glb": "concept/art/env/props/clay_pots_cluster.glb",
+    "pos": [
+     -134.745,
+     23.049,
+     90.524
+    ],
+    "yaw_deg": -163.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -134.745,
+    23.049,
+    90.524
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_180",
+   "district": "HoomunN",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -135.979,
+     23.197,
+     91.171
+    ],
+    "yaw_deg": -163.3,
+    "host": "명륜1가 방면 상가주택"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -135.979,
+    23.197,
+    91.171
    ]
   },
   {
@@ -3683,7 +5608,7 @@
    ]
   },
   {
-   "name": "Prop_basin_planter_onion_098",
+   "name": "Prop_basin_planter_onion_181",
    "district": "HoomunN",
    "kind": "prop",
    "info": {
@@ -3919,12 +5844,12 @@
    },
    "tris": [
     758,
-    368,
+    392,
     238
    ],
-   "detail_tris": 184,
+   "detail_tris": 348,
    "origin": [
-    -188.341,
+    -188.373,
     28.29,
     91.331
    ]
@@ -3989,7 +5914,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_099",
+   "name": "Prop_gas_meter_pipe_182",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4012,7 +5937,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_100",
+   "name": "Prop_water_tank_roof_183",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4035,7 +5960,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_101",
+   "name": "Prop_ac_outdoor_unit_184",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4058,7 +5983,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_102",
+   "name": "Prop_ac_outdoor_unit_185",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4081,7 +6006,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_103",
+   "name": "Prop_ac_outdoor_unit_186",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4104,7 +6029,7 @@
    ]
   },
   {
-   "name": "Prop_laundry_rack_104",
+   "name": "Prop_laundry_rack_187",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4124,6 +6049,167 @@
     -188.3,
     35.75,
     91.23
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_188",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -190.763,
+     33.73,
+     90.866
+    ],
+    "yaw_deg": -95.71,
+    "host": "남쪽 상가 1(제본)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -190.763,
+    33.73,
+    90.866
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_189",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -190.625,
+     29.947,
+     89.49
+    ],
+    "yaw_deg": -95.71,
+    "host": "남쪽 상가 1(제본)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -190.625,
+    29.947,
+    89.49
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_190",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -190.839,
+     29.927,
+     90.26
+    ],
+    "yaw_deg": -95.71,
+    "host": "남쪽 상가 1(제본)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -190.839,
+    29.927,
+    90.26
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_191",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -190.624,
+     31.095,
+     91.044
+    ],
+    "yaw_deg": -95.71,
+    "host": "남쪽 상가 1(제본)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -190.624,
+    31.095,
+    91.044
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_192",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -190.594,
+     31.095,
+     90.745
+    ],
+    "yaw_deg": -95.71,
+    "host": "남쪽 상가 1(제본)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -190.594,
+    31.095,
+    90.745
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_193",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -187.376,
+     29.955,
+     88.226
+    ],
+    "yaw_deg": 174.29,
+    "host": "남쪽 상가 1(제본)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -187.376,
+    29.955,
+    88.226
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_194",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -187.078,
+     29.955,
+     88.256
+    ],
+    "yaw_deg": 174.29,
+    "host": "남쪽 상가 1(제본)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -187.078,
+    29.955,
+    88.256
    ]
   },
   {
@@ -4170,14 +6256,14 @@
    },
    "tris": [
     954,
-    434,
+    458,
     274
    ],
-   "detail_tris": 364,
+   "detail_tris": 596,
    "origin": [
     -184.64,
     27.395,
-    91.083
+    91.077
    ]
   },
   {
@@ -4240,7 +6326,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_105",
+   "name": "Prop_gas_meter_pipe_195",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4263,7 +6349,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_106",
+   "name": "Prop_water_tank_roof_196",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4286,7 +6372,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_107",
+   "name": "Prop_ac_outdoor_unit_197",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4309,7 +6395,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_108",
+   "name": "Prop_styrofoam_planter_198",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4332,7 +6418,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_109",
+   "name": "Prop_styrofoam_planter_199",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4352,6 +6438,282 @@
     -185.929,
     34.945,
     89.081
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_200",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -182.273,
+     32.925,
+     90.183
+    ],
+    "yaw_deg": 102.31,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -182.273,
+    32.925,
+    90.183
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_201",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -182.53,
+     27.311,
+     89.004
+    ],
+    "yaw_deg": 102.31,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -182.53,
+    27.311,
+    89.004
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_202",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -182.336,
+     27.238,
+     89.858
+    ],
+    "yaw_deg": 102.31,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -182.336,
+    27.238,
+    89.858
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_203",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -182.248,
+     28.811,
+     91.03
+    ],
+    "yaw_deg": 102.31,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -182.248,
+    28.811,
+    91.03
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_204",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -182.184,
+     28.811,
+     91.323
+    ],
+    "yaw_deg": 102.31,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -182.184,
+    28.811,
+    91.323
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_205",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -183.753,
+     28.979,
+     94.127
+    ],
+    "yaw_deg": 12.31,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -183.753,
+    28.979,
+    94.127
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_206",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -182.345,
+     28.782,
+     93.728
+    ],
+    "yaw_deg": 12.31,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -182.345,
+    28.782,
+    93.728
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_207",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -185.199,
+     29.043,
+     87.97
+    ],
+    "yaw_deg": -167.69,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -185.199,
+    29.043,
+    87.97
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_208",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -185.267,
+     32.925,
+     87.824
+    ],
+    "yaw_deg": -167.69,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -185.267,
+    32.925,
+    87.824
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_209",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -185.713,
+     28.391,
+     87.914
+    ],
+    "yaw_deg": -167.69,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -185.713,
+    28.391,
+    87.914
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_210",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -184.159,
+     29.089,
+     87.742
+    ],
+    "yaw_deg": -167.69,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.159,
+    29.089,
+    87.742
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_211",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -183.866,
+     29.089,
+     87.678
+    ],
+    "yaw_deg": -167.69,
+    "host": "남쪽 상가 2(분식)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -183.866,
+    29.089,
+    87.678
    ]
   },
   {
@@ -4398,10 +6760,10 @@
    },
    "tris": [
     2268,
-    858,
+    954,
     588
    ],
-   "detail_tris": 2498,
+   "detail_tris": 3412,
    "origin": [
     -157.2,
     24.23,
@@ -4409,7 +6771,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_110",
+   "name": "Prop_ac_outdoor_unit_212",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4432,7 +6794,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_111",
+   "name": "Prop_ac_outdoor_unit_213",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4455,7 +6817,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_112",
+   "name": "Prop_ac_outdoor_unit_214",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4478,7 +6840,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_113",
+   "name": "Prop_ac_outdoor_unit_215",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4501,7 +6863,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_114",
+   "name": "Prop_ac_outdoor_unit_216",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4524,7 +6886,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_115",
+   "name": "Prop_ac_outdoor_unit_217",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4547,7 +6909,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_116",
+   "name": "Prop_ac_outdoor_unit_218",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4570,7 +6932,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_117",
+   "name": "Prop_electric_meter_box_219",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4593,7 +6955,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_118",
+   "name": "Prop_electric_meter_box_220",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4616,7 +6978,7 @@
    ]
   },
   {
-   "name": "Prop_mailbox_cluster_119",
+   "name": "Prop_mailbox_cluster_221",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4639,7 +7001,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_120",
+   "name": "Prop_ac_outdoor_unit_222",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4662,7 +7024,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_121",
+   "name": "Prop_ac_outdoor_unit_223",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4685,7 +7047,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_122",
+   "name": "Prop_ac_outdoor_unit_224",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4708,7 +7070,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_123",
+   "name": "Prop_ac_outdoor_unit_225",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4731,7 +7093,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_124",
+   "name": "Prop_gas_meter_pipe_226",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4754,7 +7116,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_125",
+   "name": "Prop_water_tank_roof_227",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4777,7 +7139,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_126",
+   "name": "Prop_ac_outdoor_unit_228",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4800,7 +7162,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_127",
+   "name": "Prop_ac_outdoor_unit_229",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4820,6 +7182,305 @@
     -155.719,
     33.08,
     78.368
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_230",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -152.487,
+     25.688,
+     81.884
+    ],
+    "yaw_deg": 107.45,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -152.487,
+    25.688,
+    81.884
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_231",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -154.307,
+     25.792,
+     85.527
+    ],
+    "yaw_deg": 17.45,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.307,
+    25.792,
+    85.527
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_232",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -154.339,
+     31.01,
+     85.702
+    ],
+    "yaw_deg": 17.45,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.339,
+    31.01,
+    85.702
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_233",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -161.296,
+     28.01,
+     84.924
+    ],
+    "yaw_deg": -72.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -161.296,
+    28.01,
+    84.924
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_234",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -162.096,
+     28.01,
+     82.378
+    ],
+    "yaw_deg": -72.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -162.096,
+    28.01,
+    82.378
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_235",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -162.17,
+     31.01,
+     82.142
+    ],
+    "yaw_deg": -72.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -162.17,
+    31.01,
+    82.142
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_236",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -161.847,
+     26.807,
+     82.898
+    ],
+    "yaw_deg": -72.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -161.847,
+    26.807,
+    82.898
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_237",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -162.269,
+     26.824,
+     81.856
+    ],
+    "yaw_deg": -72.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -162.269,
+    26.824,
+    81.856
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_238",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -160.08,
+     28.01,
+     78.624
+    ],
+    "yaw_deg": -162.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -160.08,
+    28.01,
+    78.624
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_239",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -156.859,
+     31.01,
+     77.612
+    ],
+    "yaw_deg": -162.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -156.859,
+    31.01,
+    77.612
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_a_240",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_a",
+    "glb": "concept/art/env/props/potted_plant_a.glb",
+    "pos": [
+     -161.846,
+     26.665,
+     79.257
+    ],
+    "yaw_deg": -162.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -161.846,
+    26.665,
+    79.257
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_241",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -160.726,
+     26.432,
+     78.913
+    ],
+    "yaw_deg": -162.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -160.726,
+    26.432,
+    78.913
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_242",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -157.903,
+     25.916,
+     77.932
+    ],
+    "yaw_deg": -162.55,
+    "host": "명륜3가 하숙집 A(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -157.903,
+    25.916,
+    77.932
    ]
   },
   {
@@ -4916,18 +7577,18 @@
    },
    "tris": [
     3646,
-    1530,
+    1686,
     924
    ],
-   "detail_tris": 3884,
+   "detail_tris": 5584,
    "origin": [
-    -146.672,
+    -146.637,
     22.965,
-    78.903
+    78.981
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_128",
+   "name": "Prop_ac_outdoor_unit_243",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4950,7 +7611,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_129",
+   "name": "Prop_ac_outdoor_unit_244",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4973,7 +7634,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_130",
+   "name": "Prop_ac_outdoor_unit_245",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -4996,7 +7657,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_131",
+   "name": "Prop_ac_outdoor_unit_246",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5019,7 +7680,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_132",
+   "name": "Prop_ac_outdoor_unit_247",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5042,7 +7703,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_133",
+   "name": "Prop_ac_outdoor_unit_248",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5065,7 +7726,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_134",
+   "name": "Prop_ac_outdoor_unit_249",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5088,7 +7749,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_135",
+   "name": "Prop_ac_outdoor_unit_250",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5111,7 +7772,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_136",
+   "name": "Prop_ac_outdoor_unit_251",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5134,7 +7795,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_137",
+   "name": "Prop_ac_outdoor_unit_252",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5157,7 +7818,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_138",
+   "name": "Prop_ac_outdoor_unit_253",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5180,7 +7841,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_139",
+   "name": "Prop_ac_outdoor_unit_254",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5203,7 +7864,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_140",
+   "name": "Prop_ac_outdoor_unit_255",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5226,7 +7887,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_141",
+   "name": "Prop_ac_outdoor_unit_256",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5275,7 +7936,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_142",
+   "name": "Prop_ac_outdoor_unit_257",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5298,7 +7959,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_143",
+   "name": "Prop_gas_meter_pipe_258",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5321,7 +7982,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_144",
+   "name": "Prop_water_tank_roof_259",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5344,7 +8005,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_145",
+   "name": "Prop_ac_outdoor_unit_260",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5367,7 +8028,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_146",
+   "name": "Prop_ac_outdoor_unit_261",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5390,7 +8051,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_147",
+   "name": "Prop_ac_outdoor_unit_262",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5410,6 +8071,351 @@
     -149.094,
     35.965,
     76.3
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_263",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -142.365,
+     24.483,
+     77.229
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -142.365,
+    24.483,
+    77.229
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_264",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -142.224,
+     33.895,
+     77.15
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -142.224,
+    33.895,
+    77.15
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_265",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -142.793,
+     23.825,
+     75.226
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -142.793,
+    23.825,
+    75.226
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_266",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -141.435,
+     23.329,
+     79.754
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -141.435,
+    23.329,
+    79.754
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_267",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -144.054,
+     33.895,
+     82.524
+    ],
+    "yaw_deg": 16.7,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -144.054,
+    33.895,
+    82.524
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_268",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -147.061,
+     33.895,
+     83.426
+    ],
+    "yaw_deg": 16.7,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -147.061,
+    33.895,
+    83.426
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_269",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -151.591,
+     27.895,
+     78.892
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -151.591,
+    27.895,
+    78.892
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_270",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -150.743,
+     30.895,
+     81.719
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -150.743,
+    30.895,
+    81.719
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_271",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -151.522,
+     30.895,
+     79.123
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -151.522,
+    30.895,
+    79.123
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_272",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -150.713,
+     24.5,
+     81.845
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -150.713,
+    24.5,
+    81.845
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_273",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -150.573,
+     25.67,
+     81.744
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -150.573,
+    25.67,
+    81.744
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_274",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -146.172,
+     27.895,
+     74.314
+    ],
+    "yaw_deg": -163.3,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -146.172,
+    27.895,
+    74.314
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_275",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -149.131,
+     30.895,
+     75.201
+    ],
+    "yaw_deg": -163.3,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -149.131,
+    30.895,
+    75.201
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_276",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -146.24,
+     30.895,
+     74.334
+    ],
+    "yaw_deg": -163.3,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -146.24,
+    30.895,
+    74.334
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_277",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -144.994,
+     24.163,
+     73.96
+    ],
+    "yaw_deg": -163.3,
+    "host": "명륜3가 원룸 B(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -144.994,
+    24.163,
+    73.96
    ]
   },
   {
@@ -5456,10 +8462,10 @@
    },
    "tris": [
     3468,
-    1178,
+    1310,
     660
    ],
-   "detail_tris": 2936,
+   "detail_tris": 4288,
    "origin": [
     -136.49,
     22.05,
@@ -5467,7 +8473,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_148",
+   "name": "Prop_ac_outdoor_unit_278",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5490,7 +8496,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_149",
+   "name": "Prop_ac_outdoor_unit_279",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5513,7 +8519,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_150",
+   "name": "Prop_ac_outdoor_unit_280",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5536,7 +8542,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_151",
+   "name": "Prop_ac_outdoor_unit_281",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5559,7 +8565,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_152",
+   "name": "Prop_ac_outdoor_unit_282",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5582,7 +8588,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_153",
+   "name": "Prop_electric_meter_box_283",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5605,7 +8611,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_154",
+   "name": "Prop_electric_meter_box_284",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5628,7 +8634,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_155",
+   "name": "Prop_ac_outdoor_unit_285",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5651,7 +8657,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_156",
+   "name": "Prop_ac_outdoor_unit_286",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5674,7 +8680,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_157",
+   "name": "Prop_ac_outdoor_unit_287",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5697,7 +8703,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_158",
+   "name": "Prop_ac_outdoor_unit_288",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5720,7 +8726,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_159",
+   "name": "Prop_gas_meter_pipe_289",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5743,7 +8749,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_160",
+   "name": "Prop_water_tank_roof_290",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5766,7 +8772,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_161",
+   "name": "Prop_ac_outdoor_unit_291",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5789,7 +8795,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_162",
+   "name": "Prop_ac_outdoor_unit_292",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5812,7 +8818,7 @@
    ]
   },
   {
-   "name": "Prop_laundry_rack_163",
+   "name": "Prop_laundry_rack_293",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5832,6 +8838,305 @@
     -136.15,
     31.73,
     75.73
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_294",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -132.631,
+     23.795,
+     73.265
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -132.631,
+    23.795,
+    73.265
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_295",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -131.826,
+     23.59,
+     75.947
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -131.826,
+    23.59,
+    75.947
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_296",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -131.73,
+     29.71,
+     75.719
+    ],
+    "yaw_deg": 106.7,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -131.73,
+    29.71,
+    75.719
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_297",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -136.175,
+     23.649,
+     79.996
+    ],
+    "yaw_deg": 16.7,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -136.175,
+    23.649,
+    79.996
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_298",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -136.12,
+     29.71,
+     80.144
+    ],
+    "yaw_deg": 16.7,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -136.12,
+    29.71,
+    80.144
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_299",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -134.244,
+     22.657,
+     79.589
+    ],
+    "yaw_deg": 16.7,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -134.244,
+    22.657,
+    79.589
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_300",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -140.041,
+     26.71,
+     77.503
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.041,
+    26.71,
+    77.503
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_301",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -140.342,
+     26.71,
+     76.501
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.342,
+    26.71,
+    76.501
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_302",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -140.052,
+     29.71,
+     77.467
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.052,
+    29.71,
+    77.467
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_303",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -140.318,
+     29.71,
+     76.581
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.318,
+    29.71,
+    76.581
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_304",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -140.144,
+     23.48,
+     77.186
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.144,
+    23.48,
+    77.186
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_305",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -140.011,
+     24.645,
+     77.061
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.011,
+    24.645,
+    77.061
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_306",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -140.097,
+     24.645,
+     76.774
+    ],
+    "yaw_deg": -73.3,
+    "host": "명륜1가 방면 빌라(남쪽)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -140.097,
+    24.645,
+    76.774
    ]
   },
   {
@@ -5878,10 +9183,10 @@
    },
    "tris": [
     2384,
-    952,
+    1108,
     630
    ],
-   "detail_tris": 2586,
+   "detail_tris": 4294,
    "origin": [
     -175.836,
     26.6,
@@ -5889,7 +9194,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_164",
+   "name": "Prop_ac_outdoor_unit_307",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5912,7 +9217,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_165",
+   "name": "Prop_ac_outdoor_unit_308",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5935,7 +9240,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_166",
+   "name": "Prop_ac_outdoor_unit_309",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5958,7 +9263,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_167",
+   "name": "Prop_ac_outdoor_unit_310",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -5981,7 +9286,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_168",
+   "name": "Prop_ac_outdoor_unit_311",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6004,7 +9309,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_169",
+   "name": "Prop_ac_outdoor_unit_312",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6027,7 +9332,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_170",
+   "name": "Prop_electric_meter_box_313",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6050,7 +9355,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_171",
+   "name": "Prop_electric_meter_box_314",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6073,7 +9378,7 @@
    ]
   },
   {
-   "name": "Prop_clay_pots_cluster_172",
+   "name": "Prop_clay_pots_cluster_315",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6096,7 +9401,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_173",
+   "name": "Prop_ac_outdoor_unit_316",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6119,7 +9424,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_174",
+   "name": "Prop_ac_outdoor_unit_317",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6142,7 +9447,7 @@
    ]
   },
   {
-   "name": "Prop_clay_pots_cluster_175",
+   "name": "Prop_clay_pots_cluster_318",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6165,7 +9470,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_176",
+   "name": "Prop_ac_outdoor_unit_319",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6188,7 +9493,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_177",
+   "name": "Prop_ac_outdoor_unit_320",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6211,7 +9516,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_178",
+   "name": "Prop_ac_outdoor_unit_321",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6234,7 +9539,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_179",
+   "name": "Prop_ac_outdoor_unit_322",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6257,7 +9562,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_180",
+   "name": "Prop_ac_outdoor_unit_323",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6280,7 +9585,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_181",
+   "name": "Prop_ac_outdoor_unit_324",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6303,7 +9608,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_182",
+   "name": "Prop_gas_meter_pipe_325",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6326,7 +9631,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_183",
+   "name": "Prop_water_tank_roof_326",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6349,7 +9654,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_184",
+   "name": "Prop_ac_outdoor_unit_327",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6372,7 +9677,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_185",
+   "name": "Prop_ac_outdoor_unit_328",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6395,7 +9700,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_186",
+   "name": "Prop_ac_outdoor_unit_329",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6418,7 +9723,7 @@
    ]
   },
   {
-   "name": "Prop_laundry_rack_187",
+   "name": "Prop_laundry_rack_330",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6441,7 +9746,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_188",
+   "name": "Prop_styrofoam_planter_331",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6464,7 +9769,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_189",
+   "name": "Prop_styrofoam_planter_332",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6487,7 +9792,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_190",
+   "name": "Prop_styrofoam_planter_333",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6510,7 +9815,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_191",
+   "name": "Prop_styrofoam_planter_334",
    "district": "HoomunS",
    "kind": "prop",
    "info": {
@@ -6530,6 +9835,351 @@
     -182.284,
     34.3,
     71.542
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_335",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -167.183,
+     27.828,
+     74.128
+    ],
+    "yaw_deg": 107.05,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -167.183,
+    27.828,
+    74.128
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_336",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -168.491,
+     29.28,
+     69.325
+    ],
+    "yaw_deg": 107.05,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -168.491,
+    29.28,
+    69.325
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_a_337",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_a",
+    "glb": "concept/art/env/props/potted_plant_a.glb",
+    "pos": [
+     -168.241,
+     27.031,
+     70.394
+    ],
+    "yaw_deg": 107.05,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -168.241,
+    27.031,
+    70.394
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_338",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -172.079,
+     27.864,
+     77.02
+    ],
+    "yaw_deg": 17.05,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -172.079,
+    27.864,
+    77.02
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_339",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -174.377,
+     29.28,
+     77.889
+    ],
+    "yaw_deg": 17.05,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -174.377,
+    29.28,
+    77.889
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_340",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -174.441,
+     32.28,
+     77.909
+    ],
+    "yaw_deg": 17.05,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -174.441,
+    32.28,
+    77.909
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_341",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -177.103,
+     32.28,
+     78.725
+    ],
+    "yaw_deg": 17.05,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -177.103,
+    32.28,
+    78.725
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_342",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -183.253,
+     29.28,
+     77.375
+    ],
+    "yaw_deg": -72.95,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -183.253,
+    29.28,
+    77.375
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_343",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -184.129,
+     29.28,
+     74.519
+    ],
+    "yaw_deg": -72.95,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.129,
+    29.28,
+    74.519
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_344",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -183.243,
+     32.28,
+     77.408
+    ],
+    "yaw_deg": -72.95,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -183.243,
+    32.28,
+    77.408
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_345",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -183.199,
+     28.128,
+     77.27
+    ],
+    "yaw_deg": -72.95,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -183.199,
+    28.128,
+    77.27
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_346",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -184.557,
+     29.663,
+     72.589
+    ],
+    "yaw_deg": -72.95,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.557,
+    29.663,
+    72.589
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_347",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -184.645,
+     29.663,
+     72.303
+    ],
+    "yaw_deg": -72.95,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.645,
+    29.663,
+    72.303
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_348",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -179.085,
+     29.28,
+     69.425
+    ],
+    "yaw_deg": -162.95,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -179.085,
+    29.28,
+    69.425
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_349",
+   "district": "HoomunS",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -176.001,
+     29.28,
+     68.479
+    ],
+    "yaw_deg": -162.95,
+    "host": "주차장 뒤 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -176.001,
+    29.28,
+    68.479
    ]
   },
   {
@@ -6905,10 +10555,10 @@
    },
    "tris": [
     3226,
-    1178,
+    1262,
     664
    ],
-   "detail_tris": 3144,
+   "detail_tris": 4078,
    "origin": [
     -154.955,
     27.08,
@@ -6916,7 +10566,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_192",
+   "name": "Prop_ac_outdoor_unit_350",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -6939,7 +10589,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_193",
+   "name": "Prop_electric_meter_box_351",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -6962,7 +10612,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_194",
+   "name": "Prop_electric_meter_box_352",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -6985,7 +10635,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_195",
+   "name": "Prop_ac_outdoor_unit_353",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7008,7 +10658,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_196",
+   "name": "Prop_ac_outdoor_unit_354",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7031,7 +10681,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_197",
+   "name": "Prop_ac_outdoor_unit_355",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7054,7 +10704,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_198",
+   "name": "Prop_ac_outdoor_unit_356",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7077,7 +10727,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_199",
+   "name": "Prop_ac_outdoor_unit_357",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7100,7 +10750,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_200",
+   "name": "Prop_ac_outdoor_unit_358",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7123,7 +10773,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_201",
+   "name": "Prop_ac_outdoor_unit_359",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7146,7 +10796,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_202",
+   "name": "Prop_ac_outdoor_unit_360",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7169,7 +10819,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_203",
+   "name": "Prop_ac_outdoor_unit_361",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7192,7 +10842,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_204",
+   "name": "Prop_gas_meter_pipe_362",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7215,7 +10865,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_205",
+   "name": "Prop_water_tank_roof_363",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7238,7 +10888,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_206",
+   "name": "Prop_ac_outdoor_unit_364",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7261,7 +10911,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_207",
+   "name": "Prop_ac_outdoor_unit_365",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7284,7 +10934,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_208",
+   "name": "Prop_ac_outdoor_unit_366",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7307,7 +10957,7 @@
    ]
   },
   {
-   "name": "Prop_jangdok_set_209",
+   "name": "Prop_jangdok_set_367",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7330,7 +10980,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_210",
+   "name": "Prop_styrofoam_planter_368",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7353,7 +11003,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_211",
+   "name": "Prop_styrofoam_planter_369",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7376,7 +11026,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_212",
+   "name": "Prop_styrofoam_planter_370",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7399,7 +11049,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_213",
+   "name": "Prop_styrofoam_planter_371",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7422,7 +11072,7 @@
    ]
   },
   {
-   "name": "Prop_clay_pots_cluster_214",
+   "name": "Prop_clay_pots_cluster_372",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7442,6 +11092,259 @@
     -159.919,
     29.666,
     131.308
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_373",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -153.678,
+     31.38,
+     131.737
+    ],
+    "yaw_deg": 0.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -153.678,
+    31.38,
+    131.737
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_374",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -153.642,
+     34.38,
+     131.737
+    ],
+    "yaw_deg": 0.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -153.642,
+    34.38,
+    131.737
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_375",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -154.157,
+     30.386,
+     131.744
+    ],
+    "yaw_deg": 0.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.157,
+    30.386,
+    131.744
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_376",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -157.808,
+     30.545,
+     131.655
+    ],
+    "yaw_deg": 0.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -157.808,
+    30.545,
+    131.655
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_377",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -159.579,
+     28.809,
+     125.55
+    ],
+    "yaw_deg": -90.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -159.579,
+    28.809,
+    125.55
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_378",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -159.737,
+     34.38,
+     128.281
+    ],
+    "yaw_deg": -90.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -159.737,
+    34.38,
+    128.281
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_379",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -159.655,
+     28.25,
+     128.839
+    ],
+    "yaw_deg": -90.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -159.655,
+    28.25,
+    128.839
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_380",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -156.71,
+     31.38,
+     122.263
+    ],
+    "yaw_deg": -180.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -156.71,
+    31.38,
+    122.263
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_381",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -156.763,
+     34.38,
+     122.263
+    ],
+    "yaw_deg": -180.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -156.763,
+    34.38,
+    122.263
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_382",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -158.565,
+     27.366,
+     122.346
+    ],
+    "yaw_deg": -180.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -158.565,
+    27.366,
+    122.346
+   ]
+  },
+  {
+   "name": "Prop_clay_pots_cluster_383",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "clay_pots_cluster",
+    "glb": "concept/art/env/props/clay_pots_cluster.glb",
+    "pos": [
+     -154.708,
+     27.307,
+     122.081
+    ],
+    "yaw_deg": -180.0,
+    "host": "반시우네 다세대"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.708,
+    27.307,
+    122.081
    ]
   },
   {
@@ -7488,18 +11391,18 @@
    },
    "tris": [
     3560,
-    1402,
+    1498,
     914
    ],
-   "detail_tris": 3470,
+   "detail_tris": 5094,
    "origin": [
-    -153.199,
+    -153.194,
     31.0,
     141.5
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_215",
+   "name": "Prop_ac_outdoor_unit_384",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7522,7 +11425,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_216",
+   "name": "Prop_ac_outdoor_unit_385",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7545,7 +11448,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_217",
+   "name": "Prop_ac_outdoor_unit_386",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7568,7 +11471,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_218",
+   "name": "Prop_ac_outdoor_unit_387",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7591,7 +11494,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_219",
+   "name": "Prop_ac_outdoor_unit_388",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7614,7 +11517,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_220",
+   "name": "Prop_electric_meter_box_389",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7637,7 +11540,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_221",
+   "name": "Prop_electric_meter_box_390",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7660,7 +11563,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_222",
+   "name": "Prop_ac_outdoor_unit_391",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7683,7 +11586,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_223",
+   "name": "Prop_ac_outdoor_unit_392",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7706,7 +11609,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_224",
+   "name": "Prop_ac_outdoor_unit_393",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7729,7 +11632,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_225",
+   "name": "Prop_ac_outdoor_unit_394",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7752,7 +11655,7 @@
    ]
   },
   {
-   "name": "Prop_clay_pots_cluster_226",
+   "name": "Prop_clay_pots_cluster_395",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7775,7 +11678,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_227",
+   "name": "Prop_ac_outdoor_unit_396",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7798,7 +11701,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_228",
+   "name": "Prop_ac_outdoor_unit_397",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7821,7 +11724,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_229",
+   "name": "Prop_ac_outdoor_unit_398",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7844,7 +11747,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_230",
+   "name": "Prop_ac_outdoor_unit_399",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7867,7 +11770,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_231",
+   "name": "Prop_gas_meter_pipe_400",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7890,7 +11793,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_232",
+   "name": "Prop_water_tank_roof_401",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7913,7 +11816,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_233",
+   "name": "Prop_ac_outdoor_unit_402",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7936,7 +11839,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_234",
+   "name": "Prop_styrofoam_planter_403",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7959,7 +11862,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_235",
+   "name": "Prop_styrofoam_planter_404",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -7982,7 +11885,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_236",
+   "name": "Prop_styrofoam_planter_405",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8005,7 +11908,7 @@
    ]
   },
   {
-   "name": "Prop_basin_planter_onion_237",
+   "name": "Prop_basin_planter_onion_406",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8025,6 +11928,489 @@
     -157.873,
     34.487,
     145.847
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_407",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -148.263,
+     35.88,
+     139.786
+    ],
+    "yaw_deg": 90.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -148.263,
+    35.88,
+    139.786
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_408",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -148.263,
+     35.88,
+     142.706
+    ],
+    "yaw_deg": 90.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -148.263,
+    35.88,
+    142.706
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_409",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -148.263,
+     38.88,
+     139.701
+    ],
+    "yaw_deg": 90.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -148.263,
+    38.88,
+    139.701
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_410",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -148.263,
+     38.88,
+     142.808
+    ],
+    "yaw_deg": 90.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -148.263,
+    38.88,
+    142.808
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_411",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -148.263,
+     41.88,
+     139.655
+    ],
+    "yaw_deg": 90.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -148.263,
+    41.88,
+    139.655
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_412",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -151.283,
+     35.88,
+     146.237
+    ],
+    "yaw_deg": 0.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -151.283,
+    35.88,
+    146.237
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_413",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -154.176,
+     35.88,
+     146.237
+    ],
+    "yaw_deg": 0.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.176,
+    35.88,
+    146.237
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_414",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -154.716,
+     41.88,
+     146.237
+    ],
+    "yaw_deg": 0.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.716,
+    41.88,
+    146.237
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_415",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -157.737,
+     41.88,
+     139.775
+    ],
+    "yaw_deg": -90.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -157.737,
+    41.88,
+    139.775
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_a_416",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_a",
+    "glb": "concept/art/env/props/potted_plant_a.glb",
+    "pos": [
+     -157.662,
+     33.784,
+     143.314
+    ],
+    "yaw_deg": -90.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -157.662,
+    33.784,
+    143.314
+   ]
+  },
+  {
+   "name": "Prop_clay_pots_cluster_417",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "clay_pots_cluster",
+    "glb": "concept/art/env/props/clay_pots_cluster.glb",
+    "pos": [
+     -157.919,
+     33.549,
+     142.458
+    ],
+    "yaw_deg": -90.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -157.919,
+    33.549,
+    142.458
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_418",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -157.744,
+     32.924,
+     141.05
+    ],
+    "yaw_deg": -90.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -157.744,
+    32.924,
+    141.05
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_419",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -154.662,
+     35.88,
+     136.763
+    ],
+    "yaw_deg": -180.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.662,
+    35.88,
+    136.763
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_420",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -151.765,
+     35.88,
+     136.763
+    ],
+    "yaw_deg": -180.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -151.765,
+    35.88,
+    136.763
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_421",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -154.25,
+     38.88,
+     136.763
+    ],
+    "yaw_deg": -180.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.25,
+    38.88,
+    136.763
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_422",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -154.686,
+     41.88,
+     136.763
+    ],
+    "yaw_deg": -180.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.686,
+    41.88,
+    136.763
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_423",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -151.8,
+     41.88,
+     136.763
+    ],
+    "yaw_deg": -180.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -151.8,
+    41.88,
+    136.763
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_424",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -153.0,
+     31.803,
+     136.763
+    ],
+    "yaw_deg": -180.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -153.0,
+    31.803,
+    136.763
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_425",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -150.0,
+     31.558,
+     136.763
+    ],
+    "yaw_deg": -180.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -150.0,
+    31.558,
+    136.763
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_426",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -150.777,
+     31.577,
+     136.627
+    ],
+    "yaw_deg": -180.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -150.777,
+    31.577,
+    136.627
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_427",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -154.779,
+     33.09,
+     136.919
+    ],
+    "yaw_deg": -180.0,
+    "host": "꼭대기 다세대(4층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -154.779,
+    33.09,
+    136.919
    ]
   },
   {
@@ -8115,7 +12501,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_238",
+   "name": "Prop_styrofoam_planter_428",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8138,7 +12524,7 @@
    ]
   },
   {
-   "name": "Prop_clay_pots_cluster_239",
+   "name": "Prop_clay_pots_cluster_429",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8161,7 +12547,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_240",
+   "name": "Prop_styrofoam_planter_430",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8227,10 +12613,10 @@
    },
    "tris": [
     2846,
-    1004,
+    1076,
     556
    ],
-   "detail_tris": 1734,
+   "detail_tris": 2614,
    "origin": [
     -144.41,
     26.86,
@@ -8238,7 +12624,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_241",
+   "name": "Prop_ac_outdoor_unit_431",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8261,7 +12647,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_242",
+   "name": "Prop_ac_outdoor_unit_432",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8284,7 +12670,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_243",
+   "name": "Prop_electric_meter_box_433",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8307,7 +12693,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_244",
+   "name": "Prop_electric_meter_box_434",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8330,7 +12716,7 @@
    ]
   },
   {
-   "name": "Prop_mailbox_cluster_245",
+   "name": "Prop_mailbox_cluster_435",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8353,7 +12739,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_246",
+   "name": "Prop_ac_outdoor_unit_436",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8376,7 +12762,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_247",
+   "name": "Prop_ac_outdoor_unit_437",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8399,7 +12785,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_248",
+   "name": "Prop_gas_meter_pipe_438",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8422,7 +12808,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_249",
+   "name": "Prop_water_tank_roof_439",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8445,7 +12831,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_250",
+   "name": "Prop_ac_outdoor_unit_440",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8468,7 +12854,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_251",
+   "name": "Prop_ac_outdoor_unit_441",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8491,7 +12877,7 @@
    ]
   },
   {
-   "name": "Prop_laundry_rack_252",
+   "name": "Prop_laundry_rack_442",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8514,7 +12900,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_253",
+   "name": "Prop_styrofoam_planter_443",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8537,7 +12923,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_254",
+   "name": "Prop_styrofoam_planter_444",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8560,7 +12946,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_255",
+   "name": "Prop_styrofoam_planter_445",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8583,7 +12969,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_256",
+   "name": "Prop_styrofoam_planter_446",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8606,7 +12992,7 @@
    ]
   },
   {
-   "name": "Prop_basin_planter_onion_257",
+   "name": "Prop_basin_planter_onion_447",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8626,6 +13012,167 @@
     -139.214,
     27.283,
     121.627
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_448",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -141.364,
+     29.54,
+     130.237
+    ],
+    "yaw_deg": 0.0,
+    "host": "명륜3가 다세대 4"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -141.364,
+    29.54,
+    130.237
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_449",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -146.449,
+     29.54,
+     130.237
+    ],
+    "yaw_deg": 0.0,
+    "host": "명륜3가 다세대 4"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -146.449,
+    29.54,
+    130.237
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_450",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -146.15,
+     28.237,
+     121.921
+    ],
+    "yaw_deg": -180.0,
+    "host": "명륜3가 다세대 4"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -146.15,
+    28.237,
+    121.921
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_451",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -145.453,
+     29.54,
+     121.763
+    ],
+    "yaw_deg": -180.0,
+    "host": "명륜3가 다세대 4"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -145.453,
+    29.54,
+    121.763
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_452",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -145.979,
+     32.54,
+     121.763
+    ],
+    "yaw_deg": -180.0,
+    "host": "명륜3가 다세대 4"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -145.979,
+    32.54,
+    121.763
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_a_453",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_a",
+    "glb": "concept/art/env/props/potted_plant_a.glb",
+    "pos": [
+     -143.353,
+     27.349,
+     121.838
+    ],
+    "yaw_deg": -180.0,
+    "host": "명륜3가 다세대 4"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -143.353,
+    27.349,
+    121.838
+   ]
+  },
+  {
+   "name": "Prop_clay_pots_cluster_454",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "clay_pots_cluster",
+    "glb": "concept/art/env/props/clay_pots_cluster.glb",
+    "pos": [
+     -144.209,
+     27.382,
+     121.581
+    ],
+    "yaw_deg": -180.0,
+    "host": "명륜3가 다세대 4"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -144.209,
+    27.382,
+    121.581
    ]
   },
   {
@@ -8663,27 +13210,27 @@
      "y0": 25.52,
      "top": 35.12
     },
-    "lod_size": 13.2,
+    "lod_size": 13.21,
     "lod_screen_heights": [
-     0.3984,
-     0.1449,
+     0.3987,
+     0.145,
      0.006
     ]
    },
    "tris": [
     2168,
-    828,
+    912,
     558
    ],
-   "detail_tris": 2518,
+   "detail_tris": 3614,
    "origin": [
     -133.5,
-    25.62,
-    123.851
+    25.571,
+    123.857
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_258",
+   "name": "Prop_ac_outdoor_unit_455",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8706,7 +13253,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_259",
+   "name": "Prop_ac_outdoor_unit_456",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8729,7 +13276,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_260",
+   "name": "Prop_ac_outdoor_unit_457",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8752,7 +13299,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_261",
+   "name": "Prop_ac_outdoor_unit_458",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8775,7 +13322,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_262",
+   "name": "Prop_ac_outdoor_unit_459",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8798,7 +13345,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_263",
+   "name": "Prop_ac_outdoor_unit_460",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8821,7 +13368,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_264",
+   "name": "Prop_ac_outdoor_unit_461",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8844,7 +13391,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_265",
+   "name": "Prop_ac_outdoor_unit_462",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8867,7 +13414,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_266",
+   "name": "Prop_ac_outdoor_unit_463",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8890,7 +13437,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_267",
+   "name": "Prop_ac_outdoor_unit_464",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8913,7 +13460,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_268",
+   "name": "Prop_ac_outdoor_unit_465",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8936,7 +13483,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_269",
+   "name": "Prop_electric_meter_box_466",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8959,7 +13506,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_270",
+   "name": "Prop_electric_meter_box_467",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -8982,7 +13529,7 @@
    ]
   },
   {
-   "name": "Prop_mailbox_cluster_271",
+   "name": "Prop_mailbox_cluster_468",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9005,7 +13552,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_272",
+   "name": "Prop_gas_meter_pipe_469",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9028,7 +13575,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_273",
+   "name": "Prop_water_tank_roof_470",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9051,7 +13598,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_274",
+   "name": "Prop_ac_outdoor_unit_471",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9074,7 +13621,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_275",
+   "name": "Prop_ac_outdoor_unit_472",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9097,7 +13644,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_276",
+   "name": "Prop_styrofoam_planter_473",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9120,7 +13667,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_277",
+   "name": "Prop_styrofoam_planter_474",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9140,6 +13687,328 @@
     -135.1,
     34.52,
     118.85
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_475",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -130.263,
+     29.5,
+     123.83
+    ],
+    "yaw_deg": 90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -130.263,
+    29.5,
+    123.83
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_476",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -130.263,
+     29.5,
+     126.851
+    ],
+    "yaw_deg": 90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -130.263,
+    29.5,
+    126.851
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_477",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -130.263,
+     32.5,
+     120.662
+    ],
+    "yaw_deg": 90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -130.263,
+    32.5,
+    120.662
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_478",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -130.263,
+     32.5,
+     124.186
+    ],
+    "yaw_deg": 90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -130.263,
+    32.5,
+    124.186
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_479",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -130.263,
+     32.5,
+     127.141
+    ],
+    "yaw_deg": 90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -130.263,
+    32.5,
+    127.141
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_480",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -133.31,
+     32.5,
+     130.237
+    ],
+    "yaw_deg": 0.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -133.31,
+    32.5,
+    130.237
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_481",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -136.579,
+     27.927,
+     121.35
+    ],
+    "yaw_deg": -90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -136.579,
+    27.927,
+    121.35
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_482",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -136.737,
+     29.5,
+     127.222
+    ],
+    "yaw_deg": -90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -136.737,
+    29.5,
+    127.222
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_483",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -136.737,
+     29.5,
+     124.319
+    ],
+    "yaw_deg": -90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -136.737,
+    29.5,
+    124.319
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_484",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -136.737,
+     29.5,
+     120.777
+    ],
+    "yaw_deg": -90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -136.737,
+    29.5,
+    120.777
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_485",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -136.737,
+     32.5,
+     120.791
+    ],
+    "yaw_deg": -90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -136.737,
+    32.5,
+    120.791
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_486",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -136.744,
+     28.757,
+     127.684
+    ],
+    "yaw_deg": -90.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -136.744,
+    28.757,
+    127.684
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_487",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -135.503,
+     25.692,
+     117.627
+    ],
+    "yaw_deg": -180.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -135.503,
+    25.692,
+    117.627
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_488",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -134.233,
+     25.574,
+     117.756
+    ],
+    "yaw_deg": -180.0,
+    "host": "골목 끝 다세대 5"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -134.233,
+    25.574,
+    117.756
    ]
   },
   {
@@ -9230,7 +14099,7 @@
    ]
   },
   {
-   "name": "Prop_clay_pots_cluster_278",
+   "name": "Prop_clay_pots_cluster_489",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9253,7 +14122,7 @@
    ]
   },
   {
-   "name": "Prop_clay_pots_cluster_279",
+   "name": "Prop_clay_pots_cluster_490",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9276,7 +14145,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_280",
+   "name": "Prop_styrofoam_planter_491",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9333,27 +14202,27 @@
      "y0": 31.24,
      "top": 37.84
     },
-    "lod_size": 12.3,
+    "lod_size": 12.31,
     "lod_screen_heights": [
-     0.3713,
-     0.135,
+     0.3716,
+     0.1351,
      0.006
     ]
    },
    "tris": [
     1998,
-    732,
+    792,
     468
    ],
-   "detail_tris": 1982,
+   "detail_tris": 2614,
    "origin": [
-    -187.699,
+    -187.694,
     29.84,
-    121.0
+    121.005
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_281",
+   "name": "Prop_ac_outdoor_unit_492",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9376,7 +14245,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_282",
+   "name": "Prop_ac_outdoor_unit_493",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9399,7 +14268,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_283",
+   "name": "Prop_electric_meter_box_494",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9422,7 +14291,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_284",
+   "name": "Prop_electric_meter_box_495",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9445,7 +14314,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_285",
+   "name": "Prop_ac_outdoor_unit_496",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9468,7 +14337,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_286",
+   "name": "Prop_ac_outdoor_unit_497",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9491,7 +14360,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_287",
+   "name": "Prop_ac_outdoor_unit_498",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9514,7 +14383,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_288",
+   "name": "Prop_ac_outdoor_unit_499",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9537,7 +14406,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_289",
+   "name": "Prop_ac_outdoor_unit_500",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9560,7 +14429,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_290",
+   "name": "Prop_gas_meter_pipe_501",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9583,7 +14452,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_291",
+   "name": "Prop_water_tank_roof_502",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9606,7 +14475,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_292",
+   "name": "Prop_ac_outdoor_unit_503",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9626,6 +14495,167 @@
     -192.0,
     37.29,
     117.826
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_504",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -181.763,
+     35.22,
+     119.823
+    ],
+    "yaw_deg": 90.0,
+    "host": "후문상가 뒤 하숙집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -181.763,
+    35.22,
+    119.823
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_505",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -181.763,
+     35.22,
+     122.51
+    ],
+    "yaw_deg": 90.0,
+    "host": "후문상가 뒤 하숙집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -181.763,
+    35.22,
+    122.51
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_506",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -184.55,
+     33.897,
+     125.079
+    ],
+    "yaw_deg": 0.0,
+    "host": "후문상가 뒤 하숙집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.55,
+    33.897,
+    125.079
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_507",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -184.513,
+     35.22,
+     125.237
+    ],
+    "yaw_deg": 0.0,
+    "host": "후문상가 뒤 하숙집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -184.513,
+    35.22,
+    125.237
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_508",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -193.079,
+     33.876,
+     119.35
+    ],
+    "yaw_deg": -90.0,
+    "host": "후문상가 뒤 하숙집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -193.079,
+    33.876,
+    119.35
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_509",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -193.244,
+     33.541,
+     120.967
+    ],
+    "yaw_deg": -90.0,
+    "host": "후문상가 뒤 하숙집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -193.244,
+    33.541,
+    120.967
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_510",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -193.155,
+     33.341,
+     120.256
+    ],
+    "yaw_deg": -90.0,
+    "host": "후문상가 뒤 하숙집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -193.155,
+    33.341,
+    120.256
    ]
   },
   {
@@ -9663,27 +14693,27 @@
      "y0": 28.08,
      "top": 37.68
     },
-    "lod_size": 10.2,
+    "lod_size": 10.21,
     "lod_screen_heights": [
-     0.3079,
-     0.112,
+     0.3082,
+     0.1121,
      0.006
     ]
    },
    "tris": [
     2256,
-    906,
+    954,
     616
    ],
-   "detail_tris": 1906,
+   "detail_tris": 2872,
    "origin": [
     -176.5,
     28.18,
-    125.851
+    125.857
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_293",
+   "name": "Prop_ac_outdoor_unit_511",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9706,7 +14736,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_294",
+   "name": "Prop_ac_outdoor_unit_512",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9729,7 +14759,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_295",
+   "name": "Prop_ac_outdoor_unit_513",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9752,7 +14782,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_296",
+   "name": "Prop_ac_outdoor_unit_514",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9775,7 +14805,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_297",
+   "name": "Prop_ac_outdoor_unit_515",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9798,7 +14828,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_298",
+   "name": "Prop_ac_outdoor_unit_516",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9821,7 +14851,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_299",
+   "name": "Prop_electric_meter_box_517",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9844,7 +14874,7 @@
    ]
   },
   {
-   "name": "Prop_electric_meter_box_300",
+   "name": "Prop_electric_meter_box_518",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9867,7 +14897,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_301",
+   "name": "Prop_ac_outdoor_unit_519",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9890,7 +14920,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_302",
+   "name": "Prop_ac_outdoor_unit_520",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9913,7 +14943,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_303",
+   "name": "Prop_gas_meter_pipe_521",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9936,7 +14966,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_304",
+   "name": "Prop_water_tank_roof_522",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9959,7 +14989,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_305",
+   "name": "Prop_ac_outdoor_unit_523",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -9982,7 +15012,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_306",
+   "name": "Prop_styrofoam_planter_524",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10005,7 +15035,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_307",
+   "name": "Prop_styrofoam_planter_525",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10025,6 +15055,259 @@
     -177.767,
     30.186,
     121.256
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_526",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -172.263,
+     35.06,
+     124.169
+    ],
+    "yaw_deg": 90.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -172.263,
+    35.06,
+    124.169
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_527",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -174.933,
+     32.06,
+     130.737
+    ],
+    "yaw_deg": 0.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -174.933,
+    32.06,
+    130.737
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_528",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -177.957,
+     35.06,
+     130.737
+    ],
+    "yaw_deg": 0.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -177.957,
+    35.06,
+    130.737
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_529",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -180.579,
+     33.845,
+     128.05
+    ],
+    "yaw_deg": -90.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -180.579,
+    33.845,
+    128.05
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_530",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -180.737,
+     32.06,
+     124.795
+    ],
+    "yaw_deg": -90.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -180.737,
+    32.06,
+    124.795
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_531",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -180.737,
+     35.06,
+     127.824
+    ],
+    "yaw_deg": -90.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -180.737,
+    35.06,
+    127.824
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_532",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -180.737,
+     35.06,
+     124.71
+    ],
+    "yaw_deg": -90.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -180.737,
+    35.06,
+    124.71
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_533",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -175.35,
+     30.234,
+     121.421
+    ],
+    "yaw_deg": -180.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -175.35,
+    30.234,
+    121.421
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_534",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -175.257,
+     35.06,
+     121.263
+    ],
+    "yaw_deg": -180.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -175.257,
+    35.06,
+    121.263
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_535",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -176.467,
+     29.798,
+     121.256
+    ],
+    "yaw_deg": -180.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -176.467,
+    29.798,
+    121.256
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_536",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -175.756,
+     29.574,
+     121.346
+    ],
+    "yaw_deg": -180.0,
+    "host": "명륜3가 다세대 6"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -175.756,
+    29.574,
+    121.346
    ]
   },
   {
@@ -10071,10 +15354,10 @@
    },
    "tris": [
     3712,
-    682,
+    730,
     272
    ],
-   "detail_tris": 50,
+   "detail_tris": 234,
    "origin": [
     -177.716,
     26.775,
@@ -10082,7 +15365,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_308",
+   "name": "Prop_gas_meter_pipe_537",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10102,6 +15385,52 @@
     -174.129,
     28.2,
     116.124
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_538",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -176.915,
+     29.577,
+     117.131
+    ],
+    "yaw_deg": 11.31,
+    "host": "골목 단독주택(단층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -176.915,
+    29.577,
+    117.131
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_539",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -178.332,
+     30.574,
+     117.416
+    ],
+    "yaw_deg": 11.31,
+    "host": "골목 단독주택(단층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -178.332,
+    30.574,
+    117.416
    ]
   },
   {
@@ -10148,10 +15477,10 @@
    },
    "tris": [
     660,
-    310,
+    322,
     200
    ],
-   "detail_tris": 406,
+   "detail_tris": 546,
    "origin": [
     -172.77,
     26.725,
@@ -10159,7 +15488,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_309",
+   "name": "Prop_styrofoam_planter_540",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10182,7 +15511,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_310",
+   "name": "Prop_styrofoam_planter_541",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10202,6 +15531,98 @@
     -174.566,
     33.295,
     118.714
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_542",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -173.776,
+     31.095,
+     120.289
+    ],
+    "yaw_deg": -38.66,
+    "host": "골목 단독주택(2층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -173.776,
+    31.095,
+    120.289
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_543",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -172.018,
+     27.673,
+     118.09
+    ],
+    "yaw_deg": 141.34,
+    "host": "골목 단독주택(2층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -172.018,
+    27.673,
+    118.09
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_544",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -171.929,
+     26.888,
+     117.784
+    ],
+    "yaw_deg": 141.34,
+    "host": "골목 단독주택(2층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -171.929,
+    26.888,
+    117.784
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_545",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -170.294,
+     27.059,
+     119.257
+    ],
+    "yaw_deg": 141.34,
+    "host": "골목 단독주택(2층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -170.294,
+    27.059,
+    119.257
    ]
   },
   {
@@ -10249,10 +15670,10 @@
    },
    "tris": [
     4226,
-    756,
+    792,
     324
    ],
-   "detail_tris": 366,
+   "detail_tris": 510,
    "origin": [
     -168.415,
     27.125,
@@ -10260,7 +15681,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_311",
+   "name": "Prop_gas_meter_pipe_546",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10283,7 +15704,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_312",
+   "name": "Prop_ac_outdoor_unit_547",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10303,6 +15724,52 @@
     -170.829,
     29.276,
     123.957
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_548",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -167.23,
+     28.189,
+     121.743
+    ],
+    "yaw_deg": 146.31,
+    "host": "골목 단독주택(단층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -167.23,
+    28.189,
+    121.743
+   ]
+  },
+  {
+   "name": "Prop_basin_planter_onion_549",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "basin_planter_onion",
+    "glb": "concept/art/env/props/basin_planter_onion.glb",
+    "pos": [
+     -167.634,
+     27.358,
+     121.12
+    ],
+    "yaw_deg": 146.31,
+    "host": "골목 단독주택(단층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -167.634,
+    27.358,
+    121.12
    ]
   },
   {
@@ -10349,10 +15816,10 @@
    },
    "tris": [
     488,
-    258,
+    270,
     168
    ],
-   "detail_tris": 260,
+   "detail_tris": 312,
    "origin": [
     -166.11,
     27.29,
@@ -10360,7 +15827,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_313",
+   "name": "Prop_styrofoam_planter_550",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10383,7 +15850,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_314",
+   "name": "Prop_styrofoam_planter_551",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10406,7 +15873,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_315",
+   "name": "Prop_styrofoam_planter_552",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10429,7 +15896,7 @@
    ]
   },
   {
-   "name": "Prop_styrofoam_planter_316",
+   "name": "Prop_styrofoam_planter_553",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10449,6 +15916,29 @@
     -167.57,
     34.03,
     129.267
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_554",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -166.966,
+     31.01,
+     128.821
+    ],
+    "yaw_deg": 38.66,
+    "host": "골목 단독주택(2층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -166.966,
+    31.01,
+    128.821
    ]
   },
   {
@@ -10496,10 +15986,10 @@
    },
    "tris": [
     1202,
-    496,
+    556,
     344
    ],
-   "detail_tris": 1232,
+   "detail_tris": 1488,
    "origin": [
     -166.8,
     26.55,
@@ -10507,7 +15997,7 @@
    ]
   },
   {
-   "name": "Prop_gas_meter_pipe_317",
+   "name": "Prop_gas_meter_pipe_555",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10530,7 +16020,7 @@
    ]
   },
   {
-   "name": "Prop_basin_planter_onion_318",
+   "name": "Prop_basin_planter_onion_556",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10553,7 +16043,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_319",
+   "name": "Prop_ac_outdoor_unit_557",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10576,7 +16066,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_320",
+   "name": "Prop_ac_outdoor_unit_558",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10599,7 +16089,7 @@
    ]
   },
   {
-   "name": "Prop_water_tank_roof_321",
+   "name": "Prop_water_tank_roof_559",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10622,7 +16112,7 @@
    ]
   },
   {
-   "name": "Prop_laundry_rack_322",
+   "name": "Prop_laundry_rack_560",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10642,6 +16132,98 @@
     -166.461,
     33.33,
     113.544
+   ]
+  },
+  {
+   "name": "Prop_potted_plant_b_561",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "potted_plant_b",
+    "glb": "concept/art/env/props/potted_plant_b.glb",
+    "pos": [
+     -163.709,
+     27.172,
+     114.89
+    ],
+    "yaw_deg": 51.34,
+    "host": "골목 단독주택(2층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -163.709,
+    27.172,
+    114.89
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_562",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -168.104,
+     27.044,
+     110.668
+    ],
+    "yaw_deg": -128.66,
+    "host": "골목 단독주택(2층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -168.104,
+    27.044,
+    110.668
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_563",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -166.171,
+     27.079,
+     110.912
+    ],
+    "yaw_deg": 141.34,
+    "host": "골목 단독주택(2층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -166.171,
+    27.079,
+    110.912
+   ]
+  },
+  {
+   "name": "Prop_ac_outdoor_unit_564",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "ac_outdoor_unit",
+    "glb": "concept/art/env/props/ac_outdoor_unit.glb",
+    "pos": [
+     -163.957,
+     27.098,
+     112.683
+    ],
+    "yaw_deg": 141.34,
+    "host": "골목 단독주택(2층)"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -163.957,
+    27.098,
+    112.683
    ]
   },
   {
@@ -10679,27 +16261,27 @@
      "floors": 1,
      "y0": 30.37
     },
-    "lod_size": 6.49,
+    "lod_size": 7.05,
     "lod_screen_heights": [
-     0.1958,
-     0.0712,
+     0.2127,
+     0.0773,
      0.006
     ]
    },
    "tris": [
     3504,
-    632,
+    668,
     224
    ],
-   "detail_tris": 488,
+   "detail_tris": 620,
    "origin": [
     -164.87,
-    28.59,
+    28.03,
     130.41
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_323",
+   "name": "Prop_ac_outdoor_unit_565",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10722,7 +16304,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_324",
+   "name": "Prop_ac_outdoor_unit_566",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -10742,6 +16324,98 @@
     -164.931,
     29.133,
     128.494
+   ]
+  },
+  {
+   "name": "Prop_styrofoam_planter_567",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "styrofoam_planter",
+    "glb": "concept/art/env/props/styrofoam_planter.glb",
+    "pos": [
+     -163.434,
+     30.544,
+     132.272
+    ],
+    "yaw_deg": 3.41,
+    "host": "계단 옆 단층집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -163.434,
+    30.544,
+    132.272
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_568",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -164.232,
+     29.541,
+     128.588
+    ],
+    "yaw_deg": -176.59,
+    "host": "계단 옆 단층집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -164.232,
+    29.541,
+    128.588
+   ]
+  },
+  {
+   "name": "Prop_electric_meter_box_569",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "electric_meter_box",
+    "glb": "concept/art/env/props/electric_meter_box.glb",
+    "pos": [
+     -163.932,
+     29.541,
+     128.57
+    ],
+    "yaw_deg": -176.59,
+    "host": "계단 옆 단층집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -163.932,
+    29.541,
+    128.57
+   ]
+  },
+  {
+   "name": "Prop_gas_meter_pipe_570",
+   "district": "Alley",
+   "kind": "prop",
+   "info": {
+    "prop": "gas_meter_pipe",
+    "glb": "concept/art/env/props/gas_meter_pipe.glb",
+    "pos": [
+     -162.602,
+     28.86,
+     129.323
+    ],
+    "yaw_deg": 93.41,
+    "host": "계단 옆 단층집"
+   },
+   "tris": 0,
+   "detail_tris": 0,
+   "origin": [
+    -162.602,
+    28.86,
+    129.323
    ]
   },
   {
@@ -10874,7 +16548,7 @@
    ]
   },
   {
-   "name": "Prop_basin_planter_onion_325",
+   "name": "Prop_basin_planter_onion_571",
    "district": "Alley",
    "kind": "prop",
    "info": {
@@ -11119,7 +16793,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_326",
+   "name": "Prop_ac_outdoor_unit_572",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11142,7 +16816,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_327",
+   "name": "Prop_ac_outdoor_unit_573",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11165,7 +16839,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_328",
+   "name": "Prop_ac_outdoor_unit_574",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11188,7 +16862,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_329",
+   "name": "Prop_ac_outdoor_unit_575",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11211,7 +16885,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_330",
+   "name": "Prop_ac_outdoor_unit_576",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11234,7 +16908,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_331",
+   "name": "Prop_ac_outdoor_unit_577",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11257,7 +16931,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_332",
+   "name": "Prop_ac_outdoor_unit_578",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11280,7 +16954,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_333",
+   "name": "Prop_ac_outdoor_unit_579",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11303,7 +16977,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_334",
+   "name": "Prop_ac_outdoor_unit_580",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11326,7 +17000,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_335",
+   "name": "Prop_ac_outdoor_unit_581",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11430,7 +17104,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_336",
+   "name": "Prop_ac_outdoor_unit_582",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11453,7 +17127,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_337",
+   "name": "Prop_ac_outdoor_unit_583",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -11476,7 +17150,7 @@
    ]
   },
   {
-   "name": "Prop_ac_outdoor_unit_338",
+   "name": "Prop_ac_outdoor_unit_584",
    "district": "Campus",
    "kind": "prop",
    "info": {
@@ -12363,13 +18037,13 @@
     ]
    },
    "tris": [
-    1346,
-    456,
+    1426,
+    486,
     133
    ],
-   "detail_tris": 48,
+   "detail_tris": 80,
    "origin": [
-    -189.601,
+    -189.141,
     30.313,
     96.886
    ]
@@ -12386,23 +18060,23 @@
      103.5
     ],
     "height": 8.0,
-    "lod_size": 24.31,
+    "lod_size": 33.96,
     "lod_screen_heights": [
-     0.7337,
-     0.2668,
+     0.95,
+     0.3727,
      0.006
     ]
    },
    "tris": [
-    1074,
-    354,
+    1394,
+    474,
     109
    ],
-   "detail_tris": 48,
+   "detail_tris": 80,
    "origin": [
     -182.036,
     28.83,
-    99.306
+    96.923
    ]
   },
   {
@@ -12425,11 +18099,11 @@
     ]
    },
    "tris": [
-    1602,
-    550,
+    1922,
+    670,
     181
    ],
-   "detail_tris": 48,
+   "detail_tris": 80,
    "origin": [
     -173.783,
     26.58,
@@ -12456,15 +18130,15 @@
     ]
    },
    "tris": [
-    1186,
-    396,
+    1346,
+    456,
     133
    ],
-   "detail_tris": 48,
+   "detail_tris": 80,
    "origin": [
     -163.515,
     27.117,
-    98.432
+    101.816
    ]
   },
   {
@@ -12479,23 +18153,23 @@
      123.76
     ],
     "height": 8.0,
-    "lod_size": 14.01,
+    "lod_size": 23.04,
     "lod_screen_heights": [
-     0.4229,
-     0.1538,
+     0.6952,
+     0.2528,
      0.006
     ]
    },
    "tris": [
-    1458,
-    496,
+    2098,
+    736,
     133
    ],
-   "detail_tris": 48,
+   "detail_tris": 80,
    "origin": [
-    -165.715,
+    -160.159,
     27.146,
-    123.737
+    121.901
    ]
   },
   {
@@ -12510,23 +18184,23 @@
      130.57
     ],
     "height": 8.0,
-    "lod_size": 11.83,
+    "lod_size": 11.66,
     "lod_screen_heights": [
-     0.357,
-     0.1298,
+     0.3518,
+     0.1279,
      0.006
     ]
    },
    "tris": [
-    678,
-    220,
+    998,
+    340,
     13
    ],
-   "detail_tris": 48,
+   "detail_tris": 80,
    "origin": [
-    -160.189,
+    -162.36,
     28.699,
-    131.032
+    131.53
    ]
   },
   {
@@ -12541,23 +18215,23 @@
      93.89
     ],
     "height": 9.0,
-    "lod_size": 19.96,
+    "lod_size": 26.78,
     "lod_screen_heights": [
-     0.6023,
-     0.219,
+     0.8081,
+     0.2939,
      0.006
     ]
    },
    "tris": [
-    1218,
-    406,
+    1698,
+    586,
     133
    ],
-   "detail_tris": 48,
+   "detail_tris": 80,
    "origin": [
     -145.201,
     24.509,
-    86.671
+    90.082
    ]
   },
   {
@@ -12580,11 +18254,11 @@
     ]
    },
    "tris": [
-    758,
-    250,
+    918,
+    310,
     13
    ],
-   "detail_tris": 48,
+   "detail_tris": 80,
    "origin": [
     -137.001,
     23.076,

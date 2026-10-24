@@ -280,6 +280,8 @@ namespace Haengin.Tests
                 // 2026-10-24 맵 아트 패스 3차: 이야기 모드에선 M2 무대(Stages — 인카운터 적 3·구경꾼·야차)가 꺼진다(09 2-1). 이 시험은 이야기 없이 Zone1 을 열어 무대가 켜져 있어
                 // 적·구경꾼(헐 외곽선·그림자 포함) 약 1.9M 이 같이 세어진다 → 같은 경로를 무대 끈 채로 한 번 더 재서 맵 몫을 따로 남긴다
                 ("밤 상가거리 걷기 · 이야기 모드(M2 무대 꺼짐)", DayPart.Night, new Vector3(-199.0f, 31.0f, 103.2f), new Vector3(-176.0f, 28.4f, 103.6f)),
+                // 2026-10-24 맵 아트 패스 4차: 벽면 밀도(가스관·실외기·화분)가 가장 빽빽한 명륜3가 골목도 이야기 모드로 잰다
+                ("낮 명륜3가 골목 걷기 · 이야기 모드(M2 무대 꺼짐)", DayPart.Day, new Vector3(-172.0f, 27.1f, 115.9f), new Vector3(-161.5f, 28.0f, 124.5f)),
             };
             var stagesRoot = GameObject.Find("Stages");
             foreach (var (name, part, a, b) in routes)

@@ -33,11 +33,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Cover: 0.5
     - _Dots: 0
     - _Flip: 0
     - _Lines: 0.7
     m_Colors:
+    - _CloudLit: {r: 0.97999996, g: 0.96999997, b: 0.95, a: 1}
+    - _CloudShade: {r: 0.85, g: 0.8399999, b: 0.86, a: 1}
     - _FarColor: {r: 0.639, g: 0.6119999, b: 0.56499994, a: 1}
+    - _HorizonColor: {r: 0.94, g: 0.89, b: 0.8, a: 1}
     - _MidColor: {r: 0.788, g: 0.75699997, b: 0.698, a: 1}
     - _NearColor: {r: 0.43099996, g: 0.41599998, b: 0.39199996, a: 1}
     - _SkyColor: {r: 0.914, g: 0.878, b: 0.8, a: 1}

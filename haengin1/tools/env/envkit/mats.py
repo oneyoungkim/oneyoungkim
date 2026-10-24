@@ -49,6 +49,8 @@ MATS = {
     "M_Wire_Black":    dict(color="#1A1417", tile=1.0, uv="world", owner="kit", note="전선·빨랫줄·철망 줄(docs/10 4장 색 #1A1417)"),
     "M_Plant_Green":   dict(color="#7E9A5E", tile=1.0, uv="world", owner="kit", note="(--prop-geometry 때) 화분 식물"),
     "M_Fabric":        dict(color="#A9B7C2", tile=1.0, uv="world", owner="kit", note="빨랫줄 빨래·(--prop-geometry 때) 건조대 빨래"),
+    "M_Fabric_White":  dict(color="#E9E4DA", tile=1.0, uv="world", owner="kit", note="4차: 흰 빨래"),
+    "M_Fabric_Red":    dict(color="#B5655A", tile=1.0, uv="world", owner="kit", note="4차: 붉은 빨래·이불"),
     "M_Tank_Blue":     dict(color="#7FB2C9", tile=1.0, uv="world", owner="kit", note="(--prop-geometry 때) 옥상 물탱크 — 기본은 소품 water_tank_roof"),
 }
 

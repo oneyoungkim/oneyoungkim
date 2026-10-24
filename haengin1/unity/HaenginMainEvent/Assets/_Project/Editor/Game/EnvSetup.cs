@@ -61,6 +61,7 @@ namespace Haengin.EditorGame
             foreach (var d in new[] { MatDir, PropMatDir, SignMatDir, SkyMatDir, PrefabDir, Root + "/Materials/Fx" }) EnsureFolder(d);
             Import();
             Materials();
+            CopyClumpTextures();
             PropPrefabs();
             SkyAssets();
             OutlineFeature();
@@ -213,6 +214,13 @@ namespace Haengin.EditorGame
                 tex = ExtractedTexture(tex, name) ?? tex;
                 Material mat;
                 var b0 = lod0.sharedMesh.bounds; float h0 = b0.size.y * Mathf.Max(lod0.transform.lossyScale.y, 0.001f);
+                if (CardTreeReady(name))
+                {
+                    // 4차: 나무는 카드 전용 수관(가지 뼈대 + 잎 덩어리 카드) — 크기는 Hunyuan 나무와 같게
+                    float w0 = Mathf.Max(b0.size.x, b0.size.z) * Mathf.Max(lod0.transform.lossyScale.x, 0.001f);
+                    var ct = BuildCardTree(name, h0, w0); report.Add(ct); Notes.Add(ct); n++;
+                    continue;
+                }
                 if (IsVeg(name))
                 {
                     float amp = name.EndsWith("_tree") ? 0.07f : name == "shrub_bush" ? 0.03f : name == "ivy_patch" ? 0.015f : name == "grass_tuft" ? 0.05f : 0.02f;
@@ -285,22 +293,31 @@ namespace Haengin.EditorGame
 
         // ───────────────────────── 3) 원경 카드 에셋(호 메시·재질)
         public const float SkyRadius = 480f;   // 3차: 600 → 480(산 카드가 더 크고 가깝게)
+        // 4차: 카드 세로를 0.62 배로 눌러(산 꼭대기 23° → 약 10°) 0.2H 내림 — 도시 층이 지평선 위 0~7°, 가까운 지붕 층은 눈높이 아래(높은 곳에서 내려다볼 때만 보임)
+        public const float SkySquash = 0.62f, SkyDrop = 0.2f;
         static void SkyAssets()
         {
             // 호 메시: 90° + 양쪽 2° 겹침, 폭 = 호 길이, 높이 = 폭 × 1152/2688, 지평선 y=0, 아래로 0.35H 더(아랫줄 Clamp)
             var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(ArcMeshPath);
             if (mesh == null) { mesh = new Mesh { name = "SkyArc" }; AssetDatabase.CreateAsset(mesh, ArcMeshPath); }
             const int Seg = 24; float a0 = -47f, a1 = 47f;
-            float arc = SkyRadius * Mathf.Deg2Rad * 90f, H = arc * 1152f / 2688f;
+            float arc = SkyRadius * Mathf.Deg2Rad * 90f, H = arc * 1152f / 2688f * SkySquash;
             var v = new List<Vector3>(); var uv = new List<Vector2>(); var tri = new List<int>();
             for (int i = 0; i <= Seg; i++)
             {
                 float t = i / (float)Seg, a = Mathf.Lerp(a0, a1, t) * Mathf.Deg2Rad;
                 float x = Mathf.Sin(a) * SkyRadius, z = Mathf.Cos(a) * SkyRadius;
                 float u = Mathf.Lerp(-2f / 94f, 1f + 2f / 94f, t);
-                v.Add(new Vector3(x, -0.35f * H, z)); uv.Add(new Vector2(u, -0.35f));
-                v.Add(new Vector3(x, 2.4f * H, z)); uv.Add(new Vector2(u, 2.4f));   // 위로 2.4H(하늘 그라데이션 — 올려다봐도 빈 곳 없게)
-                if (i > 0) { int k = i * 2; tri.AddRange(new[] { k - 2, k - 1, k, k - 1, k + 1, k }); }
+                // 4차: 줄 4개 — 아래 −0.9H(내려다봐도 끝이 안 보이게, 셰이더가 아랫줄을 집음) · 지평선 · 1.05H · 위 2.4H(반지름 0.55배로 오므림 —
+                //      게임 카메라 먼 면 600m 안에 들게. 원통 그대로면 위쪽이 잘려 카메라 바탕색 띠가 보임)
+                float[] hs = { -0.9f, 0f, 1.05f, 2.4f }, rs = { 1f, 1f, 1f, 0.55f };
+                for (int r = 0; r < 4; r++) { v.Add(new Vector3(x * rs[r], hs[r] * H, z * rs[r])); uv.Add(new Vector2(u, hs[r])); }
+                if (i > 0)
+                    for (int r = 0; r < 3; r++)
+                    {
+                        int a2 = (i - 1) * 4 + r, b2 = a2 + 1, c2 = i * 4 + r, d2 = c2 + 1;
+                        tri.AddRange(new[] { a2, b2, c2, b2, d2, c2 });
+                    }
             }
             mesh.Clear(); mesh.SetVertices(v); mesh.SetUVs(0, uv); mesh.SetTriangles(tri, 0); mesh.RecalculateNormals(); mesh.RecalculateBounds();
             EditorUtility.SetDirty(mesh);
@@ -340,6 +357,10 @@ namespace Haengin.EditorGame
             var m = AssetDatabase.LoadAssetAtPath<Material>(OutlineMatPath);
             if (m == null) { m = new Material(sh) { name = "M_Outline" }; AssetDatabase.CreateAsset(m, OutlineMatPath); }
             if (m.shader != sh) m.shader = sh;
+            // 4차: 거리별 굵기·역깊이 모서리·근경 손그림 결 값(재질에 저장된 옛 값을 덮어씀)
+            m.SetFloat("_Strength", 1f); m.SetFloat("_NearWidth", 2.4f); m.SetFloat("_WidthPow", 0.55f); m.SetFloat("_FarWidth", 0.55f);
+            m.SetFloat("_FadeStart", 55f); m.SetFloat("_FadeEnd", 80f); m.SetFloat("_DepthRel", 0.022f); m.SetFloat("_DepthAbs", 0.03f);
+            m.SetFloat("_CreaseInv", 0.0045f); m.SetFloat("_Grain", 0.035f); m.SetFloat("_Stain", 0.05f); m.SetFloat("_HandNear", 8f); m.SetFloat("_HandFar", 22f);
             EditorUtility.SetDirty(m);
             foreach (var path in Renderers)
             {
@@ -915,7 +936,7 @@ namespace Haengin.EditorGame
                 var go = new GameObject("카드 " + name);
                 go.transform.SetParent(sky, false);
                 go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-                go.transform.localPosition = new Vector3(0f, SkyRadius * Mathf.PI / 2f * 1152f / 2688f * 0.06f, 0f);   // 3차: 지평선을 눈높이보다 조금 위로(산이 성곽 위로 보이게)
+                go.transform.localPosition = new Vector3(0f, -SkyRadius * Mathf.PI / 2f * 1152f / 2688f * SkySquash * SkyDrop, 0f);   // 4차: 눌러서 내림(위 SkySquash 주석)
                 go.AddComponent<MeshFilter>().sharedMesh = mesh;
                 var r = go.AddComponent<MeshRenderer>();
                 r.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>($"{SkyMatDir}/M_Sky_{name}.mat");
@@ -940,11 +961,7 @@ namespace Haengin.EditorGame
                 r.shadowCastingMode = ShadowCastingMode.Off; r.receiveShadows = false; r.lightProbeUsage = LightProbeUsage.Off; r.reflectionProbeUsage = ReflectionProbeUsage.Off;
                 return r;
             }
-            clouds.Add(Quad("구름 1", 0, 20f, 150f, 170f, 2.2f));
-            clouds.Add(Quad("구름 2", 2, 75f, 120f, 130f, 2.0f));
-            clouds.Add(Quad("구름 3", 5, 150f, 170f, 190f, 2.4f));
-            clouds.Add(Quad("구름 4", 1, 225f, 130f, 150f, 2.0f));
-            clouds.Add(Quad("구름 5", 7, 305f, 160f, 160f, 2.2f));
+            // 4차: 구름 판(외곽선 있는 만화 구름) 대신 카드 셰이더의 절차 붓 구름(층운·적운, 산·도시 실루엣 뒤) — 판은 만들지 않음
             cards.Clouds = clouds.ToArray();
             cards.Moon = Quad("초승달", 8, 135f, 230f, 42f, 1f);
             cards.Apply(DayPart.Day);

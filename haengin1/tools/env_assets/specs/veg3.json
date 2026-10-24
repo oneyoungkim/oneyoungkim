@@ -1,0 +1,28 @@
+{
+ "note": "4th pass: foliage clump card sheets (2x2) for card-only tree crowns, transparent background (2026-10-24)",
+ "defaults": {
+  "quality": "high",
+  "resolution": "2k",
+  "aspect": "1:1",
+  "background": "transparent"
+ },
+ "prefix": "Sprite sheet for a cel-shaded 3D game drawn like a hand-painted anime background: four separate foliage clump cards arranged in a 2 by 2 grid, each clump centered in its own quarter of the image with clear empty space around it, transparent background, nothing else in the image.",
+ "common": "Flat matte colors only, no gradients, no black outlines, no trunk, no text, no letters, no shadow on the ground. Each of the four clumps has a different irregular shape so they can be mixed without repeating.",
+ "items": [
+  {
+   "name": "clump_broad",
+   "out": "concept/art/env/veg/clump_broad.png",
+   "prompt": "Each clump is a dense, roughly rounded mass of many small zelkova and plane-tree leaves (dozens of small leaves) with an irregular jagged outline made of individual leaf tips poking out, a lively spiky silhouette rather than a smooth blob, with a few small holes near the edge. Painted in exactly two flat tones: fresh yellow-green on the upper left two thirds and darker olive green on the lower right third, with a crisp painted boundary between them, plus a few tiny pale leaf highlights on the lit side."
+  },
+  {
+   "name": "clump_pine",
+   "out": "concept/art/env/veg/clump_pine.png",
+   "prompt": "Each clump is a flattish horizontal pad of Korean red pine needle tufts seen from the side, wider than tall, the top edge bumpy and the outline bristling with sharp needle points, a few short brown twig ends inside. Painted in exactly two flat tones: deep muted green on the upper half and dark blue-green on the lower half, with a crisp painted boundary between them."
+  },
+  {
+   "name": "clump_cherry",
+   "out": "concept/art/env/veg/clump_cherry.png",
+   "prompt": "Each clump is a dense, roughly rounded mass of many small pale pink cherry blossoms in full spring bloom with a few small fresh green leaves, an irregular outline of petal edges poking out, with a few small holes near the edge. Painted in exactly two flat tones: pale pink on the upper left two thirds and dusty rose on the lower right third, with a crisp painted boundary between them, plus tiny white petal highlights."
+  }
+ ]
+}

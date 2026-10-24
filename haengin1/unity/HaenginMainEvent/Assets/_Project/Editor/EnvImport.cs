@@ -57,11 +57,13 @@ namespace Haengin.EditorTools
             imp.isReadable = false;
             if (tex)
             {
-                bool atlas = name.EndsWith("_Atlas") || name == "M_Cage_Mesh" || name == "M_Glass_Clear" || name.StartsWith("Leaf_");   // Leaf_* = 잎 카드(3차)   // 체육관: 철망 알파 컷아웃 · 유리 알파(둘은 Repeat)
+                bool clump = name.StartsWith("Clump_");   // 4차: 카드 전용 수관의 잎 덩어리 2×2 아틀라스
+                bool atlas = name.EndsWith("_Atlas") || name == "M_Cage_Mesh" || name == "M_Glass_Clear" || name.StartsWith("Leaf_") || clump;   // Leaf_* = 잎 카드(3차)   // 체육관: 철망 알파 컷아웃 · 유리 알파(둘은 Repeat)
                 imp.sRGBTexture = true;
-                imp.wrapMode = name.EndsWith("_Atlas") ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
+                imp.wrapMode = name.EndsWith("_Atlas") || clump ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
                 imp.alphaIsTransparency = atlas;
                 imp.alphaSource = atlas ? TextureImporterAlphaSource.FromInput : TextureImporterAlphaSource.None;
+                if (clump || name.StartsWith("Leaf_")) { imp.mipMapsPreserveCoverage = true; imp.alphaTestReferenceValue = 0.4f; }   // 멀어져도 잎이 빠지지 않게
             }
             else if (sky)
             {

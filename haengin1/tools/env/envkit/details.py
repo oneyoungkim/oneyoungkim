@@ -71,6 +71,8 @@ def gas_lines(o, P, u_riser, y_meter, floor_ys, run_dir, run_len, wrap=None, w=0
     """세로관(계량기 위 → 꼭대기 층) + 층마다 가로 가지(run_dir 쪽으로 run_len) + 가지 끝 계량기(소품).
     wrap = (옆 Panel, 길이): 홀수 층 가지는 모서리를 돌아 옆 면으로 이어짐(벽 따라 꺾임). 관은 키트(코드)."""
     det = o.det
+    if hasattr(o, "gas_panels"):
+        o.gas_panels.add(id(P))
     top = floor_ys[-1] + 0.45
     pts = [P.p(u_riser, y_meter + 0.55, w), P.p(u_riser, top, w)]
     pipe(det, pts, PIPE_W, "M_Pipe_Yellow")
@@ -249,6 +251,9 @@ def ext_stair(o, P, u_start, direction, levels_y, width=0.9, w0=0.04, mat="M_Met
     u = u_start
     d = direction
     landing = 1.0
+    if hasattr(o, "stairs"):
+        run_max = max(max(2, int(math.ceil((levels_y[i + 1] - levels_y[i]) / RISER))) * TREAD for i in range(len(levels_y) - 1))
+        o.stairs.append((id(P), min(u_start, u_start + direction * (run_max + landing)), max(u_start, u_start + direction * (run_max + landing))))
     for i in range(len(levels_y) - 1):
         ya, yb = levels_y[i], levels_y[i + 1]
         rise = yb - ya

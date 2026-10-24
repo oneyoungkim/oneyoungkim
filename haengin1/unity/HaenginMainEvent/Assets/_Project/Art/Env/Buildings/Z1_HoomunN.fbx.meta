@@ -32,6 +32,16 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_Fabric_Red
+    second: {fileID: 2100000, guid: e7211cf19e856ea47a215c2ef33115e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Fabric_White
+    second: {fileID: 2100000, guid: e930033c58b62cb42bb3f26c44c34ea8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_Glass_Dark
     second: {fileID: 2100000, guid: a19909f1ff2df614abe425ea5f2fc14d, type: 2}
   - first:

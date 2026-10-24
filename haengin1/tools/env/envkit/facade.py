@@ -26,6 +26,9 @@ class Out:
         self.signs = []      # dict
         self.sockets = []    # dict(kind, pos, yaw, note)
         self.notes = []
+        self.plog = {}       # 4차: id(Panel) → (Panel, [Op]) — dense.densify 가 구멍을 피해 놓을 때 씀
+        self.gas_panels = set()   # 4차: 본체가 가스관을 낸 면
+        self.stairs = []     # 4차: (id(Panel), u0, u1) 외부 철계단 자리
 
     def L(self, *levels):
         return [self.lod[i] for i in levels]
@@ -151,6 +154,8 @@ class Op:
 
 def emit_openings(o, P, ops):
     """구멍들의 테두리·유리·틀·창턱(LOD별) + 방범창(디테일) + 창문 불 판."""
+    if hasattr(o, "plog"):
+        o.plog.setdefault(id(P), (P, []))[1].extend(ops)
     for op in ops:
         u0, u1, y0, y1, dp = op.u0, op.u1, op.y0, op.y1, op.depth
         for L in (0, 1, 2):

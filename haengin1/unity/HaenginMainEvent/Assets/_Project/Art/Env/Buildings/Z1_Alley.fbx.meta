@@ -32,6 +32,16 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_Fabric_Red
+    second: {fileID: 2100000, guid: e7211cf19e856ea47a215c2ef33115e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Fabric_White
+    second: {fileID: 2100000, guid: e930033c58b62cb42bb3f26c44c34ea8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_Giwa_Dark
     second: {fileID: 2100000, guid: 20877426a1e3e7d4d996a0744fdb0b34, type: 2}
   - first:

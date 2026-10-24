@@ -1,4 +1,6 @@
 // 행인1의 메인이벤트 — 잎 카드(알파 컷아웃·양면) 툰 셰이더 = ToonLeaf + clip. 나무 수관 둘레의 근경 잎 결용(3차 패스)
+// 4차: 카드 전용 수관(_Sphere 1 = 정점 법선이 수관 덩어리 둥근 법선 — 뒤집지 않음, 셀 2톤이 덩어리째로 갈림) + 먹선은 잎 덩어리 가장자리에만
+//      (_Ink: 알파 경계 띠 × 덩어리 법선이 시선과 직각인 곳) + 스텐실 _StencilRef(1 = 화면 공간 외곽선이 수관 안쪽에 잔선을 긋지 않게).
 // 원본: 식생 툰 셰이더(docs/10 2차 패스 2026-10-24): 1단 그림자(고유색 × 배경 곱셈) + 주변광 + 점광(Forward+) + 안개 + 바람 흔들림(정점, 높이에 비례).
 // UTS 대신 쓰는 이유: 바람 정점 변형과 그림자 캐스터가 같이 흔들려야 하고, 잎 덩어리는 스펙큘러·림·헐 외곽선이 필요 없다. 외곽선은 화면 공간.
 Shader "Haengin/ToonLeafCard"
@@ -14,6 +16,11 @@ Shader "Haengin/ToonLeafCard"
         _WindFreq ("Wind frequency", Float) = 1.1
         _Height ("Sway height m", Float) = 3
         _Cutoff ("Alpha cutoff", Range(0, 1)) = 0.5
+        _Sphere ("Crown normals (no flip)", Float) = 0
+        _Ink ("Ink at clump edge", Range(0, 1)) = 0
+        _InkWidth ("Ink alpha band", Range(0.01, 0.6)) = 0.22
+        _InkColor ("Ink", Color) = (0.102, 0.078, 0.09, 1)
+        _StencilRef ("Stencil ref (1 = skip screen outline)", Float) = 0
     }
     SubShader
     {
@@ -21,7 +28,7 @@ Shader "Haengin/ToonLeafCard"
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
         CBUFFER_START(UnityPerMaterial)
-        float4 _BaseMap_ST; half4 _BaseColor, _ShadeColor; float _Step, _Feather, _WindAmp, _WindFreq, _Height, _Cutoff;
+        float4 _BaseMap_ST; half4 _BaseColor, _ShadeColor, _InkColor; float _Step, _Feather, _WindAmp, _WindFreq, _Height, _Cutoff, _Sphere, _Ink, _InkWidth, _StencilRef;
         CBUFFER_END
         TEXTURE2D(_BaseMap); SAMPLER(sampler_BaseMap);
         float3 Sway(float3 posOS)
@@ -38,6 +45,7 @@ Shader "Haengin/ToonLeafCard"
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
             Cull Off ZWrite On
+            Stencil { Ref [_StencilRef] Comp Always Pass Replace }
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment Frag
@@ -68,7 +76,8 @@ Shader "Haengin/ToonLeafCard"
                 clip(tex.a - _Cutoff);
                 half3 albedo = tex.rgb * _BaseColor.rgb;
                 float3 n = normalize(i.n);
-                n = dot(n, GetCameraPositionWS() - i.wp) < 0 ? -n : n;   // 양면: 카메라 쪽 법선
+                float3 V = normalize(GetCameraPositionWS() - i.wp);
+                if (_Sphere < 0.5) n = dot(n, V) < 0 ? -n : n;   // 양면: 카메라 쪽 법선(수관 둥근 법선이면 그대로)
                 float4 sc = TransformWorldToShadowCoord(i.wp);
                 Light ml = GetMainLight(sc);
                 half nl = saturate(dot(n, ml.direction) * 0.5 + 0.5) * ml.shadowAttenuation;
@@ -87,6 +96,10 @@ Shader "Haengin/ToonLeafCard"
                     col += albedo * l.color * a * 0.9;
                 LIGHT_LOOP_END
                 #endif
+                // 먹선: 알파 경계 띠(컷오프 바로 안쪽) × 덩어리 가장자리(둥근 법선 ⟂ 시선)
+                half band = 1.0 - smoothstep(_Cutoff, _Cutoff + _InkWidth, tex.a);
+                half rim = smoothstep(0.30, 0.75, 1.0 - abs(dot(n, V)));
+                col = lerp(col, _InkColor.rgb * max(lightCol, 0.35), saturate(band * rim * _Ink));
                 col = MixFog(col, i.fog);
                 return half4(col, 1);
             }

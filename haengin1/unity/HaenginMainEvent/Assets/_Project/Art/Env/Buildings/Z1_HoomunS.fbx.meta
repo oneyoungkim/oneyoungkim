@@ -27,6 +27,21 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_Fabric
+    second: {fileID: 2100000, guid: 002097ba892f6b54db4761ae0d09de15, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Fabric_Red
+    second: {fileID: 2100000, guid: e7211cf19e856ea47a215c2ef33115e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Fabric_White
+    second: {fileID: 2100000, guid: e930033c58b62cb42bb3f26c44c34ea8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_Glass_Dark
     second: {fileID: 2100000, guid: a19909f1ff2df614abe425ea5f2fc14d, type: 2}
   - first:
@@ -79,6 +94,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: M_Tile_Beige
     second: {fileID: 2100000, guid: 1c5a199a27c907046902e92fa4c4b1a2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Wire_Black
+    second: {fileID: 2100000, guid: e0e79c8b34399504ca05403a97bb8b73, type: 2}
   materials:
     materialImportMode: 2
     materialName: 1

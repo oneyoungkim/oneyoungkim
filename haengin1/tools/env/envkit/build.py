@@ -18,6 +18,7 @@ from .zone import Zone, classify, DISTRICTS, poly_closest
 from .facade import Out
 from .btypes import GENERATORS, castle_wall
 from . import details as D
+from . import dense
 
 FENCE_TYPES = ("fence_wall", "fence_grille", "retaining_concrete", "retaining_stone", "railing")
 LOD_DIST = (40.0, 110.0)     # LOD0→1, LOD1→2 바뀌는 거리(m) 목표 — 게임 카메라 세로 FOV 45° 기준
@@ -97,6 +98,8 @@ def generate(zone_path, log=print):
         o.meta = {}
         o._pending_holes = []
         GENERATORS[b.btype](zone, b, o)
+        if b.btype in dense.DENSE_TYPES:
+            dense.densify(zone, b, o)   # 4차: 벽면 밀도 규칙 배치
         outs_by_block[b.idx] = o
         if b.btype in FENCE_TYPES:
             fence_groups.setdefault(b.district, []).append((b, o))
@@ -105,6 +108,12 @@ def generate(zone_path, log=print):
         info = dict(block=b.name, index=b.idx, btype=b.btype, kind=b.kind, center=[b.cx, b.cy, b.cz],
                     size=[b.w, b.h, b.d], yaw=b.yaw, floors=b.floors, use=b.use, roles=b.roles, meta=o.meta)
         objs.append((Obj(name, b.district, "building", lods=o.lod, det=o.det, info=info), o))
+    tot = {}
+    for o in outs_by_block.values():
+        for k, v in (getattr(o, "dense", None) or {}).items():
+            tot[k] = tot.get(k, 0) + v
+    if tot:
+        log("4차 벽면 밀도: " + " · ".join("%s %d" % kv for kv in sorted(tot.items())))
     for dist, lst in sorted(fence_groups.items()):
         m = merge_outs([o for _, o in lst])
         info = dict(blocks=[dict(block=b.name, index=b.idx, btype=b.btype, center=[b.cx, b.cy, b.cz], size=[b.w, b.h, b.d],
@@ -295,10 +304,10 @@ def _poles_and_wires(zone, anchors):
             if i in used:
                 continue
             d = math.hypot(s["pos"][0] - p["x"], s["pos"][2] - p["z"])
-            if 3.0 < d < 17.0:
+            if 3.0 < d < 20.0:   # 4차: 17 → 20m
                 cand.append((d, i))
         cand.sort()
-        for d, i in cand[:3]:
+        for d, i in cand[:5]:   # 4차: 전봇대마다 인입선 3 → 5
             used.add(i)
             A = low[i % len(low)]
             B = anchors[i]["pos"]
@@ -329,7 +338,7 @@ def _poles_and_wires(zone, anchors):
     taken = set()
     n_pairs = 0
     for d, i, j in pairs:
-        if i in taken or j in taken or n_pairs >= 10:
+        if i in taken or j in taken or n_pairs >= 24:   # 4차: 집과 집 사이 10 → 24
             continue
         taken.add(i)
         taken.add(j)
