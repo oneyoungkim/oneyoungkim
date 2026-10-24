@@ -1,0 +1,319 @@
+// 행인1의 메인이벤트 — 체육관 장면 두뇌(docs/12_체육관_설계.md 2·3·4장): 시간대(조명·NPC 자리) · 드릴 자리 마커 → 메뉴 → DrillRunner · 드릴 카메라 프리셋 · 결과 카드 · 시뮬 몽타주
+// 무대 Gym.unity 의 루트(StagePlace 와 같은 오브젝트)에 붙는다. 플레이어 리그(Zone1 바탕 장면)는 들어올 때 찾는다(SceneLoader 가 Spawn 에 놓은 뒤).
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using Unity.Cinemachine;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace Haengin
+{
+    [DisallowMultipleComponent]
+    public sealed class GymManager : MonoBehaviour
+    {
+        public static GymManager Instance { get; private set; }
+
+        public DrillBook Book;
+        public InputActionAsset Actions;
+        public UiFonts Fonts;
+        public GymLights Lights;
+        public GymNpc Yunjun, Gojun;
+        public List<GymNpc> Members = new List<GymNpc>();
+        public List<Transform> Sockets = new List<Transform>();
+        public List<DrillMarker> Markers = new List<DrillMarker>();
+        public List<BagSwing> Bags = new List<BagSwing>();
+        public Transform Dummy, SpeedBag, MirrorProbe;
+        public TextMeshPro WallTimer;
+        public CinemachineCamera DrillCam;
+        public EnemyDef SparDef;
+        public GameObject GojunFighterPrefab;
+        public ReflectionProbe Probe;
+        public MirrorPlane Mirror;
+        [Tooltip("시뮬 몽타주 길이(초, 4-5: 15초 3컷). 시험·봇은 줄임")] public float SimMontageSec = 15f;
+        /// 시험·스모크: 시간대 강제(-1 = 게임 시계)
+        public int ForcePart = -1;
+
+        public DrillRunner Runner { get; private set; }
+        public DrillHud Hud { get; private set; }
+        public DrillResultCard Card { get; private set; }
+        public DrillMenu Menu { get; private set; }
+        public GymActors Actors { get; private set; }
+        public GymPart Part { get; private set; }
+        public bool Busy => (Runner != null && Runner.State != DrillRunner.Phase.Idle) || simRunning || (Menu != null && (Menu.Open || Menu.BoardOpen));
+        public DrillDef Current { get; private set; }
+        public bool SimRunning => simRunning;
+        public string LastCoachLine { get; private set; } = "";
+        public int DrillsDone { get; private set; }
+        public event Action<DrillDef, DrillResult, DrillReward> DrillFinished;
+
+        readonly Dictionary<string, Transform> sock = new Dictionary<string, Transform>();
+        bool simRunning, waitingClose;
+        InputAction submit, dodge;
+        bool pSub, pDodge;
+        CamTuning savedIndoor;
+
+        void Awake()
+        {
+            Instance = this;
+            foreach (var s in Sockets) if (s != null) sock[s.name] = s;
+            Runner = GetComponent<DrillRunner>() ?? gameObject.AddComponent<DrillRunner>();
+            Runner.Actions = Actions;
+            Runner.Finished += OnFinished;
+            T Ui<T>(string n) where T : Component { var go = new GameObject(n) { layer = 5 }; go.transform.SetParent(transform, false); return go.AddComponent<T>(); }
+            Hud = Ui<DrillHud>("드릴 화면"); Hud.Fonts = Fonts; Hud.Runner = Runner; Hud.WallTimer = WallTimer;
+            Card = Ui<DrillResultCard>("결과 카드"); Card.Fonts = Fonts;
+            Menu = Ui<DrillMenu>("드릴 메뉴"); Menu.Fonts = Fonts; Menu.Actions = Actions;
+            foreach (var m in Markers) if (m != null) m.Gym = this;
+            if (Actions != null) { submit = Actions.FindAction("Menu/Submit", false); dodge = Actions.FindAction("Explore/Interact", false); }
+        }
+
+        void OnDestroy() { if (Instance == this) Instance = null; }
+
+        IEnumerator Start()
+        {
+            yield return null;
+            GymState.Visits++;
+            BindPlayer();
+            ApplyPart(ForcePart >= 0 ? (GymPart)ForcePart : GymLights.PartOfHour(GameClock.Hour));
+            if (Probe != null) Probe.RenderProbe();
+            Debug.Log($"[Gym] 체육관 입장: {GymLights.Name(Part)} · 드릴 {Book?.Drills.Length ?? 0}종(플레이 가능 {Book?.PlayableCount ?? 0}) · 소켓 {sock.Count} · 마커 {Markers.Count} · {GymState.Current.Summary}");
+        }
+
+        public Transform Sock(string name) => sock.TryGetValue(name, out var t) ? t : null;
+
+        void BindPlayer()
+        {
+            var motor = FindAnyObjectByType<PlayerMotor>();
+            var pc = motor != null ? motor.GetComponent<PlayerCombat>() : FindAnyObjectByType<PlayerCombat>();
+            Actors = new GymActors
+            {
+                Motor = motor, Player = pc, Input = motor != null ? motor.GetComponent<PInput>() : null,
+                Visual = motor != null ? motor.transform.Find("Visual") : null,
+                Yunjun = Yunjun, Gojun = Gojun, Bags = Bags, Dummy = Dummy, SpeedBag = SpeedBag,
+                Mode = FindAnyObjectByType<CombatMode>(), Tuning = pc != null ? pc.T : null, Moves = pc != null ? pc.Moves : null,
+                GojunFighterPrefab = GojunFighterPrefab, SparDef = SparDef,
+                Say = (who, line) => { LastCoachLine = line; Hud.Say(who, line); },
+                Toast = s => Hud.ShowToast(s),
+            };
+            if (Yunjun != null && Actors.Mitt == null)
+            {
+                var f = Yunjun.GetComponent<Fighter>();
+                if (f == null)
+                {
+                    f = CombatFactory.AddFighter(Yunjun.gameObject, "이윤준(미트)", 1, 9999, 1.75f, 0.30f, Actors.Tuning, Yunjun.transform.GetChild(0));
+                    f.KeepStanding = true; f.StaggerMul = 0.15f; f.Body.SetYaw(Yunjun.transform.eulerAngles.y);
+                }
+                Actors.Mitt = f;
+            }
+        }
+
+        // ───────────────────────── 시간대
+        public void ApplyPart(GymPart p)
+        {
+            Part = p;
+            if (Lights != null) Lights.Apply(p);
+            foreach (var n in Members) if (n != null) n.gameObject.SetActive(false);
+            if (Gojun != null) Gojun.gameObject.SetActive(false);
+            if (Yunjun != null) Yunjun.gameObject.SetActive(p != GymPart.Dawn);
+            switch (p)
+            {
+                case GymPart.Morning:
+                    Put(Yunjun, "Sock_NPC_Coach_Weight", GymNpc.Routine.Sit);
+                    Put(Member(0), "Sock_Drill_D05_01", GymNpc.Routine.Bag);
+                    Put(Member(1), "Sock_NPC_Member_Stretch", GymNpc.Routine.Stretch);
+                    break;
+                case GymPart.Day:
+                    Put(Yunjun, "Sock_NPC_Coach_Desk", GymNpc.Routine.Sit);
+                    Put(Gojun, "Sock_NPC_Gojun_Bag", GymNpc.Routine.Bag);
+                    Put(Member(2), "Sock_NPC_Member_Mirror", GymNpc.Routine.Shadow);
+                    Put(Member(3), "Sock_Drill_D05_04", GymNpc.Routine.Bag);
+                    break;
+                case GymPart.Evening:
+                    Put(Yunjun, "Sock_NPC_Coach_CageDoor", GymNpc.Routine.Watch);
+                    Put(Gojun, "Sock_NPC_Gojun_Cage", GymNpc.Routine.Shadow);
+                    for (int i = 0; i < 8; i++) Put(Member(i), $"Sock_NPC_Line_{i + 1:00}", i % 3 == 1 ? GymNpc.Routine.Rope : GymNpc.Routine.Shadow);
+                    break;
+                case GymPart.Night:
+                    Put(Yunjun, "Sock_NPC_Coach_MatEdge", GymNpc.Routine.Mitts);
+                    break;
+            }
+        }
+
+        GymNpc Member(int i) => i < Members.Count ? Members[i] : null;
+
+        void Put(GymNpc n, string socket, GymNpc.Routine r)
+        {
+            if (n == null) return;
+            var s = Sock(socket);
+            if (s == null) { n.gameObject.SetActive(false); return; }
+            n.gameObject.SetActive(true);
+            n.Place(s.position, s.forward, r);
+        }
+
+        // ───────────────────────── 드릴 자리
+        public void OnMarkerUsed(DrillMarker m)
+        {
+            if (Busy || Book == null) return;
+            var def = Book.Find(m.DrillId);
+            if (def == null) return;
+            if (def.Id == "D14") { Menu.ShowBoard(Book, GymState.Current, null); return; }
+            Menu.Show(def, GymState.Current, () => StartDrill(def.Id), () => StartCoroutine(SimCo(def)), null);
+        }
+
+        /// 드릴 직접 시작(봇 skill > 0 이면 자동 플레이). 돌려주는 것 = 시작했나
+        public bool StartDrill(string id, float bot = 0f)
+        {
+            if (Busy || Book == null) return false;
+            var def = Book.Find(id);
+            if (def == null || Actors == null) return false;
+            string blocked = DrillSim.DirectBlocked(def, GymState.Current, GymSave.Today);
+            if (blocked.Length > 0) { Hud.Show(true); Hud.Say("이윤준", blocked); Debug.Log($"[Gym] 드릴 {id} 막힘: {blocked}"); StartCoroutine(HideHudLater(2.5f)); return false; }
+            var station = DrillStations.Create(def.Id);
+            if (station == null) { Debug.Log($"[Gym] 드릴 {id} 자리만(2부)"); return false; }
+            Current = def;
+            var s = Sock(def.Socket) ?? Sock("Sock_Drill_" + def.Id);
+            Actors.Station = s != null ? s : transform;
+            // 시우를 자리에, NPC 가 그 자리에 있으면 비켜 줌
+            if (Actors.Motor != null && s != null)
+            {
+                Actors.Motor.ClearMoveInput();
+                Actors.Motor.Teleport(s.position, HitResolver.Yaw(s.forward));
+            }
+            foreach (var n in Members) if (n != null && n.gameObject.activeSelf && s != null && (n.transform.position - s.position).sqrMagnitude < 1.5f) n.gameObject.SetActive(false);
+            if (def.Id == "D04") { var mt = Sock("Sock_NPC_Coach_MatEdge"); if (Yunjun != null && mt != null) { Yunjun.gameObject.SetActive(true); Yunjun.Place(s.position + s.forward * 1.05f, -s.forward, GymNpc.Routine.Mitts); } }
+            if (def.Id == "D07" || def.Id == "D10") { if (Gojun != null && s != null) { Gojun.gameObject.SetActive(true); Gojun.Place(s.position + s.forward * (def.Id == "D07" ? 2.2f : 1.0f), -s.forward, GymNpc.Routine.Watch); } }
+            if (def.Id == "D11") { var cd = Sock("Sock_NPC_Coach_CageDoor"); if (Yunjun != null && cd != null) { Yunjun.gameObject.SetActive(true); Yunjun.Place(cd.position, cd.forward, GymNpc.Routine.Watch); } }
+            Runner.Bot = bot;
+            SetCam(def.CamPreset, Actors.Station);
+            if (Mirror != null) Mirror.Set(def.CamPreset == "mirror");
+            Hud.Show(true);
+            if (Actors.Input != null && Actors.Player != null) { }
+            Runner.Begin(def, station, Actors);
+            return true;
+        }
+
+        IEnumerator HideHudLater(float s) { yield return new WaitForSecondsRealtime(s); if (Runner.State == DrillRunner.Phase.Idle) Hud.Show(false); }
+
+        void OnFinished(DrillResult r, DrillReward w)
+        {
+            DrillsDone++;
+            var ds = GymState.Current.Of(r.Def.Id);
+            bool unlock = r.Grade == Grade.S && w.FirstS && r.Def.SimAllowed;
+            string line = r.Aborted ? "" : r.Grade == Grade.S ? r.Def.CueS : r.Grade == Grade.D ? "…" : r.Grade == Grade.A ? "나쁘지 않아." : r.Grade == Grade.B ? "0.3초 늦어. 다시." : "처음부터.";
+            if (r.Concussion) line = "오늘은 끝. 내일까지 머리 쓰는 건 없다.";
+            LastCoachLine = line;
+            Card.Show(r, w, line, unlock);
+            if (r.Grade == Grade.S && !string.IsNullOrEmpty(r.Def.CueGojun) && Gojun != null && Gojun.gameObject.activeSelf) Hud.Say("고준", r.Def.CueGojun);
+            waitingClose = true;
+            foreach (var m in Markers) if (m != null) m.Refresh();
+            DrillFinished?.Invoke(r.Def, r, w);
+        }
+
+        /// 결과 카드 닫기(× · Enter · 봇)
+        public void CloseCard()
+        {
+            if (!waitingClose) return;
+            waitingClose = false;
+            Card.Hide();
+            Hud.Show(false);
+            Runner.Close();
+            SetCam(null, null);
+            if (Mirror != null) Mirror.Set(false);
+            Current = null;
+            if (!simRunning) ApplyPart(Part);        // NPC 자리 복구
+        }
+
+        void Update()
+        {
+            if (!waitingClose || Card.ShownFor < 0.6f) return;
+            if (Runner.Bot > 0f && Card.ShownFor > 2.5f) { CloseCard(); return; }
+            bool s = submit != null && submit.enabled && GameUi.Edge(submit, ref pSub);
+            bool d = dodge != null && dodge.enabled && GameUi.Edge(dodge, ref pDodge);
+            var kb = Keyboard.current; var gp = Gamepad.current;
+            bool raw = (kb != null && (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame)) || (gp != null && gp.buttonSouth.wasPressedThisFrame);
+            if (s || d || raw) CloseCard();
+        }
+
+        // ───────────────────────── 시뮬(4-5): 몽타주 3컷 → 보상 75% → 카드('시뮬')
+        public IEnumerator SimCo(DrillDef def)
+        {
+            if (Busy) yield break;
+            string why = DrillSim.Blocked(def, GymState.Current, GymSave.Today);
+            if (why.Length > 0) { Hud.Show(true); Hud.Say("이윤준", why); yield return new WaitForSecondsRealtime(2f); Hud.Show(false); yield break; }
+            simRunning = true; Current = def;
+            var s = Sock(def.Socket) ?? transform;
+            if (Actors.Motor != null) { Actors.Motor.ClearMoveInput(); Actors.Motor.Teleport(s.position, HitResolver.Yaw(s.forward)); }
+            if (Actors.Input != null) Actors.Input.enabled = false;
+            GameState.InputLocked = true;
+            Hud.Show(true);
+            var me = Actors.Player != null ? Actors.Player.Me : null;
+            string[] cuts = { "mirror", "side", "shoulder" };
+            string[] words = { "준비", "중반", "마무리" };
+            float per = Mathf.Max(0.3f, SimMontageSec / 3f);
+            int sweatShown = 0;
+            var w = DrillRewards.Compute(def, Grade.S, true, GymState.Current, false);
+            for (int c = 0; c < 3; c++)
+            {
+                SetCam(cuts[c], s);
+                if (Mirror != null) Mirror.Set(cuts[c] == "mirror");
+                Hud.Say("시뮬", $"{def.NameKr} — {words[c]}");
+                float t = 0f;
+                while (t < per)
+                {
+                    t += UiKit.RealDt;
+                    if (me != null && me.State == Fighter.Phase.Free && Actors.Moves != null && def.Category == DrillCategory.Striking && Mathf.Repeat(t, 0.7f) < UiKit.RealDt) me.StartAttack(c % 2 == 0 ? Actors.Moves.Jab : Actors.Moves.Cross, null);
+                    else if (me != null && def.Category != DrillCategory.Striking) me.ScriptAnim = "Stance";
+                    int target = Mathf.RoundToInt(w.Sweat * (c * per + t) / (3f * per));
+                    if (target != sweatShown) { sweatShown = target; Hud.ShowToast($"땀 {sweatShown}"); }
+                    yield return null;
+                }
+            }
+            if (me != null) me.ScriptAnim = null;
+            var reward = DrillSim.Run(def, GymState.Current, GymSave.Today);
+            Debug.Log($"[Gym] 시뮬 {def.Id}: {reward} · 오늘 남은 {GymState.Current.SimLeft(GymSave.Today)} · 검정까지 {DrillSim.CertEvery - GymState.Current.Of(def.Id).SimRunsSinceCert}");
+            Card.ShowSim(def, reward, GymState.Current.SimLeft(GymSave.Today));
+            GameState.InputLocked = false;
+            if (Actors.Input != null) Actors.Input.enabled = true;
+            simRunning = false;
+            waitingClose = true;
+            foreach (var m in Markers) if (m != null) m.Refresh();
+            DrillFinished?.Invoke(def, new DrillResult { Def = def, Grade = Grade.S }, reward);
+        }
+
+        // ───────────────────────── 드릴 카메라(2장 표): 고정 프리셋, 드릴 중 플레이어 조작 끔
+        public void SetCam(string preset, Transform at)
+        {
+            if (DrillCam == null) return;
+            if (string.IsNullOrEmpty(preset) || at == null || preset == "combat") { DrillCam.Priority = 0; return; }
+            var f = new Vector3(at.forward.x, 0f, at.forward.z).normalized; var r = Vector3.Cross(Vector3.up, f); var p = at.position;
+            Vector3 pos, look;
+            switch (preset)
+            {
+                case "mirror": pos = p + f * 2.6f + r * 1.5f + Vector3.up * 1.55f; look = p + Vector3.up * 1.05f; break;
+                case "side": pos = p + r * 3.0f + f * 0.8f + Vector3.up * 1.55f; look = p + f * 0.5f + Vector3.up * 1.05f; break;
+                case "shoulder": pos = p - f * 2.2f + r * 0.7f + Vector3.up * 1.75f; look = p + f * 1.1f + Vector3.up * 1.15f; break;
+                case "low": pos = p + r * 3.0f + f * 0.4f + Vector3.up * 0.9f; look = p + f * 0.4f + Vector3.up * 0.55f; break;
+                default: pos = p + f * 2.8f + r * 1.2f + Vector3.up * 1.55f; look = p + Vector3.up * 1.0f; break;
+            }
+            // 벽 안으로 들어가지 않게(실내 20×13): 방 안쪽으로 당김
+            var local = transform.InverseTransformPoint(pos);
+            local.x = Mathf.Clamp(local.x, 0.4f, 19.6f); local.z = Mathf.Clamp(local.z, 0.4f, 12.6f); local.y = Mathf.Clamp(local.y, 0.5f, 2.6f);
+            pos = transform.TransformPoint(local);
+            DrillCam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(look - pos, Vector3.up));
+            DrillCam.Lens.FieldOfView = 50f;
+            DrillCam.Priority = 30;
+        }
+
+        // ───────────────────────── 시험·스모크 도우미
+        /// 드릴을 봇으로 끝까지(결과 카드 닫기까지). skill 1 = S
+        public IEnumerator PlayBot(string id, float skill, int maxFrames = 60 * 400)
+        {
+            if (!StartDrill(id, skill)) yield break;
+            int n = 0;
+            while (Runner.State != DrillRunner.Phase.Result && n++ < maxFrames) yield return null;
+            while (waitingClose && n++ < maxFrames) yield return null;
+        }
+    }
+}

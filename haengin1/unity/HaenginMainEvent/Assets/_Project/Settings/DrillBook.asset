@@ -1,0 +1,723 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c1033d61ce17b43accc74317fa349f, type: 3}
+  m_Name: DrillBook
+  m_EditorClassIdentifier: Haengin.Game::Haengin.DrillBook
+  Drills:
+  - Id: D01
+    NameKr: "\uC904\uB118\uAE30 \uAE30\uBCF8"
+    RealName: "Boxer skip \u2014 \uB9AC\uB4EC\xB7\uBC1C \uAC00\uBCBC\uC6C0\xB7\uC720\uC0B0\uC18C"
+    Category: 3
+    Rounds: 2
+    RoundSec: 60
+    RestSec: 8
+    FatigueCost: 8
+    SweatBase: 20
+    MainStat: 2
+    SubStat: -1
+    Metrics:
+    - Id: beat_sd
+      LabelKr: "\uBC15\uC790 \uC624\uCC28"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 120
+      S: 25
+      Weight: 0.4
+    - Id: trips
+      LabelKr: "\uAC78\uB9BC"
+      Unit: "\uD68C"
+      HigherIsBetter: 0
+      D: 8
+      S: 0
+      Weight: 0.3
+    - Id: late_hold
+      LabelKr: "\uD6C4\uBC18 \uC720\uC9C0"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 60
+      S: 97
+      Weight: 0.3
+    Socket: Sock_Drill_D01
+    CamPreset: mirror
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 1
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uBC1C\uB05D. \uB4A4\uAFC8\uCE58 \uB2FF\uC73C\uBA74 \uCC98\uC74C\uBD80\uD130."
+    CueRound: "\uD638\uD761 \uCF54\uB85C."
+    CueS: "\u2026\uB410\uB124."
+    CueGojun: "\uC57C \uB108 \uC904\uB118\uAE30 \uC65C \uC774\uB807\uAC8C \uC798\uD574,
+      \uC5B4\uB9B4 \uB54C \uD588\uC5B4?"
+    CueStop: 
+    CueHurt: 
+  - Id: D02
+    NameKr: "\uC904\uB118\uAE30 \uB354\uBE14\uC5B8\uB354"
+    RealName: "Double-under \u2014 \uD3ED\uBC1C\uC801 \uC810\uD504\xB7\uC190\uBAA9
+      \uC18D\uB3C4"
+    Category: 3
+    Rounds: 3
+    RoundSec: 40
+    RestSec: 8
+    FatigueCost: 10
+    SweatBase: 24
+    MainStat: 2
+    SubStat: 1
+    Metrics:
+    - Id: du_rate
+      LabelKr: "\uB354\uBE14\uC5B8\uB354 \uC131\uACF5"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 30
+      S: 95
+      Weight: 0.4
+    - Id: du_streak
+      LabelKr: "\uCD5C\uB300 \uC5F0\uC18D"
+      Unit: "\uD68C"
+      HigherIsBetter: 1
+      D: 5
+      S: 50
+      Weight: 0.3
+    - Id: trips
+      LabelKr: "\uAC78\uB9BC"
+      Unit: "\uD68C"
+      HigherIsBetter: 0
+      D: 6
+      S: 0
+      Weight: 0.3
+    Socket: Sock_Drill_D02
+    CamPreset: mirror
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 1
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uC190\uBAA9\uB9CC. \uD314 \uB3CC\uB9AC\uBA74 \uB450 \uBC88 \uBABB
+      \uB3CC\uC544."
+    CueRound: "\uC190\uBAA9."
+    CueS: "\uC190\uBAA9 \uB410\uC5B4. \uB2E4\uC74C\uC740 \uBC1C\uBAA9."
+    CueGojun: 
+    CueStop: 
+    CueHurt: 
+  - Id: D03
+    NameKr: "\uC100\uB3C4\uBCF5\uC2F1 \uCF64\uBE44 \uD638\uCD9C"
+    RealName: "Shadow boxing w/ called combos \u2014 \uD638\uCD9C \uCF64\uBE44\uB97C
+      \uD5C8\uACF5\uC5D0, \uAC00\uB4DC \uBCF5\uADC0"
+    Category: 0
+    Rounds: 3
+    RoundSec: 60
+    RestSec: 8
+    FatigueCost: 10
+    SweatBase: 26
+    MainStat: 1
+    SubStat: 4
+    Metrics:
+    - Id: combo_acc
+      LabelKr: "\uCF64\uBE44 \uC815\uD655"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 50
+      S: 98
+      Weight: 0.35
+    - Id: react
+      LabelKr: "\uCCAB \uBC18\uC751"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 900
+      S: 350
+      Weight: 0.25
+    - Id: guard_rate
+      LabelKr: "\uAC00\uB4DC \uBCF5\uADC0"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 50
+      S: 95
+      Weight: 0.25
+    - Id: gap_sd
+      LabelKr: "\uD0C0\uACA9 \uAC04\uACA9 \uC548\uC815"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 160
+      S: 50
+      Weight: 0.15
+    Socket: Sock_Drill_D03
+    CamPreset: mirror
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 1
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uC6D0\uD22C. \uC6D0\uD22C\uC4F0\uB9AC."
+    CueRound: "\uAC00\uB4DC. \uCE58\uACE0 \uC190 \uB0B4\uB824\uC624\uBA74 \uB9DE\uC544."
+    CueS: "\uAC70\uC6B8 \uBCF4\uC9C0 \uB9C8. \uC0C1\uB300\uB97C \uBD10."
+    CueGojun: "\uD615, \uC7E4 \uC9C0\uAE08 \uB098\uBCF4\uB2E4 \uBE60\uB978 \uAC70
+      \uC544\uB2C8\uC5D0\uC694?"
+    CueStop: 
+    CueHurt: 
+  - Id: D04
+    NameKr: "\uBBF8\uD2B8 \uCE58\uAE30"
+    RealName: "Pad work(focus mitts) \u2014 \uD638\uCD9C \uCF64\uBE44\uB97C \uCF54\uCE58
+      \uBBF8\uD2B8\uC5D0 \uD0C0\uC774\uBC0D \uB9DE\uCDB0"
+    Category: 0
+    Rounds: 3
+    RoundSec: 50
+    RestSec: 8
+    FatigueCost: 12
+    SweatBase: 30
+    MainStat: 1
+    SubStat: 4
+    Metrics:
+    - Id: timing
+      LabelKr: "\uD0C0\uC774\uBC0D \uC624\uCC28"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 180
+      S: 45
+      Weight: 0.35
+    - Id: combo_acc
+      LabelKr: "\uCF64\uBE44 \uC815\uD655"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 55
+      S: 98
+      Weight: 0.3
+    - Id: react
+      LabelKr: "\uBC18\uC751"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 800
+      S: 320
+      Weight: 0.15
+    - Id: late_hold
+      LabelKr: "\uD6C4\uBC18 \uC720\uC9C0"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 60
+      S: 95
+      Weight: 0.2
+    Socket: Sock_Drill_D04
+    CamPreset: side
+    UsesCombat: 1
+    SimAllowed: 1
+    Playable: 1
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uC6D0. \uD22C. \u2026\uBBF8\uD2B8 \uBCF4\uC9C0 \uB9D0\uACE0 \uB0B4
+      \uC5B4\uAE68 \uBD10."
+    CueRound: "\uAC01 15\uB3C4 \uB354 \uB2EB\uC544. \uADF8\uB798\uC57C \uC5B4\uAE68\uAC00
+      \uAC00\uB824."
+    CueS: "\u2026\uADF8\uB798. \uADF8\uAC8C \uB124 \uC6D0\uD22C\uC57C."
+    CueGojun: 
+    CueStop: 
+    CueHurt: 
+  - Id: D05
+    NameKr: "\uC0CC\uB4DC\uBC31 \uB77C\uC6B4\uB4DC"
+    RealName: "Heavy bag rounds \u2014 \uD30C\uC6CC\xB7\uB9AC\uB4EC \uC720\uC9C0\xB7\uAC00\uB4DC
+      \uBCF5\uADC0"
+    Category: 0
+    Rounds: 3
+    RoundSec: 60
+    RestSec: 8
+    FatigueCost: 14
+    SweatBase: 30
+    MainStat: 0
+    SubStat: 2
+    Metrics:
+    - Id: rhythm
+      LabelKr: "\uB9AC\uB4EC \uC624\uCC28"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 200
+      S: 60
+      Weight: 0.3
+    - Id: power_hold
+      LabelKr: "\uD30C\uC6CC \uC720\uC9C0"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 50
+      S: 92
+      Weight: 0.3
+    - Id: guard_rate
+      LabelKr: "\uAC00\uB4DC \uBCF5\uADC0"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 50
+      S: 95
+      Weight: 0.2
+    - Id: hits_per_round
+      LabelKr: "\uB77C\uC6B4\uB4DC\uB2F9 \uD0C0\uACA9"
+      Unit: "\uD68C"
+      HigherIsBetter: 1
+      D: 20
+      S: 50
+      Weight: 0.2
+    Socket: Sock_Drill_D05_01
+    CamPreset: shoulder
+    UsesCombat: 1
+    SimAllowed: 1
+    Playable: 1
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uBC31 \uB530\uB77C\uAC00\uC9C0 \uB9C8. \uC624\uB294 \uAC78 \uCCD0."
+    CueRound: "\uB9C9\uD310! \uB9C9\uD310! 20\uCD08! \uB2E4 \uC3DF\uC544!"
+    CueS: "\uD798 \uBE7C\uACE0 \uCCE4\uB294\uB370 \uADF8 \uC18C\uB9AC\uAC00 \uB098\uB124."
+    CueGojun: "\uB9C9\uD310! \uB9C9\uD310! 20\uCD08! \uB2E4 \uC3DF\uC544!"
+    CueStop: 
+    CueHurt: 
+  - Id: D06
+    NameKr: "\uC2A4\uD53C\uB4DC\uBC31"
+    RealName: "Speed bag \u2014 \uC190-\uB208 \uB9AC\uB4EC, \uC5B4\uAE68 \uC9C0\uAD6C\uB825"
+    Category: 0
+    Rounds: 3
+    RoundSec: 40
+    RestSec: 8
+    FatigueCost: 6
+    SweatBase: 18
+    MainStat: 1
+    SubStat: -1
+    Metrics:
+    - Id: streak
+      LabelKr: "\uCD5C\uB300 \uC5F0\uC18D"
+      Unit: "\uD68C"
+      HigherIsBetter: 1
+      D: 10
+      S: 200
+      Weight: 0.4
+    - Id: beat_err
+      LabelKr: "\uBC15\uC790 \uC624\uCC28"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 90
+      S: 20
+      Weight: 0.4
+    - Id: misses
+      LabelKr: "\uC2E4\uC218"
+      Unit: "\uD68C"
+      HigherIsBetter: 0
+      D: 10
+      S: 0
+      Weight: 0.2
+    Socket: Sock_Drill_D06
+    CamPreset: front
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 1
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uB208 \uAC10\uACE0\uB3C4 \uB418\uAC8C."
+    CueRound: "\uB9AC\uB4EC."
+    CueS: "\uB410\uC5B4."
+    CueGojun: "\uC774\uAC70 \uB098 300 \uAC04\uB2E4, \uBD10\uBD10\u2014 \uC544 \uC528."
+    CueStop: 
+    CueHurt: 
+  - Id: D07
+    NameKr: "\uC2A4\uD504\uB864 \uB4DC\uB9B4"
+    RealName: "Sprawl drill(\uD14C\uC774\uD06C\uB2E4\uC6B4 \uBC29\uC5B4) \u2014 \uCF54\uCE58
+      '\uC0F7!' \uD638\uCD9C\uC5D0 \uBC18\uC751"
+    Category: 1
+    Rounds: 3
+    RoundSec: 40
+    RestSec: 8
+    FatigueCost: 12
+    SweatBase: 24
+    MainStat: 5
+    SubStat: 1
+    Metrics:
+    - Id: react
+      LabelKr: "\uBC18\uC751"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 700
+      S: 280
+      Weight: 0.4
+    - Id: posture
+      LabelKr: "\uC790\uC138 \uC131\uACF5"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 50
+      S: 97
+      Weight: 0.35
+    - Id: recover
+      LabelKr: "\uBCF5\uADC0 \uC2DC\uAC04"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 1200
+      S: 600
+      Weight: 0.25
+    Socket: Sock_Drill_D07
+    CamPreset: low
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 1
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uC5C9\uB369\uC774. \uC190 \uB9D0\uACE0 \uC5C9\uB369\uC774\uAC00 \uBA3C\uC800."
+    CueRound: "\uC0F7! \uC0F7! \u2026\uD398\uC774\uD06C\uC9C0\uB871."
+    CueS: "\uD14C\uC774\uD06C\uB2E4\uC6B4 \uD558\uB098\uB294 \uB9C9\uACA0\uB124."
+    CueGojun: "\uC0F7! \uC0F7! \u2026\uD398\uC774\uD06C\uC9C0\uB871."
+    CueStop: 
+    CueHurt: 
+  - Id: D08
+    NameKr: "\uB354\uBBF8 \uD14C\uC774\uD06C\uB2E4\uC6B4"
+    RealName: "Double/Single-leg on grappling dummy \u2014 \uB808\uBCA8 \uCCB4\uC778\uC9C0
+      \u2192 \uD398\uB124\uD2B8\uB808\uC774\uC158 \u2192 \uB4DC\uB77C\uC774\uBE0C
+      \u2192 \uD53C\uB2C8\uC2DC"
+    Category: 1
+    Rounds: 2
+    RoundSec: 45
+    RestSec: 8
+    FatigueCost: 12
+    SweatBase: 26
+    MainStat: 5
+    SubStat: 0
+    Metrics:
+    - Id: lc_err
+      LabelKr: "\uB808\uBCA8 \uCCB4\uC778\uC9C0 \uC624\uCC28"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 250
+      S: 60
+      Weight: 0.35
+    - Id: order
+      LabelKr: "\uB2E8\uACC4 \uC21C\uC11C"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 50
+      S: 98
+      Weight: 0.35
+    - Id: finish
+      LabelKr: "\uD53C\uB2C8\uC2DC \uC131\uACF5"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 40
+      S: 95
+      Weight: 0.3
+    Socket: Sock_Drill_D08
+    CamPreset: low
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 1
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uBA38\uB9AC \uBC14\uAE65. \uC548\uCABD\uC774\uBA74 \uAE38\uB85C\uD2F4."
+    CueRound: "\uBB34\uB98E \uBC14\uB2E5\uC5D0 \uB2FF\uAE30 \uC804\uC5D0 \uC62C\uB77C\uC640."
+    CueS: "\uB410\uC5B4."
+    CueGojun: "\uB354\uBBF8\uB294 \uC548 \uB54C\uB824\uC694, \uC548\uC2EC\uD558\uACE0
+      \uB4E4\uC5B4\uAC00."
+    CueStop: 
+    CueHurt: 
+  - Id: D09
+    NameKr: "\uD074\uB9B0\uCE58\xB7\uBCBD \uB808\uC2AC\uB9C1"
+    RealName: "Clinch & cage wrestling(\uACE0\uC900 \uC0C1\uB300) \u2014 \uC5B8\uB354\uD6C5
+      \uC7C1\uD0C8\xB7\uBCBD \uCEE8\uD2B8\uB864\xB7\uBB34\uB98E"
+    Category: 1
+    Rounds: 2
+    RoundSec: 50
+    RestSec: 8
+    FatigueCost: 16
+    SweatBase: 30
+    MainStat: 3
+    SubStat: 5
+    Metrics:
+    - Id: wall_ctrl
+      LabelKr: "\uBCBD \uCEE8\uD2B8\uB864"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 30
+      S: 75
+      Weight: 0.35
+    - Id: underhook
+      LabelKr: "\uC5B8\uB354\uD6C5 \uC2B9\uB960"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 35
+      S: 85
+      Weight: 0.3
+    - Id: knees
+      LabelKr: "\uBB34\uB98E \uC801\uC911"
+      Unit: "\uD68C"
+      HigherIsBetter: 1
+      D: 3
+      S: 15
+      Weight: 0.15
+    - Id: taken_down
+      LabelKr: "\uB2F9\uD55C \uD14C\uC774\uD06C\uB2E4\uC6B4"
+      Unit: "\uD68C"
+      HigherIsBetter: 0
+      D: 4
+      S: 0
+      Weight: 0.2
+    Socket: Sock_Drill_D09
+    CamPreset: side
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 0
+    HeadRisk: 1
+    StoryOnly: 0
+    CueStart: "\uBA38\uB9AC \uC138\uC6CC. \uBA38\uB9AC \uC219\uC774\uBA74 \uB124
+      \uB4A4\uD1B5\uC218\uAC00 \uBCBD\uC5D0 \uAC04\uB2E4."
+    CueRound: "\uBA38\uB9AC \uC138\uC6CC."
+    CueS: "\uBCBD\uC5D0\uC11C\uB294 \uB124\uAC00 \uC138."
+    CueGojun: "\uC544 \uD615 \uBB34\uB98E \uC9C4\uC9DC \uC544\uD504\uAC8C \uB123\uB124."
+    CueStop: 
+    CueHurt: 
+  - Id: D10
+    NameKr: "\uADF8\uB77C\uC6B4\uB4DC \uB4DC\uB9B4"
+    RealName: "Shrimp 20\uD68C + \uB9C8\uC6B4\uD2B8 \uD0C8\uCD9C(\uBE0C\uB9BF\uC9C0
+      \uC564 \uB864\xB7\uC5D8\uBCF4 \uC774\uC2A4\uCF00\uC774\uD504) 10\uD68C"
+    Category: 2
+    Rounds: 2
+    RoundSec: 50
+    RestSec: 8
+    FatigueCost: 10
+    SweatBase: 24
+    MainStat: 6
+    SubStat: 2
+    Metrics:
+    - Id: shrimp_err
+      LabelKr: "\uC0C8\uC6B0 \uB9AC\uB4EC"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 200
+      S: 60
+      Weight: 0.3
+    - Id: escape
+      LabelKr: "\uD0C8\uCD9C \uC131\uACF5"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 40
+      S: 95
+      Weight: 0.4
+    - Id: bridge_err
+      LabelKr: "\uBE0C\uB9BF\uC9C0 \uD0C0\uC774\uBC0D"
+      Unit: ms
+      HigherIsBetter: 0
+      D: 300
+      S: 80
+      Weight: 0.3
+    Socket: Sock_Drill_D10
+    CamPreset: low
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 1
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uBE0C\uB9BF\uC9C0\uB294 \uD799\uC73C\uB85C. \uBAA9\uC73C\uB85C \uD558\uBA74
+      \uB2E4\uCE5C\uB2E4."
+    CueRound: "\uD799."
+    CueS: "\uB410\uC5B4."
+    CueGojun: "\uB0B4\uAC00 \uBB34\uAC81\uC9C0? \uBC25 \uBA39\uC5C8\uAC70\uB4E0."
+    CueStop: 
+    CueHurt: 
+  - Id: D11
+    NameKr: "\uAE30\uC220 \uC2A4\uD30C\uB9C1(\uB77C\uC774\uD2B8)"
+    RealName: "Technical/light sparring \u2014 \uD5E4\uB4DC\uAE30\uC5B4\xB7\uD53C\uD574
+      25%, \uAC15\uD0C0 \uAE08\uC9C0"
+    Category: 0
+    Rounds: 3
+    RoundSec: 50
+    RestSec: 8
+    FatigueCost: 18
+    SweatBase: 36
+    MainStat: 3
+    SubStat: 4
+    Metrics:
+    - Id: land_rate
+      LabelKr: "\uBA85\uC911\uB960"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 20
+      S: 55
+      Weight: 0.25
+    - Id: avoid_rate
+      LabelKr: "\uD53C\uACA9 \uD68C\uD53C"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 30
+      S: 75
+      Weight: 0.3
+    - Id: reads
+      LabelKr: "\uC77D\uC5C8\uB2E4\xB7\uAC00\uB4DC"
+      Unit: "\uD68C"
+      HigherIsBetter: 1
+      D: 2
+      S: 12
+      Weight: 0.15
+    - Id: violations
+      LabelKr: "\uAC15\uD0C0 \uC704\uBC18"
+      Unit: "\uD68C"
+      HigherIsBetter: 0
+      D: 3
+      S: 0
+      Weight: 0.15
+    - Id: position
+      LabelKr: "\uD3EC\uC9C0\uC158"
+      Unit: "\uC810"
+      HigherIsBetter: 1
+      D: -2
+      S: 3
+      Weight: 0.15
+    Socket: Sock_Drill_D11
+    CamPreset: combat
+    UsesCombat: 1
+    SimAllowed: 0
+    Playable: 1
+    HeadRisk: 1
+    StoryOnly: 0
+    CueStart: "\uB77C\uC774\uD2B8. \uBA38\uB9AC\uB294 \uD130\uCE58."
+    CueRound: "\uB77C\uC774\uD2B8."
+    CueS: "\u2026\uB9DE\uB294 \uAC74 \uC7AC\uB2A5\uC774 \uC788\uB124."
+    CueGojun: 
+    CueStop: "\uC2A4\uD1B1. \u2026\uB098\uAC00\uC11C \uC0CC\uB4DC\uBC31 \uCCD0."
+    CueHurt: "\uC2A4\uD1B1. \uC549\uC544."
+  - Id: D12
+    NameKr: "\uC11C\uD0B7 \uC6E8\uC774\uD2B8"
+    RealName: "Circuit \u2014 \uCF00\uD2C0\uBCA8 \uC2A4\uC719 20 \xB7 \uBC84\uD53C
+      10 \xB7 \uD478\uC2DC\uC5C5 15 \xB7 \uD50C\uB7AD\uD06C 30 s \xD7 3\uC138\uD2B8"
+    Category: 3
+    Rounds: 3
+    RoundSec: 50
+    RestSec: 5
+    FatigueCost: 14
+    SweatBase: 28
+    MainStat: 0
+    SubStat: 2
+    Metrics:
+    - Id: tempo
+      LabelKr: "\uD15C\uD3EC \uC720\uC9C0"
+      Unit: '%'
+      HigherIsBetter: 0
+      D: 140
+      S: 105
+      Weight: 0.35
+    - Id: form
+      LabelKr: "\uD3FC \uD310\uC815"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 50
+      S: 97
+      Weight: 0.4
+    - Id: finish_time
+      LabelKr: "\uC644\uC8FC \uC2DC\uAC04"
+      Unit: s
+      HigherIsBetter: 0
+      D: 180
+      S: 120
+      Weight: 0.25
+    Socket: Sock_Drill_D12
+    CamPreset: front
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 0
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uCF00\uD2C0\uBCA8\uC740 \uD314 \uC544\uB2C8\uACE0 \uC5C9\uB369\uC774."
+    CueRound: "\uB2E4\uC74C \uC138\uD2B8."
+    CueS: "\uB410\uC5B4."
+    CueGojun: "\uBC84\uD53C 10\uAC1C\uBA74 \uB098 \uC8FD\uC5B4\uC694\u2014 \uC544\uB2C8
+      12\uAC1C \uD558\uC790."
+    CueStop: 
+    CueHurt: 
+  - Id: D13
+    NameKr: "\uD0C0\uC774\uC5B4 \uB4A4\uC9D1\uAE30"
+    RealName: "Tire flip \u2014 \uC804\uC2E0 \uD30C\uC6CC\xB7\uD799 \uB4DC\uB77C\uC774\uBE0C"
+    Category: 3
+    Rounds: 2
+    RoundSec: 50
+    RestSec: 8
+    FatigueCost: 14
+    SweatBase: 26
+    MainStat: 0
+    SubStat: 3
+    Metrics:
+    - Id: flips
+      LabelKr: "\uB4A4\uC9D1\uAE30"
+      Unit: "\uD68C"
+      HigherIsBetter: 1
+      D: 10
+      S: 30
+      Weight: 0.4
+    - Id: form
+      LabelKr: "\uD3FC \uD310\uC815"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 50
+      S: 97
+      Weight: 0.35
+    - Id: power_hold
+      LabelKr: "\uD30C\uC6CC \uC720\uC9C0"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 55
+      S: 92
+      Weight: 0.25
+    Socket: Sock_Drill_D13
+    CamPreset: front
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 0
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uD5C8\uB9AC\uB85C \uB4E4\uC9C0 \uB9C8. \uB2E4\uB9AC."
+    CueRound: "\uB2E4\uB9AC."
+    CueS: "\uB410\uC5B4."
+    CueGojun: "\uC774\uAC70 \uD2B8\uB7ED \uD0C0\uC774\uC5B4\uC778\uB370? \uD615 \uC7E4
+      \uAD34\uBB3C\uC774\uC5D0\uC694."
+    CueStop: 
+    CueHurt: 
+  - Id: D14
+    NameKr: "\uB85C\uB4DC\uC6CC\uD06C"
+    RealName: "Roadwork(\uC131\uACFD \uB7EC\uB2DD) \u2014 \uC57C\uC678 \uAE30\uB85D\uC744
+      \uD654\uC774\uD2B8\uBCF4\uB4DC\uC5D0 \uC62C\uB824 \uB4F1\uAE09\uB9CC"
+    Category: 4
+    Rounds: 1
+    RoundSec: 0
+    RestSec: 0
+    FatigueCost: 0
+    SweatBase: 0
+    MainStat: 2
+    SubStat: 7
+    Metrics:
+    - Id: pace_hold
+      LabelKr: "\uD398\uC774\uC2A4 \uC720\uC9C0"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 55
+      S: 95
+      Weight: 0.45
+    - Id: split
+      LabelKr: "\uAD6C\uAC04 \uC2DC\uAC04"
+      Unit: s
+      HigherIsBetter: 0
+      D: 900
+      S: 560
+      Weight: 0.35
+    - Id: breath
+      LabelKr: "\uD638\uD761 \uC785\uB825"
+      Unit: '%'
+      HigherIsBetter: 1
+      D: 50
+      S: 95
+      Weight: 0.2
+    Socket: Sock_Drill_D14
+    CamPreset: front
+    UsesCombat: 0
+    SimAllowed: 1
+    Playable: 0
+    HeadRisk: 0
+    StoryOnly: 0
+    CueStart: "\uAE30\uB85D."
+    CueRound: 
+    CueS: "\uC131\uACFD 10\uBD84 20\uCD08. \uB2E4\uC74C\uC5D4 10\uBD84."
+    CueGojun: 
+    CueStop: 
+    CueHurt: 

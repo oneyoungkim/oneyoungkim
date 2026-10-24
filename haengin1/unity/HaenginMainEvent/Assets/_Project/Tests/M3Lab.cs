@@ -58,7 +58,7 @@ namespace Haengin.Tests
             {
                 var o = SceneManager.GetSceneAt(i);
                 if (!o.isLoaded) continue;
-                if (o.name.StartsWith("St_") || o.name == "Title") yield return SceneManager.UnloadSceneAsync(o);
+                if (o.name.StartsWith("St_") || o.name == "Title" || o.name == "Gym") yield return SceneManager.UnloadSceneAsync(o);
             }
             yield return Lab.UnloadOurs(default);
         }

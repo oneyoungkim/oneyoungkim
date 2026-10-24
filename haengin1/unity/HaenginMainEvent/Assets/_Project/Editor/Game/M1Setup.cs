@@ -261,7 +261,7 @@ namespace Haengin.EditorGame
         {
             var list = new[] { StorySetup.TitleScene, Zone1Scene }
                 .Concat(StorySetup.StageKeys.Select(SceneLoader.StagePath))
-                .Concat(new[] { SandboxScene, CombatSetup.LabScene })
+                .Concat(new[] { SceneLoader.GymScene, SandboxScene, CombatSetup.LabScene })
                 .Where(path => AssetDatabase.LoadAssetAtPath<SceneAsset>(path) != null)
                 .Select(path => new EditorBuildSettingsScene(path, true)).ToArray();
             EditorBuildSettings.scenes = list;

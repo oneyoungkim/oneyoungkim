@@ -14,7 +14,7 @@ namespace Haengin
         public const string Zone1Scene = "Assets/_Project/Scenes/Zone1.unity";
         public const string LabScene = "Assets/_Project/Scenes/CombatLab.unity";
 
-        public enum Mode { None, New, Continue, Select, Practice }
+        public enum Mode { None, New, Continue, Select, Practice, Gym }
 
         public sealed class Req
         {

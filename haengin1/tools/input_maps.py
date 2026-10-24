@@ -46,15 +46,30 @@ def talk_map():
     return {"name": m, "id": uid(m, "map"), "actions": acts, "bindings": b}
 
 
+def add_kick(d):
+    """Combat 맵에 Kick(docs/12 4-1 'R2 킥' 예약): R2 는 M2 달리기(Run)가 쓰므로 패드 L2 + 키보드 R 로 둔다(대표 결정 대기). 이미 있으면 그대로."""
+    for m in d["maps"]:
+        if m["name"] != "Combat":
+            continue
+        if any(a["name"] == "Kick" for a in m["actions"]):
+            return False
+        mn = m["name"]
+        m["actions"].append(action(mn, "Kick", "Button", "Button"))
+        m["bindings"] += [bind(mn, "Kick", "<Gamepad>/leftTrigger", "Gamepad"), bind(mn, "Kick", "<Keyboard>/r", "Keyboard&Mouse")]
+        return True
+    return False
+
+
 def main():
     path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1] / "unity/HaenginMainEvent/Assets/_Project/Input/HInput.inputactions"
     d = json.loads(path.read_text(encoding="utf-8"))
     maps = [x for x in d["maps"] if x["name"] != "Talk"]
     maps.append(talk_map())
     d["maps"] = maps
+    kick = add_kick(d)
     text = json.dumps(d, ensure_ascii=False, indent=4)
     path.write_text(text, encoding="utf-8", newline="\n")
-    print(f"[input_maps] {path.name}: 맵 {', '.join(x['name'] for x in maps)}")
+    print(f"[input_maps] {path.name}: 맵 {', '.join(x['name'] for x in maps)} · Combat/Kick {'추가' if kick else '있음'}")
 
 
 if __name__ == "__main__":

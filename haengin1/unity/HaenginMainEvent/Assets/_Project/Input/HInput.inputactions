@@ -483,6 +483,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Kick",
+                    "type": "Button",
+                    "id": "c71677c0-ce0a-5f51-a9f6-789cb0fcfdea",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -901,6 +910,28 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "DebugHud",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "857faa7d-79df-59d6-a41e-84767268eb55",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Kick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3a668ff2-a76e-5ad0-b6e1-0307e9d1d3ec",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Kick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

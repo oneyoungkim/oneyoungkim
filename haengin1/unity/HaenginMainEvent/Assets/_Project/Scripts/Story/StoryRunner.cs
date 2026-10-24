@@ -107,6 +107,10 @@ namespace Haengin
                 case StoryBoot.Mode.New: Begin(false, null, null); break;
                 case StoryBoot.Mode.Continue: if (r.Save != null) Begin(r.Save.Test, r.Save.SceneId, r.Save); break;
                 case StoryBoot.Mode.Select: Begin(false, r.SceneId, null); break;
+                case StoryBoot.Mode.Gym:
+                    Debug.Log("[M3] 연습장: 체육관(혜화 MMA)으로 — 이야기 없이");
+                    if (Loader != null) StartCoroutine(Loader.Go("Gym", "Spawn", false, Vector3.zero, 0f, true));
+                    break;
                 default: Debug.Log("[M3] 연습장: 이야기 없이 Zone1(M2 무대 켬)"); break;
             }
         }
@@ -121,6 +125,7 @@ namespace Haengin
             Flags = s != null ? s.Flags : new StoryFlags();
             Ledger = s != null ? s.Ledger : new Ledger();
             Names = s != null ? s.Names : new NameBook();
+            GymState.Current = s != null && s.Gym != null ? s.Gym : new GymSave();
             int start = string.IsNullOrEmpty(startId) ? 0 : Def.IndexOf(List, startId);
             if (start < 0) { Debug.LogWarning($"[M3] 장면 {startId} 없음 → 처음부터"); start = 0; }
             running = true; Finished = false;
@@ -417,6 +422,7 @@ namespace Haengin
             Ledger = JsonUtility.FromJson<Ledger>(JsonUtility.ToJson(Ledger)),
             Names = JsonUtility.FromJson<NameBook>(JsonUtility.ToJson(Names)),
             Flags = Flags.Clone(),
+            Gym = GymState.Current != null ? GymState.Current.Clone() : new GymSave(),
             Label = $"{s.DateLabel} {s.TimeLabel} · {s.Title}",
         };
 

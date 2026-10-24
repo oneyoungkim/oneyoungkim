@@ -16,7 +16,8 @@ namespace Haengin
     public sealed class SceneLoader : MonoBehaviour
     {
         public const string Zone1 = "Zone1";
-        public static string StagePath(string key) => $"Assets/_Project/Scenes/St_{key}.unity";
+        public const string Gym = "Gym", GymScene = "Assets/_Project/Scenes/Gym.unity";
+        public static string StagePath(string key) => key == Gym ? GymScene : $"Assets/_Project/Scenes/St_{key}.unity";
 
         public InkWipe Wipe;
         public PlayerMotor Motor;
@@ -63,7 +64,22 @@ namespace Haengin
             return indoor;
         }
 
-        public float ExpectedCamDistance => Cam == null ? 0f : (Indoor ? Indoors().radius : (outdoor != null ? outdoor.radius : Cam.T.radius));
+        public float ExpectedCamDistance => Cam == null ? 0f : (Indoor ? (Stage != null && Stage.CamRadius > 0f ? Stage.CamRadius : Indoors().radius) : (outdoor != null ? outdoor.radius : Cam.T.radius));
+
+        /// 무대가 정한 실내 카메라(체육관: 거리 3.0 · 높이 1.55 · FOV 50 · 피치 6° — docs/12 2장). 없으면 공통 실내값
+        CamTuning StageCam(StagePlace st)
+        {
+            var b = Indoors();
+            if (st == null || st.CamRadius <= 0f || b == null) return b;
+            if (stageCam == null) stageCam = Instantiate(b);
+            stageCam.name = "CamTuning(" + st.Key + ")";
+            stageCam.radius = st.CamRadius; stageCam.radiusRun = st.CamRadius + 0.2f;
+            stageCam.fov = st.CamFov > 0f ? st.CamFov : b.fov; stageCam.fovRun = stageCam.fov + 2f;
+            if (st.CamTargetHeight > 0f) stageCam.targetHeight = st.CamTargetHeight;
+            stageCam.pitchDefault = st.CamPitch; stageCam.pitchMax = st.CamPitchMax > 0f ? st.CamPitchMax : b.pitchMax;
+            return stageCam;
+        }
+        CamTuning stageCam;
 
         /// 장소로 옮긴다. place = "Zone1"·무대 키, Zone1 이면 pos·yaw, 무대면 spawn 이름. wipe = 먹 닦기
         public IEnumerator Go(string place, string spawn, bool hasPos, Vector3 pos, float yaw, bool wipe = true)
@@ -126,7 +142,7 @@ namespace Haengin
             }
             if (Cam != null)
             {
-                var want = Indoor ? Indoors() : (outdoor != null ? outdoor : Cam.Tuning);
+                var want = Indoor ? StageCam(Stage) : (outdoor != null ? outdoor : Cam.Tuning);
                 if (outdoor == null) outdoor = Cam.Tuning;
                 if (want != null && Cam.Tuning != want) Cam.Tuning = want;
                 Cam.SnapBehind();

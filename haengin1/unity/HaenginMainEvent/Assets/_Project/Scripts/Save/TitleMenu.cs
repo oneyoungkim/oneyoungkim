@@ -127,6 +127,7 @@ namespace Haengin
             var p = new Page { Title = "연습장", Note = "M2 전투 — 이야기와 상관없음", Back = back };
             Add(p, "Zone1 — 뒷골목 인카운터 · 와룡공원 야차", () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.Practice }));
             Add(p, "전투 연습장", () => StoryBoot.Go(null, StoryBoot.LabScene));
+            Add(p, "체육관 — 혜화 MMA(트레이닝 드릴)", () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.Gym }));
             Add(p, "돌아가기", () => Show(back));
             return p;
         }

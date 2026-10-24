@@ -17,6 +17,8 @@ namespace Haengin
         public Transform[] Spawns = new Transform[0];
         /// 자리 무대(9단계 전): 바닥·벽·이름판만
         public bool Placeholder;
+        /// 실내 카메라 덮어쓰기(0 = 공통 실내값): 거리 · 세로 FOV · 따라가는 점 높이 · 기본 피치 · 피치 상한(체육관 천장 3.2m)
+        public float CamRadius, CamFov, CamTargetHeight, CamPitch, CamPitchMax;
 
         public static readonly List<StagePlace> All = new List<StagePlace>();
 

@@ -21,6 +21,8 @@ namespace Haengin
         public Ledger Ledger = new Ledger();
         public NameBook Names = new NameBook();
         public StoryFlags Flags = new StoryFlags();
+        /// 체육관: 스탯·피로·땀·드릴 기록(docs/12 4-5 DrillSave)
+        public GymSave Gym = new GymSave();
         /// 저장한 실제 시각(ISO 8601) · 장면 이름(이어하기 표시용)
         public string SavedAt = "";
         public string Label = "";

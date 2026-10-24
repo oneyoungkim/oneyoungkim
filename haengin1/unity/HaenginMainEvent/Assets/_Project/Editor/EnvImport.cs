@@ -14,7 +14,7 @@ namespace Haengin.EditorTools
 
         void OnPreprocessModel()
         {
-            if (!assetPath.StartsWith(Root + "/Buildings/")) return;
+            if (!assetPath.StartsWith(Root + "/Buildings/") && !assetPath.StartsWith(Root + "/Gym/")) return;
             var imp = (ModelImporter)assetImporter;
             imp.globalScale = 1f;
             imp.useFileUnits = true;
@@ -46,7 +46,7 @@ namespace Haengin.EditorTools
             if (!assetPath.StartsWith(Root + "/")) return;
             var imp = (TextureImporter)assetImporter;
             string name = System.IO.Path.GetFileNameWithoutExtension(assetPath);
-            bool tex = assetPath.StartsWith(Root + "/Textures/") || assetPath.StartsWith(Root + "/Props/Tex/");
+            bool tex = assetPath.StartsWith(Root + "/Textures/") || assetPath.StartsWith(Root + "/Props/Tex/") || assetPath.StartsWith(Root + "/Gym/Textures/") || assetPath.StartsWith(Root + "/Gym/Props/Tex/");
             bool sky = assetPath.StartsWith(Root + "/Sky/");
             imp.textureType = TextureImporterType.Default;
             imp.mipmapEnabled = true;
@@ -57,9 +57,9 @@ namespace Haengin.EditorTools
             imp.isReadable = false;
             if (tex)
             {
-                bool atlas = name.EndsWith("_Atlas");
+                bool atlas = name.EndsWith("_Atlas") || name == "M_Cage_Mesh" || name == "M_Glass_Clear";   // 체육관: 철망 알파 컷아웃 · 유리 알파(둘은 Repeat)
                 imp.sRGBTexture = true;
-                imp.wrapMode = atlas ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
+                imp.wrapMode = name.EndsWith("_Atlas") ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
                 imp.alphaIsTransparency = atlas;
                 imp.alphaSource = atlas ? TextureImporterAlphaSource.FromInput : TextureImporterAlphaSource.None;
             }

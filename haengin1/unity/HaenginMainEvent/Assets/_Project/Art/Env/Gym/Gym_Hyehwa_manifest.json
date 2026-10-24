@@ -1,0 +1,2390 @@
+{
+ "generator": "haengin1/tools/env/gym/build_gym.py",
+ "doc": "haengin1/docs/12_체육관_설계.md",
+ "axes": "Unity 좌표 그대로(X 동, Y 위, Z 북). 원점 = 지하 바닥 남서 모서리. 프리팹을 원점·회전 0·배율 1 로 놓음",
+ "room": {
+  "w": 20.0,
+  "d": 13.0,
+  "h": 3.2,
+  "beam_bottom": 2.8,
+  "cage": {
+   "center": [
+    14.5,
+    6.0
+   ],
+   "circumradius": 3.1,
+   "platform": 0.25
+  }
+ },
+ "lod": {
+  "screen_heights": [
+   0.12,
+   0.0,
+   0.0
+  ],
+  "note": "Room/Stair/Cage/Office/Mirror/WallPads/BagRail = LOD0·LOD1. Fluor·Poster 는 LOD 밖"
+ },
+ "materials": {
+  "M_AC_White": {
+   "color": "#E6E2D8",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "흰 새시 틀·흰 방범창(docs/10 3-1)·(--prop-geometry 때) 실외기",
+   "texture": "concept/art/env/textures/M_AC_White.png",
+   "tiling": 1.0
+  },
+  "M_Cage_Canvas": {
+   "color": "#E8E2D6",
+   "tile": 2.0,
+   "uv": "world",
+   "owner": "gym",
+   "note": "케이지 캔버스·매트 테두리",
+   "texture": "concept/art/env/gym/textures/M_Cage_Canvas.png",
+   "tiling": 0.5
+  },
+  "M_Cage_Mesh": {
+   "color": "#1A1417",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "gym",
+   "note": "케이지 철망(알파 컷아웃, 양면)",
+   "texture": "concept/art/env/gym/textures/M_Cage_Mesh.png",
+   "tiling": 1.0
+  },
+  "M_Concrete": {
+   "color": "#B9B6AF",
+   "tile": 2.4,
+   "uv": "world",
+   "owner": "conv",
+   "note": "옹벽·기초·갓돌·필로티·학교 층 띠·전봇대",
+   "texture": "concept/art/env/textures/M_Concrete.png",
+   "tiling": 0.4167
+  },
+  "M_Concrete_Ceiling": {
+   "color": "#B9B6AF",
+   "tile": 2.4,
+   "uv": "world",
+   "owner": "gym",
+   "note": "노출 천장",
+   "texture": "concept/art/env/gym/textures/M_Concrete_Ceiling.png",
+   "tiling": 0.4167
+  },
+  "M_Fluorescent": {
+   "color": "#EAF0EC",
+   "tile": 1.0,
+   "uv": "unit",
+   "owner": "gym",
+   "note": "형광등 확산판(발광)",
+   "texture": "concept/art/env/gym/textures/M_Fluorescent.png",
+   "tiling": 1.0
+  },
+  "M_Glass_Clear": {
+   "color": "#DCE4E8",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "gym",
+   "note": "사무실 유리(투명 0.15)",
+   "texture": "concept/art/env/gym/textures/M_Glass_Clear.png",
+   "tiling": 1.0
+  },
+  "M_Glass_Dark": {
+   "color": "#2E3A44",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "낮 유리·창",
+   "texture": "concept/art/env/textures/M_Glass_Dark.png",
+   "tiling": 1.0
+  },
+  "M_Mat_Vinyl": {
+   "color": "#4A6B8A",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "gym",
+   "note": "퍼즐 매트",
+   "texture": "concept/art/env/gym/textures/M_Mat_Vinyl.png",
+   "tiling": 1.0
+  },
+  "M_Metal_Green": {
+   "color": "#4F6B58",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "철대문·현관 철문·외부 철계단·캠퍼스 펜스·난간",
+   "texture": "concept/art/env/textures/M_Metal_Green.png",
+   "tiling": 1.0
+  },
+  "M_Metal_Grey": {
+   "color": "#8C8F93",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "상가 새시·셔터 박스·간판 틀·빗물관·실외기 받침",
+   "texture": "concept/art/env/textures/M_Metal_Grey.png",
+   "tiling": 1.0
+  },
+  "M_Mirror": {
+   "color": "#B8BEC2",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "gym",
+   "note": "거울(평면 반사 꺼질 때 판)",
+   "texture": "concept/art/env/gym/textures/M_Mirror.png",
+   "tiling": 1.0
+  },
+  "M_Pad_Vinyl": {
+   "color": "#7A3A32",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "gym",
+   "note": "케이지 기둥 패드·벽 레슬링 패드",
+   "texture": "concept/art/env/gym/textures/M_Pad_Vinyl.png",
+   "tiling": 1.0
+  },
+  "M_Paint_Gym": {
+   "color": "#4F5B55",
+   "tile": 2.0,
+   "uv": "world",
+   "owner": "gym",
+   "note": "벽 아랫 띠 1.2m",
+   "texture": "concept/art/env/gym/textures/M_Paint_Gym.png",
+   "tiling": 0.5
+  },
+  "M_Plaster_Cream": {
+   "color": "#E3D5B8",
+   "tile": 2.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "크림 뿜칠(단독·담장·학교)·층 띠",
+   "texture": "concept/art/env/textures/M_Plaster_Cream.png",
+   "tiling": 0.5
+  },
+  "M_Poster_Atlas": {
+   "color": "#EFE9DA",
+   "tile": 1.0,
+   "uv": "unit",
+   "owner": "gym",
+   "note": "포스터 8칸(poster_atlas.json)",
+   "texture": "concept/art/env/gym/textures/M_Poster_Atlas.png",
+   "tiling": 1.0
+  },
+  "M_Rubber_Floor": {
+   "color": "#3A3A3A",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "gym",
+   "note": "고무 바닥",
+   "texture": "concept/art/env/gym/textures/M_Rubber_Floor.png",
+   "tiling": 1.0
+  },
+  "M_Steel_Dark": {
+   "color": "#2A2A2C",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "gym",
+   "note": "케이지 틀·레일·트러스·체인·난간",
+   "texture": "concept/art/env/gym/textures/M_Steel_Dark.png",
+   "tiling": 1.0
+  },
+  "M_Timer_Red": {
+   "color": "#C83C32",
+   "tile": 1.0,
+   "uv": "unit",
+   "owner": "gym",
+   "note": "라운드 타이머 숫자판(발광)·응급함 띠",
+   "texture": "concept/art/env/gym/textures/M_Timer_Red.png",
+   "tiling": 1.0
+  },
+  "M_Wood_Dark": {
+   "color": "#4A3A30",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "짙은 나무(대문·풍판·마루·처마 안)",
+   "texture": "concept/art/env/textures/M_Wood_Dark.png",
+   "tiling": 1.0
+  }
+ },
+ "new_materials": [
+  "M_Mat_Vinyl",
+  "M_Cage_Canvas",
+  "M_Rubber_Floor",
+  "M_Concrete_Ceiling",
+  "M_Pad_Vinyl",
+  "M_Fluorescent",
+  "M_Mirror",
+  "M_Cage_Mesh",
+  "M_Paint_Gym",
+  "M_Glass_Clear",
+  "M_Steel_Dark",
+  "M_Timer_Red",
+  "M_Poster_Atlas"
+ ],
+ "poster_cells": {
+  "cage_seoul_a": [
+   0,
+   0
+  ],
+  "cage_seoul_b": [
+   1,
+   0
+  ],
+  "rules_board": [
+   2,
+   0
+  ],
+  "weight_chart": [
+   3,
+   0
+  ],
+  "old_fight_poster": [
+   0,
+   1
+  ],
+  "belt_plaque": [
+   1,
+   1
+  ],
+  "blank_sign": [
+   2,
+   1
+  ],
+  "gym_banner": [
+   3,
+   1
+  ]
+ },
+ "tris": {
+  "Room_Shell": [
+   630,
+   288
+  ],
+  "Stair": [
+   548,
+   384
+  ],
+  "Cage": [
+   954,
+   746
+  ],
+  "Office": [
+   300,
+   228
+  ],
+  "Mirror": [
+   124,
+   60
+  ],
+  "WallPads": [
+   96,
+   96
+  ],
+  "BagRail": [
+   180,
+   60
+  ],
+  "Fluor_01": 36,
+  "Fluor_02": 36,
+  "Fluor_03": 36,
+  "Fluor_04": 36,
+  "Fluor_05": 36,
+  "Fluor_06": 36,
+  "Fluor_07": 36,
+  "Fluor_08": 36,
+  "Fluor_09": 36,
+  "Fluor_10": 36,
+  "Fluor_11": 36,
+  "Fluor_12": 36,
+  "Fluor_13": 36,
+  "Fluor_14": 36,
+  "Poster_rules_board_01": 2,
+  "Poster_weight_chart_01": 2,
+  "Poster_cage_seoul_a_01": 2,
+  "Poster_cage_seoul_b_01": 2,
+  "Poster_blank_sign_01": 2,
+  "Poster_gym_banner_01": 2,
+  "Poster_old_fight_poster_01": 2,
+  "Poster_belt_plaque_01": 2,
+  "Poster_cage_seoul_a_02": 2,
+  "Poster_cage_seoul_b_02": 2,
+  "Poster_gym_banner_02": 2
+ },
+ "tris_total_lod0": 3358,
+ "sockets": [
+  {
+   "name": "Sock_Light_Stair",
+   "kind": "light",
+   "pos": [
+    0.9,
+    4.55,
+    11.5
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "flicker": 1
+   }
+  },
+  {
+   "name": "Sock_Audio_Street",
+   "kind": "audio",
+   "pos": [
+    0.9,
+    5.0,
+    15.0
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "audio": "daehakro_street"
+   }
+  },
+  {
+   "name": "Sock_Spawn_Entrance",
+   "kind": "spawn",
+   "pos": [
+    0.9,
+    3.42,
+    14.5
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {}
+  },
+  {
+   "name": "Sock_Trigger_Shoes",
+   "kind": "trigger",
+   "pos": [
+    1.2,
+    0.0,
+    7.6
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "action": "shoes_off"
+   }
+  },
+  {
+   "name": "Sock_CageDoor",
+   "kind": "door",
+   "pos": [
+    11.636,
+    0.25,
+    6.0
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "width": 0.9,
+    "hinge": "left"
+   }
+  },
+  {
+   "name": "Sock_CageDoor",
+   "kind": "door",
+   "pos": [
+    11.636,
+    0.25,
+    6.0
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "width": 0.9,
+    "hinge": "left"
+   }
+  },
+  {
+   "name": "Sock_Light_Spot_01",
+   "kind": "light",
+   "pos": [
+    12.5,
+    2.55,
+    4.0
+   ],
+   "fwd": [
+    0.544,
+    -0.639,
+    0.544
+   ],
+   "info": {
+    "light": "spot",
+    "angle": 40,
+    "color": "#F2E9D8"
+   }
+  },
+  {
+   "name": "Sock_Light_Spot_02",
+   "kind": "light",
+   "pos": [
+    16.5,
+    2.55,
+    4.0
+   ],
+   "fwd": [
+    -0.544,
+    -0.639,
+    0.544
+   ],
+   "info": {
+    "light": "spot",
+    "angle": 40,
+    "color": "#F2E9D8"
+   }
+  },
+  {
+   "name": "Sock_Light_Spot_03",
+   "kind": "light",
+   "pos": [
+    16.5,
+    2.55,
+    8.0
+   ],
+   "fwd": [
+    -0.544,
+    -0.639,
+    -0.544
+   ],
+   "info": {
+    "light": "spot",
+    "angle": 40,
+    "color": "#F2E9D8"
+   }
+  },
+  {
+   "name": "Sock_Light_Spot_04",
+   "kind": "light",
+   "pos": [
+    12.5,
+    2.55,
+    8.0
+   ],
+   "fwd": [
+    0.544,
+    -0.639,
+    -0.544
+   ],
+   "info": {
+    "light": "spot",
+    "angle": 40,
+    "color": "#F2E9D8"
+   }
+  },
+  {
+   "name": "Sock_Drill_D11",
+   "kind": "drill",
+   "pos": [
+    14.5,
+    0.25,
+    6.0
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "drill": "D11"
+   }
+  },
+  {
+   "name": "Sock_NPC_Gojun_Cage",
+   "kind": "npc",
+   "pos": [
+    15.3,
+    0.25,
+    6.0
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "npc": "gojun"
+   }
+  },
+  {
+   "name": "Sock_NPC_Coach_CageDoor",
+   "kind": "npc",
+   "pos": [
+    10.5,
+    0.0,
+    6.0
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "npc": "yunjun"
+   }
+  },
+  {
+   "name": "Sock_Light_Office",
+   "kind": "light",
+   "pos": [
+    17.0,
+    3.15,
+    11.6
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "area",
+    "size": "1.2x0.3"
+   }
+  },
+  {
+   "name": "Sock_NPC_Coach_Desk",
+   "kind": "npc",
+   "pos": [
+    17.0,
+    0.0,
+    12.72
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "yunjun",
+    "pose": "sit"
+   }
+  },
+  {
+   "name": "Sock_Trigger_OfficeDoor",
+   "kind": "trigger",
+   "pos": [
+    14.85,
+    0.0,
+    10.0
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "action": "office_enter"
+   }
+  },
+  {
+   "name": "Prop_office_desk_01",
+   "kind": "prop",
+   "pos": [
+    17.0,
+    0.0,
+    12.1
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "office_desk",
+    "glb": "concept/art/env/gym/props/office_desk.glb"
+   }
+  },
+  {
+   "name": "Prop_office_chair_01",
+   "kind": "prop",
+   "pos": [
+    17.0,
+    0.0,
+    12.72
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "office_chair",
+    "glb": "concept/art/env/gym/props/office_chair.glb"
+   }
+  },
+  {
+   "name": "Sock_Drill_D09",
+   "kind": "drill",
+   "pos": [
+    14.0,
+    0.0,
+    1.0
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "drill": "D09"
+   }
+  },
+  {
+   "name": "Prop_heavy_bag_long_01",
+   "kind": "prop",
+   "pos": [
+    19.2,
+    0.72,
+    2.6
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "heavy_bag_long",
+    "glb": "concept/art/env/gym/props/heavy_bag_long.glb"
+   }
+  },
+  {
+   "name": "Sock_Drill_D05_01",
+   "kind": "drill",
+   "pos": [
+    18.4,
+    0.0,
+    2.6
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "drill": "D05",
+    "bag": "heavy_bag_long"
+   }
+  },
+  {
+   "name": "Prop_heavy_bag_short_01",
+   "kind": "prop",
+   "pos": [
+    19.2,
+    1.32,
+    4.3
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "heavy_bag_short",
+    "glb": "concept/art/env/gym/props/heavy_bag_short.glb"
+   }
+  },
+  {
+   "name": "Sock_Drill_D05_02",
+   "kind": "drill",
+   "pos": [
+    18.4,
+    0.0,
+    4.3
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "drill": "D05",
+    "bag": "heavy_bag_short"
+   }
+  },
+  {
+   "name": "Prop_heavy_bag_long_02",
+   "kind": "prop",
+   "pos": [
+    19.2,
+    0.72,
+    6.0
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "heavy_bag_long",
+    "glb": "concept/art/env/gym/props/heavy_bag_long.glb"
+   }
+  },
+  {
+   "name": "Sock_Drill_D05_03",
+   "kind": "drill",
+   "pos": [
+    18.4,
+    0.0,
+    6.0
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "drill": "D05",
+    "bag": "heavy_bag_long"
+   }
+  },
+  {
+   "name": "Prop_heavy_bag_long_03",
+   "kind": "prop",
+   "pos": [
+    19.2,
+    0.72,
+    7.7
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "heavy_bag_long",
+    "glb": "concept/art/env/gym/props/heavy_bag_long.glb"
+   }
+  },
+  {
+   "name": "Sock_Drill_D05_04",
+   "kind": "drill",
+   "pos": [
+    18.4,
+    0.0,
+    7.7
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "drill": "D05",
+    "bag": "heavy_bag_long"
+   }
+  },
+  {
+   "name": "Prop_heavy_bag_short_02",
+   "kind": "prop",
+   "pos": [
+    19.2,
+    1.32,
+    9.4
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "heavy_bag_short",
+    "glb": "concept/art/env/gym/props/heavy_bag_short.glb"
+   }
+  },
+  {
+   "name": "Sock_Drill_D05_05",
+   "kind": "drill",
+   "pos": [
+    18.4,
+    0.0,
+    9.4
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "drill": "D05",
+    "bag": "heavy_bag_short"
+   }
+  },
+  {
+   "name": "Prop_heavy_bag_long_04",
+   "kind": "prop",
+   "pos": [
+    19.2,
+    0.72,
+    11.1
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "heavy_bag_long",
+    "glb": "concept/art/env/gym/props/heavy_bag_long.glb"
+   }
+  },
+  {
+   "name": "Sock_Drill_D05_06",
+   "kind": "drill",
+   "pos": [
+    18.4,
+    0.0,
+    11.1
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "drill": "D05",
+    "bag": "heavy_bag_long"
+   }
+  },
+  {
+   "name": "Prop_speed_bag_platform_01",
+   "kind": "prop",
+   "pos": [
+    19.0,
+    1.45,
+    0.9
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "speed_bag_platform",
+    "glb": "concept/art/env/gym/props/speed_bag_platform.glb"
+   }
+  },
+  {
+   "name": "Sock_Drill_D06",
+   "kind": "drill",
+   "pos": [
+    18.3,
+    0.0,
+    0.9
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "drill": "D06"
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_01",
+   "kind": "light",
+   "pos": [
+    2.4,
+    2.72,
+    2.3
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 2.3
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_02",
+   "kind": "light",
+   "pos": [
+    6.0,
+    2.72,
+    2.3
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 2.3
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_03",
+   "kind": "light",
+   "pos": [
+    9.6,
+    2.72,
+    2.3
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 2.3
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_04",
+   "kind": "light",
+   "pos": [
+    13.2,
+    2.72,
+    2.3
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 2.3
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_05",
+   "kind": "light",
+   "pos": [
+    16.8,
+    2.72,
+    2.3
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 2.3
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_06",
+   "kind": "light",
+   "pos": [
+    2.4,
+    2.72,
+    6.0
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 6.0
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_07",
+   "kind": "light",
+   "pos": [
+    6.0,
+    2.72,
+    6.0
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 6.0
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_08",
+   "kind": "light",
+   "pos": [
+    9.6,
+    2.72,
+    6.0
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 6.0
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_09",
+   "kind": "light",
+   "pos": [
+    13.2,
+    2.72,
+    6.0
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 6.0
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_10",
+   "kind": "light",
+   "pos": [
+    16.8,
+    2.72,
+    6.0
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 6.0
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_11",
+   "kind": "light",
+   "pos": [
+    2.4,
+    2.72,
+    10.5
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 10.5
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_12",
+   "kind": "light",
+   "pos": [
+    6.0,
+    2.72,
+    10.5
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 10.5
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_13",
+   "kind": "light",
+   "pos": [
+    9.6,
+    2.72,
+    10.5
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 10.5
+   }
+  },
+  {
+   "name": "Sock_Light_Fluor_14",
+   "kind": "light",
+   "pos": [
+    13.2,
+    2.72,
+    10.5
+   ],
+   "fwd": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "info": {
+    "light": "fluor",
+    "row": 10.5
+   }
+  },
+  {
+   "name": "Prop_locker_unit_01",
+   "kind": "prop",
+   "pos": [
+    0.225,
+    0.0,
+    1.1
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "locker_unit",
+    "glb": "concept/art/env/gym/props/locker_unit.glb"
+   }
+  },
+  {
+   "name": "Prop_locker_unit_02",
+   "kind": "prop",
+   "pos": [
+    0.225,
+    0.0,
+    1.7
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "locker_unit",
+    "glb": "concept/art/env/gym/props/locker_unit.glb"
+   }
+  },
+  {
+   "name": "Prop_locker_unit_03",
+   "kind": "prop",
+   "pos": [
+    0.225,
+    0.0,
+    2.3
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "locker_unit",
+    "glb": "concept/art/env/gym/props/locker_unit.glb"
+   }
+  },
+  {
+   "name": "Prop_locker_unit_04",
+   "kind": "prop",
+   "pos": [
+    0.225,
+    0.0,
+    2.9
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "locker_unit",
+    "glb": "concept/art/env/gym/props/locker_unit.glb"
+   }
+  },
+  {
+   "name": "Prop_locker_unit_05",
+   "kind": "prop",
+   "pos": [
+    0.225,
+    0.0,
+    3.5
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "locker_unit",
+    "glb": "concept/art/env/gym/props/locker_unit.glb"
+   }
+  },
+  {
+   "name": "Prop_locker_unit_06",
+   "kind": "prop",
+   "pos": [
+    0.225,
+    0.0,
+    4.1
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "locker_unit",
+    "glb": "concept/art/env/gym/props/locker_unit.glb"
+   }
+  },
+  {
+   "name": "Prop_locker_unit_07",
+   "kind": "prop",
+   "pos": [
+    0.225,
+    0.0,
+    4.7
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "locker_unit",
+    "glb": "concept/art/env/gym/props/locker_unit.glb"
+   }
+  },
+  {
+   "name": "Prop_locker_unit_08",
+   "kind": "prop",
+   "pos": [
+    0.225,
+    0.0,
+    5.3
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "locker_unit",
+    "glb": "concept/art/env/gym/props/locker_unit.glb"
+   }
+  },
+  {
+   "name": "Prop_shoe_rack_01",
+   "kind": "prop",
+   "pos": [
+    0.18,
+    0.0,
+    6.8
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "shoe_rack",
+    "glb": "concept/art/env/gym/props/shoe_rack.glb"
+   }
+  },
+  {
+   "name": "Prop_slippers_pile_01",
+   "kind": "prop",
+   "pos": [
+    1.0,
+    0.0,
+    6.3
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "slippers_pile",
+    "glb": "concept/art/env/gym/props/slippers_pile.glb"
+   }
+  },
+  {
+   "name": "Prop_water_cooler_01",
+   "kind": "prop",
+   "pos": [
+    2.4,
+    0.0,
+    12.78
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "water_cooler",
+    "glb": "concept/art/env/gym/props/water_cooler.glb"
+   }
+  },
+  {
+   "name": "Prop_barbell_rack_01",
+   "kind": "prop",
+   "pos": [
+    7.8,
+    0.0,
+    12.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "barbell_rack",
+    "glb": "concept/art/env/gym/props/barbell_rack.glb"
+   }
+  },
+  {
+   "name": "Prop_dumbbell_rack_01",
+   "kind": "prop",
+   "pos": [
+    4.5,
+    0.0,
+    12.6
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "dumbbell_rack",
+    "glb": "concept/art/env/gym/props/dumbbell_rack.glb"
+   }
+  },
+  {
+   "name": "Prop_weight_bench_01",
+   "kind": "prop",
+   "pos": [
+    5.5,
+    0.0,
+    10.0
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "weight_bench",
+    "glb": "concept/art/env/gym/props/weight_bench.glb"
+   }
+  },
+  {
+   "name": "Prop_kettlebell_01",
+   "kind": "prop",
+   "pos": [
+    3.0,
+    0.0,
+    9.5
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "kettlebell",
+    "glb": "concept/art/env/gym/props/kettlebell.glb"
+   }
+  },
+  {
+   "name": "Prop_kettlebell_02",
+   "kind": "prop",
+   "pos": [
+    3.4,
+    0.0,
+    9.65
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "kettlebell",
+    "glb": "concept/art/env/gym/props/kettlebell.glb"
+   }
+  },
+  {
+   "name": "Prop_kettlebell_03",
+   "kind": "prop",
+   "pos": [
+    3.8,
+    0.0,
+    9.5
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "kettlebell",
+    "glb": "concept/art/env/gym/props/kettlebell.glb"
+   }
+  },
+  {
+   "name": "Prop_tractor_tire_01",
+   "kind": "prop",
+   "pos": [
+    7.5,
+    0.0,
+    9.3
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "tractor_tire",
+    "glb": "concept/art/env/gym/props/tractor_tire.glb"
+   }
+  },
+  {
+   "name": "Prop_battle_rope_coil_01",
+   "kind": "prop",
+   "pos": [
+    3.2,
+    0.0,
+    11.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "battle_rope_coil",
+    "glb": "concept/art/env/gym/props/battle_rope_coil.glb"
+   }
+  },
+  {
+   "name": "Prop_whiteboard_stand_01",
+   "kind": "prop",
+   "pos": [
+    8.7,
+    0.0,
+    12.4
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "whiteboard_stand",
+    "glb": "concept/art/env/gym/props/whiteboard_stand.glb"
+   }
+  },
+  {
+   "name": "Prop_stand_fan_01",
+   "kind": "prop",
+   "pos": [
+    8.9,
+    0.0,
+    9.0
+   ],
+   "fwd": [
+    -0.707,
+    0.0,
+    -0.707
+   ],
+   "info": {
+    "prop": "stand_fan",
+    "glb": "concept/art/env/gym/props/stand_fan.glb"
+   }
+  },
+  {
+   "name": "Prop_folding_chair_01",
+   "kind": "prop",
+   "pos": [
+    10.5,
+    0.0,
+    12.55
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "folding_chair",
+    "glb": "concept/art/env/gym/props/folding_chair.glb"
+   }
+  },
+  {
+   "name": "Prop_folding_chair_02",
+   "kind": "prop",
+   "pos": [
+    11.3,
+    0.0,
+    12.55
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "folding_chair",
+    "glb": "concept/art/env/gym/props/folding_chair.glb"
+   }
+  },
+  {
+   "name": "Prop_folding_chair_03",
+   "kind": "prop",
+   "pos": [
+    12.1,
+    0.0,
+    12.55
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "folding_chair",
+    "glb": "concept/art/env/gym/props/folding_chair.glb"
+   }
+  },
+  {
+   "name": "Prop_folding_chair_04",
+   "kind": "prop",
+   "pos": [
+    10.55,
+    0.0,
+    2.5
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "folding_chair",
+    "glb": "concept/art/env/gym/props/folding_chair.glb"
+   }
+  },
+  {
+   "name": "Prop_folding_chair_05",
+   "kind": "prop",
+   "pos": [
+    10.55,
+    0.0,
+    3.3
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "folding_chair",
+    "glb": "concept/art/env/gym/props/folding_chair.glb"
+   }
+  },
+  {
+   "name": "Prop_speaker_cabinet_01",
+   "kind": "prop",
+   "pos": [
+    12.9,
+    2.0,
+    12.8
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "speaker_cabinet",
+    "glb": "concept/art/env/gym/props/speaker_cabinet.glb"
+   }
+  },
+  {
+   "name": "Prop_speaker_cabinet_02",
+   "kind": "prop",
+   "pos": [
+    10.5,
+    2.0,
+    0.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "speaker_cabinet",
+    "glb": "concept/art/env/gym/props/speaker_cabinet.glb"
+   }
+  },
+  {
+   "name": "Sock_Audio_Speaker_01",
+   "kind": "audio",
+   "pos": [
+    12.9,
+    2.3,
+    12.7
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "audio": "gym_hiphop"
+   }
+  },
+  {
+   "name": "Sock_Audio_Speaker_02",
+   "kind": "audio",
+   "pos": [
+    10.5,
+    2.3,
+    0.3
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "audio": "gym_hiphop"
+   }
+  },
+  {
+   "name": "Prop_body_scale_01",
+   "kind": "prop",
+   "pos": [
+    13.5,
+    0.0,
+    12.4
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "body_scale",
+    "glb": "concept/art/env/gym/props/body_scale.glb"
+   }
+  },
+  {
+   "name": "Sock_Interact_Scale",
+   "kind": "interact",
+   "pos": [
+    13.5,
+    0.0,
+    11.7
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "action": "weigh_in"
+   }
+  },
+  {
+   "name": "Prop_grappling_dummy_01",
+   "kind": "prop",
+   "pos": [
+    4.0,
+    0.03,
+    4.5
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "grappling_dummy",
+    "glb": "concept/art/env/gym/props/grappling_dummy.glb"
+   }
+  },
+  {
+   "name": "Prop_mat_roll_01",
+   "kind": "prop",
+   "pos": [
+    10.6,
+    0.0,
+    5.6
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "mat_roll",
+    "glb": "concept/art/env/gym/props/mat_roll.glb"
+   }
+  },
+  {
+   "name": "Prop_focus_mitts_pair_01",
+   "kind": "prop",
+   "pos": [
+    10.0,
+    0.03,
+    5.8
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "focus_mitts_pair",
+    "glb": "concept/art/env/gym/props/focus_mitts_pair.glb"
+   }
+  },
+  {
+   "name": "Prop_mma_gloves_pair_01",
+   "kind": "prop",
+   "pos": [
+    9.6,
+    0.03,
+    5.8
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "mma_gloves_pair",
+    "glb": "concept/art/env/gym/props/mma_gloves_pair.glb"
+   }
+  },
+  {
+   "name": "Prop_jump_rope_coiled_01",
+   "kind": "prop",
+   "pos": [
+    9.2,
+    0.03,
+    5.8
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "jump_rope_coiled",
+    "glb": "concept/art/env/gym/props/jump_rope_coiled.glb"
+   }
+  },
+  {
+   "name": "Sock_Drill_D01",
+   "kind": "drill",
+   "pos": [
+    3.5,
+    0.03,
+    3.0
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "drill": "D01"
+   }
+  },
+  {
+   "name": "Sock_Drill_D02",
+   "kind": "drill",
+   "pos": [
+    3.5,
+    0.03,
+    3.0
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "drill": "D02"
+   }
+  },
+  {
+   "name": "Sock_Drill_D03",
+   "kind": "drill",
+   "pos": [
+    6.0,
+    0.03,
+    2.5
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "drill": "D03"
+   }
+  },
+  {
+   "name": "Sock_Drill_D04",
+   "kind": "drill",
+   "pos": [
+    8.5,
+    0.03,
+    4.0
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "drill": "D04"
+   }
+  },
+  {
+   "name": "Sock_Drill_D07",
+   "kind": "drill",
+   "pos": [
+    4.5,
+    0.03,
+    5.0
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "drill": "D07"
+   }
+  },
+  {
+   "name": "Sock_Drill_D08",
+   "kind": "drill",
+   "pos": [
+    4.0,
+    0.03,
+    3.6
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "drill": "D08"
+   }
+  },
+  {
+   "name": "Sock_Drill_D10",
+   "kind": "drill",
+   "pos": [
+    7.5,
+    0.03,
+    4.5
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "drill": "D10"
+   }
+  },
+  {
+   "name": "Sock_Drill_D12",
+   "kind": "drill",
+   "pos": [
+    5.0,
+    0.0,
+    9.3
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "drill": "D12"
+   }
+  },
+  {
+   "name": "Sock_Drill_D13",
+   "kind": "drill",
+   "pos": [
+    7.5,
+    0.0,
+    8.3
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "drill": "D13"
+   }
+  },
+  {
+   "name": "Sock_Drill_D14",
+   "kind": "drill",
+   "pos": [
+    8.7,
+    0.0,
+    11.6
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "drill": "D14"
+   }
+  },
+  {
+   "name": "Sock_NPC_Coach_Weight",
+   "kind": "npc",
+   "pos": [
+    5.5,
+    0.0,
+    10.6
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "yunjun",
+    "pose": "sit_bench"
+   }
+  },
+  {
+   "name": "Sock_NPC_Coach_MatEdge",
+   "kind": "npc",
+   "pos": [
+    9.6,
+    0.03,
+    4.0
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "npc": "yunjun",
+    "pose": "mitts"
+   }
+  },
+  {
+   "name": "Sock_NPC_Gojun_Bag",
+   "kind": "npc",
+   "pos": [
+    18.4,
+    0.0,
+    6.0
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "npc": "gojun"
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_01",
+   "kind": "npc",
+   "pos": [
+    3.0,
+    0.03,
+    2.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 1
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_02",
+   "kind": "npc",
+   "pos": [
+    4.2,
+    0.03,
+    2.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 2
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_03",
+   "kind": "npc",
+   "pos": [
+    5.4,
+    0.03,
+    2.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 3
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_04",
+   "kind": "npc",
+   "pos": [
+    6.6,
+    0.03,
+    2.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 4
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_05",
+   "kind": "npc",
+   "pos": [
+    7.8,
+    0.03,
+    2.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 5
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_06",
+   "kind": "npc",
+   "pos": [
+    3.0,
+    0.03,
+    4.4
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 6
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_07",
+   "kind": "npc",
+   "pos": [
+    4.2,
+    0.03,
+    4.4
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 7
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_08",
+   "kind": "npc",
+   "pos": [
+    5.4,
+    0.03,
+    4.4
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 8
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_09",
+   "kind": "npc",
+   "pos": [
+    6.6,
+    0.03,
+    4.4
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 9
+   }
+  },
+  {
+   "name": "Sock_NPC_Line_10",
+   "kind": "npc",
+   "pos": [
+    7.8,
+    0.03,
+    4.4
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member",
+    "slot": 10
+   }
+  },
+  {
+   "name": "Sock_NPC_Member_Stretch",
+   "kind": "npc",
+   "pos": [
+    6.5,
+    0.03,
+    1.8
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member"
+   }
+  },
+  {
+   "name": "Sock_NPC_Member_Mirror",
+   "kind": "npc",
+   "pos": [
+    3.0,
+    0.03,
+    1.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "npc": "member"
+   }
+  },
+  {
+   "name": "Sock_Cam_g01",
+   "kind": "camera",
+   "pos": [
+    0.9,
+    2.45,
+    9.1
+   ],
+   "fwd": [
+    0.896,
+    -0.166,
+    -0.412
+   ],
+   "info": {
+    "look_at": [
+     12.0,
+     0.4,
+     4.0
+    ],
+    "fov_v": 50
+   }
+  },
+  {
+   "name": "Sock_Cam_g02",
+   "kind": "camera",
+   "pos": [
+    11.7,
+    1.55,
+    6.0
+   ],
+   "fwd": [
+    0.991,
+    -0.127,
+    0.046
+   ],
+   "info": {
+    "look_at": [
+     16.0,
+     1.0,
+     6.2
+    ],
+    "fov_v": 50
+   }
+  },
+  {
+   "name": "Sock_Cam_g03",
+   "kind": "camera",
+   "pos": [
+    3.0,
+    1.7,
+    7.4
+   ],
+   "fwd": [
+    0.909,
+    -0.058,
+    -0.413
+   ],
+   "info": {
+    "look_at": [
+     14.0,
+     1.0,
+     2.4
+    ],
+    "fov_v": 50
+   }
+  },
+  {
+   "name": "Sock_Cam_g04",
+   "kind": "camera",
+   "pos": [
+    10.8,
+    1.65,
+    7.4
+   ],
+   "fwd": [
+    -0.828,
+    -0.099,
+    0.552
+   ],
+   "info": {
+    "look_at": [
+     4.5,
+     0.9,
+     11.6
+    ],
+    "fov_v": 50
+   }
+  },
+  {
+   "name": "Sock_Cam_g05",
+   "kind": "camera",
+   "pos": [
+    16.6,
+    1.6,
+    8.0
+   ],
+   "fwd": [
+    0.086,
+    -0.065,
+    0.994
+   ],
+   "info": {
+    "look_at": [
+     17.0,
+     1.3,
+     12.6
+    ],
+    "fov_v": 50
+   }
+  },
+  {
+   "name": "Sock_Cam_g06",
+   "kind": "camera",
+   "pos": [
+    9.4,
+    1.6,
+    2.6
+   ],
+   "fwd": [
+    0.803,
+    -0.098,
+    0.588
+   ],
+   "info": {
+    "look_at": [
+     13.5,
+     1.1,
+     5.6
+    ],
+    "fov_v": 50
+   }
+  }
+ ],
+ "files_bytes": {
+  "Gym_Hyehwa.fbx": 365196
+ }
+}
