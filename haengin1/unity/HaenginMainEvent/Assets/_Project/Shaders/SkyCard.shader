@@ -10,6 +10,7 @@ Shader "Haengin/SkyCard"
         _FarColor ("Far", Color) = (0.639, 0.612, 0.565, 1)
         _MidColor ("Mid", Color) = (0.788, 0.757, 0.698, 1)
         _NearColor ("Near", Color) = (0.431, 0.416, 0.392, 1)
+        _ZenithColor ("Zenith", Color) = (0.83, 0.79, 0.69, 1)
         _Lines ("Lines", Range(0, 1)) = 0.7
         _Dots ("Night window dots", Range(0, 1)) = 0
         _Flip ("Flip U", Float) = 0
@@ -17,7 +18,7 @@ Shader "Haengin/SkyCard"
     SubShader
     {
         Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Transparent" "Queue" = "Background+20" "IgnoreProjector" = "True" }
-        ZWrite Off ZTest LEqual Cull Off Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite Off ZTest LEqual Cull Off Blend Off
         Pass
         {
             Name "SkyCard"
@@ -29,7 +30,7 @@ Shader "Haengin/SkyCard"
             TEXTURE2D(_LayersTex); SAMPLER(sampler_LayersTex);
             TEXTURE2D(_DetailTex); SAMPLER(sampler_DetailTex);
             CBUFFER_START(UnityPerMaterial)
-            half4 _SkyColor, _FarColor, _MidColor, _NearColor;
+            half4 _SkyColor, _FarColor, _MidColor, _NearColor, _ZenithColor;
             float _Lines, _Dots, _Flip;
             CBUFFER_END
             struct A { float4 pos : POSITION; float2 uv : TEXCOORD0; };
@@ -49,7 +50,10 @@ Shader "Haengin/SkyCard"
                 float h = Hash(cell);
                 float dot1 = step(0.985, h) * L.g * (1.0 - L.b) * _Dots;
                 c = lerp(c, half3(0.95, 0.80, 0.50), dot1 * 0.9);
-                return half4(c, L.a);
+                // 종이색 하늘 그라데이션(지평선 = 하늘색 → 위로 천정색). 카드 실루엣 밖(A=0)에 깔린다
+                float hz = saturate((i.uv.y - 0.08) / 1.6);
+                half3 skyGrad = lerp(_SkyColor.rgb, _ZenithColor.rgb, hz * hz * 0.9 + hz * 0.1);
+                return half4(lerp(skyGrad, c, L.a), 1);
             }
             ENDHLSL
         }

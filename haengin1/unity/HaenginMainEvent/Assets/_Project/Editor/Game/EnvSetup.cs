@@ -20,7 +20,7 @@ using Object = UnityEngine.Object;
 
 namespace Haengin.EditorGame
 {
-    public static class EnvSetup
+    public static partial class EnvSetup
     {
         const string Tag = "[EnvSetup]";
         public const string Root = "Assets/_Project";
@@ -160,7 +160,7 @@ namespace Haengin.EditorGame
                 var m = Toon($"{MatDir}/{name}.mat", tex, uv01 ? Vector2.one : Vector2.one * tiling, Vector2.zero, col);
                 if (name == "M_Glass_Lit")
                 {
-                    m.EnableKeyword("_EMISSIVE_SIMPLE"); m.SetTexture("_Emissive_Tex", tex); m.SetColor("_Emissive_Color", new Color(1f, 1f, 1f, 1f));
+                    m.EnableKeyword("_EMISSIVE_SIMPLE"); m.SetTexture("_Emissive_Tex", tex); m.SetColor("_Emissive_Color", new Color(1.15f, 0.86f, 0.55f, 1f));   // 저녁·밤 창문 불 = 따뜻한 주황
                     EditorUtility.SetDirty(m);
                 }
                 made[name] = m;
@@ -211,7 +211,14 @@ namespace Haengin.EditorGame
                 if (tex == null && srcMat != null) tex = srcMat.mainTexture;
                 // glTFast 가 GLB 안 텍스처를 압축 없는 RGBA32 서브 에셋으로 두어 빌드가 커진다(소품 40개 ≈ 300MB) → PNG 로 뽑아 BC7 로 들인다(EnvImport)
                 tex = ExtractedTexture(tex, name) ?? tex;
-                var mat = Toon($"{PropMatDir}/M_P_{name}.mat", tex, Vector2.one, Vector2.zero, Color.white);
+                Material mat;
+                var b0 = lod0.sharedMesh.bounds; float h0 = b0.size.y * Mathf.Max(lod0.transform.lossyScale.y, 0.001f);
+                if (IsVeg(name))
+                {
+                    float amp = name.EndsWith("_tree") ? 0.07f : name == "shrub_bush" ? 0.03f : name == "ivy_patch" ? 0.015f : name == "grass_tuft" ? 0.05f : 0.02f;
+                    mat = Leaf($"{PropMatDir}/M_V_{name}.mat", tex, amp, Mathf.Max(0.3f, h0));
+                }
+                else mat = Toon($"{PropMatDir}/M_P_{name}.mat", tex, Vector2.one, Vector2.zero, Color.white);
 
                 var root = new GameObject("P_" + name);
                 var lg = root.AddComponent<LODGroup>();
@@ -221,8 +228,9 @@ namespace Haengin.EditorGame
                 // docs/10 10장: LOD1 50% @12m · LOD2 20% @30m · 1m 미만은 60m 컬링(그 밖은 화면 높이 0.6%). FOV 45 → 화면 높이 = 크기 / (거리 × 0.8284)
                 float H(float dist) => Mathf.Clamp(size / (dist * 0.8284f), 0.002f, 0.95f);
                 // 2026-10-24 D08: 60m 컬링·12/30m 이면 밤 상가거리 삼각형 2.68M(예산 2.5M) → 작은 소품(1m 미만)은 8/20m 전환·45m 컬링
-                float cull = size < 1f ? H(45f) : 0.006f;
-                float[] trans = { H(size < 1f ? 8f : 12f), H(size < 1f ? 20f : 30f), cull };
+                float cull = size < 1f ? H(35f) : 0.006f;
+                // 작은 것(1m 미만, 실외기 등 338개) 6/15m·40m 컬링, 큰 것(나무 등 3m 이상) 22/55m, 중간(관목 등 1~3m) 10/25m — D08 삼각형 2.5M 예산
+                float[] trans = { H(size < 1f ? 6f : size >= 3f ? 18f : 10f), H(size < 1f ? 14f : size >= 3f ? 50f : 25f), cull };
                 for (int k = 0; k < 3; k++)
                 {
                     var mf = Lod(k);
@@ -290,7 +298,7 @@ namespace Haengin.EditorGame
                 float x = Mathf.Sin(a) * SkyRadius, z = Mathf.Cos(a) * SkyRadius;
                 float u = Mathf.Lerp(-2f / 94f, 1f + 2f / 94f, t);
                 v.Add(new Vector3(x, -0.35f * H, z)); uv.Add(new Vector2(u, -0.35f));
-                v.Add(new Vector3(x, H, z)); uv.Add(new Vector2(u, 1f));
+                v.Add(new Vector3(x, 2.4f * H, z)); uv.Add(new Vector2(u, 2.4f));   // 위로 2.4H(하늘 그라데이션 — 올려다봐도 빈 곳 없게)
                 if (i > 0) { int k = i * 2; tri.AddRange(new[] { k - 2, k - 1, k, k - 1, k + 1, k }); }
             }
             mesh.Clear(); mesh.SetVertices(v); mesh.SetUVs(0, uv); mesh.SetTriangles(tri, 0); mesh.RecalculateNormals(); mesh.RecalculateBounds();
@@ -384,9 +392,9 @@ namespace Haengin.EditorGame
                 if (a == null) continue;
                 bool ch = false;
                 if (a.shadowCascadeCount != 2) { a.shadowCascadeCount = 2; ch = true; }
-                if (Mathf.Abs(a.shadowDistance - 60f) > 0.01f) { a.shadowDistance = 60f; ch = true; }
+                if (Mathf.Abs(a.shadowDistance - 45f) > 0.01f) { a.shadowDistance = 45f; ch = true; }   // 60 → 45m(2차 D08 삼각형 예산, 45m 밖 그림자는 외곽선 소실 거리(55~80m)와 겹침)
                 if (Mathf.Abs(a.cascade2Split - 0.22f) > 0.001f) { a.cascade2Split = 0.22f; ch = true; }
-                if (ch) { EditorUtility.SetDirty(a); Notes.Add($"그림자 캐스케이드 2단·60m: {p}"); }
+                if (ch) { EditorUtility.SetDirty(a); Notes.Add($"그림자 캐스케이드 2단·45m: {p}"); }
             }
             // LOD Bias 1(docs/11 6장 — 전환값은 Bias 1 기준). 템플릿 품질 단계는 2 라 소품 LOD 가 두 배 거리에서야 바뀜
             int cur = QualitySettings.GetQualityLevel(); int fixedLevels = 0;
@@ -416,6 +424,7 @@ namespace Haengin.EditorGame
                 a.Sky = H("#CBD1D6"); a.Fog = H("#A9B0B9"); a.FogStart = 40f; a.FogEnd = 300f;
                 a.SplitShadows = new Color(0.25f, 0.40f, 0.45f); a.SplitHighlights = H("#D8C9B8"); a.SplitBalance = -10f;
                 a.StreetLamps = a.SecurityLamps = a.Vending = a.ConvAwning = a.GukbapWindow = true; a.ShopSigns = false; a.LampIntensity = 7f; a.Windows = 0.15f;
+                a.Saturation = -4f; a.Contrast = 2f; a.Lift = new Vector4(0.98f, 1f, 1.04f, 0f); a.Gamma = new Vector4(0.98f, 1f, 1.04f, 0f); a.Gain = new Vector4(0.98f, 1f, 1.02f, 0f); a.Zenith = H("#9FA9BB");
             });
             Set(DayPart.Dusk, a =>
             {
@@ -423,7 +432,8 @@ namespace Haengin.EditorGame
                 a.AmbientSky = new Color(0.72f, 0.60f, 0.56f); a.AmbientEquator = new Color(0.60f, 0.50f, 0.49f); a.AmbientGround = new Color(0.36f, 0.30f, 0.32f);
                 a.Sky = H("#EBC9A6"); a.Fog = H("#CFAC8A"); a.FogStart = 50f; a.FogEnd = 340f;
                 a.SplitShadows = new Color(0.30f, 0.22f, 0.38f); a.SplitHighlights = new Color(1.0f, 0.78f, 0.55f); a.SplitBalance = 10f;
-                a.Vending = a.ConvAwning = a.ShopSigns = true; a.StreetLamps = a.SecurityLamps = a.GukbapWindow = false; a.LampIntensity = 5f; a.Windows = 0.1f;
+                a.Vending = a.ConvAwning = a.ShopSigns = true; a.StreetLamps = a.SecurityLamps = a.GukbapWindow = false; a.LampIntensity = 5f; a.Windows = 0.25f;
+                a.Saturation = 4f; a.Contrast = 4f; a.Lift = new Vector4(1f, 0.99f, 1.0f, 0f); a.Gamma = new Vector4(1.01f, 0.99f, 0.97f, 0f); a.Gain = new Vector4(1.03f, 0.98f, 0.92f, 0f); a.Zenith = H("#B59A96");
             });
             Set(DayPart.Night, a =>
             {
@@ -432,8 +442,14 @@ namespace Haengin.EditorGame
                 a.Sky = H("#222A44"); a.Fog = H("#141829"); a.FogStart = 30f; a.FogEnd = 240f;
                 a.SplitShadows = new Color(0.14f, 0.18f, 0.36f); a.SplitHighlights = new Color(0.95f, 0.70f, 0.45f); a.SplitBalance = -15f;
                 a.StreetLamps = a.SecurityLamps = a.Vending = a.ConvAwning = a.GukbapWindow = a.ShopSigns = true; a.LampIntensity = 10f; a.Windows = 0.4f;
+                a.Saturation = -2f; a.Contrast = 3f; a.Lift = new Vector4(0.97f, 0.98f, 1.06f, 0.006f);   // D07 밤 하한 6(주차장 아스팔트 5.0 → Lift +0.006; +0.02 는 18 로 너무 밝아짐) a.Gamma = new Vector4(1f, 1f, 1.03f, 0f); a.Gain = new Vector4(1.04f, 0.98f, 0.92f, 0f); a.Zenith = H("#121728");
             });
-            Notes.Add("조명 프리셋 새벽·노을·밤 = docs/10 9장 값(밤 주변광 내림, 가로등 10)");
+            Set(DayPart.Day, a =>
+            {
+                // 낮: 스타일 프레임의 따뜻하고 채도 있는 팔레트(2차 패스) — 해·하늘은 그대로
+                a.Saturation = 8f; a.Contrast = 5f; a.Lift = new Vector4(1f, 0.99f, 0.98f, 0f); a.Gamma = new Vector4(1.01f, 1f, 0.97f, 0f); a.Gain = new Vector4(1.04f, 1.0f, 0.94f, 0f); a.Zenith = H("#D3C9B0");
+            });
+            Notes.Add("조명 프리셋 새벽·노을·밤 = docs/10 9장 값 + 색 보정(채도·대비·Lift/Gamma/Gain)·천정색");
         }
 
         // ───────────────────────── 7) 캐릭터 UTS 재질 = 스텐실 1 쓰기(화면 공간 외곽선이 캐릭터를 건너뜀)
@@ -527,7 +543,7 @@ namespace Haengin.EditorGame
                         GameObjectUtility.SetStaticEditorFlags(r.gameObject, staticFlags);
                         r.gameObject.layer = 0;
                         r.receiveShadows = true;
-                        if (r.name.Contains("_Detail_")) r.shadowCastingMode = ShadowCastingMode.Off;
+                        if (r.name.Contains("_Detail_") || r.name.EndsWith("_LOD2")) r.shadowCastingMode = ShadowCastingMode.Off;   // 디테일·LOD2 는 그림자 없음
                         renderers++;
                     }
                     GameObjectUtility.SetStaticEditorFlags(t.gameObject, staticFlags);
@@ -538,6 +554,7 @@ namespace Haengin.EditorGame
                         if (lg == null) lg = t.gameObject.AddComponent<LODGroup>();   // (?? 는 유니티 가짜 null 을 못 걸러냄)
                         var heights = L(G(inf, "lod_screen_heights"));
                         float[] h = heights != null && heights.Count >= 3 ? new[] { F(heights[0]), F(heights[1]), F(heights[2]) } : new[] { 0.3f, 0.12f, 0.006f };
+                        h[0] *= 1.5f; h[1] *= 1.2f;   // D08 삼각형 예산(2.5M): LOD0→1 을 40m → 27m, LOD1→2 를 110m → 92m 로 당김(2026-10-24 2차)
                         var lods = new List<LOD>();
                         for (int k = 0; k < 3; k++)
                         {
@@ -561,6 +578,9 @@ namespace Haengin.EditorGame
             int hidden = HideGreyBoxes(zoneRoot);
             // 키트 밖 회색 소품(벤치·운동기구·정류장·보안등)도 GLB 소품으로
             int swapped = SwapGreyProps(d, zoneRoot, env, Prefab);
+            // 2차 패스: 바닥·벽 디테일·잡동사니·남은 회색 상자·보안등, 식생
+            string decor = Decor(d, zoneRoot, env, objs, Prefab);
+            string veg = Vegetation(d, zoneRoot, env, objs, Prefab);
             // 가로등·보안등 빛 반지름(빛 웅덩이 지름 6~8m)
             foreach (var s in zoneRoot.GetComponentsInChildren<LightSpot>(true))
             {
@@ -578,7 +598,7 @@ namespace Haengin.EditorGame
             Physics.SyncTransforms();
 
             var msg = $"{Tag} Zone1 키트: 구역 7 · 건물 {buildings} · LOD 묶음 {lodGroups} · 렌더러 {renderers} · 소품 {props}(프리팹 없음 {missingProps}) · 창문 불 {winlit}묶음/{panes}장 · 간판 {signs} · 빛 자리 {socks} · " +
-                      $"회색 상자 숨김 {hidden} · 회색 소품 교체 {swapped} · 간판 올림 {lifted} · 바닥 재질 {ground} · {lot} · {(DateTime.Now - t0).TotalSeconds:F1}초";
+                      $"회색 상자 숨김 {hidden} · 회색 소품 교체 {swapped} · 간판 올림 {lifted} · 바닥 재질 {ground} · {lot} · [{decor}] · [{veg}] · {(DateTime.Now - t0).TotalSeconds:F1}초";
             Debug.Log(msg);
             Notes.Add(msg);
         }
@@ -849,6 +869,7 @@ namespace Haengin.EditorGame
             ["asphalt"] = ("M_Asphalt", 4.0f, Color.white), ["sidewalk"] = ("M_Paving", 1.2f, Color.white), ["wallpath"] = ("M_Granite", 1.5f, Color.white),
             ["pad_stone"] = ("M_Granite", 1.5f, Color.white), ["ground"] = ("M_Dirt", 3.0f, Color.white), ["dirt"] = ("M_Dirt", 3.0f, Color.white),
             ["stairs"] = ("M_Granite", 1.5f, new Color(0.95f, 0.94f, 0.92f)),
+            ["pad_asphalt"] = ("M_Asphalt", 4.0f, Color.white), ["pad_dirt"] = ("M_Dirt", 3.0f, Color.white), ["apron"] = ("M_Dirt", 3.0f, new Color(0.9f, 0.88f, 0.84f)),
         };
 
         static int GroundMaterials(Transform zoneRoot)

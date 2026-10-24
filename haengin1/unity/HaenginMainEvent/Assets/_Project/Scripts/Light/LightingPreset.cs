@@ -32,5 +32,10 @@ namespace Haengin
         public Color ConvTeal = new Color(0.55f, 0.95f, 0.88f);
         public float LampIntensity = 6f;
         [Tooltip("창문 불 켜짐 비율(키트 창 — 시드 고정)")] [Range(0f, 1f)] public float Windows;
+        [Header("색 보정(필름 볼륨 — 스타일 프레임 팔레트, 2026-10-24 2차 패스)")]
+        [Range(-100f, 100f)] public float Saturation = -15f;
+        [Range(-100f, 100f)] public float Contrast = -6f;
+        [Tooltip("Lift(어두운 쪽)·Gamma(중간)·Gain(밝은 쪽) — xyz 색, w 전체")] public Vector4 Lift = new Vector4(1f, 1f, 1f, 0f), Gamma = new Vector4(1f, 1f, 1f, 0f), Gain = new Vector4(1f, 1f, 1f, 0f);
+        [Tooltip("하늘 천정 색(원경 카드 그라데이션 위쪽)")] public Color Zenith = new Color(0.86f, 0.82f, 0.74f);
     }
 }

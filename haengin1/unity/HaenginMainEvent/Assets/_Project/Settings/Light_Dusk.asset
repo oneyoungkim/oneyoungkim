@@ -37,4 +37,10 @@ MonoBehaviour:
   Sodium: {r: 1, g: 0.62, b: 0.28, a: 1}
   ConvTeal: {r: 0.55, g: 0.95, b: 0.88, a: 1}
   LampIntensity: 5
-  Windows: 0.1
+  Windows: 0.25
+  Saturation: 4
+  Contrast: 4
+  Lift: {x: 1, y: 0.99, z: 1, w: 0}
+  Gamma: {x: 1.01, y: 0.99, z: 0.97, w: 0}
+  Gain: {x: 1.03, y: 0.98, z: 0.92, w: 0}
+  Zenith: {r: 0.70980394, g: 0.6039216, b: 0.5882353, a: 1}

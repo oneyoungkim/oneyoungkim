@@ -38,3 +38,9 @@ MonoBehaviour:
   ConvTeal: {r: 0.55, g: 0.95, b: 0.88, a: 1}
   LampIntensity: 10
   Windows: 0.4
+  Saturation: -2
+  Contrast: 3
+  Lift: {x: 0.97, y: 0.98, z: 1.06, w: 0.006}
+  Gamma: {x: 1, y: 1, z: 1.03, w: 0}
+  Gain: {x: 1.04, y: 0.98, z: 0.92, w: 0}
+  Zenith: {r: 0.07058824, g: 0.09019608, b: 0.15686275, a: 1}

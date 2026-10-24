@@ -27,11 +27,14 @@ namespace Haengin
             public Quaternion SunRot; public Color SunColor; public float SunI, Shadow;
             public Color ASky, AEq, AGround, Sky, Fog; public float FogStart, FogEnd;
             public Color SplitS, SplitH; public float SplitB;
+            public float Sat, Con; public Vector4 Lift, Gamma, Gain;
         }
 
         Snap from, to;
         float t = 1f;
         SplitToning split;
+        ColorAdjustments adjust;
+        LiftGammaGain lgg;
         bool profileCloned;
 
         void OnEnable() { Instance = this; }
@@ -59,7 +62,12 @@ namespace Haengin
                 // volume.profile = 실행 중 복제본(sharedProfile 에셋은 그대로)
                 var prof = Film.profile;
                 profileCloned = true;
-                if (prof != null) prof.TryGet(out split);
+                if (prof != null)
+                {
+                    prof.TryGet(out split);
+                    if (!prof.TryGet(out adjust)) adjust = prof.Add<ColorAdjustments>(true);
+                    if (!prof.TryGet(out lgg)) lgg = prof.Add<LiftGammaGain>(true);
+                }
             }
         }
 
@@ -76,6 +84,8 @@ namespace Haengin
                 Fog = RenderSettings.fogColor, FogStart = RenderSettings.fogStartDistance, FogEnd = RenderSettings.fogEndDistance,
             };
             if (split != null) { s.SplitS = split.shadows.value; s.SplitH = split.highlights.value; s.SplitB = split.balance.value; }
+            if (adjust != null) { s.Sat = adjust.saturation.value; s.Con = adjust.contrast.value; }
+            if (lgg != null) { s.Lift = lgg.lift.value; s.Gamma = lgg.gamma.value; s.Gain = lgg.gain.value; }
             return s;
         }
 
@@ -86,6 +96,7 @@ namespace Haengin
             ASky = p.AmbientSky, AEq = p.AmbientEquator, AGround = p.AmbientGround,
             Sky = p.Sky, Fog = p.Fog, FogStart = p.FogStart, FogEnd = p.FogEnd,
             SplitS = p.SplitShadows, SplitH = p.SplitHighlights, SplitB = p.SplitBalance,
+            Sat = p.Saturation, Con = p.Contrast, Lift = p.Lift, Gamma = p.Gamma, Gain = p.Gain,
         };
 
         /// 프리셋 적용. instant = 바로(먹 닦기로 덮인 동안·테스트)
@@ -120,7 +131,7 @@ namespace Haengin
             }
             // 원경 카드·구름·달(docs/10 8장) — 하늘색과 같은 팔레트
             var sky = SkyCards.Instance ?? FindFirstObjectByType<SkyCards>();
-            if (sky != null) sky.Apply(part);
+            if (sky != null) sky.Apply(part, p.Sky, p.Zenith);
             Debug.Log($"[M3] 조명: {p.name} ({part}) · {(instant ? "바로" : BlendSecs + "초")} · 켠 빛 {CountLit()}");
         }
 
@@ -170,6 +181,16 @@ namespace Haengin
                 split.shadows.value = Color.Lerp(from.SplitS, to.SplitS, k);
                 split.highlights.value = Color.Lerp(from.SplitH, to.SplitH, k);
                 split.balance.value = Mathf.Lerp(from.SplitB, to.SplitB, k);
+            }
+            if (adjust != null)
+            {
+                adjust.active = true; adjust.saturation.overrideState = adjust.contrast.overrideState = true;
+                adjust.saturation.value = Mathf.Lerp(from.Sat, to.Sat, k); adjust.contrast.value = Mathf.Lerp(from.Con, to.Con, k);
+            }
+            if (lgg != null)
+            {
+                lgg.active = true; lgg.lift.overrideState = lgg.gamma.overrideState = lgg.gain.overrideState = true;
+                lgg.lift.value = Vector4.Lerp(from.Lift, to.Lift, k); lgg.gamma.value = Vector4.Lerp(from.Gamma, to.Gamma, k); lgg.gain.value = Vector4.Lerp(from.Gain, to.Gain, k);
             }
         }
 

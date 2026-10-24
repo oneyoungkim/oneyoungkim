@@ -1643,6 +1643,10 @@ namespace Haengin.EditorTools
             var m = new Mesh { name = name };
             if (v.Count > 65000) m.indexFormat = IndexFormat.UInt32;
             m.SetVertices(v); m.SetTriangles(t, 0);
+            // 평면 UV(월드 미터) — 아트 패스가 흙 텍스처(M_Dirt, 3m)를 입힐 수 있게(2026-10-24)
+            var uv = new List<Vector2>(v.Count);
+            foreach (var p in v) uv.Add(new Vector2(p.x, p.z));
+            m.SetUVs(0, uv);
             m.RecalculateNormals(); m.RecalculateBounds();
             return m;
         }

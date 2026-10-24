@@ -197,6 +197,39 @@
   },
   "bytes": 1714460
  },
+ "cherry_tree": {
+  "name": "cherry_tree",
+  "model": "hunyuan",
+  "faces_in": 499838,
+  "tris": 13720,
+  "w": 5.468,
+  "d": 5.459,
+  "h": 6.5,
+  "want": [
+   5.0,
+   5.0,
+   6.5
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    71.5,
+    73.1
+   ],
+   "ab_sat": [
+    15.1,
+    17.2
+   ]
+  },
+  "bytes": 4883260
+ },
  "clay_pots_cluster": {
   "name": "clay_pots_cluster",
   "model": "hunyuan",
@@ -560,6 +593,39 @@
   },
   "bytes": 1898844
  },
+ "grass_tuft": {
+  "name": "grass_tuft",
+  "model": "hunyuan",
+  "faces_in": 501172,
+  "tris": 5010,
+  "w": 0.581,
+  "d": 0.45,
+  "h": 0.4,
+  "want": [
+   0.9,
+   0.9,
+   0.4
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    36.0,
+    49.5
+   ],
+   "ab_sat": [
+    38.0,
+    19.5
+   ]
+  },
+  "bytes": 1760868
+ },
  "ice_cream_freezer": {
   "name": "ice_cream_freezer",
   "model": "hunyuan",
@@ -592,6 +658,39 @@
    ]
   },
   "bytes": 1855540
+ },
+ "ivy_patch": {
+  "name": "ivy_patch",
+  "model": "hunyuan",
+  "faces_in": 496144,
+  "tris": 5880,
+  "w": 1.776,
+  "d": 0.271,
+  "h": 1.8,
+  "want": [
+   2.0,
+   0.35,
+   1.8
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    34.1,
+    45.7
+   ],
+   "ab_sat": [
+    36.1,
+    18.0
+   ]
+  },
+  "bytes": 1948400
  },
  "jangdok_set": {
   "name": "jangdok_set",
@@ -857,6 +956,39 @@
   },
   "bytes": 5196584
  },
+ "pine_tree": {
+  "name": "pine_tree",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 13720,
+  "w": 5.221,
+  "d": 3.708,
+  "h": 7.0,
+  "want": [
+   4.5,
+   4.5,
+   7.0
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    20.4,
+    39.7
+   ],
+   "ab_sat": [
+    20.5,
+    11.0
+   ]
+  },
+  "bytes": 5864308
+ },
  "plastic_crates_stack": {
   "name": "plastic_crates_stack",
   "model": "hunyuan",
@@ -890,6 +1022,72 @@
   },
   "bytes": 2376452
  },
+ "potted_plant_a": {
+  "name": "potted_plant_a",
+  "model": "hunyuan",
+  "faces_in": 499786,
+  "tris": 4996,
+  "w": 0.572,
+  "d": 0.285,
+  "h": 1.0,
+  "want": [
+   0.6,
+   0.6,
+   1.0
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    43.4,
+    37.8
+   ],
+   "ab_sat": [
+    19.5,
+    9.5
+   ]
+  },
+  "bytes": 1665736
+ },
+ "potted_plant_b": {
+  "name": "potted_plant_b",
+  "model": "hunyuan",
+  "faces_in": 490022,
+  "tris": 4900,
+  "w": 0.521,
+  "d": 0.269,
+  "h": 0.5,
+  "want": [
+   0.7,
+   0.7,
+   0.5
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    36.0,
+    43.4
+   ],
+   "ab_sat": [
+    20.4,
+    13.6
+   ]
+  },
+  "bytes": 1910988
+ },
  "roll_container": {
   "name": "roll_container",
   "model": "hunyuan",
@@ -922,6 +1120,39 @@
    ]
   },
   "bytes": 2282640
+ },
+ "shrub_bush": {
+  "name": "shrub_bush",
+  "model": "hunyuan",
+  "faces_in": 499466,
+  "tris": 5880,
+  "w": 1.853,
+  "d": 1.782,
+  "h": 1.1,
+  "want": [
+   1.6,
+   1.4,
+   1.1
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    45.8,
+    39.0
+   ],
+   "ab_sat": [
+    23.3,
+    17.9
+   ]
+  },
+  "bytes": 1598016
  },
  "stockpot_burner": {
   "name": "stockpot_burner",
@@ -1318,5 +1549,38 @@
    ]
   },
   "bytes": 1739488
+ },
+ "zelkova_tree": {
+  "name": "zelkova_tree",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 13720,
+  "w": 5.979,
+  "d": 6.534,
+  "h": 9.0,
+  "want": [
+   6.0,
+   6.0,
+   9.0
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    69.4,
+    67.9
+   ],
+   "ab_sat": [
+    39.1,
+    33.5
+   ]
+  },
+  "bytes": 5093764
  }
 }

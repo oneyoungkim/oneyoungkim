@@ -270,6 +270,9 @@ namespace Haengin.Tests
             var draw = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Draw Calls Count");
             var csv = new StringBuilder("경로,프레임,렌더ms,삼각형,SetPass,그리기\n");
             var summary = new List<string>();
+            // 2026-10-24: 측정 동안 카메라 자동 렌더(배치 게임 뷰 640×480)를 끄고 수동 1080p Render() 만 센다 — 확인 결과 UnityStats 는 원래 마지막 렌더만 세어 값이 같았음(2.55M 그대로). 잣대를 분명히 하려고 둔다.
+            bool camWasEnabled = cam.enabled;
+            cam.enabled = false;
             var routes = new[]
             {
                 ("밤 상가거리 걷기", DayPart.Night, new Vector3(-199.0f, 31.0f, 103.2f), new Vector3(-176.0f, 28.4f, 103.6f)),
@@ -310,6 +313,7 @@ namespace Haengin.Tests
                 double p95 = sorted[(int)(sorted.Count * 0.95)], p99 = sorted[Math.Min(sorted.Count - 1, (int)(sorted.Count * 0.99))];
                 summary.Add($"{name}: 1080p 렌더 한 번 평균 {ms.Average():F2}ms · 95% {p95:F2} · 99% {p99:F2} · 삼각형 최대 {tris.Max():N0} · SetPass 최대 {sps.Max()} · 그리기 최대 {dcs.Max()} · 빛 자리 {r.Light.CountLit()}");
             }
+            cam.enabled = camWasEnabled;
             tri.Dispose(); setp.Dispose(); draw.Dispose();
             rt.Release(); UnityEngine.Object.Destroy(rt); UnityEngine.Object.Destroy(one);
             string gpu = SystemInfo.graphicsDeviceName + " · " + SystemInfo.graphicsDeviceType;

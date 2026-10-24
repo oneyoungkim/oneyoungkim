@@ -358,5 +358,77 @@
    0.25
   ],
   "face_limit": 8000
+ },
+ "pine_tree": {
+  "tier": "H",
+  "dims": [
+   4.5,
+   4.5,
+   7.0
+  ],
+  "face_limit": 14000
+ },
+ "cherry_tree": {
+  "tier": "H",
+  "dims": [
+   5.0,
+   5.0,
+   6.5
+  ],
+  "face_limit": 14000
+ },
+ "zelkova_tree": {
+  "tier": "H",
+  "dims": [
+   6.0,
+   6.0,
+   9.0
+  ],
+  "face_limit": 14000
+ },
+ "shrub_bush": {
+  "tier": "R",
+  "dims": [
+   1.6,
+   1.4,
+   1.1
+  ],
+  "face_limit": 6000
+ },
+ "ivy_patch": {
+  "tier": "R",
+  "dims": [
+   2.0,
+   0.35,
+   1.8
+  ],
+  "face_limit": 6000
+ },
+ "potted_plant_a": {
+  "tier": "R",
+  "dims": [
+   0.6,
+   0.6,
+   1.0
+  ],
+  "face_limit": 5000
+ },
+ "potted_plant_b": {
+  "tier": "R",
+  "dims": [
+   0.7,
+   0.7,
+   0.5
+  ],
+  "face_limit": 5000
+ },
+ "grass_tuft": {
+  "tier": "R",
+  "dims": [
+   0.9,
+   0.9,
+   0.4
+  ],
+  "face_limit": 4000
  }
 }

@@ -1,0 +1,59 @@
+{
+ "note": "Vegetation props (2026-10-24, 2nd map pass). Same pipeline as props.json.",
+ "defaults": {
+  "quality": "high",
+  "resolution": "2k",
+  "aspect": "1:1"
+ },
+ "common": "Reference image for building a 3D game prop. Single isolated object in a three-quarter front view from slightly above (camera about 35 degrees to the left of the front and 20 degrees above), the whole object fully visible and centered with generous margin, on a pure white background, no floor, no cast shadow, nothing else in the image. Stylized hand-painted look for a cel-shaded game: flat matte base colors only (albedo), even shadowless lighting, no specular highlights, no reflections, no ambient occlusion, no gradients, no black outlines. Simple clean readable shapes with crisp edges and correct real-world proportions. Muted low-saturation palette that fits a Seoul hillside neighborhood drawn in a flat-colored anime background style. No text, no letters, no numbers, no logos, no brand marks. Foliage is simplified into a few big rounded clumps and layered masses with a clear silhouette, not individual leaves; the trunk and branches are solid chunky shapes; everything is a closed solid volume suitable for a low-poly 3D model.",
+ "items": [
+  {
+   "name": "pine_tree",
+   "out": "concept/art/env/props/ref/pine_tree.png",
+   "aspect": "3:4",
+   "prompt": "OBJECT: a Korean red pine tree (Pinus densiflora) about 7 meters tall as seen on a Seoul hillside park: a slightly curved reddish-brown scaly trunk forking into two thick limbs, four or five flat-topped layered dark green needle clumps spread like umbrellas, bare trunk visible below the crown."
+  },
+  {
+   "name": "cherry_tree",
+   "out": "concept/art/env/props/ref/cherry_tree.png",
+   "aspect": "3:4",
+   "prompt": "OBJECT: a spring cherry blossom tree about 6.5 meters tall in full bloom: a dark grey-brown trunk with a few spreading branches, a rounded crown made of several soft pale pink blossom masses with slightly darker pink shadow sides, no leaves."
+  },
+  {
+   "name": "zelkova_tree",
+   "out": "concept/art/env/props/ref/zelkova_tree.png",
+   "aspect": "3:4",
+   "prompt": "OBJECT: a Korean zelkova street tree about 9 meters tall in fresh spring foliage: a straight grey trunk with a small square tree-pit base, upward fanning branches, a broad vase-shaped crown made of layered light yellow-green rounded leaf masses."
+  },
+  {
+   "name": "shrub_bush",
+   "out": "concept/art/env/props/ref/shrub_bush.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a trimmed roadside hedge shrub about 1.1 meters tall and 1.6 meters wide: a dense rounded mass of small dark green boxwood-like leaves, slightly lumpy top, a few bare stems visible at the bottom."
+  },
+  {
+   "name": "ivy_patch",
+   "out": "concept/art/env/props/ref/ivy_patch.png",
+   "aspect": "4:3",
+   "prompt": "OBJECT: a patch of ivy vines about 2 meters wide and 1.8 meters tall growing flat against a wall, shaped as a thin irregular sheet of overlapping green leaf clusters with brown stems, thicker at the bottom and tapering upward, seen from the front at a slight angle."
+  },
+  {
+   "name": "potted_plant_a",
+   "out": "concept/art/env/props/ref/potted_plant_a.png",
+   "aspect": "3:4",
+   "prompt": "OBJECT: a leafy rubber plant about 1 meter tall in a plain dark terracotta pot, with a dozen big oval deep green leaves on a short stem."
+  },
+  {
+   "name": "potted_plant_b",
+   "out": "concept/art/env/props/ref/potted_plant_b.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a low wide plastic flower pot about 0.5 meters tall in faded burgundy red, packed with bushy green foliage and small red and white flowers."
+  },
+  {
+   "name": "grass_tuft",
+   "out": "concept/art/env/props/ref/grass_tuft.png",
+   "aspect": "1:1",
+   "prompt": "OBJECT: a clump of weeds and tall grass about 0.4 meters tall growing from a bit of soil at the base of a wall: several arching green blades and a couple of small dandelion-like weeds, simplified into three or four overlapping leaf masses."
+  }
+ ]
+}
