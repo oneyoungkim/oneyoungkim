@@ -70,6 +70,20 @@ STAGE_MATS = {
     "M_TV_Screen":       dict(color="#3A4A55", tile=1.0, uv="world", note="TV 화면"),
     "M_Black_Plastic":   dict(color="#2A2A2C", tile=1.0, uv="world", note="검은 플라스틱(TV 틀·계산기·스피커)"),
     "M_Door_School":     dict(color="#A8ADA4", tile=1.0, uv="world", note="학교 미닫이문(회녹)"),
+    # 룩데브 ⑥ 디테일(docs/14, 2026-10-26 — tools/lookdev/detail_tex.py 가 굽는 그림, 0~1 UV 판)
+    "M_D14_Menu_Gukbap":   dict(color="#C9A070", tile=1.0, uv="unit", note="국밥집 메뉴판(칸 7)"),
+    "M_D14_Poster_Gukbap": dict(color="#E8DCC4", tile=1.0, uv="unit", note="국밥집 포스터"),
+    "M_D14_Origin_Gukbap": dict(color="#E2E8E2", tile=1.0, uv="unit", note="원산지 표시"),
+    "M_D14_Calendar_3":    dict(color="#F4F0E6", tile=1.0, uv="unit", note="달력 3월(국밥집)"),
+    "M_D14_Calendar_Home": dict(color="#F0ECE4", tile=1.0, uv="unit", note="달력 3월(시우네)"),
+    "M_D14_TV_News":       dict(color="#365070", tile=1.0, uv="unit", note="TV 화면(뉴스)"),
+    "M_D14_Poster_Gym":    dict(color="#222226", tile=1.0, uv="unit", note="혜화 MMA 전단(시우네 벽)"),
+    "M_D14_Drawing_Haneul": dict(color="#FAF8F0", tile=1.0, uv="unit", note="하늘이 그림"),
+    "M_D14_POP_Strip":     dict(color="#F6F4EE", tile=1.0, uv="unit", note="편의점 선반 가격표 띠(칸 8)"),
+    "M_D14_Promo_Conv":    dict(color="#3C6088", tile=1.0, uv="unit", note="편의점 행사 포스터"),
+    "M_D14_Aisle_Signs":   dict(color="#ECE8DC", tile=1.0, uv="unit", note="편의점 천장 분류 표지(칸 4)"),
+    "M_D14_Board_School":  dict(color="#B98A5A", tile=1.0, uv="unit", note="교실 게시판 종이"),
+    "M_D14_ClassSign":     dict(color="#EEECE4", tile=1.0, uv="unit", note="학급 표지 2-3"),
 }
 for k, v in STAGE_MATS.items():
     MATS.setdefault(k, dict(v, owner="stage"))
@@ -296,6 +310,20 @@ def menu_panels(mb, axis, c, u0, u1, y0, y1, depth_sign, n=7):
             B(mb, c + min(0, depth_sign * 0.02), c + max(0, depth_sign * 0.02), y0 + 0.03, y1 - 0.03, a, b, mats[k % len(mats)])
 
 
+def pic(mb, axis, c, u0, u1, y0, y1, out_sign, mat, d=0.006, rect=(0.0, 0.0, 1.0, 1.0)):
+    """벽 방 쪽 면에 붙인 그림 판(0~1 UV, rect = 그림의 일부 칸 u, v, w, h). axis 'x' = z = c 벽(u = x), 'z' = x = c 벽(u = z). out_sign = 벽 바깥(방 반대) 방향.
+    UV 방향은 window() 의 바깥 경치 판과 반대(그 규약을 그대로 쓰면 Unity 에서 글자가 좌우 거울상 — 2026-10-26 실측, 경치 그림은 티가 안 났음)."""
+    s = out_sign
+    dd = -d * s
+
+    def P(u, y):
+        return (u, y, c + dd) if axis == "x" else (c + dd, y, u)
+    out = (0.0, 0.0, -s) if axis == "x" else (-s, 0.0, 0.0)
+    ua, va, ub, vb = rect[0], rect[1], rect[0] + rect[2], rect[1] + rect[3]
+    uv = [(ub, va), (ua, va), (ua, vb), (ub, vb)] if (s < 0) == (axis == "x") else [(ua, va), (ub, va), (ub, vb), (ua, vb)]
+    mb.face([P(u0, y0), P(u1, y0), P(u1, y1), P(u0, y1)], mat, out=out, uv=uv)
+
+
 def light(name, pos, color="#FFF2DD", intensity=1.6, rng=6.0, kind="point"):
     sock("Sock_Light_" + name, "light", pos, 0.0, color=color, intensity=intensity, range=rng, light=kind)
 
@@ -355,7 +383,7 @@ def gukbap():
     B(sh, KX, KX + T, 0.0, 1.0, KZ + T, z1, "M_Wall_Cream", mats={"+x": "M_Wainscot"})
     # 메뉴판(홀 쪽, 칸막이 위)
     B(sh, -4.7, -0.4, 2.0, 2.62, KZ - 0.05, KZ, "M_Wood_Counter")
-    menu_panels(sh, "x", KZ - 0.05, -4.65, -0.45, 2.02, 2.6, -1, n=7)
+    pic(sh, "x", KZ - 0.05, -4.65, -0.45, 2.02, 2.6, 1, "M_D14_Menu_Gukbap")     # 룩데브 ⑥: 빈 색 칸 → 메뉴 글자 그림
     # 형광등: 홀 4 판, 주방 2 맨 관
     fx = part("Fixtures")
     for (x, z) in ((-3.6, -2.0), (-0.8, -2.0), (2.4, -2.0), (3.3, 2.0)):
@@ -442,6 +470,7 @@ def gukbap():
     seg_box(hl, (x1 - 0.12, 2.03, z1 - 0.5), (x1 - 0.42, 2.03, z1 - 0.5), 0.03, 0.03, "M_Black_Plastic")
     B(hl, x1 - 0.5, x1 - 0.42, 1.85, 2.38, z1 - 0.95, z1 - 0.15, "M_Black_Plastic")
     B(hl, x1 - 0.505, x1 - 0.5, 1.88, 2.35, z1 - 0.92, z1 - 0.18, "M_TV_Screen")
+    pic(hl, "z", x1 - 0.505, z1 - 0.9, z1 - 0.2, 1.9, 2.33, 1, "M_D14_TV_News", d=0.004)
     # 옷걸이 줄 + 달력(동벽)
     seg_box(hl, (x1 - 0.04, 1.75, -0.6), (x1 - 0.04, 1.75, 0.4), 0.04, 0.08, "M_Wood_Counter")
     for zz in (-0.4, -0.05, 0.25):
@@ -450,8 +479,9 @@ def gukbap():
     B(hl, x1 - 0.025, x1 - 0.02, 1.62, 1.72, 1.02, 1.33, "M_Paper_Pink")
     prop("water_cooler", 1, (x1 - 0.35, 0.0, -1.0), 270.0)
     # 불
-    light("Hall_A", (-2.4, 2.5, -1.8), "#FFE9C4", 2.2, 7.0)
-    light("Hall_B", (3.2, 2.5, 1.6), "#FFE9C4", 1.6, 5.5)
+    light("Hall_A", (-2.4, 2.5, -1.8), "#FFD9A2", 2.3, 7.0)      # 룩데브 ⑤: 형광 흰빛 → 백열 주황(프레임 s02 #F1D79A 쪽)
+    light("Hall_B", (3.2, 2.5, 1.6), "#FFD9A2", 1.7, 5.5)
+    detail_gukbap(x0, x1, z0, z1, KZ, KX, H, tables)
     light("Kitchen", (-1.6, 2.5, 2.2), "#F4F1E4", 2.0, 6.0)
     light("Dawn", (-2.8, 1.8, 3.6), "#9DB8DA", 0.8, 3.0)
     # 자리
@@ -575,6 +605,7 @@ def home():
     marker("Save", (2.35, 0.0, z1 - 1.05), 0.0, "save", "공책(저장)")
     marker("Ledger", (tx, 0.0, tz - 0.62), 0.0, "ledger", "가계부")
     marker("Haneul", (tx + 0.55, 0.0, tz + 0.55), 225.0, "haneul", "하늘이")
+    detail_home(x0, x1, z0, z1, H, tx, tz, dx0, dx1, dz1)
     cam("s03", (2.5, 1.55, -2.45), (-1.0, 0.8, 2.6))
     cam("s04", (2.55, 1.5, 2.9), (-1.6, 0.45, -1.9))
     sock("Sock_Actor_하늘", "actor", (tx, 0.06, tz + 0.66), 180.0, state="SitFloor")
@@ -674,6 +705,7 @@ def conv():
     marker("Job_Counter", (3.5, 0.0, -2.2), 270.0, "job_counter", "계산대")
     marker("Job_Stock", (2.9, 0.0, 3.7), 0.0, "job_stock", "진열(창고 상자)")
     marker("Job_Waste", (1.95, 0.0, 0.25), 180.0, "job_waste", "폐기")
+    detail_conv(x0, x1, z0, z1, H)
     cam("s05", (0.3, 1.65, -4.55), (-2.2, 1.0, 3.2))
     cam("s06", (3.65, 1.6, -3.9), (-0.8, 1.1, 3.6))
     return dict(size=(W, D, H), title="하루편의점")
@@ -805,11 +837,199 @@ def school():
     door("Front", (4.75, 0.0, -9.0), 270.0, "나가기 — 교문")
     marker("Seat", (DESK_X[4], 0.0, DESK_Z[4] - 0.42), 0.0, "seat", "내 자리")
     marker("Class", (-2.0, 0.0, 10.55), 180.0, "class", "수업")
+    detail_school(CX0, CX1, CZ0, CZ1, H, lz1)
     cam("s07", (2.2, 1.6, 4.05), (-3.0, 1.1, 11.0))
     cam("s08", (-0.6, 1.7, 11.7), (1.0, 1.0, 3.4))
     sock("Sock_Seat_시우", "seat", (DESK_X[4], 0.0, DESK_Z[4] - 0.42), 0.0)
     sock("Sock_Actor_도경민", "actor", (-2.0, 0.0, 11.95), 180.0, state="TalkOpen")
     return dict(size=(W, D, H), title="혜성고(2-3반·복도)")
+
+
+# ================================================================ 룩데브 ⑥ 디테일(docs/14 4-6, 2026-10-26) — 부분 'Detail14'(Unity 비교 사진에서 켜고 끔)
+def _spoon_can(mb, x, y, z):
+    cyl(mb, (x, y, z), UP, 0.04, 0.04, 0.12, 10, "M_Stainless", caps=(True, False))
+    for k in range(5):
+        a = k * 1.25
+        seg_box(mb, (x + 0.015 * math.cos(a), y + 0.1, z + 0.015 * math.sin(a)), (x + 0.03 * math.cos(a), y + 0.22, z + 0.03 * math.sin(a)), 0.008, 0.004, "M_Stainless")
+
+
+def _dish(mb, x, y, z, r, food):
+    cyl(mb, (x, y, z), UP, r * 0.75, r, 0.025, 12, "M_AC_White", caps=(True, False))
+    cyl(mb, (x, y + 0.012, z), UP, r * 0.62, r * 0.55, 0.02, 10, food, caps=(False, True))
+
+
+def _books(mb, x0, y, z0, z1, n, seed, along="z"):
+    import random as _r
+    rnd = _r.Random(seed)
+    mats = ("M_Paper_Blue", "M_Paper_Pink", "M_Paper_Yellow", "M_Paper_Green", "M_Paper_White", "M_Fabric_Navy", "M_Plastic_Red")
+    u = 0.0
+    for k in range(n):
+        w = rnd.uniform(0.02, 0.045)
+        h = rnd.uniform(0.16, 0.26)
+        dep = rnd.uniform(0.14, 0.2)
+        if along == "z":
+            B(mb, x0, x0 + dep, y, y + h, z0 + u, z0 + u + w, mats[rnd.randrange(len(mats))])
+        else:
+            B(mb, x0 + u, x0 + u + w, y, y + h, z0, z0 + dep, mats[rnd.randrange(len(mats))])
+        u += w + 0.004
+        if (z0 if along == "z" else x0) + u > (z1 if along == "z" else x0 + (z1 - z0)):
+            break
+
+
+def detail_gukbap(x0, x1, z0, z1, KZ, KX, H, tables):
+    d = part("Detail14")
+    # 벽 그림: 포스터(서벽 홀) · 원산지 표시(동벽) · 달력(문 옆 남벽)
+    pic(d, "z", x0, -2.2, -1.4, 1.35, 2.47, -1, "M_D14_Poster_Gukbap")
+    pic(d, "z", x1, -2.9, -2.15, 1.3, 2.35, 1, "M_D14_Origin_Gukbap")
+    pic(d, "x", z0, 3.75, 4.3, 1.45, 2.24, -1, "M_D14_Calendar_3")
+    # 식탁마다 수저통·반찬 두 접시(김치·깍두기)·물병
+    for ti, (tx, tz) in enumerate(tables):
+        _spoon_can(d, tx + 0.3, 0.72, tz - 0.22)
+        _dish(d, tx - 0.18, 0.72, tz + 0.02, 0.075, "M_Plastic_Red")
+        _dish(d, tx + 0.05, 0.72, tz + 0.18, 0.07, "M_Paper_Yellow")
+        cyl(d, (tx - 0.32, 0.72, tz - 0.2), UP, 0.04, 0.04, 0.22, 10, "M_Glass_Frosted", caps=(True, True))
+    # 정수기 옆 컵 쌓음 · 계산대 사탕 그릇 · 영수증 꽂이
+    B(d, x1 - 0.72, x1 - 0.32, 0.86, 0.95, -1.5, -1.2, "M_Stainless")
+    for k in range(3):
+        for j in range(4 - k):
+            cup(d, x1 - 0.66 + 0.075 * j + 0.037 * k, 0.95 + 0.075 * k, -1.35)
+    cyl(d, (2.75, 1.05, -2.6), UP, 0.07, 0.09, 0.05, 12, "M_AC_White", caps=(True, False))
+    for k in range(6):
+        cyl(d, (2.72 + 0.03 * (k % 3), 1.09, -2.62 + 0.03 * (k // 3)), UP, 0.012, 0.012, 0.012, 6, ("M_Plastic_Red", "M_Paper_Yellow", "M_Paper_Green")[k % 3], caps=(True, True))
+    seg_box(d, (2.05, 1.05, -2.6), (2.05, 1.22, -2.6), 0.008, 0.008, "M_Steel_Frame")
+    # 옷걸이에 걸린 외투 2·모자
+    for zz, m in ((-0.4, "M_Fabric_Navy"), (0.25, "M_Stainless_Dark")):
+        B(d, x1 - 0.2, x1 - 0.08, 1.05, 1.72, zz - 0.18, zz + 0.18, m)
+    cyl(d, (x1 - 0.12, 1.7, -0.05), (-1.0, 0.0, 0.0), 0.09, 0.08, 0.08, 12, "M_Paper_White", caps=(False, True))
+    # 문 옆 우산꽂이(우산 3) · 바닥 매트
+    cyl(d, (2.15, 0.0, z0 + 0.3), UP, 0.12, 0.12, 0.5, 14, "M_Stainless_Dark", caps=(True, False))
+    for k, m in enumerate(("M_Fabric_Navy", "M_Plastic_Red", "M_Stainless_Dark")):
+        seg_box(d, (2.12 + 0.04 * k, 0.1, z0 + 0.28), (2.1 + 0.05 * k, 0.86, z0 + 0.32), 0.03, 0.03, m)
+    B(d, 2.4, 3.6, 0.0, 0.012, z0 + 0.1, z0 + 0.85, "M_Stainless_Dark")
+    # 주방: 빨간 바구니(선반)·도마·고무장갑·쟁반 더미·노란 가스관
+    for zz in (0.7, 1.55, 2.3):
+        B(d, x0 + 0.04, x0 + 0.5, 1.38, 1.5, zz - 0.18, zz + 0.18, "M_Plastic_Red")
+    B(d, -1.6, -1.05, 0.86, 0.885, z1 - 0.55, z1 - 0.2, "M_Wood_Light")
+    for k in range(5):
+        B(d, -3.95, -3.35, 0.85 + 0.018 * k, 0.86 + 0.018 * k, 0.75, 1.2, "M_Stainless")
+    seg_box(d, (-0.85, 1.25, z1 - 0.02), (-0.85, 1.05, z1 - 0.02), 0.07, 0.02, "M_Plastic_Red")
+    seg_box(d, (x0 + 0.05, 0.55, 3.6), (-1.95, 0.55, 3.6), 0.03, 0.03, "M_Paper_Yellow")
+    seg_box(d, (-1.95, 0.55, 3.6), (-1.95, 0.25, 3.6), 0.03, 0.03, "M_Paper_Yellow")
+    # 벽시계(서벽 위)
+    cyl(d, (x0 + 0.02, 2.35, -0.6), (1.0, 0.0, 0.0), 0.16, 0.16, 0.03, 18, "M_AC_White", caps=(False, True))
+    seg_box(d, (x0 + 0.055, 2.35, -0.6), (x0 + 0.055, 2.45, -0.6), 0.012, 0.004, "M_Black_Plastic")
+    seg_box(d, (x0 + 0.055, 2.35, -0.6), (x0 + 0.055, 2.33, -0.52), 0.012, 0.004, "M_Black_Plastic")
+
+
+def detail_home(x0, x1, z0, z1, H, tx, tz, dx0, dx1, dz1):
+    d = part("Detail14")
+    # 벽: 달력(부엌 옆 서벽) · 혜화 MMA 전단(동벽) · 하늘 그림(책상 위 북벽)
+    pic(d, "z", x0, 1.75, 2.25, 1.35, 2.07, -1, "M_D14_Calendar_Home")
+    pic(d, "z", x1, -0.95, -0.45, 1.45, 2.15, 1, "M_D14_Poster_Gym")
+    pic(d, "x", z1, dx0 + 0.15, dx0 + 0.55, 1.4, 1.8, 1, "M_D14_Drawing_Haneul")
+    # 밥상: 국그릇 2·수저 2·김 통
+    for k, (cx, cz) in enumerate(((-0.12, 0.08), (0.14, 0.12))):
+        cyl(d, (tx + cx, 0.32, tz + cz), UP, 0.04, 0.055, 0.05, 12, "M_Stainless", caps=(True, False))
+        seg_box(d, (tx + cx + 0.08, 0.322, tz + cz - 0.05), (tx + cx + 0.08, 0.322, tz + cz + 0.1), 0.012, 0.004, "M_Stainless")
+    B(d, tx - 0.05, tx + 0.07, 0.32, 0.36, tz - 0.1, tz - 0.02, "M_Paper_Green")
+    # 책상: 교과서 더미·필통·책가방(의자) · 낮은 책꽂이 위 책 더
+    for k in range(4):
+        B(d, dx0 + 0.45, dx0 + 0.7, 0.65 + 0.025 * k, 0.673 + 0.025 * k, dz1 - 0.5 + 0.01 * k, dz1 - 0.32 + 0.01 * k, ("M_Paper_Blue", "M_Paper_Yellow", "M_Paper_Pink", "M_Paper_White")[k])
+    seg_box(d, (dx0 + 0.15, 0.665, dz1 - 0.42), (dx0 + 0.35, 0.665, dz1 - 0.42), 0.05, 0.03, "M_Plastic_Red")
+    B(d, (dx0 + dx1) / 2 - 0.15, (dx0 + dx1) / 2 + 0.15, 0.45, 0.8, dz1 - 1.08, dz1 - 0.92, "M_Fabric_Navy")
+    _books(d, -0.66, 0.85, z0 + 0.04, z0 + 1.3, 22, 31, along="x")
+    # 옷걸이 옆 빨래 바구니·갠 옷 · 현관 신발 두 켤레
+    cyl(d, (x1 - 0.55, 0.0, 1.45), UP, 0.2, 0.24, 0.32, 14, "M_Plastic_Blue", caps=(True, False))
+    B(d, x1 - 0.7, x1 - 0.4, 0.32, 0.38, 1.32, 1.58, "M_Fabric_White")
+    for k, xx in enumerate((2.0, 2.45)):
+        for sgn in (-1, 1):
+            B(d, xx + 0.06 * sgn - 0.04, xx + 0.06 * sgn + 0.04, -0.15, -0.08, z0 + 0.25, z0 + 0.52, ("M_AC_White", "M_Fabric_Navy")[k])
+    # 부엌: 냄비·양념통 줄·행주
+    cyl(d, (x0 + 0.3, 0.95, 0.75), UP, 0.11, 0.11, 0.12, 14, "M_Stainless", caps=(True, False))
+    for k in range(5):
+        cyl(d, (x0 + 0.12, 0.88, -1.15 + 0.07 * k), UP, 0.025, 0.025, 0.1 + 0.02 * (k % 2), 8, ("M_Plastic_Red", "M_AC_White", "M_Paper_Yellow", "M_Paper_Green", "M_Plastic_Red")[k], caps=(True, True))
+    B(d, x0 + 0.62, x0 + 0.64, 0.6, 0.8, -0.2, 0.05, "M_Paper_White")
+    # 창턱 화분 2
+    for xx in (-0.6, 1.3):
+        cyl(d, (xx, 0.9, z1 - 0.12), UP, 0.06, 0.08, 0.1, 10, "M_Plastic_Red", caps=(True, False))
+        cyl(d, (xx, 1.0, z1 - 0.12), UP, 0.1, 0.05, 0.14, 8, "M_Cabinet_Green", caps=(True, True))
+
+
+def detail_conv(x0, x1, z0, z1, H):
+    d = part("Detail14")
+    # 진열대 가격표 띠(선반 앞, 단마다) · 끝판 행사 포스터 · 천장 분류 표지(양면)
+    for gx in (-2.6, -0.55):
+        g0, g1 = -2.9, 2.7
+        for sgn in (-1, 1):
+            xr = gx + 0.465 * sgn
+            for k, yy in enumerate((0.12, 0.45, 0.78, 1.11)):
+                off = 0.125 * ((k + (1 if sgn > 0 else 0)) % 2)
+                pic(d, "z", xr, g0 + 0.05, g1 - 0.05, yy + 0.02, yy + 0.07, -sgn, "M_D14_POP_Strip", d=0.003, rect=(off, 0.0, 0.875, 1.0))
+        pic(d, "x", g0 - 0.06, gx - 0.42, gx + 0.42, 0.25, 1.4, 1, "M_D14_Promo_Conv", d=0.004)
+        seg_box(d, (gx, H, 0.0), (gx, H - 0.35, 0.0), 0.01, 0.01, "M_Steel_Frame")
+        k = 0 if gx < -1 else 2
+        pic(d, "x", 0.0, gx - 0.4, gx + 0.4, H - 0.6, H - 0.35, 1, "M_D14_Aisle_Signs", d=0.0, rect=(0.25 * k, 0.0, 0.25, 1.0))
+        pic(d, "x", 0.0, gx - 0.4, gx + 0.4, H - 0.6, H - 0.35, -1, "M_D14_Aisle_Signs", d=0.0, rect=(0.25 * (k + 1), 0.0, 0.25, 1.0))
+    # 냉장고 위 '음료' 표지 · 앞 유리 행사 포스터
+    pic(d, "x", z1 - 0.76, x0 + 0.4, x0 + 1.5, 2.2, 2.42, 1, "M_D14_Aisle_Signs", d=0.004, rect=(0.0, 0.0, 0.25, 1.0))
+    pic(d, "x", z0, 1.15, 1.5, 1.2, 1.75, -1, "M_D14_Promo_Conv", d=0.012)
+    # 장바구니 더미(문 옆) — 파란 바구니 5단
+    for k in range(5):
+        B(d, 0.35, 0.8, 0.06 * k, 0.06 * k + 0.2, z0 + 0.25, z0 + 0.6, "M_Plastic_Blue", mats={"+y": "M_Black_Plastic"})
+    # 커피 기계·컵 쌓음(창가 끝) · 계산대 껌·사탕 진열 · 바닥 줄 서기 표시
+    B(d, x0 + 0.06, x0 + 0.42, 1.04, 1.55, z0 + 1.05, z0 + 1.4, "M_Black_Plastic")
+    B(d, x0 + 0.42, x0 + 0.425, 1.25, 1.45, z0 + 1.12, z0 + 1.33, "M_TV_Screen")
+    for k in range(6):
+        cup(d, x0 + 0.24, 1.04 + 0.06 * k, z0 + 1.6, "M_AC_White")
+    for k in range(8):
+        B(d, 2.32 + 0.07 * (k % 4), 2.38 + 0.07 * (k % 4), 1.04, 1.12 + 0.03 * (k // 4), -0.98 + 0.08 * (k // 4), -0.92 + 0.08 * (k // 4), ("M_Plastic_Red", "M_Paper_Yellow", "M_Paper_Green", "M_Paper_Blue")[k % 4])
+    for k in range(3):
+        B(d, 1.55 - 0.55 * k, 1.85 - 0.55 * k, 0.0, 0.003, -2.3, -2.2, "M_Paper_Yellow")
+
+
+def detail_school(CX0, CX1, CZ0, CZ1, H, lz1):
+    d = part("Detail14")
+    # 뒤 게시판(코르크 위 종이 그림) · 학급 표지(뒷문 위 복도 쪽) · 칠판 날짜 종이 · 태극기 액자
+    pic(d, "x", CZ0 + 0.03, -5.45, 0.45, 1.5, 2.42, -1, "M_D14_Board_School", d=0.008)
+    pic(d, "z", CX1 + 0.12, 4.65, 5.55, 2.25, 2.55, -1, "M_D14_ClassSign", d=-0.01)
+    B(d, 0.2, 0.6, 1.7, 2.0, CZ1 - 0.07, CZ1 - 0.065, "M_Paper_White")
+    B(d, -3.85, -3.25, 2.25, 2.65, CZ1 - 0.02, CZ1, "M_AC_White")
+    B(d, -3.8, -3.3, 2.32, 2.58, CZ1 - 0.025, CZ1 - 0.02, "M_Plastic_Red")
+    # 사물함 위 물건: 가방·공·책 더미 · 사물함 문 이름표
+    import random as _r
+    rnd = _r.Random(77)
+    xx = -6.1
+    while xx < 1.6:
+        kind = rnd.randrange(4)
+        if kind == 0:
+            B(d, xx, xx + 0.32, 1.2, 1.45, CZ0 + 0.06, CZ0 + 0.34, ("M_Fabric_Navy", "M_Plastic_Blue", "M_Plastic_Red")[rnd.randrange(3)])
+            xx += 0.4
+        elif kind == 1:
+            cyl(d, (xx + 0.13, 1.2, CZ0 + 0.2), UP, 0.12, 0.12, 0.24, 12, "M_Plastic_Red", caps=(True, True))
+            xx += 0.3
+        elif kind == 2:
+            for k in range(rnd.randint(2, 5)):
+                B(d, xx, xx + 0.24, 1.2 + 0.03 * k, 1.228 + 0.03 * k, CZ0 + 0.08, CZ0 + 0.3, ("M_Paper_White", "M_Paper_Blue", "M_Paper_Yellow")[k % 3])
+            xx += 0.32
+        else:
+            xx += rnd.uniform(0.2, 0.6)
+    for i in range(20):
+        x = -6.2 + 8.0 * (i + 0.5) / 20
+        for yy in (0.27, 0.57, 0.87):
+            B(d, x - 0.07, x + 0.07, yy - 0.02, yy, lz1 + 0.02, lz1 + 0.024, "M_Paper_White")
+    # 책상 옆 가방 · 책상 위 교과서(자리 30 중 2/3)
+    for r, zz in enumerate(DESK_Z):
+        for c, xx in enumerate(DESK_X):
+            k = r * 6 + c
+            if k % 2 == 0:
+                B(d, xx + 0.3, xx + 0.36, 0.25, 0.62, zz - 0.08, zz + 0.16, ("M_Fabric_Navy", "M_Black_Plastic", "M_Plastic_Blue")[k % 3])
+            if k % 3 != 1:
+                B(d, xx - 0.18, xx + 0.05, 0.75, 0.77, zz - 0.12, zz + 0.06, ("M_Paper_Blue", "M_Paper_White", "M_Paper_Yellow", "M_Paper_Green")[k % 4])
+    # 청소함 옆 빗자루·쓰레받기 · 교탁 위 출석부·분필 통
+    seg_box(d, (CX1 - 0.18, 0.0, CZ0 + 0.55), (CX1 - 0.12, 1.25, CZ0 + 0.5), 0.03, 0.03, "M_Wood_Light")
+    B(d, CX1 - 0.3, CX1 - 0.05, 0.0, 0.25, CZ0 + 0.7, CZ0 + 0.76, "M_Plastic_Blue")
+    B(d, -2.3, -2.0, 1.1, 1.13, 11.1, 11.35, "M_Paper_Blue")
+    cyl(d, (-1.75, 1.1, 11.3), UP, 0.04, 0.04, 0.08, 10, "M_AC_White", caps=(True, False))
 
 
 STAGES = {"Gukbap": gukbap, "Home": home, "Conv": conv, "School": school}

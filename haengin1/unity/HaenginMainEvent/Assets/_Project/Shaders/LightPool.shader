@@ -26,7 +26,7 @@ Shader "Haengin/LightPool"
             CBUFFER_START(UnityPerMaterial)
             float _Strength, _Bands, _Cover;
             CBUFFER_END
-            float _HaenginNight, _HaenginSignsOn;
+            float _HaenginNight, _HaenginSignsOn, _HaenginLightOn, _HaenginPoolBoost;   // 룩데브 ⑤(docs/14 4-5): 밤 웅덩이 세기 × 프리셋 PoolBoost(밤 2)
             struct A { float4 pos : POSITION; float2 uv : TEXCOORD0; float2 uv1 : TEXCOORD1; half4 col : COLOR; };
             struct V { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; float2 k : TEXCOORD1; half4 col : TEXCOORD2; float fog : TEXCOORD3; float3 wp : TEXCOORD4; };
             float Hash(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
@@ -49,7 +49,8 @@ Shader "Haengin/LightPool"
                 else
                 {
                     float sx = 1 - smoothstep(0.55, 1.0, abs(i.uv.x));      // 가게 앞: 폭 방향은 유리 폭만큼, 바깥으로 갈수록 옅게
-                    float sy = pow(saturate(1 - i.uv.y), 1.6) * smoothstep(0.0, 0.06, i.uv.y);
+                    float vy = _HaenginLightOn > 0.5 ? i.uv.y * 1.8 : i.uv.y;   // 룩데브 ⑤: 6m → 3.3m(인도까지만 — 차도가 통째로 밝던 것)
+                    float sy = pow(saturate(1 - vy), 1.6) * smoothstep(0.0, 0.06, i.uv.y);
                     f = sx * sy;
                 }
                 // 붓 결: 땅 좌표 잡음으로 가장자리를 흔들고, 몇 단으로 나눠 그린 듯하게
@@ -57,7 +58,9 @@ Shader "Haengin/LightPool"
                 f = saturate(f * (0.82 + 0.36 * n) - 0.02);
                 float stepped = floor(f * 4.0 + 0.5) / 4.0;
                 f = lerp(f, stepped, _Bands * smoothstep(0.05, 0.25, f));
-                float k = saturate(i.col.a * f * gate * _Strength);
+                // 룩데브 ⑤: 가로등 원 웅덩이만 세게, 가게 앞 사각은 줄임(넓게 깔려 길 전체가 밝은 베이지 — 2026-10-26 진단: 웅덩이를 끄면 길이 어두워짐)
+                float boost = _HaenginLightOn > 0.5 ? (i.k.x < 0.5 ? (_HaenginPoolBoost > 0.01 ? _HaenginPoolBoost : 1.0) : 0.7) : 1.0;
+                float k = saturate(i.col.a * f * gate * _Strength * boost);
                 half3 c = i.col.rgb * k;
                 half fogK = 1 - ComputeFogIntensity(i.fog);
                 c = MixFogColor(c, half3(0, 0, 0), i.fog);                  // 안개 속에선 옅게

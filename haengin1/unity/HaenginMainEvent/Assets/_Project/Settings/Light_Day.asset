@@ -17,16 +17,16 @@ MonoBehaviour:
   SunYaw: 155
   SunColor: {r: 1, g: 0.973, b: 0.933, a: 1}
   SunIntensity: 1
-  ShadowStrength: 0.7
-  AmbientSky: {r: 0.62, g: 0.6, b: 0.57, a: 1}
-  AmbientEquator: {r: 0.527, g: 0.51000005, b: 0.48450002, a: 0.85}
-  AmbientGround: {r: 0.372, g: 0.36, b: 0.342, a: 0.6}
+  ShadowStrength: 0.5
+  AmbientSky: {r: 0.85, g: 0.83, b: 0.79, a: 1}
+  AmbientEquator: {r: 0.74, g: 0.71, b: 0.68, a: 1}
+  AmbientGround: {r: 0.53, g: 0.51, b: 0.48, a: 1}
   Sky: {r: 0.93333334, g: 0.8901961, b: 0.81960785, a: 1}
   Fog: {r: 0.83137256, g: 0.80784315, b: 0.7647059, a: 1}
   FogStart: 40
   FogEnd: 380
-  SplitShadows: {r: 0.184, g: 0.29, b: 0.353, a: 1}
-  SplitHighlights: {r: 0.953, g: 0.851, b: 0.69, a: 1}
+  SplitShadows: {r: 0.49035293, g: 0.4842353, b: 0.48, a: 1}
+  SplitHighlights: {r: 0.5452941, g: 0.535098, b: 0.5190196, a: 1}
   SplitBalance: 0
   StreetLamps: 0
   SecurityLamps: 0
@@ -38,9 +38,18 @@ MonoBehaviour:
   ConvTeal: {r: 0.55, g: 0.95, b: 0.88, a: 1}
   LampIntensity: 6
   Windows: 0
-  Saturation: 8
-  Contrast: 5
-  Lift: {x: 1, y: 0.99, z: 0.98, w: 0}
-  Gamma: {x: 1.01, y: 1, z: 0.97, w: 0}
-  Gain: {x: 1.04, y: 1, z: 0.94, w: 0}
+  Saturation: -10
+  Contrast: 0
+  Lift: {x: 1, y: 1, z: 1, w: 0.03}
+  Gamma: {x: 1, y: 1, z: 1, w: 0}
+  Gain: {x: 1, y: 1, z: 1.02, w: 0}
   Zenith: {r: 0.827451, g: 0.7882353, b: 0.6901961, a: 1}
+  Lut: {fileID: 2800000, guid: 660885858010beb44a3fa5c762c2afea, type: 3}
+  LutContribution: 1
+  Ink: {r: 0.25882354, g: 0.23921569, b: 0.2, a: 1}
+  HazeColor: {r: 0.8509804, g: 0.8235294, b: 0.7607843, a: 1}
+  HazeStart: 14
+  HazeEnd: 120
+  HazeStrength: 0.36
+  Dapple: 1
+  PoolBoost: 1

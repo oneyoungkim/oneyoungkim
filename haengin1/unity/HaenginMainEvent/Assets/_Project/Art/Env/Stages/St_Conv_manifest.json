@@ -45,6 +45,33 @@
    "texture": "concept/art/env/textures/M_Concrete.png",
    "tiling": 0.4167
   },
+  "M_D14_Aisle_Signs": {
+   "color": "#ECE8DC",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "편의점 천장 분류 표지(칸 4)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Aisle_Signs.png",
+   "tiling": 1.0
+  },
+  "M_D14_POP_Strip": {
+   "color": "#F6F4EE",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "편의점 선반 가격표 띠(칸 8)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_POP_Strip.png",
+   "tiling": 1.0
+  },
+  "M_D14_Promo_Conv": {
+   "color": "#3C6088",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "편의점 행사 포스터",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Promo_Conv.png",
+   "tiling": 1.0
+  },
   "M_Fluor_Panel": {
    "color": "#F2F5EF",
    "tile": 1.0,
@@ -94,6 +121,30 @@
    "texture": "concept/art/env/textures/M_Metal_Grey.png",
    "tiling": 1.0
   },
+  "M_Paper_Blue": {
+   "color": "#8FA6C2",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_Green": {
+   "color": "#9DB592",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_Yellow": {
+   "color": "#E3CC7E",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
   "M_Plaster_Cream": {
    "color": "#E3D5B8",
    "tile": 2.0,
@@ -108,6 +159,14 @@
    "tile": 1.0,
    "uv": "world",
    "note": "파란 플라스틱(폐기 바구니)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Plastic_Red": {
+   "color": "#B5473C",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "빨간 플라스틱(김치통 뚜껑·바구니)",
    "owner": "stage",
    "tiling": 1.0
   },
@@ -174,9 +233,10 @@
  "tris": {
   "Shell": 434,
   "Fixtures": 288,
-  "Store": 1934
+  "Store": 1934,
+  "Detail14": 456
  },
- "tris_total": 2656,
+ "tris_total": 3112,
  "sockets": [
   {
    "name": "Prop_ice_cream_freezer_01",
@@ -594,5 +654,5 @@
    "Default"
   ]
  ],
- "fbx_bytes": 99196
+ "fbx_bytes": 119756
 }

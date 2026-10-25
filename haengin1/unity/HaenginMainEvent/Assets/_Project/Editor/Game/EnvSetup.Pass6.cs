@@ -395,10 +395,10 @@ namespace Haengin.EditorGame
             if (m == null) { m = new Material(sh) { name = "M_G6_" + key }; AssetDatabase.CreateAsset(m, path); }
             if (m.shader != sh) m.shader = sh;
             m.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>($"{TexDir}/Clump_{clump}.png"));
-            m.SetColor("_BaseColor", tint); m.SetColor("_ShadeColor", new Color(0.80f, 0.80f, 0.84f));
+            m.SetColor("_BaseColor", tint); m.SetColor("_ShadeColor", LookdevSetup.LeafShade);
             m.SetFloat("_Step", 0.5f); m.SetFloat("_Feather", 0.03f); m.SetFloat("_WindAmp", wind); m.SetFloat("_WindFreq", 1.5f); m.SetFloat("_Height", 1f);
             m.SetFloat("_Cutoff", 0.4f); m.SetFloat("_Sphere", sphere ? 1f : 0f); m.SetFloat("_Ink", ink); m.SetFloat("_InkWidth", 0.25f);
-            m.SetColor("_InkColor", new Color(0.102f, 0.078f, 0.09f)); m.SetFloat("_StencilRef", 1f); m.SetFloat("_SwayUV", 1f);
+            m.SetColor("_InkColor", LookdevSetup.LeafInk); m.SetFloat("_StencilRef", 1f); m.SetFloat("_SwayUV", 1f);
             m.enableInstancing = false; EditorUtility.SetDirty(m);
             return m;
         }

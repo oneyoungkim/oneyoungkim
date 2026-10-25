@@ -61,6 +61,33 @@
    "owner": "stage",
    "tiling": 1.0
   },
+  "M_D14_Calendar_Home": {
+   "color": "#F0ECE4",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "달력 3월(시우네)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Calendar_Home.png",
+   "tiling": 1.0
+  },
+  "M_D14_Drawing_Haneul": {
+   "color": "#FAF8F0",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "하늘이 그림",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Drawing_Haneul.png",
+   "tiling": 1.0
+  },
+  "M_D14_Poster_Gym": {
+   "color": "#222226",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "혜화 MMA 전단(시우네 벽)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Poster_Gym.png",
+   "tiling": 1.0
+  },
   "M_Fabric_Futon": {
    "color": "#D7AFA6",
    "tile": 1.0,
@@ -169,6 +196,14 @@
    "texture": "concept/art/env/textures/M_Plaster_Cream.png",
    "tiling": 0.5
   },
+  "M_Plastic_Blue": {
+   "color": "#4E6E9A",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "파란 플라스틱(폐기 바구니)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
   "M_Plastic_Red": {
    "color": "#B5473C",
    "tile": 1.0,
@@ -260,9 +295,10 @@
   "Shell": 650,
   "Fixtures": 134,
   "Kitchenette": 338,
-  "Living": 1064
+  "Living": 1064,
+  "Detail14": 850
  },
- "tris_total": 2186,
+ "tris_total": 3036,
  "sockets": [
   {
    "name": "Prop_rice_cooker_01",
@@ -713,5 +749,5 @@
    "Default"
   ]
  ],
- "fbx_bytes": 114828
+ "fbx_bytes": 141964
 }

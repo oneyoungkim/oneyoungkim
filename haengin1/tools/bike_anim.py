@@ -68,6 +68,7 @@ bpy.ops.import_scene.fbx(filepath=BIKE)
 bike_objs = [o for o in bpy.data.objects if o not in siwoo_objs]
 bike_root = bpy.data.objects['Bike']
 bike_root.scale = (BIKE_SCALE,) * 3
+sc.render.fps, sc.render.fps_base = FPS, 1.0      # FBX 가져오기가 장면 fps 를 파일 값(24)으로 바꿔 놓아 — 클립이 Unity 에서 24fps(1.25초)로 들어가던 것(2026-10-26)
 bpy.context.view_layer.update()
 def W(name):
     return bpy.data.objects[name].matrix_world.translation.copy()
@@ -92,8 +93,8 @@ for _sd, _e in GRIP_EMPTY.items():
     _md = lambda a: sorted(a)[len(a) // 2]       # 가운데값(레버·종 정점에 덜 끌리게)
     GRIP[_sd] = Vector(((min(_xs) + max(_xs)) / 2, _md([c.y for c in _v]), _md([c.z for c in _v])))
 HAND_X_IN = 0.018 * _k     # 가운데 손가락 뿌리가 손 가운데보다 검지 쪽 — 손 가운데를 봉 가운데에 두려고 안쪽으로
-SADDLE_TOP = max(c.z for c in _fco if abs(c.x) < 0.07 * _k and 0.12 * _k < c.y < 0.36 * _k and 0.7 * _k < c.z < 0.95 * _k)
-_box = [c for c in _fco if c.z > 0.9 * _k and c.y > 0.25 * _k]
+SADDLE_TOP = max(c.z for c in _fco if abs(c.x) < 0.07 * _k and 0.12 * _k < c.y < 0.36 * _k and 0.7 * _k < c.z < 1.2 * _k)   # 2026-10-26: 안장 +12cm 자전거도(위 한계 0.95 → 1.2)
+_box = [c for c in _fco if c.z > 0.9 * _k and c.y > 0.36 * _k]     # 배달통(앞면 y ≈ 0.37). 0.25 였을 때는 올린 안장 뒤끝이 배달통으로 잡혔다
 BOX_FRONT = min(c.y for c in _box) if _box else 9.0
 BOX_FRONT_Z = min(c.z for c in _box) if _box else 9.0
 print('GRIP bar', {k: tuple(round(x, 4) for x in v) for k, v in GRIP.items()}, 'empty', {k: tuple(round(x, 4) for x in v) for k, v in GRIP_EMPTY.items()})
@@ -309,14 +310,17 @@ def butt_gap():
     return zmin - SADDLE_TOP, BOX_FRONT - ymax_box
 
 # ───────────────────────── 자세 매개변수(클립별)
-SEAT = dict(y=0.19, z=1.05)     # 앉은 골반 머리(안장 맞춤으로 z 를 고침)
+SEAT = dict(y=0.19, z=1.05, lean_add=0.0)     # 앉은 골반 머리(안장 맞춤으로 z 를 고침) · lean_add = 손잡이까지 닿게 더 숙이는 각(맞춤)
+LEAN_W = (0.9, 1.0, 1.0, 0.45, 0.0)    # 숙임 더하기 몫(척추 3마디 · 목 · 머리는 앞을 봄)
+ELBOW_WANT = 18.0                      # 앉아 밟을 때 팔꿈치 굽힘 목표(도)
 def seated(phi, breath=0.0, mode='cruise', comp=0.0):
     """앉은 자세. phi = 오른쪽 페달 각. comp = 자전거 기울기(도, + 왼쪽) — 몸을 세상 기준으로 세우는 반대 롤"""
     beta = 2.5 * cs(phi - 20.0)                    # 골반 롤(+ = 왼쪽 아래): 아래로 내려간 다리 쪽이 내려감
     low = mode == 'coast'
     tilt = 22.0 if low else 18.0
     lean = [31, 39, 46, 27, 4] if low else [22, 27, 30, 18, 7]
-    lean = [l - (breath * (0.0, 0.6, 1.0, 0.3, 0.0)[i]) for i, l in enumerate(lean)]
+    lean = [l + SEAT['lean_add'] * LEAN_W[i] - (breath * (0.0, 0.6, 1.0, 0.3, 0.0)[i]) for i, l in enumerate(lean)]
+    tilt += 0.2 * SEAT["lean_add"]
     k = (0.55, 0.7, 0.8, 0.9, 1.0)
     p = dict(pel=Vector((0.008 * cs(phi - 20.0), SEAT['y'] + (0.012 if low else 0.0), SEAT['z'] - (0.004 if low else 0.0))),
              tilt=tilt, proll=beta - 0.55 * comp, pyaw=1.5 * sn(phi),
@@ -332,11 +336,12 @@ def seated(phi, breath=0.0, mode='cruise', comp=0.0):
     p['feet'] = feet
     return p
 
+STAND_Z = 1.17 - 0.6 * (CR - 0.1019)      # 일어선 골반 높이: 크랭크가 길면 아래 페달이 내려가 조금 낮춤(0.10m 크랭크 = 1.17)
 def standing(phi, psi):
     """일어서서 밟기. psi = 자전거 기울기(+ 왼쪽). 몸통은 세상 기준 0.3ψ 만 따라감 → 자전거 좌표에선 −0.7ψ"""
     bob = 0.022 * cs(2 * (phi - 60.0))
     k = (0.6, 0.7, 0.78, 0.9, 1.0)
-    p = dict(pel=Vector((-0.045 * sn(phi - 10.0), 0.10, 1.17 + bob)),
+    p = dict(pel=Vector((-0.045 * sn(phi - 10.0), 0.10, STAND_Z + bob)),
              tilt=32.0, proll=-0.6 * psi + 3.0 * cs(phi - 30.0), pyaw=5.0 * sn(phi),
              lean=[40, 49, 55, 36, 14], roll=[-k[0] * psi, -k[1] * psi, -k[2] * psi, -k[3] * psi, -k[4] * psi],
              yaw=[2.0 * sn(phi), 1.0 * sn(phi), -2.5 * sn(phi), -1.0 * sn(phi), 0.0],
@@ -384,11 +389,22 @@ def blend(pa, pb, t):
 
 # ───────────────────────── 앉은 높이 맞추기(엉덩이 아랫면 = 안장 윗면 − 4mm)
 SINK = 0.004
+def _elbow(p):
+    _, _, e = solve(p)
+    return (e['LeftElbow'] + e['RightElbow']) / 2, max(e['LeftHand'], e['RightHand'])
 for it in range(4):
     Q, H, e = solve(seated(90.0)); apply(Q, H)
     gap, boxc = butt_gap()
     SEAT['z'] -= gap + SINK
-    print('SEAT fit', it, 'gap %.4f box clearance %.3f -> z %.4f' % (gap, boxc, SEAT['z']))
+    # 안장이 높으면(2026-10-26 +12cm) 손잡이가 상대적으로 낮아 팔이 다 펴져도 모자람 → 팔꿈치가 ELBOW_WANT 만큼 굽을 때까지 더 숙임(이분법)
+    lo, hi = 0.0, 30.0
+    for _ in range(18):
+        SEAT['lean_add'] = (lo + hi) / 2
+        el, sh = _elbow(seated(90.0))
+        if sh > 1e-4 or el < ELBOW_WANT: lo = SEAT['lean_add']
+        else: hi = SEAT['lean_add']
+    SEAT['lean_add'] = hi
+    print('SEAT fit', it, 'gap %.4f box clearance %.3f -> z %.4f · lean +%.1f° elbow %.1f°' % (gap, boxc, SEAT['z'], SEAT['lean_add'], _elbow(seated(90.0))[0]))
 
 # ───────────────────────── 클립 정의
 def startstop_crank():
@@ -463,7 +479,7 @@ proxy = make_proxy()
 curves = dict(
     note='행인1 자전거 동작 곡선(tools/bike_anim.py). theta = Unity Crank.localRotation = Euler(theta,0,0) 의 각(도, 0 = FBX 쉬는 자세, 앞으로 밟으면 증가). '
          'lean = Unity LeanRoot.localRotation = Euler(0,0,lean) 의 각(도, + = 라이더 왼쪽). 동작은 자전거 좌표(자전거 기울기 없이) 기준 — Unity 에서 Lean 을 시우·자전거 공통 부모에 더한다. '
-         'crank_speed = 크랭크 각속도 / 순항(12°/프레임). 좌표: Unity (x,y,z) = (-Bx, Bz, -By), 자전거 원점 = 접지선 가운데 땅. 루프 클립(cruise·climb)은 정규화 시간 = theta/360.',
+         'crank_speed = 크랭크 각속도 / 순항(12°/프레임). ik = 프레임마다 [왼발 페달 위, 오른발 페달 위, 왼 발목 xyz(페달 위면 그 페달 가운데에서의 차이, 아니면 자전거 원점 기준), 오른 발목 xyz, 왼 손목 xyz, 오른 손목 xyz, 골반 xyz](Unity 자전거 좌표). 좌표: Unity (x,y,z) = (-Bx, Bz, -By), 자전거 원점 = 접지선 가운데 땅. 루프 클립(cruise·climb)은 정규화 시간 = theta/360.',
     fps=FPS, bike_scale=BIKE_SCALE, crank_len=round(CR, 4), phi0_right_pedal_deg=round(PHI0, 2),
     bb_unity=[round(-BB.x, 4), round(BB.z, 4), round(-BB.y, 4)], saddle_top=round(SADDLE_TOP, 4),
     grip_bar_unity={sd: [round(-v.x, 4), round(v.z, 4), round(-v.y, 4)] for sd, v in GRIP.items()},
@@ -475,13 +491,31 @@ ACTIONS = {}
 for name in CLIPS:
     c = CLIP[name]; n = c['n']
     arm.animation_data_clear(); PREV.clear()
-    rec = dict(frames=n + 1, length_s=round(n / FPS, 4), fps=FPS, loop=c['loop'], ref_rpm=round(c['rpm'], 2), theta=[], lean=[], crank_speed=[])
+    rec = dict(frames=n + 1, length_s=round(n / FPS, 4), fps=FPS, loop=c['loop'], ref_rpm=round(c['rpm'], 2), theta=[], lean=[], crank_speed=[], ik=[])
     errs = dict(foot=[], hand=[], knee=[], elbow=[], reach=[])
     for f in range(n + 1):
         p, phi, psi, wsp = clip_frame(name, f)
         Q, H, e = solve(p)
         apply(Q, H, frame=f)
         rec['theta'].append(round(theta_unity(phi), 3)); rec['lean'].append(round(psi, 3)); rec['crank_speed'].append(round(wsp, 3))
+        # Unity IK 목표(2026-10-26): 프레임마다 [왼발 페달 위 1/0, 오른발 1/0, 왼 발목 xyz, 오른 발목 xyz, 왼 손목 xyz, 오른 손목 xyz, 골반 xyz] — Unity 자전거 좌표.
+        #   페달 위 발목은 '그 페달 가운데에서의 차이'(실제 페달 자리에 더하면 됨), 땅 디딘 발은 자전거 원점 기준 절대 자리
+        ik = []
+        on = {}
+        for side, _s in SIDES:
+            ball = p['feet'][side]['ball']
+            pc = pedal(side, phi)
+            on[side] = (ball - (pc + Z * PEDAL_UP)).length < 0.02
+        ik += [1 if on['Left'] else 0, 1 if on['Right'] else 0]
+        for side, _s in SIDES:
+            a = H[side + 'Foot'] - (pedal(side, phi) if on[side] else Vector((0, 0, 0)))
+            ik += [round(-a.x, 4), round(a.z, 4), round(-a.y, 4)]
+        for side, _s in SIDES:
+            w = H[side + 'Hand']
+            ik += [round(-w.x, 4), round(w.z, 4), round(-w.y, 4)]
+        hp = H['Hips']
+        ik += [round(-hp.x, 4), round(hp.z, 4), round(-hp.y, 4)]
+        rec['ik'].append(ik)
         errs['foot'].append(max(e['LeftFoot'], e['RightFoot']) * 1000); errs['hand'].append(max(e['LeftHand'], e['RightHand']) * 1000)
         errs['knee'] += [e['LeftKnee'], e['RightKnee']]; errs['elbow'] += [e['LeftElbow'], e['RightElbow']]
         errs['reach'] += [e['LeftReach'], e['RightReach']]

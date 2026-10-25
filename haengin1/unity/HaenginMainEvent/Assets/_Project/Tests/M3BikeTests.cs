@@ -3,6 +3,7 @@
 //                      국물 감소 규칙(턱 0.18m −8 · 0.10m 0 · 벽 −15 · 옆 가속 −10/초 · 내리막 과속 −4/초 · 급브레이크 −5 · 헛발 −2) ·
 //                      모든 입력 조합(무작위 40초)에서 '내림' 0 · 오르막 입력 끊김 → 밀림 ≤ 0.5m · 넘어짐 0 · 5-2 케이크(일어서기 막음)
 //   D17 Bike_Route_Bot : Zone1 1화 코스 봇 — 경비실·꼭대기 집 정차·건네기, 태오 추월 오르막 1·내리막 1, 지각 대사 N = 실제 늦은 분, ≤ 150초
+//   D18 Bike_Pedal_Pose: 같은 코스 봇 — 페달 클립 상태(정차·출발·순항·댄싱·정지)를 모두 거치고 골반 = 클립 자리(평균 ≤ 2cm) · 발목 = 페달 + 클립 차이(95% ≤ 2cm) · 정차 왼발 = 땅(≤ 3cm)
 // 실제 Player 프리팹(PInput 끔). 이름이 M3… = 입력 테스트 뒤.
 using System.Collections;
 using System.Collections.Generic;
@@ -305,6 +306,56 @@ namespace Haengin.Tests
             Assert.That(game, Is.LessThanOrEqualTo(150f), "코스 ≤ 150초");
             Assert.IsFalse(bc.Riding, "끝나면 내림(코드)");
             Assert.That(bc.SideShots, Is.GreaterThanOrEqualTo(1), "오르막 측면 트래킹");
+        }
+
+        // ───────────────────────── D18 페달 클립 자세(docs/14 6-4, 2026-10-26): 코스 봇을 돌리며 발·골반이 클립·페달에 붙어 있는지
+        [UnityTest, Timeout(1200000)]
+        public IEnumerator D18_Bike_Pedal_Pose()
+        {
+            yield return M3Lab.OpenZone1();
+            var bc = Object.FindAnyObjectByType<BikeCourse>(FindObjectsInactive.Include);
+            Assert.IsNotNull(bc, "Zone1 에 BikeCourse");
+            bc.gameObject.SetActive(true);
+            bc.Bot = true;
+            bool done = false;
+            IEnumerator Run() { yield return bc.RunAll(); done = true; }
+            bc.StartCoroutine(Run());
+            var seen = new Dictionary<BikeRider.Mode, int>();
+            var hips = new List<float>(); var feetOn = new List<float>(); var feetDown = new List<float>();
+            var byMode = new Dictionary<BikeRider.Mode, List<float>>();
+            int diag = 0;
+            BikeRider rider = null;
+            float t0 = Time.time;
+            while (!done && Time.time - t0 < 200f)
+            {
+                yield return null;
+                if (!bc.Riding) continue;
+                if (rider == null || !rider.isActiveAndEnabled) rider = Object.FindObjectsByType<BikeRider>(FindObjectsSortMode.None).FirstOrDefault(r => r.Riding);
+                if (rider == null) continue;
+                seen[rider.Current] = (seen.TryGetValue(rider.Current, out var c) ? c : 0) + 1;
+                if (rider.Current == BikeRider.Mode.Cruise || rider.Current == BikeRider.Mode.Climb || rider.Current == BikeRider.Mode.Coast) { hips.Add(rider.HipGap); feetOn.Add(Mathf.Max(rider.FootGapL, rider.FootGapR)); }
+                if (!byMode.TryGetValue(rider.Current, out var bm)) byMode[rider.Current] = bm = new List<float>();
+                bm.Add(Mathf.Max(rider.FootGapL, rider.FootGapR));
+                if (rider.Current == BikeRider.Mode.Hold) feetDown.Add(rider.FootGapL);
+                if (rider.Current == BikeRider.Mode.Cruise && diag < 3 && seen[BikeRider.Mode.Cruise] % 97 == 50)
+                {
+                    diag++;
+                    var bt = bc.Bike.transform; var an = rider.GetComponent<Animator>();
+                    Vector3 L(Vector3 w) => bt.InverseTransformPoint(w);
+                    var st = an.GetCurrentAnimatorStateInfo(0);
+                    Debug.Log($"[M3Test] D18 진단: 상태 {(st.IsName(BikeRider.CruiseState) ? "BikeCruise" : st.shortNameHash.ToString())} t {st.normalizedTime:F3} · θ {bc.Motor.Crank:F1} · 왼발 {L(an.GetBoneTransform(HumanBodyBones.LeftFoot).position):F3} 목표 {L(rider.TargetL):F3} 페달L {L(bc.Bike.PedalL.position):F3} 클립 차이 {rider.LastPose.AnkleL:F3} · 오른발 {L(an.GetBoneTransform(HumanBodyBones.RightFoot).position):F3} 목표 {L(rider.TargetR):F3} 페달R {L(bc.Bike.PedalR.position):F3} · 골반 {L(an.GetBoneTransform(HumanBodyBones.Hips).position):F3} 클립 {rider.LastPose.Hips:F3} · 모델 {rider.transform.localPosition:F3}/{rider.transform.localEulerAngles:F1} 자전거 {bt.localPosition:F3}/{bt.localEulerAngles:F1} · 손 {L(an.GetBoneTransform(HumanBodyBones.LeftHand).position):F3} 클립 {rider.LastPose.WristL:F3} · 아바타 {an.avatar?.name} 사람 {an.isHuman} 배율 {an.humanScale:F3}");
+                }
+            }
+            float P95(List<float> v) { if (v.Count == 0) return -1f; var o = v.OrderBy(x => x).ToList(); return o[(int)(o.Count * 0.95f)]; }
+            string log = $"상태 [{string.Join(", ", seen.Select(kv => kv.Key + " " + kv.Value))}] · 골반–클립 평균 {(hips.Count > 0 ? hips.Average() * 100f : -1):F2}cm 95% {P95(hips) * 100f:F2}cm · " +
+                         $"발목–목표(페달) 평균 {(feetOn.Count > 0 ? feetOn.Average() * 100f : -1):F2}cm 95% {P95(feetOn) * 100f:F2}cm · 정차 왼발–땅 95% {P95(feetDown) * 100f:F2}cm · 상태 바뀜 {(rider != null ? rider.ModeChanges : 0)} · 상태별 발 평균 [{string.Join(", ", byMode.Select(kv => kv.Key + " " + (kv.Value.Average() * 100f).ToString("F1") + "cm"))}]";
+            Debug.Log("[M3Test] D18 페달 클립: " + log);
+            Assert.IsTrue(done, "코스 끝");
+            foreach (var m in new[] { BikeRider.Mode.Start, BikeRider.Mode.Cruise, BikeRider.Mode.Climb, BikeRider.Mode.Stop })
+                Assert.That(seen.TryGetValue(m, out var n) ? n : 0, Is.GreaterThan(0), $"상태 {m} 거침");
+            Assert.That(hips.Average(), Is.LessThanOrEqualTo(0.02f), "골반 = 클립 자리(평균 ±2cm)");
+            Assert.That(P95(feetOn), Is.LessThanOrEqualTo(0.02f), "발목 = 페달 자리(95% ≤ 2cm)");
+            if (feetDown.Count > 0) Assert.That(P95(feetDown), Is.LessThanOrEqualTo(0.03f), "정차 왼발 = 땅 자리(95% ≤ 3cm)");
         }
 
         static string Clk(float s) { int x = Mathf.FloorToInt(s); return $"{x / 3600:00}:{x / 60 % 60:00}:{x % 60:00}"; }

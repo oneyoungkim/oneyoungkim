@@ -34,7 +34,7 @@ namespace Haengin.EditorGame
         static readonly string[] Districts = { "HoomunN", "HoomunS", "Alley", "Campus", "Waryong", "Wall", "Wires" };
         static readonly string[] Renderers = { "Assets/Settings/PC_Renderer.asset", "Assets/Settings/Mobile_Renderer.asset" };
         static readonly string[] Pipelines = { "Assets/Settings/PC_RPAsset.asset", "Assets/Settings/Mobile_RPAsset.asset" };
-        static readonly Color ShadeMul = new Color(0.78f, 0.76f, 0.74f);      // FUJIMOTO 8-3 배경 곱셈
+        static readonly Color ShadeMul = new Color(0.82f, 0.785f, 0.75f);     // FUJIMOTO 8-3 배경 곱셈(.78, .76, .74) → 룩데브 2026-10-26: 조금 밝고 따뜻하게(프레임 그늘 L* 41~47 · a* +3~6)
         public static readonly List<string> Notes = new List<string>();
 
         public static bool KitAvailable => File.Exists(ManifestPath) && AssetDatabase.LoadAssetAtPath<GameObject>(BuildDir + "/Z1_HoomunN.fbx") != null;
@@ -378,13 +378,15 @@ namespace Haengin.EditorGame
                     if (have.passMaterial != m) { have.passMaterial = m; ch = true; }
                     if (!have.bindDepthStencilAttachment) { have.bindDepthStencilAttachment = true; ch = true; }
                     if (have.requirements != (ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Color)) { have.requirements = ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Color; ch = true; }
+                    // 룩데브 ③(2026-10-26): 후처리(색 보정·LUT) 뒤에 그림 — 앞에 그리면 Lift 가 먹선을 L* 34 로 띄우고 시간대 색이 물들었다(프레임 선 L* 16~29)
+                    if (have.injectionPoint != FullScreenPassRendererFeature.InjectionPoint.AfterRenderingPostProcessing) { have.injectionPoint = FullScreenPassRendererFeature.InjectionPoint.AfterRenderingPostProcessing; ch = true; }
                     if (ch) { EditorUtility.SetDirty(have); EditorUtility.SetDirty(data); }
                     continue;
                 }
                 var feat = ScriptableObject.CreateInstance<FullScreenPassRendererFeature>();
                 feat.name = "Outline";
                 feat.passMaterial = m;
-                feat.injectionPoint = FullScreenPassRendererFeature.InjectionPoint.BeforeRenderingPostProcessing;
+                feat.injectionPoint = FullScreenPassRendererFeature.InjectionPoint.AfterRenderingPostProcessing;
                 feat.fetchColorBuffer = true;
                 feat.bindDepthStencilAttachment = true;
                 feat.requirements = ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Color;
@@ -470,49 +472,66 @@ namespace Haengin.EditorGame
             if (fixedLevels > 0) { AssetDatabase.SaveAssets(); Notes.Add($"품질 단계 LOD Bias → 1: {fixedLevels}단계"); }
         }
 
-        // ───────────────────────── 6) 시간대 조명 값(docs/10 9장) — 새벽·노을·밤을 덮어쓴다(낮은 그대로). 밤 = 빛 웅덩이로 어둡게
+        // ───────────────────────── 6) 시간대 조명 값(docs/10 9장 — 2026-10-26 룩데브 정정: docs/14 4-2) — 새벽·낮·노을·밤을 덮어쓴다.
+        //   그늘은 시간대 색(청회·모브·남색)이 아니라 언제나 '따뜻한 밝은 회갈'(프레임 8장 실측 h 17~78°): 스플릿 톤 끄거나 회갈 몇 %, 채도 낮춤, 대비 0, 검정 들어 올림(Lift),
+        //   주변광 15~25% 올림(셀 그늘이 너무 깊음 — 그늘 ÷ 밝은 면 0.18 ↔ 프레임 0.27). 남는 색 차이는 시간대 LUT(맨 끝, HDR 등급 모드)가 맞춘다.
+        //   + 먹선 색(프레임 선 색) · 깊이 안개(4-4 표) · 땅 햇빛 얼룩 세기 · 밤 빛 웅덩이 배율(4-5) · LUT(Art/Env/Lut — LookdevSetup 이 들여옴)
+        //   (예전 7차 코드는 노을 해 세기·그림자, 밤 Gamma·Gain·천정색이 주석 안에 들어가 적용되지 않았다 — 이번에 바로잡음)
         static void Presets()
         {
             void Set(DayPart part, Action<LightingPreset> f)
             {
                 var a = AssetDatabase.LoadAssetAtPath<LightingPreset>(StorySetup.PresetPath(part));
                 if (a == null) { Notes.Add($"프리셋 없음: {part}"); return; }
-                f(a); EditorUtility.SetDirty(a);
+                f(a);
+                var lut = AssetDatabase.LoadAssetAtPath<Texture2D>($"{LookdevSetup.LutDir}/LUT_Z1_{part}_URP32.png");
+                a.Lut = lut; a.LutContribution = 1f;
+                EditorUtility.SetDirty(a);
             }
             Color H(string h) { ColorUtility.TryParseHtmlString(h, out var c); return c; }
+            Color Tint(string hex, float k) { var c = H(hex); return Color.Lerp(new Color(0.5f, 0.5f, 0.5f), c, k); }   // 스플릿 톤 색(0.5 회색 = 중립)
+            var flat = new Vector4(1f, 1f, 1f, 0f);
             Set(DayPart.Dawn, a =>
             {
-                a.SunPitch = 10f; a.SunYaw = 70f; a.SunColor = H("#C9D3E0"); a.SunIntensity = 0.75f; a.ShadowStrength = 0.3f;     // D07: 걷는 면 L* ≥ 28(그늘진 시우네 앞 포함 — docs/10 9장 값(.35)보다 밝음)
-                a.AmbientSky = new Color(0.87f, 0.91f, 1.0f); a.AmbientEquator = new Color(0.78f, 0.82f, 0.92f); a.AmbientGround = new Color(0.60f, 0.61f, 0.68f);   // 2026-10-24 탐색 B: 골목 바닥이 화면에 더 많이 들어와 명륜3가 27.2 → 주변광 조금 ↑(푸른 기 유지)
-                a.Sky = H("#CBD1D6"); a.Fog = H("#A9B0B9"); a.FogStart = 40f; a.FogEnd = 300f;
-                a.SplitShadows = new Color(0.25f, 0.40f, 0.45f); a.SplitHighlights = H("#D8C9B8"); a.SplitBalance = -10f;
+                a.SunPitch = 10f; a.SunYaw = 70f; a.SunColor = H("#DCD8D0"); a.SunIntensity = 0.75f; a.ShadowStrength = 0.3f;     // 청회 #C9D3E0 → 따뜻한 회색
+                a.AmbientSky = new Color(0.98f, 0.97f, 0.95f); a.AmbientEquator = new Color(0.90f, 0.88f, 0.86f); a.AmbientGround = new Color(0.72f, 0.70f, 0.67f);   // 푸른 기 뺌(D07 새벽 ≥ 28 은 밝기 그대로)
+                a.Sky = H("#CBD1D6"); a.Fog = H("#B5B2AA"); a.FogStart = 40f; a.FogEnd = 300f;
+                a.SplitShadows = Tint("#6B5E55", 0.10f); a.SplitHighlights = Tint("#F3D9B0", 0.06f); a.SplitBalance = 0f;   // 그림자 청록 10% → 끔(회갈 아주 조금)
                 a.StreetLamps = a.SecurityLamps = a.Vending = a.ConvAwning = a.GukbapWindow = true; a.ShopSigns = false; a.LampIntensity = 7f; a.Windows = 0.15f;
-                a.Saturation = -4f; a.Contrast = 2f; a.Lift = new Vector4(0.98f, 1f, 1.04f, 0f); a.Gamma = new Vector4(0.98f, 1f, 1.04f, 0f); a.Gain = new Vector4(0.98f, 1f, 1.02f, 0f); a.Zenith = H("#9FA9BB");
-            });
-            Set(DayPart.Dusk, a =>
-            {
-                a.SunPitch = 8f; a.SunYaw = 70f; a.SunColor = H("#F4B27A");   // 7차: f02 처럼 주차장 B 카메라의 왼쪽 뒤에서(275 → 70) a.SunIntensity = 0.9f; a.ShadowStrength = 0.65f;
-                a.AmbientSky = new Color(0.72f, 0.60f, 0.56f); a.AmbientEquator = new Color(0.60f, 0.50f, 0.49f); a.AmbientGround = new Color(0.36f, 0.30f, 0.32f);
-                a.Sky = H("#EBC9A6"); a.Fog = H("#CFAC8A"); a.FogStart = 50f; a.FogEnd = 340f;
-                a.SplitShadows = new Color(0.30f, 0.22f, 0.38f); a.SplitHighlights = new Color(1.0f, 0.78f, 0.55f); a.SplitBalance = 10f;
-                a.Vending = a.ConvAwning = a.ShopSigns = true; a.StreetLamps = a.SecurityLamps = a.GukbapWindow = false; a.LampIntensity = 5f; a.Windows = 0.25f;
-                a.Saturation = 4f; a.Contrast = 4f; a.Lift = new Vector4(1f, 0.99f, 1.0f, 0f); a.Gamma = new Vector4(1.01f, 0.99f, 0.97f, 0f); a.Gain = new Vector4(1.03f, 0.98f, 0.92f, 0f); a.Zenith = H("#B59A96");
-            });
-            Set(DayPart.Night, a =>
-            {
-                a.SunPitch = 50f; a.SunYaw = 200f; a.SunColor = H("#8FA3C8"); a.SunIntensity = 0.30f; a.ShadowStrength = 0.3f;     // D07: 웅덩이 위 L* ≥ 22 · 웅덩이 사이 ≥ 8(완전한 검정 금지)
-                a.AmbientSky = new Color(0.42f, 0.42f, 0.50f); a.AmbientEquator = new Color(0.36f, 0.34f, 0.37f); a.AmbientGround = new Color(0.24f, 0.21f, 0.21f);   // 7차: 지면·벽 간접광 청회 → 중성 회갈(하늘·안개색은 그대로)
-                a.Sky = H("#2A3345"); a.Fog = H("#221F2A"); a.FogStart = 30f; a.FogEnd = 240f;   // 3차: 짙은 청회색 하늘 · 7차: 땅·건물에 덮이는 안개는 남색 #182030 → 어두운 중성 #221F2A(하늘 카드는 그대로)
-                a.SplitShadows = new Color(0.20f, 0.21f, 0.32f); a.SplitHighlights = new Color(0.98f, 0.72f, 0.44f); a.SplitBalance = -4f;   // 7차: 그늘 남색 덜고 빛 쪽 주황
-                a.StreetLamps = a.SecurityLamps = a.Vending = a.ConvAwning = a.GukbapWindow = a.ShopSigns = true; a.LampIntensity = 12f; a.Windows = 0.68f;   // 3차: 창문 불 ↑ · 7차: 프레임 f01·f08 처럼 더(0.55 → 0.68, 가로등 10 → 12)
-                a.Saturation = 0f; a.Contrast = 3f; a.Lift = new Vector4(1.0f, 0.99f, 1.02f, 0.006f);   // 7차: 들어올림 청색 1.06 → 1.02   // D07 밤 하한 6(주차장 아스팔트 5.0 → Lift +0.006; +0.02 는 18 로 너무 밝아짐) a.Gamma = new Vector4(1f, 1f, 1.03f, 0f); a.Gain = new Vector4(1.06f, 0.99f, 0.90f, 0f); a.Zenith = H("#151B2C");
+                a.Saturation = -6f; a.Contrast = 0f; a.Lift = new Vector4(1f, 1f, 1f, 0.03f); a.Gamma = flat; a.Gain = flat; a.Zenith = H("#9FA9BB");
+                a.Ink = H("#3E3A33"); a.HazeColor = H("#B9B4A8"); a.HazeStart = 10f; a.HazeEnd = 95f; a.HazeStrength = 0.45f; a.Dapple = 0.35f; a.PoolBoost = 1f;
             });
             Set(DayPart.Day, a =>
             {
-                // 낮: 스타일 프레임의 따뜻하고 채도 있는 팔레트(2차 패스) — 해·하늘은 그대로
-                a.Saturation = 8f; a.Contrast = 5f; a.Lift = new Vector4(1f, 0.99f, 0.98f, 0f); a.Gamma = new Vector4(1.01f, 1f, 0.97f, 0f); a.Gain = new Vector4(1.04f, 1.0f, 0.94f, 0f); a.Zenith = H("#D3C9B0");
+                a.SunPitch = 48f; a.SunYaw = 155f; a.SunColor = new Color(1f, 0.973f, 0.933f); a.SunIntensity = 1f; a.ShadowStrength = 0.5f;
+                a.AmbientSky = new Color(0.85f, 0.83f, 0.79f); a.AmbientEquator = new Color(0.74f, 0.71f, 0.68f); a.AmbientGround = new Color(0.53f, 0.51f, 0.48f);   // +38%(그늘 L* 41~47 쪽)
+                a.Sky = H("#EEE3D1"); a.Fog = H("#D4CEC3"); a.FogStart = 40f; a.FogEnd = 380f;
+                a.SplitShadows = Tint("#6B5E55", 0.12f); a.SplitHighlights = Tint("#F3D9B0", 0.10f); a.SplitBalance = 0f;   // 그림자 청록 7% → 회갈 4% 상당
+                a.Windows = 0f;
+                a.Saturation = -10f; a.Contrast = 0f; a.Lift = new Vector4(1f, 1f, 1f, 0.03f); a.Gamma = flat; a.Gain = new Vector4(1f, 1f, 1.02f, 0f); a.Zenith = H("#D3C9B0");   // 밝은 면 노랑 덜기
+                a.Ink = H("#423D33"); a.HazeColor = H("#D9D2C2"); a.HazeStart = 14f; a.HazeEnd = 120f; a.HazeStrength = 0.36f; a.Dapple = 1f; a.PoolBoost = 1f;
             });
-            Notes.Add("조명 프리셋 새벽·노을·밤 = docs/10 9장 값 + 색 보정(채도·대비·Lift/Gamma/Gain)·천정색");
+            Set(DayPart.Dusk, a =>
+            {
+                a.SunPitch = 8f; a.SunYaw = 70f; a.SunColor = H("#F4B27A"); a.SunIntensity = 0.9f; a.ShadowStrength = 0.55f;   // 7차: f02 처럼 주차장 B 카메라의 왼쪽 뒤에서(275 → 70)
+                a.AmbientSky = new Color(0.84f, 0.77f, 0.72f); a.AmbientEquator = new Color(0.73f, 0.67f, 0.64f); a.AmbientGround = new Color(0.49f, 0.44f, 0.42f);   // 모브 → 따뜻한 회색, 밝게
+                a.Sky = H("#EBC9A6"); a.Fog = H("#CDB8A2"); a.FogStart = 50f; a.FogEnd = 340f;
+                a.SplitShadows = Tint("#6B5E55", 0.08f); a.SplitHighlights = Tint("#F4B27A", 0.12f); a.SplitBalance = 20f;   // 그림자 보라 8% → 끔, 밝은 쪽 주황 8% → 4% 상당(높은 쪽에만)
+                a.Vending = a.ConvAwning = a.ShopSigns = true; a.StreetLamps = a.SecurityLamps = a.GukbapWindow = false; a.LampIntensity = 5f; a.Windows = 0.25f;
+                a.Saturation = -20f; a.Contrast = 0f; a.Lift = new Vector4(1f, 1f, 1f, 0.03f); a.Gamma = flat; a.Gain = flat; a.Zenith = H("#B59A96");   // 땅이 주황으로 물드는 것이 가장 큰 차이
+                a.Ink = H("#41352A"); a.HazeColor = H("#C8B3A0"); a.HazeStart = 12f; a.HazeEnd = 110f; a.HazeStrength = 0.40f; a.Dapple = 0.4f; a.PoolBoost = 1f;
+            });
+            Set(DayPart.Night, a =>
+            {
+                a.SunPitch = 50f; a.SunYaw = 200f; a.SunColor = H("#8FA3C8"); a.SunIntensity = 0.14f; a.ShadowStrength = 0.3f;     // D07: 웅덩이 위 L* ≥ 22 · 웅덩이 사이 ≥ 6(완전한 검정 금지)
+                a.AmbientSky = new Color(0.34f, 0.34f, 0.38f); a.AmbientEquator = new Color(0.27f, 0.26f, 0.27f); a.AmbientGround = new Color(0.12f, 0.11f, 0.11f);   // 땅 주변광 낮추고 웅덩이만 밝게
+                a.Sky = H("#2A3345"); a.Fog = H("#221F2A"); a.FogStart = 30f; a.FogEnd = 240f;
+                a.SplitShadows = Tint("#2E3550", 0.30f); a.SplitHighlights = new Color(0.98f, 0.72f, 0.44f); a.SplitBalance = -4f;   // 그림자 남색 12% → 5% 상당, 밝은 쪽 주황 유지
+                a.StreetLamps = a.SecurityLamps = a.Vending = a.ConvAwning = a.GukbapWindow = a.ShopSigns = true; a.LampIntensity = 6f; a.Windows = 0.68f;   // 룩데브: 12 → 6(점광이 길 전체를 밝은 베이지로 — 웅덩이는 LightPool ×2.5 가 그림)
+                a.Saturation = -8f; a.Contrast = 0f; a.Lift = new Vector4(1f, 1f, 1f, 0.012f); a.Gamma = flat; a.Gain = flat; a.Zenith = H("#151B2C");
+                a.Ink = H("#2F2722"); a.HazeColor = H("#2A2C3A"); a.HazeStart = 8f; a.HazeEnd = 75f; a.HazeStrength = 0.30f; a.Dapple = 0f; a.PoolBoost = 1.4f;   // 가로등 원 ×1.4, 가게 앞 사각 ×0.5(LightPool)
+            });
+            Notes.Add("조명 프리셋 = docs/10 9장(2026-10-26 정정: 그늘 따뜻한 회갈·채도↓·대비 0·Lift) + 먹선 색·깊이 안개·햇빛 얼룩·웅덩이 배율·LUT(docs/14 4장)");
         }
 
         // ───────────────────────── 7) 캐릭터 UTS 재질 = 스텐실 1 쓰기(화면 공간 외곽선이 캐릭터를 건너뜀)
@@ -676,6 +695,9 @@ namespace Haengin.EditorGame
             // 6차: 정류장 광고 · 맨땅 초록 · 밤 빛 웅덩이 · 계단 손잡이 · 간판 점검 · 그리기 합침
             Physics.SyncTransforms();
             Notes.Add(Pass6(d, zoneRoot, env, objs, Prefab));
+            // 룩데브 ⑤⑥(2026-10-26): 햇빛 얼룩·창틀 화분·빨래집게·전단·낙서·상자 — 합치기 뒤(Detail14_Z1 루트로 켜고 끔)
+            Physics.SyncTransforms();
+            Notes.Add(Pass8(d, zoneRoot, env, objs, Prefab));
             // 원경 카드
             SkyRig(zoneRoot);
             Physics.SyncTransforms();
@@ -1276,6 +1298,7 @@ namespace Haengin.EditorGame
             for (int i = 0; i < a.Length - 1; i++) if (string.Equals(a[i], name, StringComparison.OrdinalIgnoreCase)) return a[i + 1];
             return null;
         }
+        public static void EnsureFolderPublic(string path) => EnsureFolder(path);
         static void EnsureFolder(string path)
         {
             if (AssetDatabase.IsValidFolder(path)) return;

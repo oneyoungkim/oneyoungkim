@@ -42,8 +42,23 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_D14_Board_School
+    second: {fileID: 2100000, guid: abd88be16d627e54da39d37107923567, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_D14_ClassSign
+    second: {fileID: 2100000, guid: 496a4a39da7d37143ace400b75e6d854, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_Door_School
     second: {fileID: 2100000, guid: be3bac4c4ff93c24a90bb534e83b5e03, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Fabric_Navy
+    second: {fileID: 2100000, guid: a77c4a80b87e27f429a4a33a53c67fdd, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -99,6 +114,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: M_Plaster_Cream
     second: {fileID: 2100000, guid: 68bde1e64a2e67d46a9a625a5c5d35fb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Plastic_Blue
+    second: {fileID: 2100000, guid: 5339d705b931e084f9062ee61c2ba81f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Plastic_Red
+    second: {fileID: 2100000, guid: 86b0b5c5657d7c04c8ac396240fbbc7c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

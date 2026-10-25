@@ -285,11 +285,12 @@ namespace Haengin.EditorGame
             var sl = root.GetComponent<StageLights>() ?? root.gameObject.AddComponent<StageLights>();
             switch (key)
             {
-                case "Gukbap": sl.Ambient = new Color(0.55f, 0.53f, 0.49f); sl.Filter = new Color(1f, 0.97f, 0.92f); break;
-                case "Home": sl.Ambient = new Color(0.58f, 0.55f, 0.49f); sl.Filter = new Color(1f, 0.96f, 0.90f); break;
+                case "Gukbap": sl.Ambient = new Color(0.55f, 0.53f, 0.49f); sl.Filter = new Color(1f, 0.97f, 0.92f); sl.DawnAmbient = 0.72f; break;   // 새벽 주방은 어둡게(프레임 s01)
+                case "Home": sl.Ambient = new Color(0.58f, 0.55f, 0.49f); sl.Filter = new Color(1f, 0.96f, 0.90f); sl.NightAmbient = 0.38f; sl.DawnAmbient = 0.7f; break;   // 룩데브: 밤엔 스탠드·창빛만(프레임 s04)
                 case "Conv": sl.Ambient = new Color(0.58f, 0.60f, 0.61f); sl.Filter = new Color(0.96f, 0.99f, 1f); break;
                 default: sl.Ambient = new Color(0.64f, 0.63f, 0.60f); sl.Filter = new Color(1f, 0.99f, 0.96f); break;
             }
+            sl.Lut = LookdevSetup.Lut(key);     // 룩데브(docs/14 4-1): 장소별 LUT(교실에서 '무대' LUT 하나가 그늘을 벌리던 것 — 3-4)
             // ② 충돌 상자
             var colRoot = new GameObject("Colliders").transform; colRoot.SetParent(root, false);
             int cols = 0;

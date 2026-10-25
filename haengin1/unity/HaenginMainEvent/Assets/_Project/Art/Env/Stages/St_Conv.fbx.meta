@@ -27,6 +27,21 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_D14_Aisle_Signs
+    second: {fileID: 2100000, guid: 167ba3632acd72c419f42234f2e9a74d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_D14_POP_Strip
+    second: {fileID: 2100000, guid: c84a2fca31ad39845b936b57a52b0d33, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_D14_Promo_Conv
+    second: {fileID: 2100000, guid: ae8b5811e14f0dc4ba9279f9dd5d1a54, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_Fluor_Panel
     second: {fileID: 2100000, guid: fe0392f9b5275894f8365b0afdb2d7b5, type: 2}
   - first:
@@ -57,6 +72,21 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_Paper_Blue
+    second: {fileID: 2100000, guid: 7277b9f8be46c3d4399faf434170a478, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Paper_Green
+    second: {fileID: 2100000, guid: 8d1e50ff785f6424293b6c6c8a5bc9eb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Paper_Yellow
+    second: {fileID: 2100000, guid: 8a227b8cd22c78f4d9e37c24d8db9c5e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_Plaster_Cream
     second: {fileID: 2100000, guid: 68bde1e64a2e67d46a9a625a5c5d35fb, type: 2}
   - first:
@@ -64,6 +94,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: M_Plastic_Blue
     second: {fileID: 2100000, guid: 5339d705b931e084f9062ee61c2ba81f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Plastic_Red
+    second: {fileID: 2100000, guid: 86b0b5c5657d7c04c8ac396240fbbc7c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

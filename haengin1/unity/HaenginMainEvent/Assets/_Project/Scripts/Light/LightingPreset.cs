@@ -37,5 +37,14 @@ namespace Haengin
         [Range(-100f, 100f)] public float Contrast = -6f;
         [Tooltip("Lift(어두운 쪽)·Gamma(중간)·Gain(밝은 쪽) — xyz 색, w 전체")] public Vector4 Lift = new Vector4(1f, 1f, 1f, 0f), Gamma = new Vector4(1f, 1f, 1f, 0f), Gain = new Vector4(1f, 1f, 1f, 0f);
         [Tooltip("하늘 천정 색(원경 카드 그라데이션 위쪽)")] public Color Zenith = new Color(0.86f, 0.82f, 0.74f);
+        [Header("룩데브(docs/14 4장, 2026-10-26)")]
+        [Tooltip("시간대 LUT(URP Color Lookup 띠 1024×32, sRGB 끔·읽기 켬) — 필름 볼륨 맨 끝(HDR 등급 모드: 내부 등급 뒤)")] public Texture2D Lut;
+        [Range(0f, 1f)] public float LutContribution = 1f;
+        [Tooltip("먹선 색(시간대에 물들지 않게 — 프레임 선 색 실측, sRGB)")] public Color Ink = new Color(0.259f, 0.239f, 0.200f);
+        [Tooltip("깊이 안개 색(sRGB) · 시작–끝 m · 세기")] public Color HazeColor = new Color(0.851f, 0.824f, 0.761f);
+        public float HazeStart = 40f, HazeEnd = 220f;
+        [Range(0f, 1f)] public float HazeStrength = 0.3f;
+        [Tooltip("땅 햇빛 얼룩(잎 그림자 데칼) 세기 — 낮 1, 새벽·노을 약하게, 밤 0")] [Range(0f, 1f)] public float Dapple = 1f;
+        [Tooltip("밤 빛 웅덩이 세기 배율(LightPool)")] public float PoolBoost = 1f;
     }
 }

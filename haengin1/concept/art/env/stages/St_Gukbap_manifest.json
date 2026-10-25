@@ -45,6 +45,59 @@
    "texture": "concept/art/env/textures/M_Concrete.png",
    "tiling": 0.4167
   },
+  "M_D14_Calendar_3": {
+   "color": "#F4F0E6",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "달력 3월(국밥집)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Calendar_3.png",
+   "tiling": 1.0
+  },
+  "M_D14_Menu_Gukbap": {
+   "color": "#C9A070",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "국밥집 메뉴판(칸 7)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Menu_Gukbap.png",
+   "tiling": 1.0
+  },
+  "M_D14_Origin_Gukbap": {
+   "color": "#E2E8E2",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "원산지 표시",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Origin_Gukbap.png",
+   "tiling": 1.0
+  },
+  "M_D14_Poster_Gukbap": {
+   "color": "#E8DCC4",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "국밥집 포스터",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Poster_Gukbap.png",
+   "tiling": 1.0
+  },
+  "M_D14_TV_News": {
+   "color": "#365070",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "TV 화면(뉴스)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_TV_News.png",
+   "tiling": 1.0
+  },
+  "M_Fabric_Navy": {
+   "color": "#2C3442",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "교복 상의(옷걸이)·책가방",
+   "owner": "stage",
+   "tiling": 1.0
+  },
   "M_Fluor_Panel": {
    "color": "#F2F5EF",
    "tile": 1.0,
@@ -68,14 +121,6 @@
    "owner": "conv",
    "note": "상가 새시·셔터 박스·간판 틀·빗물관·실외기 받침",
    "texture": "concept/art/env/textures/M_Metal_Grey.png",
-   "tiling": 1.0
-  },
-  "M_Paper_Blue": {
-   "color": "#8FA6C2",
-   "tile": 1.0,
-   "uv": "world",
-   "note": "게시물·메뉴판 칸",
-   "owner": "stage",
    "tiling": 1.0
   },
   "M_Paper_Green": {
@@ -241,12 +286,13 @@
   }
  },
  "tris": {
-  "Shell": 844,
+  "Shell": 762,
   "Fixtures": 176,
   "Kitchen": 2486,
-  "Hall": 1620
+  "Hall": 1622,
+  "Detail14": 2290
  },
- "tris_total": 5126,
+ "tris_total": 7336,
  "sockets": [
   {
    "name": "Prop_gamasot_stove_01",
@@ -874,8 +920,8 @@
     1.0
    ],
    "info": {
-    "color": "#FFE9C4",
-    "intensity": 2.2,
+    "color": "#FFD9A2",
+    "intensity": 2.3,
     "range": 7.0,
     "light": "point"
    }
@@ -894,8 +940,8 @@
     1.0
    ],
    "info": {
-    "color": "#FFE9C4",
-    "intensity": 1.6,
+    "color": "#FFD9A2",
+    "intensity": 1.7,
     "range": 5.5,
     "light": "point"
    }
@@ -1358,5 +1404,5 @@
    "Default"
   ]
  ],
- "fbx_bytes": 211420
+ "fbx_bytes": 280924
 }

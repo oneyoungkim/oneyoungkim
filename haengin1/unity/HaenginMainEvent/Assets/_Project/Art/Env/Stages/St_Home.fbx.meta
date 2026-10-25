@@ -37,6 +37,21 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_D14_Calendar_Home
+    second: {fileID: 2100000, guid: 000786a28cb030146b4629cb35bdd1dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_D14_Drawing_Haneul
+    second: {fileID: 2100000, guid: ebf6016071db60a4c930be01b233b4c7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_D14_Poster_Gym
+    second: {fileID: 2100000, guid: bd6b34c4094af4640a1b38a9559a7edf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_Fabric_Futon
     second: {fileID: 2100000, guid: 06a9f2d9c62f31b41a4cfb0c08da99d8, type: 2}
   - first:
@@ -99,6 +114,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: M_Plaster_Cream
     second: {fileID: 2100000, guid: 68bde1e64a2e67d46a9a625a5c5d35fb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Plastic_Blue
+    second: {fileID: 2100000, guid: 5339d705b931e084f9062ee61c2ba81f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

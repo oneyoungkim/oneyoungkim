@@ -144,6 +144,7 @@ namespace Haengin.EditorGame
             // ⑤ 조명(5-2): 형광등 14 + 계단 1(Spot 아래로, 발광 관) · 케이지 스포트 4 · 사무실 1
             var lightsGo = new GameObject("Lights"); lightsGo.transform.SetParent(root.transform, false);
             var lights = lightsGo.AddComponent<GymLights>();
+            lights.Lut = LookdevSetup.Lut("Gym");     // 룩데브(docs/14): 체육관 LUT(그늘 회갈은 GymLights 볼륨)
             lights.FluorMat = Mat("M_Fluorescent");
             int fl = 0;
             foreach (var so in sockList)

@@ -71,11 +71,37 @@
    "owner": "stage",
    "tiling": 1.0
   },
+  "M_D14_Board_School": {
+   "color": "#B98A5A",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "교실 게시판 종이",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_Board_School.png",
+   "tiling": 1.0
+  },
+  "M_D14_ClassSign": {
+   "color": "#EEECE4",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "학급 표지 2-3",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_D14_ClassSign.png",
+   "tiling": 1.0
+  },
   "M_Door_School": {
    "color": "#A8ADA4",
    "tile": 1.0,
    "uv": "world",
    "note": "학교 미닫이문(회녹)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Fabric_Navy": {
+   "color": "#2C3442",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "교복 상의(옷걸이)·책가방",
    "owner": "stage",
    "tiling": 1.0
   },
@@ -170,6 +196,22 @@
    "texture": "concept/art/env/textures/M_Plaster_Cream.png",
    "tiling": 0.5
   },
+  "M_Plastic_Blue": {
+   "color": "#4E6E9A",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "파란 플라스틱(폐기 바구니)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Plastic_Red": {
+   "color": "#B5473C",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "빨간 플라스틱(김치통 뚜껑·바구니)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
   "M_Steel_Frame": {
    "color": "#7D8287",
    "tile": 1.0,
@@ -226,9 +268,10 @@
  "tris": {
   "Shell": 3034,
   "Fixtures": 360,
-  "Classroom": 1784
+  "Classroom": 1784,
+  "Detail14": 1932
  },
- "tris_total": 5178,
+ "tris_total": 7110,
  "sockets": [
   {
    "name": "Prop_school_desk_chair_01",
@@ -2288,5 +2331,5 @@
    "Default"
   ]
  ],
- "fbx_bytes": 190204
+ "fbx_bytes": 229932
 }

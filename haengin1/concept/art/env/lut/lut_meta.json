@@ -1,194 +1,176 @@
 {
  "LUT_Z1_Night": {
-  "group": "Night",
+  "group": "Z1_Night",
+  "fit_variant": "detail",
   "fit_pairs": [
    [
-    "shot_1_night.png",
+    "z1_shot_1_night",
     "f01_hoomun_street_night.png"
+   ],
+   [
+    "z1_shot_7_night",
+    "f08_convenience_night.png"
    ]
   ],
   "size": 33,
-  "strength": 0.85,
-  "grid_smooth_sigma": 0.9,
-  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
-  "shadow_target_lab": [
-   33.411224365234375,
-   5.573215007781982,
-   4.901523113250732
-  ],
-  "lit_target_lab": [
-   67.67575073242188,
-   7.372339248657227,
-   23.168956756591797
-  ],
-  "line_color_lab": [
-   16.400373458862305,
-   2.6950032711029053,
-   4.552443981170654
-  ]
+  "strength": 0.35,
+  "grid_smooth_sigma": 1.1,
+  "space": "sRGB(display) → sRGB, URP HDR 등급 모드(내부 등급 뒤에 적용)"
  },
  "LUT_Z1_Dusk": {
-  "group": "Dusk",
+  "group": "Z1_Dusk",
+  "fit_variant": "detail",
   "fit_pairs": [
    [
-    "shot_2.png",
+    "z1_shot_2",
     "f02_parking_sunset.png"
    ]
   ],
   "size": 33,
-  "strength": 0.85,
-  "grid_smooth_sigma": 0.9,
-  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
-  "shadow_target_lab": [
-   41.08073425292969,
-   5.702114105224609,
-   8.677831649780273
-  ],
-  "lit_target_lab": [
-   67.19052124023438,
-   7.972345352172852,
-   20.26169776916504
-  ],
-  "line_color_lab": [
-   22.987932205200195,
-   3.645310640335083,
-   8.433338165283203
-  ]
+  "strength": 0.9,
+  "grid_smooth_sigma": 1.1,
+  "space": "sRGB(display) → sRGB, URP HDR 등급 모드(내부 등급 뒤에 적용)"
  },
  "LUT_Z1_Dawn": {
-  "group": "Dawn",
+  "group": "Z1_Dawn",
+  "fit_variant": "detail",
   "fit_pairs": [
    [
-    "shot_3.png",
+    "z1_shot_3",
     "f03_alley_stairs_dawn.png"
    ],
    [
-    "shot_4.png",
+    "z1_shot_4",
     "f05_waryong_climb_dawn.png"
    ]
   ],
   "size": 33,
-  "strength": 0.85,
-  "grid_smooth_sigma": 0.9,
-  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
-  "shadow_target_lab": [
-   35.86024570465088,
-   3.6108027696609497,
-   5.663062214851379
-  ],
-  "lit_target_lab": [
-   70.1238899230957,
-   3.2244895696640015,
-   10.858983755111694
-  ],
-  "line_color_lab": [
-   24.72732925415039,
-   0.1330651193857193,
-   5.244924902915955
-  ]
+  "strength": 0.9,
+  "grid_smooth_sigma": 1.1,
+  "space": "sRGB(display) → sRGB, URP HDR 등급 모드(내부 등급 뒤에 적용)"
  },
  "LUT_Z1_Day": {
-  "group": "Day",
+  "group": "Z1_Day",
+  "fit_variant": "detail",
   "fit_pairs": [
    [
-    "shot_5.png",
+    "z1_shot_8",
+    "f04_siwoo_house_morning.png"
+   ],
+   [
+    "z1_shot_5",
     "f06_fortress_trail_day.png"
    ],
    [
-    "shot_8.png",
+    "z1_shot_6",
     "f04_siwoo_house_morning.png"
    ]
   ],
   "size": 33,
-  "strength": 0.85,
-  "grid_smooth_sigma": 0.9,
-  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
-  "shadow_target_lab": [
-   44.15229034423828,
-   4.091328263282776,
-   10.238315105438232
-  ],
-  "lit_target_lab": [
-   80.11383819580078,
-   3.5206665992736816,
-   16.409296989440918
-  ],
-  "line_color_lab": [
-   25.913460731506348,
-   0.5129623562097549,
-   7.116076707839966
-  ]
+  "strength": 0.9,
+  "grid_smooth_sigma": 1.1,
+  "space": "sRGB(display) → sRGB, URP HDR 등급 모드(내부 등급 뒤에 적용)"
  },
- "LUT_Gym": {
-  "group": "Gym",
+ "LUT_Gukbap": {
+  "group": "Gukbap",
+  "fit_variant": "detail",
   "fit_pairs": [
    [
-    "g01.png",
-    "g01_stairs_overview.png"
-   ],
-   [
-    "g02.png",
-    "g02_cage_sparring.png"
-   ]
-  ],
-  "size": 33,
-  "strength": 0.85,
-  "grid_smooth_sigma": 0.9,
-  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
-  "shadow_target_lab": [
-   29.26651954650879,
-   1.9051567912101746,
-   1.9786737561225891
-  ],
-  "lit_target_lab": [
-   67.2247543334961,
-   2.0082614421844482,
-   10.91948938369751
-  ],
-  "line_color_lab": [
-   17.547283172607422,
-   1.3625589609146118,
-   2.452384829521179
-  ]
- },
- "LUT_Stage": {
-  "group": "Stage",
-  "fit_pairs": [
-   [
-    "stage_s02.png",
-    "s02_gukbap_hall_evening.png"
-   ],
-   [
-    "stage_s01.png",
+    "st_s01",
     "s01_gukbap_kitchen_dawn.png"
    ],
    [
-    "stage_s03.png",
+    "st_s02",
+    "s02_gukbap_hall_evening.png"
+   ]
+  ],
+  "size": 33,
+  "strength": 0.75,
+  "grid_smooth_sigma": 1.1,
+  "space": "sRGB(display) → sRGB, URP HDR 등급 모드(내부 등급 뒤에 적용)"
+ },
+ "LUT_Home": {
+  "group": "Home",
+  "fit_variant": "detail",
+  "fit_pairs": [
+   [
+    "st_s03",
     "s03_home_morning.png"
    ],
    [
-    "stage_s04.png",
+    "st_s04",
     "s04_home_night.png"
    ]
   ],
   "size": 33,
-  "strength": 0.85,
-  "grid_smooth_sigma": 0.9,
-  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
-  "shadow_target_lab": [
-   29.12214994430542,
-   6.60580039024353,
-   5.098544746637344
+  "strength": 0.75,
+  "grid_smooth_sigma": 1.1,
+  "space": "sRGB(display) → sRGB, URP HDR 등급 모드(내부 등급 뒤에 적용)"
+ },
+ "LUT_Conv": {
+  "group": "Conv",
+  "fit_variant": "detail",
+  "fit_pairs": [
+   [
+    "st_s05",
+    "s05_conv_aisle_night.png"
+   ],
+   [
+    "st_s06",
+    "s06_conv_counter_stock.png"
+   ]
   ],
-  "lit_target_lab": [
-   57.1787691116333,
-   8.58043885231018,
-   19.736204862594604
+  "size": 33,
+  "strength": 0.9,
+  "grid_smooth_sigma": 1.1,
+  "space": "sRGB(display) → sRGB, URP HDR 등급 모드(내부 등급 뒤에 적용)"
+ },
+ "LUT_School": {
+  "group": "School",
+  "fit_variant": "detail",
+  "fit_pairs": [
+   [
+    "st_s07",
+    "s07_classroom_backdoor.png"
+   ],
+   [
+    "st_s08",
+    "s08_classroom_front.png"
+   ]
   ],
-  "line_color_lab": [
-   17.75733780860901,
-   4.263683319091797,
-   4.216736078262329
-  ]
+  "size": 33,
+  "strength": 0.9,
+  "grid_smooth_sigma": 1.1,
+  "space": "sRGB(display) → sRGB, URP HDR 등급 모드(내부 등급 뒤에 적용)"
+ },
+ "LUT_Gym": {
+  "group": "Gym",
+  "fit_variant": "detail",
+  "fit_pairs": [
+   [
+    "gym_g01",
+    "g01_stairs_overview.png"
+   ],
+   [
+    "gym_g02",
+    "g02_cage_sparring.png"
+   ],
+   [
+    "gym_g03",
+    "g03_mats_bags.png"
+   ],
+   [
+    "gym_g04",
+    "g04_weight_corner.png"
+   ],
+   [
+    "gym_g06",
+    "g06_night_coaching.png"
+   ]
+  ],
+  "size": 33,
+  "strength": 0.9,
+  "grid_smooth_sigma": 1.1,
+  "space": "sRGB(display) → sRGB, URP HDR 등급 모드(내부 등급 뒤에 적용)"
  }
 }

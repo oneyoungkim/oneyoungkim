@@ -77,6 +77,7 @@ namespace Haengin
         readonly float[] devV = new float[12], devT = new float[12];
         int devI;
         bool hardBraked;
+        bool standCrank; float crankUn, standBase;
 
         void Awake()
         {
@@ -116,6 +117,10 @@ namespace Haengin
             prevY = feet.y;
             enabled = true;
         }
+
+        /// 페달 클립(BikeRider — docs/14 6-4)이 출발·정지·관성 동안 크랭크 각을 곡선대로 정함(그 프레임만 — 다음 프레임은 여기서 이어 감)
+        public void SetCrank(float deg) { Crank = Mathf.Repeat(deg, 360f); }
+        public void ReleaseCrank() { }
 
         /// 코스·장면이 끝날 때만(입력에는 없음)
         public void Dismount()
@@ -273,8 +278,18 @@ namespace Haengin
             Soup?.Tick(dt, LateralAccel, SlopeDeg <= DownFrom ? Speed : 0f);
 
             // 7) 크랭크(페달질 시각화): 앉기·엉덩이 = 뒷바퀴 굴림에 맞춘 회전(기어비 2.2), 일어서기 = 박자마다 반 바퀴
-            if (Posture == BikePosture.Stand) Crank = Mathf.MoveTowardsAngle(Crank, (Beats * 180f) % 360f, 720f * dt);
-            else if (pedal > 0.01f || Speed > 0.1f) Crank = Mathf.Repeat(Crank + Speed / (2f * Mathf.PI * 0.30f) * 360f / 2.2f * dt * (pedal > 0.01f ? 1f : 0f), 360f);
+            // 2026-10-26: 예전엔 MoveTowardsAngle(Crank, Beats·180 % 360) 이라 0 ↔ 180 이 정반대여서 박자 두 번에 한 번은 뒤로 돌았다(페달 클립이 거꾸로 재생) → 풀린 각으로 늘 앞으로
+            if (Posture == BikePosture.Stand)
+            {
+                if (!standCrank) { standCrank = true; crankUn = Crank; standBase = Crank - Beats * 180f; }
+                crankUn = Mathf.MoveTowards(crankUn, standBase + Beats * 180f, 720f * dt);
+                Crank = Mathf.Repeat(crankUn, 360f);
+            }
+            else
+            {
+                standCrank = false;
+                if (pedal > 0.01f || Speed > 0.1f) Crank = Mathf.Repeat(Crank + Speed / (2f * Mathf.PI * 0.30f) * 360f / 2.2f * dt * (pedal > 0.01f ? 1f : 0f), 360f);
+            }
 
             // 8) 건네기(멈춰 있을 때만)
             if (handover && Stopped) Handover?.Invoke();

@@ -3,6 +3,8 @@
 //   빈 점 Saddle · GripL · GripR · FootDown(정차 때 왼발 땅 자리)
 // 바퀴 = 속도 ÷ 굴림 반지름(앞 0.309·뒤 0.298m)만큼 돌고, 크랭크 = BikeMotor.Crank, 기울기 = 조향 × 속도(최대 12°) + 일어서기 박자마다 좌우 8°.
 // 기울기는 플레이어 Visual 을 돌린다(자전거와 시우가 같이 기울게 — 타는 동안 BodyLean 은 꺼짐).
+// 2026-10-26(docs/14 6-4): 페달 클립을 쓰면(BikeRider) 박자 흔들기 대신 클립 기울기(ClipLean — 댄싱 8·sin(θ−35.5°)·출발/정지 곡선).
+//   애니메이터·IK 보다 먼저 크랭크·기울기를 놓으려고 Update 에서(LateUpdate 면 발 IK 가 한 프레임 전 페달을 따라가 1.7cm 어긋남).
 using UnityEngine;
 
 namespace Haengin
@@ -16,6 +18,9 @@ namespace Haengin
         /// 기울일 대상(플레이어 Visual)
         public Transform LeanRoot;
         public float Lean { get; private set; }
+        /// 페달 클립 기울기(BikeRider 가 씀) — UseClipLean 이면 박자 흔들기 대신
+        public float ClipLean { get; set; }
+        public bool UseClipLean { get; set; }
         public float Sway { get; private set; }
         public float WheelTurns { get; private set; }
 
@@ -41,7 +46,7 @@ namespace Haengin
             if (isActiveAndEnabled) Hook(true);
         }
 
-        void LateUpdate()
+        void Update()
         {
             if (Motor == null) return;
             float dt = Time.deltaTime;
@@ -57,7 +62,7 @@ namespace Haengin
             Lean = Mathf.MoveTowards(Lean, want, 40f * dt);
             swayTarget = Mathf.MoveTowards(swayTarget, 0f, 24f * dt);
             Sway = Mathf.MoveTowards(Sway, swayTarget, 60f * dt);
-            if (LeanRoot != null && Motor.Mounted) LeanRoot.localRotation = Quaternion.Euler(0f, 0f, Lean + Sway);
+            if (LeanRoot != null && Motor.Mounted) LeanRoot.localRotation = Quaternion.Euler(0f, 0f, Lean + (UseClipLean ? ClipLean : Sway));
         }
     }
 }

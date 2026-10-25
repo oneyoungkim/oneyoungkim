@@ -1,5 +1,8 @@
 # 배달 자전거 소품(concept/art/env/props/delivery_bicycle.glb — 삼각형 수프, 한 메시)을 주행용으로 나눈다(docs/09 2-6, 8단계 — 크레딧 0)
-# 사용: "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/bike_split.py -- <src.glb> <dst.fbx>
+# 사용: "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/bike_split.py -- <src.glb> <dst.fbx> [--saddle-up 0.12] [--crank 0.16]
+#   --saddle-up m : 안장·안장 기둥 윗부분을 m 만큼 곧게 올린다(기둥은 죔쇠 위에서 늘어남 — 뒤로 눕히면 배달통 앞면에 엉덩이가 닿아서 수직으로)
+#   --crank m     : 크랭크 팔 길이(BB → 페달 가운데)를 m 로(팔은 늘이고 페달은 통째로 옮김, 체인링·축은 그대로)
+#   2026-10-26 대표 결정(docs/14 8장 3번): 1.72m 시우에 작음 → --saddle-up 0.12 --crank 0.16 (원래 안장 BB 위 0.50m·크랭크 0.10m)
 # 결과 FBX(정면 = Unity +Z, 위 = +Y, 미터):
 #   Bike(빈 루트) ─ Frame(차체·바구니·배달통·흙받이·포크 — 움직이지 않음)
 #                 ├ WheelF / WheelR(앞·뒤 바퀴 — 원점 = 바퀴 축, 굴러감)
@@ -14,6 +17,10 @@ from mathutils import Vector
 
 argv = sys.argv[sys.argv.index('--') + 1:]
 src, dst = argv[0], argv[1]
+def _opt(k, d):
+    return float(argv[argv.index(k) + 1]) if k in argv else d
+SADDLE_UP = _opt('--saddle-up', 0.0)
+CRANK_LEN = _opt('--crank', 0.0)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=src)
 obj = [o for o in bpy.data.objects if o.type == 'MESH'][0]
@@ -90,8 +97,55 @@ print('PARTS', info['tris'])
 if os.environ.get('BIKE_PARTS'):
     np.save(os.environ['BIKE_PARTS'], part)
 
+# ───────────────────────── 치수 고치기(안장 높이·크랭크 길이) — 부위 판정은 위에서 원래 모양으로 끝냈다
+tri_of = np.full(len(co), -1, int)
+for ti, tv in enumerate(tris):
+    tri_of[tv] = ti
+info['resize'] = dict(saddle_up=SADDLE_UP, crank=CRANK_LEN or crank_r, crank_orig=crank_r)
+if SADDLE_UP > 0:
+    # 안장 + 안장 기둥: 죔쇠(z 0.672) 위, 배달통·짐받이(y ≥ 0.36) 앞, 몸통 폭 안. 기둥은 0.672 → 0.74 사이에서 서서히(늘어남), 그 위는 통째로
+    vy, vz, vx = co[:, 1], co[:, 2], np.abs(co[:, 0])
+    reg = (vz > 0.672) & (vy > 0.05) & (vy < 0.36) & (vx < 0.16)
+    tri_reg = np.zeros(len(tris), bool)
+    tri_reg[np.unique(tri_of[reg])] = True
+    vreg = tri_reg[tri_of] & (vz > 0.66)
+    t = np.clip((vz - 0.672) / (0.74 - 0.672), 0, 1)
+    w = t * t * (3 - 2 * t)
+    co[vreg, 2] += SADDLE_UP * w[vreg]
+    info['resize']['saddle_verts'] = int(vreg.sum())
+if CRANK_LEN > 0 and abs(CRANK_LEN - crank_r) > 1e-4:
+    k = CRANK_LEN / crank_r
+    vpart = part[tri_of]
+    vx = co[:, 0]
+    n_arm = n_ped = 0
+    for side, pc in ((-1, pl), (1, pr)):
+        u = np.array([pc[1] - bb[1], pc[2] - bb[2]]); u /= np.linalg.norm(u)
+        sel = (vpart == 3) & (np.sign(vx) == side) & (np.abs(vx) >= 0.06)
+        # 페달 = 크랭크 팔 끝 바깥(|x| > 0.12 — 삼각형 단위로) → 통째로, 팔 = 그 사이 → BB 쪽은 그대로·끝으로 갈수록 늘림
+        ped_tri = np.zeros(len(tris), bool)
+        ped_tri[np.unique(tri_of[sel & (np.abs(vx) > 0.12)])] = True
+        ped = sel & ped_tri[tri_of]
+        arm = sel & ~ped
+        d = co[:, 1:3] - bb[1:3]
+        tt = d @ u
+        co[ped, 1:3] += np.outer(np.full(ped.sum(), CRANK_LEN - crank_r), u)
+        grow = arm & (tt > 0)
+        co[grow, 1:3] += np.outer(tt[grow] * (k - 1), u)
+        n_arm += int(grow.sum()); n_ped += int(ped.sum())
+        pc[1] += (CRANK_LEN - crank_r) * u[0]; pc[2] += (CRANK_LEN - crank_r) * u[1]
+    crank_r = CRANK_LEN
+    info['BB'] = dict(y=float(bb[1]), z=float(bb[2]), crank=crank_r, pedalL=pl.tolist(), pedalR=pr.tolist())
+    info['resize']['crank_arm_verts'] = n_arm; info['resize']['pedal_verts'] = n_ped
+if SADDLE_UP > 0 or CRANK_LEN > 0:
+    for i, v in enumerate(me.vertices):
+        v.co = Vector(co[i])
+    me.update()
+    cen = co[tris].mean(1)
+    ax = np.abs(cen[:, 0])
+    print('RESIZE', info['resize'], 'BB', info['BB'])
+
 # 안장 윗면·손잡이·발 디딜 자리
-sad = cen[(cen[:, 2] > 0.7) & (cen[:, 2] < 0.9) & (cen[:, 1] > 0.05) & (cen[:, 1] < 0.35) & (ax < 0.12)]
+sad = cen[(cen[:, 2] > 0.7 + SADDLE_UP) & (cen[:, 2] < 0.9 + SADDLE_UP) & (cen[:, 1] > 0.05) & (cen[:, 1] < 0.35) & (ax < 0.12)]
 saddle = np.array([0.0, float(np.median(sad[:, 1])), float(sad[:, 2].max())])
 gl = cen[(cen[:, 0] < -0.3)]
 gr = cen[(cen[:, 0] > 0.3)]

@@ -1,6 +1,9 @@
 // 행인1의 메인이벤트 — 배달 자전거 설정(docs/09_M3_버티컬슬라이스_설계.md 2-6, 6-1 8단계)
 // ① 자전거 모델: Art/Bike/DeliveryBike.fbx(tools/bike_split.py — 소품 delivery_bicycle.glb 를 차체·바퀴살·크랭크로 나눔) + 소품 재질 → Prefabs/Bike/DeliveryBike.prefab(BikeVisual)
 // ② 애니메이터: Anim/Siwoo.controller 바닥 층에 'Ride' 상태(동작 33 Chair_Sit_Idle_M = Art/Clips/M3/ChairSit.fbx) + IK 패스
+//    2026-10-26(docs/14 6-4): 페달 클립 4종(concept/art/3d/anim/bike — tools/bike_anim.py, 자전거 안장 +12cm·크랭크 0.16m 뒤) → Art/Clips/Bike/ Humanoid
+//    + 상태 BikeCruise·BikeClimb(Motion Time = BikePhase) · BikeCoast · BikeStart·BikeStop(Motion Time = BikeT, startstop 나눔) — 발 IK 켬
+//    + 곡선 에셋 Settings/BikeClips.asset(bike_curves.json — θ·기울기·IK 목표). 'Ride'(의자 앉기)는 예전 판 호환으로 남김
 // ③ 플레이어 프리팹(M1Setup.BuildPlayerPrefab 이 부름): BikeMotor(꺼 둠) · BikeInput · SoupGauge, 의상 모델마다 BikeRider
 // ④ Zone1(M1Setup.AttachRig 가 부름): 루트 'Bike' = BikeCourse(1화 코스·정차 2·끝) · CM_Bike(BikeCam) · 주행 화면(BikeHud) · 자전거(꺼 둠) · 태오(PathRunner, 꺼 둠)
 // batchmode: -executeMethod Haengin.EditorGame.BikeSetup.Build (에셋 → 플레이어 프리팹 → Zone1 다시 만들기)
@@ -26,6 +29,8 @@ namespace Haengin.EditorGame
         public const string BikePrefab = Root + "/Prefabs/Bike/DeliveryBike.prefab";
         public const string BikeMat = Root + "/Materials/Env/Props/M_P_delivery_bicycle.mat";
         public const string SitFbx = Root + "/Art/Clips/M3/ChairSit.fbx";
+        public const string ClipDir = Root + "/Art/Clips/Bike", ClipsAsset = Root + "/Settings/BikeClips.asset";
+        static string SrcClips => Path.GetFullPath(Path.Combine(Application.dataPath, "../../../concept/art/3d/anim/bike"));
 
         /// 1화 코스(x, z — 높이는 실행 때 땅에서): 국밥집 앞 → 경비실(정차 0) → 와룡공원길 → 와룡 오르막 → 꼭대기 집(정차 1) → 같은 길 → 성균관로 동쪽 끝
         static readonly Vector2[] RouteXZ =
@@ -66,6 +71,7 @@ namespace Haengin.EditorGame
         {
             BikeModel();
             EnsureRide();
+            PedalClips();
         }
 
         // ───────────────────────── ① 자전거 모델
@@ -137,6 +143,19 @@ namespace Haengin.EditorGame
                     anchors = "json 에서 만듦";
                 }
             }
+            // 2026-10-26(docs/14 6-4): 페달 빈 점은 Crank 메시의 자식이라 FBX 를 들여오면 자리가 틀어진다(Unity 실측 — 크랭크 축에서 40cm 뒤·반지름도 다름, bike_anim 의 함정 ①과 같음).
+            //   발 IK 가 이 빈 점을 따라가 발이 페달에서 30cm 넘게 떨어졌다 → json(BB·페달 가운데)으로 크랭크 기준 자리를 늘 다시 놓는다.
+            if (File.Exists(json) && MiniJson.Parse(File.ReadAllText(json)) is System.Collections.Generic.Dictionary<string, object> jj && v.Crank != null && v.PedalL != null && v.PedalR != null)
+            {
+                Vector3 U(System.Collections.Generic.List<object> p) => new Vector3(-Convert.ToSingle(p[0]), Convert.ToSingle(p[2]), -Convert.ToSingle(p[1]));
+                var bbj = (System.Collections.Generic.Dictionary<string, object>)jj["BB"];
+                var pa = U((System.Collections.Generic.List<object>)bbj["pedalL"]); var pb = U((System.Collections.Generic.List<object>)bbj["pedalR"]);
+                var left = pa.x < pb.x ? pa : pb; var right = pa.x < pb.x ? pb : pa;
+                var crankRot = v.Crank.localRotation; v.Crank.localRotation = Quaternion.identity;
+                v.PedalL.position = inst.transform.TransformPoint(left); v.PedalR.position = inst.transform.TransformPoint(right);
+                v.Crank.localRotation = crankRot;
+                anchors += $" · 페달 json(L {v.Crank.InverseTransformPoint(v.PedalL.position):F3} R {v.Crank.InverseTransformPoint(v.PedalR.position):F3} · 크랭크 축 {v.Crank.localPosition:F3})";
+            }
             Debug.Log($"{Tag} 자전거 부품: 앞바퀴 {(v.WheelF != null ? v.WheelF.localPosition.ToString("F2") : "없음")} · 뒷바퀴 {(v.WheelR != null ? v.WheelR.localPosition.ToString("F2") : "없음")} · 크랭크 {(v.Crank != null ? v.Crank.localPosition.ToString("F2") : "없음")} · 기준점 {anchors} · 자식 [{string.Join(",", inst.GetComponentsInChildren<Transform>(true).Select(t => t.name))}]");
             Directory.CreateDirectory(Path.GetDirectoryName(BikePrefab));
             var b0 = new Bounds(inst.transform.position, Vector3.zero);
@@ -166,6 +185,73 @@ namespace Haengin.EditorGame
             Debug.Log($"{Tag} {CharSetup.SiwooCtrl}: 'Ride' 상태(ChairSit {sit.length:F2}s) · 바닥 층 IK 패스 켬");
         }
 
+        // ───────────────────────── ②-2 페달 클립(docs/14 6-4)
+        static void PedalClips()
+        {
+            string src = SrcClips;
+            if (!Directory.Exists(src)) { Debug.LogWarning($"{Tag} 페달 클립 원본 없음: {src}"); return; }
+            string proj = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            Directory.CreateDirectory(Path.Combine(proj, ClipDir));
+            foreach (var n in new[] { "cruise", "climb", "coast", "startstop" })
+                File.Copy(Path.Combine(src, $"siwoo_bike_{n}.fbx"), Path.Combine(proj, ClipDir, $"siwoo_bike_{n}.fbx"), true);
+            AssetDatabase.Refresh();
+            CharSetup.Human($"{ClipDir}/siwoo_bike_cruise.fbx", BikeRider.CruiseState, -1, -1);
+            CharSetup.Human($"{ClipDir}/siwoo_bike_climb.fbx", BikeRider.ClimbState, -1, -1);
+            CharSetup.Human($"{ClipDir}/siwoo_bike_coast.fbx", BikeRider.CoastState, -1, -1);
+            var json = MiniJson.Parse(File.ReadAllText(Path.Combine(src, "bike_curves.json"))) as System.Collections.Generic.Dictionary<string, object> ?? throw new Exception("bike_curves.json 읽기 실패");
+            var clipsJ = (System.Collections.Generic.Dictionary<string, object>)json["clips"];
+            var ssJ = (System.Collections.Generic.Dictionary<string, object>)clipsJ["startstop"];
+            var segs = (System.Collections.Generic.Dictionary<string, object>)ssJ["segments"];
+            int Seg(string k, int i) => Convert.ToInt32(((System.Collections.Generic.List<object>)segs[k])[i]);
+            ModelImporterClipAnimation Sub(string name, int a, int b) => new ModelImporterClipAnimation
+            {
+                name = name, firstFrame = a, lastFrame = b, loopTime = false, loopPose = false, wrapMode = WrapMode.ClampForever,
+                lockRootRotation = true, keepOriginalOrientation = true, lockRootHeightY = true, keepOriginalPositionY = true, heightFromFeet = false,
+                lockRootPositionXZ = true, keepOriginalPositionXZ = true, maskType = ClipAnimationMaskType.None,
+            };
+            CharSetup.Human($"{ClipDir}/siwoo_bike_startstop.fbx", BikeRider.StartState, -1, -1, false,
+                new[] { Sub(BikeRider.StartState, Seg("start", 0), Seg("start", 1)), Sub(BikeRider.StopState, Seg("stop", 0), Seg("stop", 1)) });
+            // 곡선 에셋
+            var asset = AssetDatabase.LoadAssetAtPath<BikeClips>(ClipsAsset);
+            if (asset == null) { asset = ScriptableObject.CreateInstance<BikeClips>(); AssetDatabase.CreateAsset(asset, ClipsAsset); }
+            BikeClips.Track T(string key)
+            {
+                var c = (System.Collections.Generic.Dictionary<string, object>)clipsJ[key];
+                float[] Arr(string k) => ((System.Collections.Generic.List<object>)c[k]).Select(Convert.ToSingle).ToArray();
+                var ik = ((System.Collections.Generic.List<object>)c["ik"]).SelectMany(r => ((System.Collections.Generic.List<object>)r).Select(Convert.ToSingle)).ToArray();
+                return new BikeClips.Track { Name = key, Frames = Convert.ToInt32(c["frames"]), Fps = Convert.ToSingle(c["fps"]), Loop = Convert.ToBoolean(c["loop"]), Theta = Arr("theta"), Lean = Arr("lean"), Ik = ik };
+            }
+            asset.Cruise = T("cruise"); asset.Climb = T("climb"); asset.Coast = T("coast"); asset.StartStop = T("startstop");
+            asset.StartEnd = Seg("start", 1); asset.StopFrom = Seg("stop", 0);
+            asset.CrankLen = Convert.ToSingle(json["crank_len"]);
+            asset.CoastTheta = asset.Coast.Theta.Length > 0 ? asset.Coast.Theta[0] : 115.5f;
+            float phi0 = Convert.ToSingle(json["phi0_right_pedal_deg"]);
+            asset.ClimbLeanAmp = 8f; asset.ClimbLeanPhase = 10f - phi0;      // bike_anim: ψ = 8·sin(φR − 10°), φR = φ0 + θ
+            EditorUtility.SetDirty(asset);
+            // 애니메이터 상태
+            var ctrl = CharSetup.Load<AnimatorController>(CharSetup.SiwooCtrl);
+            foreach (var pn in new[] { BikeRider.PhaseParam, BikeRider.TimeParam })
+                if (!ctrl.parameters.Any(x => x.name == pn)) ctrl.AddParameter(pn, AnimatorControllerParameterType.Float);
+            var layers = ctrl.layers; layers[0].iKPass = true; ctrl.layers = layers;
+            var sm = ctrl.layers[0].stateMachine;
+            void State(string name, string fbx, string clipName, string timeParam)
+            {
+                var clip = CharSetup.Clip(fbx, clipName) ?? throw new Exception($"클립 없음: {fbx} {clipName}");
+                var st = sm.states.Select(x => x.state).FirstOrDefault(x => x.name == name) ?? sm.AddState(name);
+                st.motion = clip; st.iKOnFeet = true; st.writeDefaultValues = true;
+                st.timeParameterActive = timeParam != null; st.timeParameter = timeParam ?? "";
+                EditorUtility.SetDirty(st);
+            }
+            State(BikeRider.CruiseState, $"{ClipDir}/siwoo_bike_cruise.fbx", BikeRider.CruiseState, BikeRider.PhaseParam);
+            State(BikeRider.ClimbState, $"{ClipDir}/siwoo_bike_climb.fbx", BikeRider.ClimbState, BikeRider.PhaseParam);
+            State(BikeRider.CoastState, $"{ClipDir}/siwoo_bike_coast.fbx", BikeRider.CoastState, null);
+            State(BikeRider.StartState, $"{ClipDir}/siwoo_bike_startstop.fbx", BikeRider.StartState, BikeRider.TimeParam);
+            State(BikeRider.StopState, $"{ClipDir}/siwoo_bike_startstop.fbx", BikeRider.StopState, BikeRider.TimeParam);
+            EditorUtility.SetDirty(ctrl);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"{Tag} 페달 클립: 순항 {asset.Cruise.Frames}·댄싱 {asset.Climb.Frames}·관성 {asset.Coast.Frames}·출발/정지 {asset.StartStop.Frames} 키 · 크랭크 {asset.CrankLen:F3}m · 관성 θ {asset.CoastTheta:F1}° · 댄싱 기울기 8·sin(θ−{asset.ClimbLeanPhase:F1}°) · 상태 5 → {ClipsAsset}");
+        }
+
         // ───────────────────────── ③ 플레이어
         public static void AddToPlayer(GameObject player)
         {
@@ -181,6 +267,7 @@ namespace Haengin.EditorGame
             {
                 var rd = a.GetComponent<BikeRider>() ?? a.gameObject.AddComponent<BikeRider>();
                 rd.Motor = motor;
+                rd.Clips = AssetDatabase.LoadAssetAtPath<BikeClips>(ClipsAsset);
                 rd.enabled = false;
                 n++;
             }

@@ -1,6 +1,8 @@
 // 행인1의 메인이벤트 — 7차 맵 아트 패스(2026-10-25): 하늘 역광 테두리. 하늘(깊이 없음)과 맞닿은 실루엣 바로 안쪽(먹선 다음 몇 화소)에 하늘빛 띠를 칠한다.
 // 인물·나무 잎 덩어리(스텐실 1)에도 칠해야 해서 외곽선 패스와 따로(스텐실 없음) — URP Full Screen Pass 'Rim', 외곽선 다음.
 // 색·세기 = 전역 _HaenginRimColor · _HaenginRim(DayLight 가 시간대마다). 가는 전선은 먹선 폭 안이라 거의 안 칠해짐.
+// 룩데브 ④(docs/14 4-4, 2026-10-26): 깊이 안개(대비가 눌린 밝은 크림~회청 — 먼 곳 대비 압축)도 여기서(스텐실 없음 → 나무 잎 덩어리·먼 사람에도).
+//   t = smoothstep(시작, 끝, 깊이) × 세기, 하늘(깊이 없음)은 뺌. 전역 _HaenginHaze(rgb 선형 + a 세기) · _HaenginHazeRange(시작, 끝) · _HaenginHazeOn.
 Shader "Haengin/ScreenRim"
 {
     Properties
@@ -26,6 +28,7 @@ Shader "Haengin/ScreenRim"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
             float _NearWidth, _WidthPow, _RimPx, _SkyDepth, _MaxDepth;
             float4 _HaenginRimColor; float _HaenginRim;
+            float4 _HaenginHaze, _HaenginHazeRange; float _HaenginHazeOn;
             float Eye(float2 uv)
             {
                 float raw = SampleSceneDepth(uv);
@@ -54,8 +57,14 @@ Shader "Haengin/ScreenRim"
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 float2 uv = input.texcoord;
                 half4 c = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
-                if (_HaenginRim <= 0.001) return c;
                 float d0 = Eye(uv);
+                // ④ 깊이 안개(하늘 빼고) — 색 쪽으로 섞어 먼 곳 대비를 누름
+                if (_HaenginHazeOn > 0.5 && _HaenginHaze.a > 0.001 && d0 < _SkyDepth)
+                {
+                    float t = smoothstep(_HaenginHazeRange.x, max(_HaenginHazeRange.y, _HaenginHazeRange.x + 1.0), d0) * _HaenginHaze.a;
+                    c.rgb = lerp(c.rgb, _HaenginHaze.rgb, t);
+                }
+                if (_HaenginRim <= 0.001) return c;
                 if (d0 > _MaxDepth) return c;
                 float res = _ScreenParams.y / 1080.0;
                 float k = pow(4.0 / max(d0, 4.0), _WidthPow);

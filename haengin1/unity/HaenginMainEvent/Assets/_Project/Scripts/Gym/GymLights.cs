@@ -21,7 +21,16 @@ namespace Haengin
         /// 실내 주변광(바탕 Zone1 의 시간대 주변광 대신 — 지하라 하늘빛 없음). 2차 패스: 스타일 프레임 L* 34/46/40/28 · 채도 0.11~0.19 에 맞춤
         public Color AmbientMorning = new Color(0.56f, 0.56f, 0.55f), AmbientDay = new Color(0.74f, 0.73f, 0.70f), AmbientEvening = new Color(0.66f, 0.63f, 0.58f), AmbientNight = new Color(0.40f, 0.40f, 0.43f);
         [Tooltip("실내 볼륨 채도(Zone1 필름 볼륨 위에 덮음)")] public float Saturation = -38f, Contrast = -4f;
-        Volume vol; ColorAdjustments adjust; SplitToning split; LiftGammaGain lgg;
+        [Header("룩데브(docs/14, 2026-10-26) — 그늘 회갈·LUT·먹선·옅은 안개")]
+        public Texture2D Lut;
+        [Range(0f, 1f)] public float LutContribution = 1f;
+        public Color Ink = new Color(0.184f, 0.165f, 0.157f);
+        public Color HazeColor = new Color(0.80f, 0.78f, 0.74f);
+        public float HazeStart = 4f, HazeEnd = 22f;
+        [Range(0f, 1f)] public float HazeStrength = 0.06f;
+        [Tooltip("그늘 들어 올림(Lift w)")] public float Lift = 0.005f;
+        [Tooltip("그늘 따뜻한 회갈 스플릿 톤(0.5 회색 = 중립)")] public Color SplitShadow = new Color(0.53f, 0.50f, 0.48f);
+        Volume vol; ColorAdjustments adjust; SplitToning split; LiftGammaGain lgg; ColorLookup lookup; bool counted;
         Light sun; float sunWas = -1f; bool fogWas; bool fogSaved;
         public GymPart Part { get; private set; } = GymPart.Day;
         public int LitCount { get; private set; }
@@ -37,8 +46,10 @@ namespace Haengin
             vol.isGlobal = true; vol.priority = 50f; vol.weight = 1f;
             var prof = ScriptableObject.CreateInstance<VolumeProfile>(); prof.name = "Gym_Film(runtime)";
             adjust = prof.Add<ColorAdjustments>(true); split = prof.Add<SplitToning>(true); lgg = prof.Add<LiftGammaGain>(true);
-            split.shadows.Override(new Color(0.5f, 0.5f, 0.5f)); split.highlights.Override(new Color(0.5f, 0.5f, 0.5f)); split.balance.Override(0f);
-            lgg.lift.Override(new Vector4(1f, 1f, 1f, 0f)); lgg.gamma.Override(new Vector4(1f, 1f, 1f, 0f)); lgg.gain.Override(new Vector4(1f, 1f, 1f, 0f));
+            split.shadows.Override(SplitShadow); split.highlights.Override(new Color(0.5f, 0.5f, 0.5f)); split.balance.Override(0f);
+            lgg.lift.Override(new Vector4(1f, 1f, 1f, Lift)); lgg.gamma.Override(new Vector4(1f, 1f, 1f, 0f)); lgg.gain.Override(new Vector4(1f, 1f, 1f, 0f));
+            lookup = prof.Add<ColorLookup>(true);
+            RefreshLut();
             adjust.saturation.Override(Saturation); adjust.contrast.Override(Contrast); adjust.postExposure.Override(0f); adjust.colorFilter.Override(Color.white);
             vol.profile = prof;
         }
@@ -49,9 +60,29 @@ namespace Haengin
             foreach (var l in FindObjectsByType<Light>(FindObjectsSortMode.None)) if (l.type == LightType.Directional && l.gameObject.scene != gameObject.scene) { sun = l; sunWas = l.intensity; break; }
         }
 
+        public void RefreshLut()
+        {
+            if (lookup == null) return;
+            lookup.texture.Override(Lut);
+            lookup.contribution.Override(Lut != null && LookdevFlags.Lut ? LutContribution : 0f);
+        }
+
+        void PushLook()
+        {
+            Shader.SetGlobalColor(DayLight.IdInkColor, Ink.linear);
+            var hc = HazeColor.linear; hc.a = HazeStrength;
+            Shader.SetGlobalColor(DayLight.IdHaze, hc);
+            Shader.SetGlobalVector(DayLight.IdHazeRange, new Vector4(HazeStart, HazeEnd, 0f, 0f));
+            Shader.SetGlobalFloat(DayLight.IdDapple, 0f);
+            Shader.SetGlobalFloat(DayLight.IdCrease, 0.67f);
+            Shader.SetGlobalFloat(DayLight.IdFine, 0.8f);
+        }
+
         public void Apply(GymPart p)
         {
             Part = p;
+            if (!counted) { DayLight.IndoorDepth++; counted = true; }
+            PushLook();
             LitCount = 0;
             EnsureVolume();
             FindSun();
@@ -82,10 +113,11 @@ namespace Haengin
             Debug.Log($"[Gym] 조명 {Name(p)}: 형광등 {LitCount - (spots ? CageSpots.Count : 0)}/{Fluors.Count} · 케이지 스포트 {(spots ? CageSpots.Count : 0)} · 사무실 {(Office != null && Office.enabled)}");
         }
 
-        void LateUpdate() { if (sun != null && sun.intensity > 0f) sun.intensity = 0f; if (RenderSettings.fog) RenderSettings.fog = false; }
+        void LateUpdate() { if (sun != null && sun.intensity > 0f) sun.intensity = 0f; if (RenderSettings.fog) RenderSettings.fog = false; if (counted) PushLook(); }
 
         void OnDestroy()
         {
+            if (counted) { DayLight.IndoorDepth = Mathf.Max(0, DayLight.IndoorDepth - 1); counted = false; }
             if (sun != null && sunWas >= 0f) sun.intensity = sunWas;
             if (fogSaved) RenderSettings.fog = fogWas;
         }

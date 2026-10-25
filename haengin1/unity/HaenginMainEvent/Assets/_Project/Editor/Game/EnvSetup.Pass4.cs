@@ -280,9 +280,9 @@ namespace Haengin.EditorGame
             if (cm == null) { cm = new Material(sh) { name = "M_V_crown_" + tree }; AssetDatabase.CreateAsset(cm, mp); }
             if (cm.shader != sh) cm.shader = sh;
             cm.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>($"{TexDir}/Clump_{sp.Clump}.png"));
-            cm.SetColor("_BaseColor", sp.Tint); cm.SetColor("_ShadeColor", new Color(0.80f, 0.80f, 0.84f));
+            cm.SetColor("_BaseColor", sp.Tint); cm.SetColor("_ShadeColor", LookdevSetup.LeafShade);
             cm.SetFloat("_Step", 0.5f); cm.SetFloat("_Feather", 0.03f); cm.SetFloat("_WindAmp", sp.Wind); cm.SetFloat("_WindFreq", 1.2f); cm.SetFloat("_Height", Mathf.Max(1f, H));
-            cm.SetFloat("_Cutoff", 0.38f); cm.SetFloat("_Sphere", 1f); cm.SetFloat("_Ink", 1f); cm.SetFloat("_InkWidth", 0.3f); cm.SetColor("_InkColor", new Color(0.102f, 0.078f, 0.09f)); cm.SetFloat("_StencilRef", 1f);
+            cm.SetFloat("_Cutoff", 0.38f); cm.SetFloat("_Sphere", 1f); cm.SetFloat("_Ink", 1f); cm.SetFloat("_InkWidth", 0.3f); cm.SetColor("_InkColor", LookdevSetup.LeafInk); cm.SetFloat("_StencilRef", 1f);
             cm.enableInstancing = true; EditorUtility.SetDirty(cm);
             // 프리팹
             var root = new GameObject("P_" + tree);

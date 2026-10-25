@@ -1,5 +1,5 @@
 // 행인1의 메인이벤트 — 1장 오픈월드 W16 성능 + 녹화·사진(docs/13 12-4 12단계). 그래픽 켠 배치에서만(-nographics 빼기).
-//   Z_W16_Perf   : 늘(그래픽이면) — 밤 상가거리 오픈월드(HUD·시계·길잡이·표시 자리) 1080p 렌더 한 번 95% ≤ 12ms + 실내(손님·김) 기록 → Logs/perf_world.csv
+//   Z_W16_Perf   : 늘(그래픽이면) — 밤 상가거리 오픈월드(HUD·시계·길잡이·표시 자리) 1080p 렌더 한 번 95% ≤ 12ms + 실내(손님·김) 95% ≤ 8ms → Logs/perf_world.csv
 //   Z_World_Shots: -worldshots <폴더> 를 줄 때만 — 녹화(JPG 프레임 → 밖에서 ffmpeg 무음 mp4) a_day(하루 루프 1일) · b_jobs(노가다·계산대) ·
 //                  c_cards(유통기한 한 시간 전·컵라면 말고 국밥 + 체험·니가 행인1이냐 시비) · d_goal(어버이날 → 데모 끝 판정 → 2장 예고) + 사진(실내 2차·HUD·휴대폰·주간 계획)
 using System;
@@ -158,7 +158,7 @@ namespace Haengin.Tests
             var draw = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Draw Calls Count");
             var csv = new StringBuilder("경로,프레임,렌더ms,삼각형,SetPass,그리기\n");
             var summary = new List<string>();
-            double streetP95 = 0;
+            double streetP95 = 0, indoorP95 = 0;
             IEnumerator Measure(string name, Func<int, bool> step, int frames)
             {
                 bool was = cam.enabled; cam.enabled = false;
@@ -184,6 +184,7 @@ namespace Haengin.Tests
                 var sorted = ms.OrderBy(x => x).ToList();
                 double p95 = sorted[(int)(sorted.Count * 0.95)];
                 if (name.StartsWith("밤 상가거리")) streetP95 = p95;
+                if (name.Contains("실내")) indoorP95 = System.Math.Max(indoorP95, p95);
                 summary.Add($"{name}: 1080p 렌더 한 번 평균 {ms.Average():F2}ms · 95% {p95:F2} · 삼각형 최대 {tris.Max():N0} · SetPass 최대 {sps.Max()} · 그리기 최대 {dcs.Max()}");
             }
             // ① 밤 상가거리 걷기 — 오픈월드(세계 화면·시계·길잡이·문·지점 평가)
@@ -206,6 +207,7 @@ namespace Haengin.Tests
             if (!string.IsNullOrEmpty(outDir)) { Directory.CreateDirectory(outDir); File.WriteAllText(Path.Combine(outDir, "perf_world.csv"), csv.ToString(), new UTF8Encoding(true)); }
             Debug.Log($"[W] W16 성능(에디터 배치, {SystemInfo.graphicsDeviceName}):\n{string.Join("\n", summary)}");
             Assert.LessOrEqual(streetP95, 12.0, "밤 상가거리 오픈월드 95% ≤ 12ms");
+            Assert.LessOrEqual(indoorP95, 8.0, "실내(국밥집 저녁·시우네 밤) 95% ≤ 8ms(docs/14 룩데브 성능 기준)");
         }
 
         // ───────────────────────── 녹화·사진

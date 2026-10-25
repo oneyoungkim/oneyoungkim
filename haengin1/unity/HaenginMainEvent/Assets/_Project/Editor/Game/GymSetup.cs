@@ -49,6 +49,8 @@ namespace Haengin.EditorGame
         public static void Build() => Run(() => { Assets(); Scene(); M1Setup.SetBuildScenes(); });
         public static void AssetsOnly() => Run(Assets);
         public static void SceneOnly() => Run(() => { Scene(); M1Setup.SetBuildScenes(); });
+        /// 룩데브(LookdevSetup.Build): 장면만 다시(종료 없이)
+        public static void SceneForLookdev() => Scene();
 
         static void Run(Action body)
         {
