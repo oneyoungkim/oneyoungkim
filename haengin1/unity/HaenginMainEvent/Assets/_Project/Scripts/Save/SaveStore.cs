@@ -60,10 +60,12 @@ namespace Haengin
             }
             catch (Exception e) { error = "깨짐: " + e.GetType().Name; return null; }
             if (d == null || string.IsNullOrEmpty(d.SceneId)) { error = "깨짐: 장면 id 없음"; return null; }
-            if (d.Version != SaveData.CurrentVersion) { error = $"모르는 버전 {d.Version}"; return null; }
+            if (d.Version != SaveData.CurrentVersion && d.Version != 1) { error = $"모르는 버전 {d.Version}"; return null; }
             if (d.Ledger == null) d.Ledger = new Ledger();
             if (d.Names == null) d.Names = new NameBook();
             if (d.Flags == null) d.Flags = new StoryFlags();
+            if (d.Gym == null) d.Gym = new GymSave();
+            if (d.World == null) d.World = new WorldSave();
             return d;
         }
 

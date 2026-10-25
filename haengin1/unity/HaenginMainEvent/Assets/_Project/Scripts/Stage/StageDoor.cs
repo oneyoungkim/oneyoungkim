@@ -20,6 +20,8 @@ namespace Haengin
         public float ReturnYaw;
 
         public static int Uses { get; private set; }
+        /// 오픈월드 문지기(WorldRunner): false 면 안 열림(체육관 = 체험 뒤 · 현장 = 연락 뒤 · 마을버스 시간)
+        public static System.Func<StageDoor, bool> Gate;
 
         void Awake() { GetComponent<Interactable>().Used += Use; }
 
@@ -27,6 +29,7 @@ namespace Haengin
         {
             var loader = FindAnyObjectByType<SceneLoader>(FindObjectsInactive.Include);
             if (loader == null || loader.Busy || StoryRunner.Active) return;
+            if (Gate != null && !Gate(this)) return;
             Uses++;
             loader.StartCoroutine(Go(loader));
         }
@@ -51,6 +54,6 @@ namespace Haengin
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Uses = 0; }
+        static void ResetStatics() { Uses = 0; Gate = null; }
     }
 }

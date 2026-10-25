@@ -9,7 +9,8 @@ namespace Haengin
     [Serializable]
     public sealed class SaveData
     {
-        public const int CurrentVersion = 1;
+        /// 2 = 오픈월드 저장 v2(docs/13 10장 — World 칸). 1 = M3 장면 시작 저장(읽으면 오픈월드 카드로 이주)
+        public const int CurrentVersion = 2;
 
         public int Version = CurrentVersion;
         /// 이 장면의 '시작'에서 다시 한다(장면 시작마다 자동 저장)
@@ -23,6 +24,8 @@ namespace Haengin
         public StoryFlags Flags = new StoryFlags();
         /// 체육관: 스탯·피로·땀·드릴 기록(docs/12 4-5 DrillSave)
         public GymSave Gym = new GymSave();
+        /// 오픈월드(docs/13 10장): 세계 시계·장소·생활비·평판·카드 상태·셈·휴대폰·계획(Active 가 아니면 M3 장면 저장)
+        public WorldSave World = new WorldSave();
         /// 저장한 실제 시각(ISO 8601) · 장면 이름(이어하기 표시용)
         public string SavedAt = "";
         public string Label = "";

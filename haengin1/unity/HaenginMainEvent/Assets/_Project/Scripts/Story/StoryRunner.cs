@@ -70,6 +70,11 @@ namespace Haengin
 
         bool running, skipScene;
         Coroutine co;
+        /// 오픈월드(docs/13): 장면 목록을 돌지 않고, 감독(WorldRunner)이 카드 본편 체인을 하나씩 넘긴다(RunChain)
+        public bool WorldMode { get; private set; }
+        /// 오픈월드: 장면 효과 "ledger:+N:…"(엄마 통장·고지서 밑) → 생활비로 셈
+        public Action<int> HouseholdHook;
+        bool chainNoEffects;
         DayPart pendingLight;
 
         void OnEnable() { Instance = this; }
@@ -113,7 +118,15 @@ namespace Haengin
             switch (r.Mode)
             {
                 case StoryBoot.Mode.New: Begin(false, null, null); break;
-                case StoryBoot.Mode.Continue: if (r.Save != null) Begin(r.Save.Test, r.Save.SceneId, r.Save); break;
+                case StoryBoot.Mode.World:
+                    if (WorldRunner.Instance != null) WorldRunner.Instance.Begin(null);
+                    else Debug.LogError("[World] Zone1 에 WorldRunner 가 없습니다 — WorldSetup.Build");
+                    break;
+                case StoryBoot.Mode.Continue:
+                    if (r.Save == null) break;
+                    if (WorldRunner.Instance != null && (r.Save.Version == 1 || (r.Save.World != null && r.Save.World.Active))) WorldRunner.Instance.Begin(r.Save);
+                    else Begin(r.Save.Test, r.Save.SceneId, r.Save);
+                    break;
                 case StoryBoot.Mode.Select: Begin(false, r.SceneId, null); break;
                 case StoryBoot.Mode.Gym:
                     Debug.Log("[M3] 연습장: 체육관(혜화 MMA)으로 — 이야기 없이");
@@ -154,6 +167,56 @@ namespace Haengin
             co = StartCoroutine(Run(start, !test && start == 0 && save == null));
         }
 
+        /// 오픈월드 시작(WorldRunner 가 부름): 가계부·도감·플래그·몸을 저장에서 받고, 장면 목록은 돌지 않는다
+        public void BeginWorld(SaveData save)
+        {
+            if (running || WorldMode) Stop();
+            if (Def == null) { Debug.LogError("[M3] StoryDef 가 없습니다"); return; }
+            TestList = false;
+            var s = save != null ? save.Clone() : null;
+            Flags = s != null && s.Flags != null ? s.Flags : new StoryFlags();
+            Ledger = s != null && s.Ledger != null ? s.Ledger : new Ledger();
+            Names = s != null && s.Names != null ? s.Names : new NameBook();
+            GymState.Current = s != null && s.Gym != null ? s.Gym : new GymSave();
+            WorldMode = true; Finished = false; running = false;
+            Trace.Clear();
+            SetM2(false);      // M2 무대(주차장 인카운터·야차)는 오픈월드가 그때그때 켬(시비 카드·시비 반복 — 성능 W16)
+            CutCtx.Sub = Talk != null ? Talk.Sub : null;
+            CutCtx.Inner = Talk != null ? Talk.Inner : null;
+            CutCtx.Hud = Hud;
+            CutCtx.ApplyNow = ApplyNow;
+            CutCtx.Player = Loader != null && Loader.Motor != null ? Loader.Motor.transform : null;
+            var guide = FindAnyObjectByType<RouteGuide>(FindObjectsInactive.Include);
+            if (guide != null) guide.SetTargets(new TargetDef[0]);
+            if (Talk != null) Talk.Bot = Bot != BotMode.None ? (l => BotAnswer != null ? BotAnswer(l) : 0) : null;
+            Debug.Log($"[World] 이야기 뼈대 오픈월드 모드{(save != null ? " · 이어하기" : "")}{(Bot != BotMode.None ? " · 봇 " + Bot : "")}");
+        }
+
+        /// 오픈월드 카드 본편: 장면 id 체인을 순서대로(시각은 앞으로만 — 같은 날 그 시각까지, 회차 카드는 시계를 건드리지 않음). noEffects = 장면 끝 명령 빼기(몽타주 5-1 등)
+        public IEnumerator RunChain(IList<string> ids, bool noEffects = false)
+        {
+            if (Def == null || ids == null) yield break;
+            running = true; skipScene = false;
+            chainNoEffects = noEffects;
+            Talk?.ClearSkip();
+            if (Talk != null) Talk.Bot = Bot != BotMode.None ? (l => BotAnswer != null ? BotAnswer(l) : 0) : null;
+            foreach (var id in ids)
+            {
+                var sc = Def.Find(id);
+                if (sc == null) { Debug.LogWarning($"[World] 장면 {id} 없음 — 건너뜀"); continue; }
+                Index = Array.IndexOf(Def.Scenes, sc);
+                yield return RunScene(sc);
+                skipScene = false;
+            }
+            chainNoEffects = false;
+            running = false; InScene = false;
+            GameClock.Running = false;
+            if (Hud != null) Hud.KeepChip = false;
+            InputMaps.Use(Actions, InputMaps.Explore);
+            GameUi.HintOverride = null;
+            if (BikeCourse.Current != null && BikeCourse.Current.Riding) BikeCourse.Current.Finish();
+        }
+
         /// 이야기를 멈추고 Zone1 탐색으로 되돌린다(테스트 정리·타이틀로)
         public void Stop()
         {
@@ -182,7 +245,7 @@ namespace Haengin
             GameUi.BookHook = GameUi.TitleHook = null;
             GameUi.SubOpen = null; GameUi.SubClose = null;
             SetM2(true);
-            running = false; InScene = false;
+            running = false; InScene = false; WorldMode = false; chainNoEffects = false;
         }
 
         void SetM2(bool on)
@@ -218,10 +281,12 @@ namespace Haengin
         IEnumerator RunScene(SceneDef s)
         {
             Scene = s; skipScene = false; InScene = true;
-            GameClock.Set(s.Month, s.Day, s.Hour, s.Minute);
+            // 오픈월드: 날짜는 세계 시계 그대로, 시각은 앞으로만(장면 시각까지). 회차 카드는 시계를 건드리지 않음
+            if (WorldMode) { if (s.Kind != SceneKind.Card) GameClock.AdvanceTo(s.Hour * 60 + s.Minute); }
+            else GameClock.Set(s.Month, s.Day, s.Hour, s.Minute);
             GameClock.Running = false;
             SceneStart = Snapshot(s);
-            if (AutoSave)
+            if (AutoSave && !WorldMode)
             {
                 try { SaveStore.Write(SaveStore.Auto, SceneStart); }
                 catch (Exception e) { Debug.LogWarning($"[M3] 자동 저장 실패: {e.Message}"); }
@@ -236,7 +301,7 @@ namespace Haengin
                 if (ep != null) Card?.Show(ep, prev != null ? prev.Ledger : "");
                 Mark(s);
                 yield return Wait(EpisodeCard.Secs, false);
-                ApplyAll(s.Effects);
+                if (!chainNoEffects) ApplyAll(s.Effects);
                 End(s);
                 yield break;
             }
@@ -285,7 +350,7 @@ namespace Haengin
                     if (bike.Riding) InputMaps.Use(Actions, InputMaps.Bike);
                     GameClock.Running = false;
                     if (Hud != null) Hud.KeepChip = false;
-                    ApplyAll(s.Effects);
+                    if (!chainNoEffects) ApplyAll(s.Effects);
                     Debug.Log($"[M3] 장면 {s.Id} 끝(주행{(skipScene ? " — 건너뜀" : "")})");
                     End(s);
                     yield break;
@@ -336,7 +401,7 @@ namespace Haengin
                     }
                 }
             }
-            ApplyAll(s.Effects);
+            if (!chainNoEffects) ApplyAll(s.Effects);
             Debug.Log($"[M3] 장면 {s.Id} 끝{(skipScene ? "(건너뜀)" : "")}");
             End(s);
         }
@@ -537,6 +602,7 @@ namespace Haengin
                 case "ledger": case "wallet": case "envelope": case "spend": case "item": case "entry":
                     {
                         var line = Ledger.Apply(verb, arg);
+                        if (verb == "ledger" && WorldMode) HouseholdHook?.Invoke(Ledger.ParseInt(arg.Split(':')[0]));
                         if (verb != "entry") LedgerUi?.Toast(line);
                         break;
                     }

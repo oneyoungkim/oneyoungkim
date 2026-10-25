@@ -3,7 +3,7 @@
 // 이야기 장면 1-2 · 1-3 · 1-4 가 다리(leg) 하나씩: 0 = 경비실 건네기까지 · 1 = 꼭대기 집 도착까지 · 2 = 건네기 → 지각 대사 → 끝까지.
 // 태오(PathRunner): 와룡 오르막 입구를 시우가 지나면 12m 뒤에서 나타나 3.4 m/s 로 올라가며 앞지름('…' 말풍선 0.8초, 측면 트래킹 카메라),
 //   꼭대기(꼭대기 집 북쪽)에서 숨 고르기 → 시우가 건네고 내려가면 2.0 m/s 로 뒤따라 내려가다 시우에게 앞질림(슬로 0.5초 "쉬이익.").
-// 지각: 코스 시계(게임 05:35 시작, 실제 1초 = 게임 3초) — 꼭대기 집 약속 05:36 에 도착 시각을 빼 N분(내림, 1화는 1 이상) → "어이. N분 늦었다."
+// 지각: 코스 시계(게임 06:04 시작 — 결정 12 로 새벽 배달 06:00, 실제 1초 = 게임 3초) — 꼭대기 집 약속 06:05 에 도착 시각을 빼 N분(내림, 1화는 1 이상) → "어이. N분 늦었다."
 //   국물 70 이상 "국은 안 식었네. 됐다." · 아니면 "…식었다."
 // 봇(Bot): 경로 가운데선을 따라 페달·조향·박자(0.55초)·정차·건네기를 사람 손과 같은 길(BikeMotor 입력)로.
 using System;
@@ -37,7 +37,7 @@ namespace Haengin
         public Vector3 Start; public float StartYaw;
         public Vector3 End; public float EndRadius = 3.5f;
         public Vector3 ClimbStart;                      // 와룡 오르막 입구(태오 나타나는 기준)
-        public int StartClock = 5 * 3600 + 35 * 60;
+        public int StartClock = 6 * 3600 + 4 * 60;
         public float GameRate = 3f;
         [Header("태오")]
         public PathRunner Taeo;

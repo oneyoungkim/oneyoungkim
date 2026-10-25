@@ -267,6 +267,8 @@ namespace Haengin.EditorGame
             BikeSetup.AddToZone1(rig, zoneRoot, d);
             // 9단계 무대 4곳(2026-10-25 오픈월드 방향): 국밥집·하루편의점·시우네 출입문 + 혜성고 방면 표지 → 걸어 들어가는 문
             Debug.Log("[StageKit] Zone1 " + StageKitSetup.AddDoorsToZone1(zoneRoot.transform));
+            // 오픈월드 1장(docs/13 2026-10-25): 세계 루트(WorldRunner + 화면 5) — 데이터 Settings/World.asset
+            WorldSetup.AddToZone1(zoneRoot);
 
             EditorSceneManager.MarkSceneDirty(scene);
             Debug.Log($"{Tag} 리그 붙임: Player @ ({feet.x:F2}, {feet.y:F2}, {feet.z:F2}) yaw {d.SpawnYaw}° (데이터 y {d.SpawnPos.y:F2}) · " +

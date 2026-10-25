@@ -72,11 +72,11 @@ namespace Haengin
         Page Main()
         {
             var p = new Page { Title = "", Note = "" };
-            Add(p, "새 게임", () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.New }));
+            // 2026-10-25 대표 방향 전환(docs/13): '새 게임' = 1장 오픈월드(알바·체육관·이벤트 카드·챕터 목표). 예전 장면 순서는 연습장 › 이야기 장면 보기
+            Add(p, "새 게임", () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.World }));
             var latest = Latest(out string err, out string slot);
             if (latest != null) Add(p, "이어하기 — " + latest.Label, () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.Continue, Save = latest }));
             else if (err != null && err != "없음") Add(p, "이어하기 — 저장 파일 문제", () => Show(Broken(err)));
-            if (PlayerPrefs.GetInt("haengin.demo.cleared", 0) == 1) Add(p, "장면 고르기", () => Show(Select(p)));
             Add(p, "연습장", () => Show(Practice(p)));
             Add(p, "설정", () => Show(Settings(p)));
             Add(p, "끝내기", Quit);
@@ -101,7 +101,7 @@ namespace Haengin
         {
             LastError = err;
             var p = new Page { Title = "저장 파일을 읽지 못했습니다", Note = $"자동 저장: {err}", Back = page };
-            Add(p, "새 게임", () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.New }));
+            Add(p, "새 게임", () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.World }));
             var prev = SaveStore.ReadPrev(SaveStore.Auto, out string pe);
             if (prev != null) Add(p, "이전 자동 저장 — " + prev.Label, () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.Continue, Save = prev }));
             Add(p, "돌아가기", () => Show(p.Back));
@@ -128,6 +128,8 @@ namespace Haengin
             Add(p, "Zone1 — 뒷골목 인카운터 · 와룡공원 야차", () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.Practice }));
             Add(p, "전투 연습장", () => StoryBoot.Go(null, StoryBoot.LabScene));
             Add(p, "체육관 — 혜화 MMA(트레이닝 드릴)", () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.Gym }));
+            Add(p, "이야기 장면 보기 — 1~7화 순서(예전 데모)", () => StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.New }));
+            Add(p, "이야기 장면 고르기 — 회차 첫 장면", () => Show(Select(p)));
             Add(p, "돌아가기", () => Show(back));
             return p;
         }
@@ -252,7 +254,7 @@ namespace Haengin
             title.text = "행인1의 메인이벤트";
             sub = UiKit.Text("부제", transform, Fonts != null ? Fonts.B : null, 30f, UiKit.Ink, TextAlignmentOptions.Center);
             UiKit.Place(sub.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 110f), new Vector2(1500f, 44f));
-            sub.text = "시우 루트 1막 「출석부」 데모";
+            sub.text = "1장 「행인1」 오픈월드 데모 — 2026년 3월 3일 ~ 5월 8일";
             head = UiKit.Text("쪽 제목", transform, Fonts != null ? Fonts.Br : null, 54f, UiKit.Ink, TextAlignmentOptions.Center);
             UiKit.Place(head.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 250f), new Vector2(1500f, 80f));
             note = UiKit.Text("설명", transform, Fonts != null ? Fonts.B : null, 24f, new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.75f), TextAlignmentOptions.Center);

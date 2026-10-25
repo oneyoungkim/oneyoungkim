@@ -48,6 +48,9 @@ namespace Haengin
         public string LastCoachLine { get; private set; } = "";
         public int DrillsDone { get; private set; }
         public event Action<DrillDef, DrillResult, DrillReward> DrillFinished;
+        /// 오픈월드(docs/13 3-3): 드릴 문지기 — 빈칸이면 됨, 아니면 이윤준 한 줄(회원·체험·시간) · 끝난 드릴 알림(시간·카드)
+        public static Func<DrillDef, string> Gate;
+        public static event Action<DrillDef, DrillResult, DrillReward> Finished;
 
         readonly Dictionary<string, Transform> sock = new Dictionary<string, Transform>();
         string camPreset; Transform camAt; CamRig camRig; float roomRadius = 3.0f;
@@ -74,6 +77,9 @@ namespace Haengin
         }
 
         void OnDestroy() { if (Instance == this) Instance = null; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() { Gate = null; Finished = null; }
 
         IEnumerator Start()
         {
@@ -164,6 +170,7 @@ namespace Haengin
             if (Busy || Book == null) return;
             var def = Book.Find(m.DrillId);
             if (def == null) return;
+            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Show(true); Hud.Say("이윤준", gw); StartCoroutine(HideHudLater(2.5f)); return; } }
             if (def.Id == "D14") { Menu.ShowBoard(Book, GymState.Current, null); return; }
             Menu.Show(def, GymState.Current, () => StartDrill(def.Id), () => StartCoroutine(SimCo(def)), null);
         }
@@ -174,6 +181,7 @@ namespace Haengin
             if (Busy || Book == null) return false;
             var def = Book.Find(id);
             if (def == null || Actors == null) return false;
+            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Show(true); Hud.Say("이윤준", gw); StartCoroutine(HideHudLater(2.5f)); return false; } }
             string blocked = DrillSim.DirectBlocked(def, GymState.Current, GymSave.Today);
             if (blocked.Length > 0) { Hud.Show(true); Hud.Say("이윤준", blocked); Debug.Log($"[Gym] 드릴 {id} 막힘: {blocked}"); StartCoroutine(HideHudLater(2.5f)); return false; }
             var station = DrillStations.Create(def.Id);
@@ -215,6 +223,7 @@ namespace Haengin
             waitingClose = true;
             foreach (var m in Markers) if (m != null) m.Refresh();
             DrillFinished?.Invoke(r.Def, r, w);
+            Finished?.Invoke(r.Def, r, w);
         }
 
         /// 결과 카드 닫기(× · Enter · 봇)
@@ -304,6 +313,7 @@ namespace Haengin
             waitingClose = true;
             foreach (var m in Markers) if (m != null) m.Refresh();
             DrillFinished?.Invoke(def, new DrillResult { Def = def, Grade = Grade.S }, reward);
+            Finished?.Invoke(def, new DrillResult { Def = def, Grade = Grade.S }, reward);
         }
 
         // ───────────────────────── 드릴 카메라(2장 표): 고정 프리셋, 드릴 중 플레이어 조작 끔

@@ -201,7 +201,7 @@ namespace Haengin.EditorGame
             course.Stops = new[]
             {
                 new BikeCourse.Stop { Name = "후문 경비실", Caller = "경비실 아저씨", Pos = course.Route[StopAt[0]], Radius = 2.4f, Appt = 0 },
-                new BikeCourse.Stop { Name = "꼭대기 집", Caller = "할아버지", Pos = course.Route[StopAt[1]], Radius = 2.4f, Appt = 5 * 3600 + 36 * 60 },
+                new BikeCourse.Stop { Name = "꼭대기 집", Caller = "할아버지", Pos = course.Route[StopAt[1]], Radius = 2.4f, Appt = 6 * 3600 + 5 * 60 },
             };
             course.Start = course.Route[0];
             var d0 = course.Route[1] - course.Route[0];

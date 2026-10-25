@@ -1,0 +1,50 @@
+# W00 금칙어(docs/13 12-5) — 실존 격투 단체·대회·인물 이름. 게임 데이터(json·tsv)·원고(story/**)·런타임 코드(UI 문자열)에 0건이어야 한다.
+# 형식: 한 줄에 이름 하나. 영문 대문자 약어는 낱말 단위로(앞뒤가 영문·숫자가 아님), 나머지는 글자 그대로 찾는다.
+# '|예외:글' = 같은 줄에 그 글이 있으면 통과(대표 지시 4 — 이윤준과 그의 실제 이력만 실명).
+UFC
+유에프씨
+로드FC|예외:이윤준
+로드 FC|예외:이윤준
+ROAD FC|예외:이윤준
+Road FC|예외:이윤준
+블랙컴뱃
+블랙 컴뱃
+Black Combat
+BLACK COMBAT
+원챔피언십
+ONE Championship
+라이진
+RIZIN
+판크라스
+Pancrase
+DEEP
+제우스FC
+제우스 FC
+ZEUS FC
+TFC
+Naiza
+나이자 FC
+UAE Warriors
+UAE 워리어스
+Road to UFC
+로드 투 UFC
+Cage Warriors
+케이지 워리어스
+Bellator
+벨라토르
+PFL
+Octagon
+옥타곤
+유수영
+조슈아 반
+Joshua Van
+맥그리거
+McGregor
+조제 알도
+Jose Aldo
+네이트 디아즈
+Nate Diaz
+채드 멘데스
+Chad Mendes
+하빕
+Khabib

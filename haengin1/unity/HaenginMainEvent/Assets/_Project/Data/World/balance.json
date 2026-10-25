@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "note": "docs/13 9장 밸런스 첫안 — 원고 숫자(2·4·5·14화)는 그대로, 나머지는 게임 설정값. 시각은 결정 12(밤 10시~아침 6시 근로 없음).",
+  "start": {"year": 2026, "date": "03-03", "time": "05:50", "wallet": 2600, "seed": 20260303},
+  "clock": {"rate": 3, "wake": "05:30", "wake_sunday": "08:00", "night_limit": "02:00",
+    "bands": [["새벽", "05:00", "08:00"], ["아침", "08:00", "16:00"], ["오후", "16:00", "18:00"], ["저녁", "18:00", "22:00"], ["밤", "22:00", "05:00"]]},
+  "holidays": ["03-01", "03-02", "05-05", "05-25", "06-03", "06-06", "08-15", "08-17", "09-24", "09-25", "09-26", "10-03", "10-05", "10-09", "12-25"],
+  "minor": {"night_from": "22:00", "night_to": "06:00", "per_work_day": 420, "week_soft": 2100, "overwork_mul": 1.5},
+  "fatigue": {"sleep_per_hour": 9, "tired": 70, "tired_mul": 0.6, "gym_block": 85, "collapse": 95, "slept_tired_add": 10, "rest_day": 20, "nap": 9,
+    "drill_minutes": 30, "street": 12, "night_out": 10},
+  "money": {"fixed": [["엄마 통장 이체", 500000], ["하늘 방과후 + 준비물", 80000], ["휴대폰", 30000]], "academy_month": 9, "academy": 350000,
+    "envelope_goal": 40000, "envelope_sunday": 5000, "cake2": 38000, "cake1": 28000},
+  "gym": {"fee": 150000, "cleaner_fee": 50000, "bus_minutes": 15, "trial_drills": ["D01", "D04"], "open": "07:00", "close": "22:00"},
+  "rep": {"tiers": [[0, "모르는 애"], [20, "그 배달하는 애"], [40, "행인1"], [60, "혜화동에서 아는 이름"], [80, "반촌 놈"]],
+    "street_win": 2, "street_win_many": 3, "street_loss": -1, "side_done": 3, "delivery_good": 0.3},
+  "rumor": [
+    ["", "", ""],
+    ["후문 주차장에서 고딩 하나가 셋을 상대했대.", "국밥집 아들이 상자를 들고 버텼다더라.", "케이크는 멀쩡했대."],
+    ["후문에서 셋을 혼자 눕혔다던데.", "그 배달하는 애, 자전거로 정강이를 깠대.", "혜성고 2학년이 뒷골목을 정리했다더라."],
+    ["열 명이었다며? 후문 주차장.", "그 행인1이 진짜 있대. 반촌 놈이라고.", "건들면 국물도 없대. 국밥집이라서."]],
+  "skill": {"delegate_shifts": 10, "delegate_stat": 0.75, "grades": [0.35, 0.55, 0.75, 0.9]},
+  "weather": {"rain": {"3": 0.15, "4": 0.2, "5": 0.22}, "rain_on": ["03-13", "03-28", "04-18"], "clear_on": ["03-03", "03-14", "03-21", "04-04", "05-01", "05-08"]},
+  "zones_game": ["waryong_climb", "top_house", "bakery", "Zone1"],
+  "points": [
+    {"id": "gukbap_door", "zone": "gukbap", "pos": [-183.05, 28.97, 104.99], "r": 2.5, "label": "국밥집"},
+    {"id": "conv_door", "zone": "haru_conv", "pos": [-178.26, 28.36, 103.94], "r": 3.0, "label": "하루편의점"},
+    {"id": "home_door", "zone": "siu_house", "pos": [-159.6, 28.0, 125.0], "r": 2.5, "label": "집"},
+    {"id": "school_sign", "zone": "hyeseong_school", "pos": [-133.0, 34.3, 157.2], "r": 3.0, "label": "혜성고 가는 길"},
+    {"id": "site_sign", "zone": "construction_site", "pos": [-133.0, 22.81, 88.72], "r": 3.0, "label": "공사 현장(명륜1가 방면)"},
+    {"id": "bus_stop", "zone": "hyehwa_mma", "pos": [-185.05, 29.33, 103.73], "r": 2.2, "label": "후문시장 앞 정류장"},
+    {"id": "parking", "zone": "hoomun_parking", "pos": [-172.49, 27.2, 84.38], "r": 7.0, "label": "후문 뒷골목 주차장"},
+    {"id": "alley", "zone": "myeongnyun3ga_alley", "pos": [-172.5, 27.0, 115.5], "r": 3.0, "label": "명륜3가 골목"},
+    {"id": "waryong", "zone": "waryong_entrance", "pos": [-192.0, 38.0, 142.0], "r": 6.0, "label": "와룡공원 입구 공터"},
+    {"id": "cat_spot", "zone": "myeongnyun3ga_alley", "pos": [-183.4, 29.4, 115.6], "r": 2.5, "label": "후문 고양이 자리"},
+    {"id": "top_house", "zone": "top_house", "pos": [-265.9, 43.0, 126.4], "r": 3.0, "label": "꼭대기 집"},
+    {"id": "bungae", "zone": "bungae_delivery", "pos": [-187.56, 29.55, 105.37], "r": 2.0, "label": "번개배달 사무실"}
+  ]
+}

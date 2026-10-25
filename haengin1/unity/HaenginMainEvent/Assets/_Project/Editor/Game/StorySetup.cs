@@ -570,6 +570,8 @@ namespace Haengin.EditorGame
                     for (int k = 0; k < 6; k++) Actor(root.transform, $"반 친구 {k + 1}", new Vector3(-3f + (k % 3) * 3f, 0f, -1f + (k / 3) * 2.5f), 180f, 1.7f, actorM);
                 // 1화 배역·가구(2026-10-25 — CastSetup: 엄마·하늘·도경민·태오·민재·건우·임찬·반 친구, 교실 칸막이·뒷문 스폰)
                 string dressed = CastSetup.Dress(key, root.transform, new Vector2(w, d), spawns, kp);
+                // 오픈월드 2차(2026-10-25): 손님·동료·잠든 이불·창빛·스탠드·김(시간대별 — StageLife)
+                if (kp != null) dressed += " · " + WorldSetup.DressLife(key, root.transform, kp);
                 place.Spawns = spawns.ToArray();
                 if (!string.IsNullOrEmpty(dressed))
                 {

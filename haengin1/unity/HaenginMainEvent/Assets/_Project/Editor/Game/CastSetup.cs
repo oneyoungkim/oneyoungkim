@@ -146,7 +146,7 @@ namespace Haengin.EditorGame
         }
 
         // ───────────────────────── 무대 꾸미기(StorySetup.Stages 가 부름)
-        static GameObject Put(Transform root, string key, string name, Vector3 local, float yaw, string state = null, Color? tint = null)
+        public static GameObject Put(Transform root, string key, string name, Vector3 local, float yaw, string state = null, Color? tint = null)
         {
             var pf = AssetDatabase.LoadAssetAtPath<GameObject>(Prefab(key));
             if (pf == null) return null;

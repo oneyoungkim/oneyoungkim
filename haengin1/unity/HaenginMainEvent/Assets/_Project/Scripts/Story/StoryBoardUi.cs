@@ -71,6 +71,22 @@ namespace Haengin
             Open();
         }
 
+        /// 오픈월드 이벤트 카드(docs/13 5장 — 원고 없는 카드·사연·문자·요약): 머리 줄·제목·꼬리표·흐름·핵심 대사·발
+        public void ShowCard(string headLine, string titleLine, string tagLine, bool accent, string[] lines, string[] quoteLines, string footLine)
+        {
+            Build();
+            Mode = "카드";
+            head.text = headLine ?? "";
+            title.text = titleLine ?? "";
+            tag.gameObject.SetActive(!string.IsNullOrEmpty(tagLine));
+            tagText.text = tagLine ?? "";
+            tag.color = accent ? UiKit.Accent : UiKit.Ink;
+            body.text = lines != null && lines.Length > 0 ? "· " + string.Join("\n· ", lines) : "";
+            quotes.text = Quotes(quoteLines);
+            foot.text = footLine ?? "";
+            Open();
+        }
+
         /// 1막 소개(새 게임 첫 화면)
         public void ShowIntro(string t, string[] lines, string note)
         {

@@ -37,6 +37,8 @@ namespace Haengin
         public static Action RetryHook, SurrenderHook;
         /// M3 이야기 중(09 2-5·2-10): '도감'(BookHook) · '저장하고 타이틀로'(TitleHook). 도감처럼 메뉴 위에 뜨는 화면은 SubOpen 이 참인 동안 × · ○ 가 SubClose 로 간다
         public static Action BookHook, TitleHook, SubClose;
+        /// '도감' 칸 이름(오픈월드에선 '휴대폰')
+        public static string BookLabel = "도감";
         public static Func<bool> SubOpen;
         readonly System.Collections.Generic.List<Item> visible = new System.Collections.Generic.List<Item> { Item.Resume, Item.AutoAlign, Item.Quit, Item.Reduce };
         public Item ItemAt(int i) => i >= 0 && i < visible.Count ? visible[i] : Item.Resume;
@@ -68,7 +70,7 @@ namespace Haengin
         void OnDisable() { if (Instance == this) Instance = null; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; RetryHook = null; SurrenderHook = null; BookHook = TitleHook = SubClose = null; SubOpen = null; }
+        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; RetryHook = null; SurrenderHook = null; BookHook = TitleHook = SubClose = null; SubOpen = null; BookLabel = "도감"; }
 
         System.Collections.IEnumerator Start()
         {
@@ -241,7 +243,7 @@ namespace Haengin
                     Item.Reduce => "흔들림 줄이기 ◀ " + (Accessibility.Reduced ? "켬" : "끔") + " ▶",
                     Item.Retry => "전투 다시",
                     Item.Surrender => "항복",
-                    Item.Book => "도감",
+                    Item.Book => BookLabel,
                     Item.SaveTitle => "저장하고 타이틀로",
                     _ => "",
                 };

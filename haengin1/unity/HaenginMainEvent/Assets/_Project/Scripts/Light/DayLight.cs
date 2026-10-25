@@ -148,6 +148,44 @@ namespace Haengin
             Debug.Log($"[M3] 조명: {p.name} ({part}) · {(instant ? "바로" : BlendSecs + "초")} · 켠 빛 {CountLit()}");
         }
 
+        /// 오픈월드(docs/13 12-4 1단계): 세계 시계를 따라 이웃한 두 프리셋을 연속 보간(3월 혜화동 — 해 뜸 06:40·해 짐 18:40 근처).
+        /// 빛 자리·하늘 카드·셰이더 전역 값은 더 가까운 시간대가 바뀔 때만 다시 칠한다
+        public void ApplyClock(double minutes)
+        {
+            var (a, b, k) = PartsAt(minutes);
+            var pa = Of(a); var pb = Of(b);
+            if (pa == null || pb == null) return;
+            Find();
+            var dom = k < 0.5f ? a : b;
+            if (Current == null || Current.Part != dom || !clockMode) { Apply(dom, true); clockMode = true; }
+            from = Of(pa); to = Of(pb); t = 1f;
+            Write(Mathf.SmoothStep(0f, 1f, k));
+            ClockK = k; ClockFrom = a; ClockTo = b;
+        }
+        bool clockMode;
+        public float ClockK { get; private set; }
+        public DayPart ClockFrom { get; private set; }
+        public DayPart ClockTo { get; private set; }
+
+        /// 시각 → (앞 시간대, 뒤 시간대, 0~1)
+        public static (DayPart, DayPart, float) PartsAt(double minutes)
+        {
+            double m = minutes % 1440.0;
+            (double at, DayPart p)[] keys =
+            {
+                (0, DayPart.Night), (5 * 60 + 20, DayPart.Night), (6 * 60 + 10, DayPart.Dawn), (6 * 60 + 50, DayPart.Dawn), (7 * 60 + 40, DayPart.Day),
+                (16 * 60 + 50, DayPart.Day), (17 * 60 + 50, DayPart.Dusk), (18 * 60 + 30, DayPart.Dusk), (19 * 60 + 20, DayPart.Night), (1440, DayPart.Night),
+            };
+            for (int i = 0; i < keys.Length - 1; i++)
+            {
+                if (m < keys[i].at || m > keys[i + 1].at) continue;
+                double span = keys[i + 1].at - keys[i].at;
+                float k = span <= 0 ? 0f : (float)((m - keys[i].at) / span);
+                return (keys[i].p, keys[i + 1].p, keys[i].p == keys[i + 1].p ? 0f : k);
+            }
+            return (DayPart.Night, DayPart.Night, 0f);
+        }
+
         public int CountLit()
         {
             int n = 0;
