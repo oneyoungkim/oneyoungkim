@@ -1,0 +1,62 @@
+{
+ "name": "Siwoo",
+ "who": "siwoo",
+ "cells": 5,
+ "cell_px": 409,
+ "atlas_px": 2048,
+ "expr": [
+  "normal",
+  "hurt",
+  "ko",
+  "win",
+  "endure"
+ ],
+ "state": [
+  "open",
+  "half",
+  "closed",
+  "talkA",
+  "talkB"
+ ],
+ "lid_mm": 7.6,
+ "lid_px": 11.77,
+ "face_box_m": [
+  0.2641821501961716,
+  0.26433050632476807
+ ],
+ "eye_found": "layout",
+ "eyeL": [
+  0.365,
+  0.482
+ ],
+ "eyeR": [
+  0.645,
+  0.482
+ ],
+ "eye_w": 0.14,
+ "mouth": [
+  0.505,
+  0.243
+ ],
+ "skin": [
+  0.78,
+  0.62,
+  0.514
+ ],
+ "painted_texels": 17434,
+ "holes": 10723,
+ "head_h_skull": 0.2353,
+ "heads": 7.395,
+ "head_h_eye": 0.203,
+ "chin_z": 1.4844,
+ "height": 1.7400002448046905,
+ "head_top": 1.7385402917861938,
+ "head_scale": 1.0344869139861306,
+ "body_rescale": 0.9947326750981963,
+ "heads_target": 7.4,
+ "tris_lod0": 59446,
+ "tris_lod1": 28945,
+ "tris_lod2": 11577,
+ "tris_face": 1554,
+ "face_overlay_polys": 295
+}

@@ -1,6 +1,7 @@
 // 행인1의 메인이벤트 — 리깅 캐릭터(시우·태오) 임포트 설정 + 툰 재질 + 애니메이터 컨트롤러 (docs/07_M1_조작_설계.md 5장)
 // 재료: concept/art/3d/anim/*.glb (Tripo 자동 리깅 + 클립 1개) → tools/glb2fbx.py(Blender 헤드리스)로 FBX 변환 → 여기서 Humanoid 로 가져온다.
 // 2026-10-06 2차: 대기 = siwoo_idle246(Idle_6, 한쪽 다리에 무게) · taeo_idle243(Idle_3), 걷기 = *_walk115(Quick_Walk). 달리기 = siwoo_run(Run_02) 그대로.
+// 2026-10-25: 시우 걷기 = concept/art/3d/anim/walk/siwoo_walk566.glb(566 walking_2 — 대표 "걷는 게 여성스러움", 후보 4개 비교 docs/anim_library.md). 남성 전원(적·관원·태오)이 같은 컨트롤러로 이 걸음을 씀
 //   Siwoo.fbx(Idle) · SiwooWalk.fbx(Walk) · SiwooRun.fbx(Run) · Taeo.fbx(Idle) — 모두 메시+뼈+클립(아바타 기준 자세를 스킨 바인드 포즈에서 읽으므로 메시가 필요)
 // 클립마다 리깅을 따로 해서 뼈 휴지 자세가 조금씩 다르다 → FBX 마다 자기 아바타(Humanoid)를 만들고, 클립은 근육 공간으로 시우 아바타에 리타깃된다.
 // 걷기·달리기는 제자리 동작(루트 이동 없음, Bake Into Pose) — 이동은 PlayerMotor(CharacterController)가 한다.
@@ -32,19 +33,43 @@ namespace Haengin.EditorTools
         public const string TaeoCtrl = AnimDir + "/Taeo.controller";
         public const string SiwooMat = "Assets/_Project/Materials/M_SiwooAnim_Toon.mat";
         public const string TaeoMat = "Assets/_Project/Materials/M_Taeo_Toon.mat";
+        // 2026-10-25 정식 모델(docs/09 4-2, 6·7단계): tools/formal_model.py + face_tex.py 결과 — 손가락 뼈 30·얼굴 데칼 Face_LOD0~2·Body LOD 3단
+        public const string SiwooDeliveryFbx = Dir + "/SiwooDelivery/SiwooDelivery.fbx";
+        public const string SiwooDeliveryTex = Dir + "/SiwooDelivery/SiwooDeliveryTex.jpg";
+        public const string SiwooDeliveryMat = "Assets/_Project/Materials/M_SiwooDelivery_Toon.mat";
+        /// 정식 모델 3벌: 이름(파일 앞머리) · FBX · 몸 재질
+        public static readonly (string name, string fbx, string mat)[] Formal =
+        {
+            ("Siwoo", SiwooFbx, SiwooMat), ("SiwooDelivery", SiwooDeliveryFbx, SiwooDeliveryMat), ("Taeo", TaeoFbx, TaeoMat),
+        };
+        /// 얼굴 데칼 재질 = 몸 재질 이름 + "_Face"
+        public static string FaceMatPath(string bodyMat) => bodyMat.Substring(0, bodyMat.Length - 4) + "_Face.mat";
+        public static string FormalFile(string name, string suffix) => $"{Dir}/{name}/{name}{suffix}";
 
         // 애니메이터 변수(LocoAnim 과 같은 이름)
         public const string PSpeed = "Speed", PBlend = "Blend", PRate = "Rate";
         public const string MoveState = "Move";
 
-        /// 걷기 한 주기만 쓴다(Quick_Walk 원본 3.0초 = 똑같은 걸음 3주기, 30프레임마다 자세 차 0.01°). 블렌드 트리가 걷기·달리기의 정규화 시간을 맞추므로 한 주기끼리여야 발이 엇갈리지 않는다.
+        /// (태오 TaeoWalk.fbx = 115 Quick_Walk 에만 씀 — 시우 걷기는 2026-10-25 부터 566 walking_2 한 주기 통째) 걷기 한 주기만 쓴다(Quick_Walk 원본 3.0초 = 똑같은 걸음 3주기, 30프레임마다 자세 차 0.01°). 블렌드 트리가 걷기·달리기의 정규화 시간을 맞추므로 한 주기끼리여야 발이 엇갈리지 않는다.
         /// FBX 프레임(30fps, 1부터) 1~31 = 30프레임 = 1.0초
         public const int WalkFirst = 1, WalkLast = 31;
 
         /// 외곽선: 예전 정적 모델(원본 키 1.0 을 ×1.74)과 같은 월드 두께(약 4.5mm)가 되게. 새 FBX 는 배율 1 에 키 1.74m
         const float OutlineWorldMm = 2.6f * 1.74f;
 
-        /// Tripo 뼈 이름 → Humanoid. 손가락 뼈는 없다
+        /// 정식 모델 손가락(tools/formal_model.py): {Left,Right}Hand{Thumb,Index,Middle,Ring,Pinky}{1,2,3} → Humanoid 손가락 30
+        static readonly string[] FingerBone = { "Thumb", "Index", "Middle", "Ring", "Pinky" };
+        static readonly string[] FingerHuman = { "Thumb", "Index", "Middle", "Ring", "Little" };
+        static readonly string[] SegHuman = { "Proximal", "Intermediate", "Distal" };
+        public static IEnumerable<(HumanBodyBones h, string bone)> FingerMap()
+        {
+            foreach (var side in new[] { "Left", "Right" })
+                for (int f = 0; f < 5; f++)
+                    for (int j = 0; j < 3; j++)
+                        yield return ((HumanBodyBones)Enum.Parse(typeof(HumanBodyBones), side + FingerHuman[f] + SegHuman[j]), $"{side}Hand{FingerBone[f]}{j + 1}");
+        }
+
+        /// Tripo 뼈 이름 → Humanoid(몸 22). 정식 모델은 FingerMap 이 더해진다
         static readonly (HumanBodyBones h, string bone)[] Map =
         {
             (HumanBodyBones.Hips, "Hips"), (HumanBodyBones.Spine, "Spine02"), (HumanBodyBones.Chest, "Spine01"), (HumanBodyBones.UpperChest, "Spine"),
@@ -81,8 +106,18 @@ namespace Haengin.EditorTools
             EnsureFolder(AnimDir);
             Texture(SiwooTex);
             Texture(TaeoTex);
-            Human(SiwooFbx, "Idle", -1, -1, true, null);     // 손 셰이프 키(Fist·Grip, 08 9장 A′ — tools/hand_keys.py)
-            Human(SiwooWalkFbx, "Walk", WalkFirst, WalkLast);
+            foreach (var (n, fbx, _) in Formal)
+            {
+                if (AssetDatabase.LoadAssetAtPath<GameObject>(fbx) == null || AssetImporter.GetAtPath(FormalFile(n, "Shade.jpg")) == null) continue;
+                Texture(FormalFile(n, "Tex.jpg"));
+                Texture(FormalFile(n, "Shade.jpg"));
+                Texture(FormalFile(n, "OutW.png"), false, 1024);
+                Texture(FormalFile(n, "Face.png"), true, 2048, true);
+                Texture(FormalFile(n, "FaceMask.png"), false, 2048);
+            }
+            Human(SiwooFbx, "Idle", -1, -1, true, null);     // 손 셰이프 키(Fist·Grip, 08 9장 A′ — tools/hand_keys.py) — 정식 모델이면 손가락 뼈
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(SiwooDeliveryFbx) != null) Human(SiwooDeliveryFbx, "Idle", -1, -1);
+            Human(SiwooWalkFbx, "Walk", -1, -1, false, null, true);   // 2026-10-25 566 walking_2(한 주기 통째) — 115 Quick_Walk 는 '여성스럽다'(대표)로 교체, 골반 기울기 ±9.1° → ±6.0°
             Human(SiwooRunFbx, "Run", -1, -1);
             Human(TaeoFbx, "Idle", -1, -1);
             Human(TaeoWalkFbx, "Walk", WalkFirst, WalkLast);
@@ -93,11 +128,17 @@ namespace Haengin.EditorTools
             Ground(SiwooRunFbx, "Run", SiwooFbx);
             Ground(TaeoFbx, "Idle", TaeoFbx);
             Ground(TaeoWalkFbx, "Walk", TaeoFbx, true);
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(SiwooDeliveryFbx) != null) Ground(SiwooDeliveryFbx, "Idle", SiwooDeliveryFbx);
 
             var siwoo = Load<GameObject>(SiwooFbx);
             var taeo = Load<GameObject>(TaeoFbx);
             Toon(siwoo, SiwooMat, SiwooTex);
             Toon(taeo, TaeoMat, TaeoTex);
+            foreach (var (n, fbx, mat) in Formal)
+            {
+                var m = AssetDatabase.LoadAssetAtPath<GameObject>(fbx);
+                if (m != null && IsFormal(m)) FormalToon(m, n, mat);
+            }
 
             var idle = Clip(SiwooFbx, "Idle");
             var walk = Clip(SiwooWalkFbx, "Walk");
@@ -124,14 +165,23 @@ namespace Haengin.EditorTools
         }
 
         // ───────────────────────── 임포트 설정
-        public static void Texture(string path)
+        public static void Texture(string path) => Texture(path, true, 2048);
+
+        /// srgb = 색 텍스처(아니면 선형 — 외곽선 굵기·깎기 마스크) · alpha = 알파를 투명도로(표정 아틀라스)
+        public static void Texture(string path, bool srgb, int max, bool alpha = false)
         {
             var ti = AssetImporter.GetAtPath(path) as TextureImporter ?? throw new Exception("텍스처가 없습니다: " + path);
             bool dirty = false;
             void Set<T>(T cur, T want, Action<T> apply) { if (!EqualityComparer<T>.Default.Equals(cur, want)) { apply(want); dirty = true; } }
             Set(ti.textureType, TextureImporterType.Default, v => ti.textureType = v);
-            Set(ti.sRGBTexture, true, v => ti.sRGBTexture = v);
-            Set(ti.maxTextureSize, 2048, v => ti.maxTextureSize = v);
+            Set(ti.sRGBTexture, srgb, v => ti.sRGBTexture = v);
+            Set(ti.maxTextureSize, max, v => ti.maxTextureSize = v);
+            if (alpha || !srgb)
+            {
+                Set(ti.alphaSource, alpha ? TextureImporterAlphaSource.FromInput : TextureImporterAlphaSource.None, v => ti.alphaSource = v);
+                Set(ti.alphaIsTransparency, alpha, v => ti.alphaIsTransparency = v);
+                Set(ti.wrapMode, TextureWrapMode.Clamp, v => ti.wrapMode = v);
+            }
             Set(ti.mipmapEnabled, true, v => ti.mipmapEnabled = v);
             Set(ti.textureCompression, TextureImporterCompression.CompressedHQ, v => ti.textureCompression = v);
             Set(ti.anisoLevel, 4, v => ti.anisoLevel = v);
@@ -194,7 +244,7 @@ namespace Haengin.EditorTools
                 cp.SetApplyFootIK(true);
                 output.SetSourcePlayable(cp);
                 if (!AnimationMode.InAnimationMode()) { AnimationMode.StartAnimationMode(); started = true; }
-                var smr = go.GetComponentInChildren<SkinnedMeshRenderer>(true);
+                var smr = MainSkin(go);
                 var root = go.transform;
                 var lf = anim.GetBoneTransform(HumanBodyBones.LeftFoot);
                 var rf = anim.GetBoneTransform(HumanBodyBones.RightFoot);
@@ -232,10 +282,13 @@ namespace Haengin.EditorTools
             return stanceMins[stanceMins.Count / 2];
         }
 
-        public static void Human(string path, string clipName, int first, int last) => Human(path, clipName, first, last, false, null);
+        public static void Human(string path, string clipName, int first, int last) => Human(path, clipName, first, last, false, null, false);
+        public static void Human(string path, string clipName, int first, int last, bool blendShapes, ModelImporterClipAnimation[] subClips) => Human(path, clipName, first, last, blendShapes, subClips, false);
 
         /// subClips 가 있으면 그것으로 클립을 나눔(M2 전투 클립: 잡기 앞·뒤, 쓰러짐·누움 등). blendShapes = 셰이프 키 가져오기(손 — 08 9장)
-        public static void Human(string path, string clipName, int first, int last, bool blendShapes, ModelImporterClipAnimation[] subClips)
+        /// rootXZ = 클립에 앞으로 가는 루트 이동이 있다(566 walking_2 — Quick_Walk 와 달리 제자리 동작이 아님): 수평 이동을 자세에 굽지 않고 루트로 빼서
+        ///   (애니메이터 루트 모션은 끔) 제자리 걸음이 되게. 굽으면 몸이 1.2m 앞으로 갔다가 한 주기마다 뒤로 튐(2026-10-25 T25 가 잡음)
+        public static void Human(string path, string clipName, int first, int last, bool blendShapes, ModelImporterClipAnimation[] subClips, bool rootXZ)
         {
             var mi = AssetImporter.GetAtPath(path) as ModelImporter ?? throw new Exception("FBX 가 없습니다: " + path);
             var model = Load<GameObject>(path);
@@ -243,11 +296,16 @@ namespace Haengin.EditorTools
             var names = new HashSet<string>(all.Select(t => t.name));
             foreach (var (_, bone) in Map)
                 if (!names.Contains(bone)) throw new Exception($"{path}: 뼈 '{bone}' 가 없습니다");
+            bool fingers = names.Contains("LeftHandIndex1");
+            var map = fingers ? Map.Concat(FingerMap()).ToArray() : Map;
+            if (fingers)
+                foreach (var (_, bone) in map)
+                    if (!names.Contains(bone)) throw new Exception($"{path}: 손가락 뼈 '{bone}' 가 없습니다");
 
             float hipsY;
             var hd = new HumanDescription
             {
-                human = Map.Select(m => new HumanBone
+                human = map.Select(m => new HumanBone
                 {
                     humanName = HumanName(m.h),
                     boneName = m.bone,
@@ -266,7 +324,7 @@ namespace Haengin.EditorTools
             mi.importCameras = false;
             mi.importLights = false;
             mi.importVisibility = false;
-            mi.isReadable = false;
+            mi.isReadable = fingers;            // 정식 모델: 손가락 관통 검사(HandCheck)가 메시 가중치를 읽음
             mi.animationType = ModelImporterAnimationType.Human;
             mi.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
             mi.humanDescription = hd;
@@ -287,7 +345,7 @@ namespace Haengin.EditorTools
                 // 루트 회전·높이·수평 위치 모두 자세에 굽기(제자리). 기준 = 원본(클립이 만든 그대로: 정면 +Z, 발 = 바닥)
                 lockRootRotation = true, keepOriginalOrientation = true,
                 lockRootHeightY = true, keepOriginalPositionY = true, heightFromFeet = false,
-                lockRootPositionXZ = true, keepOriginalPositionXZ = true,
+                lockRootPositionXZ = !rootXZ, keepOriginalPositionXZ = true,
                 maskType = ClipAnimationMaskType.None,
             };
             if (subClips != null)
@@ -305,7 +363,7 @@ namespace Haengin.EditorTools
             var av = AvatarOf(path);
             if (av == null || !av.isValid || !av.isHuman) throw new Exception($"{path}: Humanoid 아바타를 만들지 못했습니다(valid {av?.isValid} human {av?.isHuman})");
             var clip = Clip(path, subClips != null ? subClips[0].name : clipName);
-            Debug.Log($"{Tag} {path}: Humanoid 아바타 OK · 기준 자세 = 바인드 포즈(골반 높이 {hipsY:F3}m) · 뼈 {all.Length - 1}개(매핑 {Map.Length}) · 클립 '{clip.name}' {clip.length:F3}s 루프 {clip.isLooping} " +
+            Debug.Log($"{Tag} {path}: Humanoid 아바타 OK · 기준 자세 = 바인드 포즈(골반 높이 {hipsY:F3}m) · 뼈 {all.Length - 1}개(매핑 {map.Length}{(fingers ? " — 손가락 30 포함" : "")}) · 클립 '{clip.name}' {clip.length:F3}s 루프 {clip.isLooping} " +
                       $"(테이크 '{take.takeName}' 프레임 {c.firstFrame}~{c.lastFrame}) · 루트 {Describe(model)}");
         }
 
@@ -313,7 +371,7 @@ namespace Haengin.EditorTools
         /// 아바타마다 기준이 달라져 리타깃이 어긋난다(2026-10-06 실측: 걷기 발목이 3.8cm, 달리기 8.4cm 땅에 묻힘). 그래서 바인드 행렬에서 다시 계산한다.
         static SkeletonBone[] BindSkeleton(GameObject model, out float hipsY)
         {
-            var smr = model.GetComponentInChildren<SkinnedMeshRenderer>(true) ?? throw new Exception($"{model.name}: 스킨 메시가 없어 바인드 포즈를 알 수 없습니다(glb2fbx.py 를 메시 포함 1 로)");
+            var smr = MainSkin(model) ?? throw new Exception($"{model.name}: 스킨 메시가 없어 바인드 포즈를 알 수 없습니다(glb2fbx.py 를 메시 포함 1 로)");
             var root = model.transform;
             var bind = new Dictionary<Transform, Matrix4x4>();
             var bp = smr.sharedMesh.bindposes;
@@ -349,7 +407,7 @@ namespace Haengin.EditorTools
 
         static string Describe(GameObject model)
         {
-            var smr = model.GetComponentInChildren<SkinnedMeshRenderer>(true);
+            var smr = MainSkin(model);
             var arm = model.transform.Cast<Transform>().FirstOrDefault(t => t.name != (smr != null ? smr.name : ""));
             string s = $"'{model.name}' 배율 {model.transform.localScale.x:F3}";
             if (arm != null) s += $" · '{arm.name}' 회전 {arm.localEulerAngles} 배율 {arm.localScale.x:F3}";
@@ -365,11 +423,70 @@ namespace Haengin.EditorTools
             var tex = Load<Texture2D>(texPath);
             var name = System.IO.Path.GetFileNameWithoutExtension(matPath);
             var mat = SandboxSetup.MakeToonMaterial(name, tex, Color.white);
-            var smr = model.GetComponentInChildren<SkinnedMeshRenderer>(true);
+            var smr = MainSkin(model);
             float s = smr != null ? smr.transform.lossyScale.x : 1f;
             mat.SetFloat("_Outline_Width", OutlineWorldMm / Mathf.Max(1e-4f, s));
             EditorUtility.SetDirty(mat);
             Debug.Log($"{Tag} 툰 재질 {matPath}: 텍스처 {tex.name} · 외곽선 폭 {mat.GetFloat("_Outline_Width"):F2}(메시 배율 {s:F3} → 월드 {OutlineWorldMm:F1}mm)");
+        }
+
+        /// 정식 모델(손가락 뼈가 있는 FBX)인가
+        public static bool IsFormal(GameObject model) => model != null && model.GetComponentsInChildren<Transform>(true).Any(t => t.name == "LeftHandIndex1");
+
+        /// 몸 메시: 이름이 Body_LOD0 인 것 → 없으면 뼈가 가장 많은 스킨(얼굴 데칼은 머리·목 뼈만 써서 바인드 포즈 기준으로 쓰면 안 됨)
+        public static SkinnedMeshRenderer MainSkin(GameObject go)
+        {
+            if (go == null) return null;
+            var all = go.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            return all.FirstOrDefault(r => r.name == "Body_LOD0") ?? all.OrderByDescending(r => r.bones != null ? r.bones.Length : 0).FirstOrDefault();
+        }
+
+        public static bool IsFace(Renderer r) => r != null && r.name.StartsWith("Face_");
+
+        /// 모델 인스턴스에 재질 입히기: 몸 = body, 얼굴 데칼(Face_LOD*) = face(없으면 끔 — 회색 허수아비·심판처럼 한 재질만 쓸 때)
+        public static void Paint(GameObject go, Material body, Material face, bool shadows = true)
+        {
+            foreach (var r in go.GetComponentsInChildren<Renderer>(true))
+            {
+                bool isFace = IsFace(r);
+                var m = isFace ? face : body;
+                if (isFace && face == null) { r.enabled = false; continue; }
+                if (m != null) { var ms = r.sharedMaterials; for (int i = 0; i < ms.Length; i++) ms[i] = m; r.sharedMaterials = ms; }
+                r.shadowCastingMode = isFace || !shadows ? UnityEngine.Rendering.ShadowCastingMode.Off : UnityEngine.Rendering.ShadowCastingMode.On;
+                r.receiveShadows = true;
+                if (r is SkinnedMeshRenderer smr) smr.updateWhenOffscreen = false;
+            }
+        }
+
+        /// 몸 재질 경로 → 얼굴 재질(없으면 null)
+        public static Material FaceMatFor(string bodyMat) => AssetDatabase.LoadAssetAtPath<Material>(FaceMatPath(bodyMat));
+
+        /// 정식 모델 재질(4-2 ④⑤⑥): 몸 = UTS(고유색 = 눈·입 지운 텍스처 · 1단 그림자 = 부위별 곱셈값을 구운 Shade · 외곽선 굵기 = OutW 텍스처)
+        ///   얼굴 = UTS 깎기 모드(표정 아틀라스 + 알파 마스크 · 외곽선 패스 끔 · 그림자 안 드리움 · 알파 테스트 큐) — 칸 바꾸기는 FaceRig 가 _MainTex_ST 로
+        public static void FormalToon(GameObject model, string name, string matPath)
+        {
+            Toon(model, matPath, FormalFile(name, "Tex.jpg"));
+            var mat = Load<Material>(matPath);
+            var shade = Load<Texture2D>(FormalFile(name, "Shade.jpg"));
+            var outW = Load<Texture2D>(FormalFile(name, "OutW.png"));
+            mat.SetFloat("_Use_BaseAs1st", 0f); mat.SetTexture("_1st_ShadeMap", shade); mat.SetColor("_1st_ShadeColor", Color.white);
+            mat.SetFloat("_Use_1stAs2nd", 0f); mat.SetTexture("_2nd_ShadeMap", shade); mat.SetColor("_2nd_ShadeColor", new Color(0.88f, 0.86f, 0.88f, 1f));
+            mat.SetTexture("_Outline_Sampler", outW);
+            EditorUtility.SetDirty(mat);
+
+            var atlas = Load<Texture2D>(FormalFile(name, "Face.png"));
+            var mask = Load<Texture2D>(FormalFile(name, "FaceMask.png"));
+            string fp = FaceMatPath(matPath);
+            var face = SandboxSetup.MakeToonMaterial(System.IO.Path.GetFileNameWithoutExtension(fp), atlas, Color.white);
+            face.SetTexture("_1st_ShadeMap", atlas); face.SetTexture("_2nd_ShadeMap", atlas);
+            face.SetTexture("_ClippingMask", mask);
+            face.SetFloat("_ClippingMode", 1f); face.SetFloat("_Clipping_Level", 0f); face.SetFloat("_Inverse_Clipping", 0f); face.SetFloat("_IsBaseMapAlphaAsClippingMask", 1f);
+            face.DisableKeyword("_IS_CLIPPING_OFF"); face.DisableKeyword("_IS_CLIPPING_TRANSMODE"); face.EnableKeyword("_IS_CLIPPING_MODE");
+            face.SetShaderPassEnabled("SRPDefaultUnlit", false);    // 외곽선 헐 없음(얼굴 껍데기 가장자리에 먹 선이 생기지 않게)
+            face.SetShaderPassEnabled("ShadowCaster", false);
+            face.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
+            EditorUtility.SetDirty(face);
+            Debug.Log($"{Tag} 정식 모델 재질 {name}: 몸 {matPath}(그림자 {shade.name} · 외곽선 굵기 {outW.name}) · 얼굴 {fp}(아틀라스 {atlas.name} {atlas.width}² · 깎기 {mask.name})");
         }
 
         // ───────────────────────── 걸음 측정 (제자리 재생 → 디딤발이 뒤로 가는 속도 = 클립 고유 이동 속도)

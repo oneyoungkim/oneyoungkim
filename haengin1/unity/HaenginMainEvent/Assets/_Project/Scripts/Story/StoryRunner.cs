@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,6 +27,10 @@ namespace Haengin
         public TalkInput TalkIn;
         public Cutscene Cut;
         public EpisodeCard Card;
+        /// 스토리보드 카드(자리 장면·조작 장면 소개·1막 소개 — 2026-10-25)
+        public StoryBoardUi Board;
+        /// 양갈래 땋기 1화 최소판(대사 이벤트 "braidgame:N")
+        public BraidGame Braid;
         public LedgerUi LedgerUi;
         public NameBookUi NameUi;
         public EndureFx Endure;
@@ -82,6 +87,8 @@ namespace Haengin
             if (Light == null) Light = GetComponent<DayLight>();
             if (Hud == null) Hud = GetComponentInChildren<StoryHud>(true);
             if (Card == null) Card = GetComponentInChildren<EpisodeCard>(true);
+            if (Board == null) Board = GetComponentInChildren<StoryBoardUi>(true);
+            if (Braid == null) Braid = GetComponentInChildren<BraidGame>(true);
             if (LedgerUi == null) LedgerUi = GetComponentInChildren<LedgerUi>(true);
             if (NameUi == null) NameUi = GetComponentInChildren<NameBookUi>(true);
             if (Endure == null) Endure = GetComponentInChildren<EndureFx>(true);
@@ -95,6 +102,7 @@ namespace Haengin
                 if (Talk.Hud == null) Talk.Hud = Hud;
             }
             if (Loader != null) { Loader.Covered += OnCovered; Loader.Placed += OnPlaced; }
+            if (Talk != null) Talk.Shown += OnLine;
         }
 
         IEnumerator Start()
@@ -143,7 +151,7 @@ namespace Haengin
             GameUi.TitleHook = SaveAndTitle;
             if (Talk != null) Talk.Bot = Bot != BotMode.None ? (l => BotAnswer != null ? BotAnswer(l) : 0) : null;
             Debug.Log($"[M3] 이야기 시작: {(test ? "시험 장면" : "데모")} {List.Length}개 중 {start + 1}번째({List[start].Id}){(save != null ? " · 이어하기" : "")}{(Bot != BotMode.None ? " · 봇 " + Bot : "")}");
-            co = StartCoroutine(Run(start));
+            co = StartCoroutine(Run(start, !test && start == 0 && save == null));
         }
 
         /// 이야기를 멈추고 Zone1 탐색으로 되돌린다(테스트 정리·타이틀로)
@@ -167,6 +175,10 @@ namespace Haengin
             if (Loader != null) StartCoroutine(Loader.Reset());
             InputMaps.Use(Actions, InputMaps.Explore);
             GameUi.HintOverride = null;
+            Board?.Hide();
+            if (BikeCourse.Current != null && BikeCourse.Current.Riding) BikeCourse.Current.Finish();
+            var of = Loader != null && Loader.Motor != null ? Loader.Motor.GetComponent<Outfit>() : null;
+            if (of != null) of.Set(Outfit.Uniform);
             GameUi.BookHook = GameUi.TitleHook = null;
             GameUi.SubOpen = null; GameUi.SubClose = null;
             SetM2(true);
@@ -178,8 +190,17 @@ namespace Haengin
             if (M2Stages != null && M2Stages.activeSelf != on) M2Stages.SetActive(on);
         }
 
-        IEnumerator Run(int start)
+        IEnumerator Run(int start, bool intro = false)
         {
+            if (intro && Board != null && Def != null && Def.Intro != null && Def.Intro.Length > 0)
+            {
+                // 새 게임 첫 화면: 1막 소개(누가·어디서·무엇을) — 눌러야 시작
+                InputMaps.Use(Actions, InputMaps.Talk);
+                GameUi.HintOverride = TalkHint;
+                Board.ShowIntro(Def.IntroTitle, Def.Intro, Def.IntroNote);
+                yield return WaitPress();
+                Board.Hide();
+            }
             for (int i = start; i < List.Length; i++)
             {
                 Index = i;
@@ -221,12 +242,28 @@ namespace Haengin
             }
 
             pendingLight = s.Light;
-            if (Loader != null) yield return Loader.Go(s.Place, s.Spawn, s.HasPos, s.Pos, s.Yaw, true);
+            // 8단계 배달 자전거: 1-2 → 1-3 → 1-4 는 한 번 탄 채 이어 간다(자리 옮김·먹 닦기 없이)
+            var bike = s.InZone1 && s.Kind == SceneKind.Move ? BikeCourse.Current : null;
+            int leg = bike != null ? BikeCourse.LegOf(s.Id) : -1;
+            bool keepRiding = leg >= 0 && bike.Riding;
+            if (Loader != null) yield return Loader.Go(s.Place, s.Spawn, s.HasPos && !keepRiding, s.Pos, s.Yaw, !keepRiding);
             else { OnCovered(); OnPlaced(); }
             Hud?.ShowDate();
+            // 7단계 의상: 새벽 배달·현장 = 배달복, 그 밖 = 교복(장면 데이터 "outfit")
+            var outfit = Loader != null && Loader.Motor != null ? Loader.Motor.GetComponent<Outfit>() : null;
+            if (outfit != null) outfit.Set(string.IsNullOrEmpty(s.Outfit) ? Outfit.Uniform : s.Outfit);
             Mark(s);
             ApplyAll(s.Start);
 
+            if (s.Kind == SceneKind.Move && Board != null && s.Board != null && s.Board.Length > 0 && Bot == BotMode.None)
+            {
+                // 조작 장면 소개 — 무슨 장면인지 보고 출발(봇은 건너뜀)
+                InputMaps.Use(Actions, InputMaps.Talk);
+                GameUi.HintOverride = TalkHint;
+                Board.Show(s, Def.Episode(s.Ep), true);
+                yield return WaitPress();
+                Board.Hide();
+            }
             if (s.Kind == SceneKind.Move)
             {
                 InputMaps.Use(Actions, InputMaps.Explore);
@@ -238,6 +275,20 @@ namespace Haengin
                 {
                     g.SetTargets(s.Targets);
                     foreach (var h in FindObjectsByType<RouteHud>(FindObjectsSortMode.None)) h.ResetFlash();
+                }
+                if (leg >= 0)
+                {
+                    // 주행 장면: 코스 다리 하나(1-2 경비실 · 1-3 꼭대기 집 도착 · 1-4 건네기 → 지각 대사 → 끝). 봇이면 코스 봇이 몬다(빠른 봇 = 건너뜀)
+                    bike.Bot = Bot != BotMode.None;
+                    Debug.Log($"[M3] 주행 {s.Id}: 다리 {leg} · {(bike.Riding ? "타는 중" : "새로 탐")}{(Bot != BotMode.None ? " · 봇 " + Bot : "")}");
+                    yield return bike.RunLeg(leg, () => skipScene || Bot == BotMode.Fast);
+                    if (bike.Riding) InputMaps.Use(Actions, InputMaps.Bike);
+                    GameClock.Running = false;
+                    if (Hud != null) Hud.KeepChip = false;
+                    ApplyAll(s.Effects);
+                    Debug.Log($"[M3] 장면 {s.Id} 끝(주행{(skipScene ? " — 건너뜀" : "")})");
+                    End(s);
+                    yield break;
                 }
                 Debug.Log($"[M3] 이동 목표 {(g != null ? g.Stops.Length : -1)}개 · 첫 목표 {(g != null && g.CurrentTarget != null ? g.CurrentTarget.Label + " " + g.Distance.ToString("F1") + "m" : "없음")} · 시우 {(Loader != null && Loader.Motor != null ? Loader.Motor.Position.ToString("F1") : "-")}");
                 float stuck = 0f; Vector3 last = Vector3.zero;
@@ -259,7 +310,9 @@ namespace Haengin
                 var tl = Cuts != null ? Cuts.Get(s.Id) : null;
                 string dk = string.IsNullOrEmpty(s.Dlg) ? s.Id : s.Dlg;
                 bool hasTalk = Dialogue != null && Dialogue.Has(dk);
-                if (tl != null && Cut != null) yield return Cut.Play(tl, WantSkip);
+                // 대사 안에 "cut:<장면>" 이벤트가 있으면 컷신은 그 자리에서(1-6 학예회 회상 — 출석 대사 사이)
+                bool cutInTalk = hasTalk && Dialogue.Get(dk).Any(x => x.Mode == DlgMode.Event && x.Text.Trim() == "cut:" + s.Id);
+                if (tl != null && Cut != null && !cutInTalk) yield return Cut.Play(tl, WantSkip);
                 if (hasTalk && Talk != null)
                 {
                     if (Bot == BotMode.Fast || skipScene) Talk.RequestSkip();
@@ -267,9 +320,20 @@ namespace Haengin
                 }
                 if (tl == null && !hasTalk)
                 {
-                    Hud?.Stub($"[{s.Id} · {KindName(s.Kind)} 자리]  {s.Title}\n{s.Summary}");
-                    yield return Wait(s.Len, true);
-                    Hud?.Stub(null);
+                    // 자리 장면 = 스토리보드 카드(원고 흐름·핵심 대사·'제작 중 장면'). 사람은 눌러야 넘어감(예전: len 초 뒤 저절로 — "막 지나감")
+                    if (Board != null)
+                    {
+                        Board.Show(s, Def.Episode(s.Ep), false);
+                        if (Bot != BotMode.None) yield return Wait(s.Len, true);
+                        else yield return WaitPress();
+                        Board.Hide();
+                    }
+                    else
+                    {
+                        Hud?.Stub($"[{s.Id} · {KindName(s.Kind)} 자리]  {s.Title}\n{s.Summary}");
+                        yield return Wait(s.Len, true);
+                        Hud?.Stub(null);
+                    }
                 }
             }
             ApplyAll(s.Effects);
@@ -287,8 +351,69 @@ namespace Haengin
             SceneStarted?.Invoke(s);
         }
 
+        // ───────────────────────── 대사 연출(1화 — 2026-10-25): 카메라 칸 = 프리셋 카메라(말하는 사람), 표정 칸 = 얼굴 칸(정식 모델), 말하는 동안 입 2장
+        CutCamDriver lineCam;
+        FaceRig talker;
+
+        static CamPreset? PresetOf(string cam) => (cam ?? "").Trim() switch
+        {
+            "근접" => CamPreset.Close, "낮은 정면" => CamPreset.LowFront, "와이드" => CamPreset.Wide, "로우앵글" => CamPreset.LowAngle,
+            "등 뒤 트래킹" => CamPreset.BackTrack, "측면 트래킹" => CamPreset.SideTrack, "미디엄" => CamPreset.Mid, _ => (CamPreset?)null,
+        };
+
+        void OnLine(DlgLine l)
+        {
+            if (talker != null) { talker.Talk = false; talker = null; }
+            string who = l.Mode == DlgMode.Inner || l.Mode == DlgMode.Screen ? "시우" : l.Who;
+            if (!string.IsNullOrEmpty(l.Face) && l.Face != "참기") { CutCtx.Face(l.Who, l.Face); lineFaces.Add(l.Who); }
+            var actor = CutCtx.Actor(who);
+            if (l.Mode == DlgMode.Sub && actor != null)
+            {
+                talker = actor.GetComponentInChildren<FaceRig>(false);
+                if (talker != null) talker.Talk = true;
+            }
+            // 카메라 칸 "프리셋[:배우]" — 배우를 안 쓰면 말하는 사람(속마음·화면 글자는 시우)
+            var cp = (l.Cam ?? "").Split(':');
+            var pr = PresetOf(cp[0]);
+            var camActor = cp.Length > 1 ? CutCtx.Actor(cp[1].Trim()) : actor;
+            if (pr.HasValue && camActor != null)
+            {
+                if (lineCam != null) CutCams.Release(lineCam);
+                var brain = Camera.main != null ? Camera.main.GetComponent<Unity.Cinemachine.CinemachineBrain>() : null;
+                if (brain != null && !lineBlendSaved)
+                {
+                    // 대사 카메라 사이는 컷(영화식) — 블렌드 중간 자리가 배우 머리·몸을 지나가던 것(1화 1-5)
+                    lineBlend = brain.DefaultBlend; lineBlendSaved = true;
+                    brain.DefaultBlend = new Unity.Cinemachine.CinemachineBlendDefinition(Unity.Cinemachine.CinemachineBlendDefinition.Styles.Cut, 0f);
+                }
+                var other = camActor == CutCtx.Player ? null : CutCtx.Player;
+                lineCam = CutCams.Make(pr.Value, camActor, other);
+                lineCam.SetLive(true);
+            }
+        }
+
+        Unity.Cinemachine.CinemachineBlendDefinition lineBlend;
+        bool lineBlendSaved;
+
+        readonly HashSet<string> lineFaces = new HashSet<string>();
+
+        void EndLines()
+        {
+            foreach (var w in lineFaces) CutCtx.ClearFace(w);
+            lineFaces.Clear();
+            if (talker != null) { talker.Talk = false; talker = null; }
+            if (lineCam != null) { CutCams.Release(lineCam); lineCam = null; }
+            if (lineBlendSaved)
+            {
+                var brain = Camera.main != null ? Camera.main.GetComponent<Unity.Cinemachine.CinemachineBrain>() : null;
+                if (brain != null) brain.DefaultBlend = lineBlend;
+                lineBlendSaved = false;
+            }
+        }
+
         void End(SceneDef s)
         {
+            EndLines();
             var g = RouteGuide.Current;
             if (g != null) g.ClearTargets();
             Hud?.Screen(null, 0f);
@@ -315,6 +440,25 @@ namespace Haengin
 
         /// 지금 장면을 끝냄(봇·디버그). 끝 상태는 같은 길로 적용된다
         public void SkipScene() { skipScene = true; Talk?.RequestSkip(); }
+
+        /// 사람이 누를 때까지(× · Enter · Space · 마우스 왼쪽 — Talk 맵 Next). 건너뛰기(길게)·봇이면 바로
+        IEnumerator WaitPress()
+        {
+            pressed = false;
+            yield return null;
+            while (true)
+            {
+                if (WantSkip() || Bot == BotMode.Fast) yield break;
+                if (Bot == BotMode.Read) { yield return Wait(1.2f, true); yield break; }
+                if (TalkIn != null && TalkIn.Next) yield break;
+                if (pressed) { pressed = false; yield break; }
+                yield return null;
+            }
+        }
+
+        bool pressed;
+        /// 카드 넘기기(테스트·스모크 — 사람이 × 를 누른 것과 같음)
+        public void Press() { pressed = true; }
 
         IEnumerator Wait(float secs, bool allowNext)
         {
@@ -358,6 +502,18 @@ namespace Haengin
         // ───────────────────────── 명령(가계부·도감·플래그 …)
         public IEnumerator ApplyCo(string cmd)
         {
+            if (cmd.StartsWith("braidgame"))
+            {
+                int n = cmd.Length > 10 ? Ledger.ParseInt(cmd.Substring(10)) : 1;
+                if (Braid != null) yield return Braid.Play(n, Bot != BotMode.None, WantSkip);
+                yield break;
+            }
+            if (cmd.StartsWith("cut:"))
+            {
+                var tl = Cuts != null ? Cuts.Get(cmd.Substring(4)) : null;
+                if (tl != null && Cut != null) yield return Cut.Play(tl, WantSkip);
+                yield break;
+            }
             if (cmd == "reveal" && LedgerUi != null && Def != null)
             {
                 if (Bot == BotMode.Fast) { LedgerUi.RevealNow(Def.LedgerRows); yield break; }
@@ -388,6 +544,39 @@ namespace Haengin
                     if (Names.Register(arg, Def != null ? Def.Names : null)) NameUi?.Register(arg);
                     break;
                 case "flag": Flags.Raise(arg); break;
+                case "braidgame": break;                                  // 건너뛰면 땋기 없음(결과는 장면 끝 braid:3)
+                case "cut": InkMode.Set(0f); break;                       // 건너뛴 회상의 끝 상태
+                case "hand":
+                    {
+                        // hand:배우:자세[:무게] — '해제'면 풂(정식 모델 = HandPoser 8종, 그 밖 = 주먹 셰이프 키)
+                        var hp = arg.Split(':');
+                        if (hp.Length >= 2) CutCtx.Hand(hp[0], hp[1] == "해제" ? "" : hp[1], hp[1] == "해제" ? 0f : hp.Length >= 3 ? Ledger.ParseInt(hp[2]) / 100f : 1f);
+                        break;
+                    }
+                case "look":
+                case "raise":
+                case "face":
+                    {
+                        // look:배우|반:대상|해제 — 고개(몸 조금)를 대상 쪽으로 / raise:배우:대상|해제 — 오른팔을 대상 쪽으로 들기(엄지 척) / face:배우:대상|해제 — 앉은 채 돌아앉기
+                        var lp = arg.Split(':');
+                        if (lp.Length < 2) break;
+                        var target = lp[1] == "해제" ? null : CutCtx.Actor(lp[1]);
+                        foreach (var cl in CastLook.For(lp[0]))
+                        {
+                            if (verb == "look") cl.Look(target);
+                            else if (verb == "face") cl.Face(target, lp[0] == "반" ? 110f : 180f);     // 반 전체는 의자에서 비틀어 돌아보는 만큼(110°)
+                            else cl.Raise(target);
+                        }
+                        break;
+                    }
+                case "pose":
+                    {
+                        // pose:배우:상태(Idle · Sit · TalkOpen · TalkHip · SitClap · SitFist)
+                        var pp = arg.Split(':');
+                        var a = pp.Length >= 2 ? CutCtx.Actor(pp[0]) : null;
+                        if (a != null) { var cp = a.GetComponent<CastPose>() ?? a.gameObject.AddComponent<CastPose>(); cp.Set(pp[1]); }
+                        break;
+                    }
                 case "endure": Flags.Endured++; break;
                 case "endurefx": if (arg == "on") Endure?.Begin(); else Endure?.End(); break;
                 case "rel":

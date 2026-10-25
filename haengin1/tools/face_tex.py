@@ -3,6 +3,7 @@
 #   작업 폴더 = formal_model.py 가 남긴 tex.jpg · face.npz · info.json
 # 만드는 것(출력 폴더):
 #   <이름>Tex.jpg    몸 텍스처에서 눈·눈썹·입을 지운 것(얼굴 앞면을 정면에서 본 그림으로 펴서 '피부 안의 구멍' = 이목구비를 찾아 둘레 피부로 메움)
+#   <이름>FaceMask.png  아틀라스 알파를 회색으로(UTS _ClippingMask)
 #   <이름>Face.png   표정 아틀라스 2048² RGBA, 5 × 5 칸(줄 = 표정 normal·hurt·ko·win·endure, 칸 = 뜸·반쯤 감음·감음·말하기 A·말하기 B).
 #                    칸 하나 = 얼굴 데칼 UV 0~1(앞에서 본 얼굴 상자). 눈·입 자리는 원래 텍스처에서 찾은 자리(못 찾으면 FUJIMOTO 3-2 비율)
 #   <이름>Shade.jpg  1단 그림자 텍스처 = 몸 텍스처 × 부위별 곱셈값(FUJIMOTO 6-3: 피부 .80·.72·.72 · 얼굴 .93·.88·.88 · 흰 옷 .78·.80·.88 · 회색 .74·.74·.80 · 짙은 옷·머리 .70·.70·.78 · 강조색 .80·.74·.74)
@@ -312,7 +313,7 @@ CELL, N = 409, 5
 SS = 3                                   # 3배로 그려 줄임(매끈한 선)
 EXPR = ['normal', 'hurt', 'ko', 'win', 'endure']
 STATE = ['open', 'half', 'closed', 'talkA', 'talkB']
-LID_MM = 6.6                             # 윗눈꺼풀 굵기(월드) — 탐색 4m(FOV 45, 1080p)에서 2px 이상(D14 · FUJIMOTO 7-2)
+LID_MM = 7.6                             # 윗눈꺼풀 굵기(월드) — 탐색 4m(FOV 53 = 카메라 B, 1080p)에서 2px 이상(D14 · FUJIMOTO 7-2). 2026-10-25 6.6 → 7.6(FOV 45 기준값이었음)
 lid_px = LID_MM / 1000.0 / bw * CELL     # 칸 화소
 shadow = np.clip(skin * np.array([0.80, 0.72, 0.72]), 0, 1)
 IRIS = {'siwoo': (0x2B, 0x1E, 0x18), 'taeo': (0x3A, 0x2A, 0x20)}[who]
@@ -447,6 +448,8 @@ for r_, ex in enumerate(EXPR):
     for c_, st in enumerate(STATE):
         atlas.paste(draw_cell(ex, st), (c_ * CELL, r_ * CELL))
 atlas.save(os.path.join(out, f'{name}Face.png'))
+# 알파 → 회색 마스크(UTS 깎기 모드는 _ClippingMask 의 R 을 읽는다 — 칸 오프셋은 본 텍스처와 같은 UV 라 같이 따라감)
+atlas.getchannel('A').convert('RGB').save(os.path.join(out, f'{name}FaceMask.png'))
 
 meta = dict(name=name, who=who, cells=N, cell_px=CELL, atlas_px=2048, expr=EXPR, state=STATE,
             lid_mm=LID_MM, lid_px=round(lid_px, 2), face_box_m=[bw, bh],

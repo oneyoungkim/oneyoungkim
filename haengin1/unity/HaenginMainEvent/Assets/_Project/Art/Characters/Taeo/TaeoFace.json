@@ -1,0 +1,62 @@
+{
+ "name": "Taeo",
+ "who": "taeo",
+ "cells": 5,
+ "cell_px": 409,
+ "atlas_px": 2048,
+ "expr": [
+  "normal",
+  "hurt",
+  "ko",
+  "win",
+  "endure"
+ ],
+ "state": [
+  "open",
+  "half",
+  "closed",
+  "talkA",
+  "talkB"
+ ],
+ "lid_mm": 7.6,
+ "lid_px": 15.44,
+ "face_box_m": [
+  0.20128539727503886,
+  0.39451444149017334
+ ],
+ "eye_found": "layout",
+ "eyeL": [
+  0.29499999999999993,
+  0.657
+ ],
+ "eyeR": [
+  0.71,
+  0.657
+ ],
+ "eye_w": 0.2075,
+ "mouth": [
+  0.51,
+  0.49
+ ],
+ "skin": [
+  0.933,
+  0.729,
+  0.561
+ ],
+ "painted_texels": 19683,
+ "holes": 13612,
+ "head_h_skull": 0.2441,
+ "heads": 7.498,
+ "head_h_eye": 0.2433,
+ "chin_z": 1.564,
+ "height": 1.830000358017152,
+ "head_top": 1.8275964260101318,
+ "head_scale": 1.1187280093435843,
+ "body_rescale": 0.9815701552490765,
+ "heads_target": 7.5,
+ "tris_lod0": 59278,
+ "tris_lod1": 28923,
+ "tris_lod2": 11569,
+ "tris_face": 1430,
+ "face_overlay_polys": 97
+}

@@ -1,0 +1,62 @@
+{
+ "name": "SiwooDelivery",
+ "who": "siwoo",
+ "cells": 5,
+ "cell_px": 409,
+ "atlas_px": 2048,
+ "expr": [
+  "normal",
+  "hurt",
+  "ko",
+  "win",
+  "endure"
+ ],
+ "state": [
+  "open",
+  "half",
+  "closed",
+  "talkA",
+  "talkB"
+ ],
+ "lid_mm": 7.6,
+ "lid_px": 15.2,
+ "face_box_m": [
+  0.2044516951505699,
+  0.2516136169433594
+ ],
+ "eye_found": "layout",
+ "eyeL": [
+  0.39999999999999997,
+  0.393
+ ],
+ "eyeR": [
+  0.645,
+  0.393
+ ],
+ "eye_w": 0.1225,
+ "mouth": [
+  0.52,
+  0.14
+ ],
+ "skin": [
+  0.812,
+  0.635,
+  0.506
+ ],
+ "painted_texels": 14643,
+ "holes": 11006,
+ "head_h_skull": 0.2352,
+ "heads": 7.397,
+ "head_h_eye": 0.201,
+ "chin_z": 1.4844,
+ "height": 1.7400000358186638,
+ "head_top": 1.738465428352356,
+ "head_scale": 1.0691857996266816,
+ "body_rescale": 0.9888480752389868,
+ "heads_target": 7.4,
+ "tris_lod0": 59291,
+ "tris_lod1": 28977,
+ "tris_lod2": 11590,
+ "tris_face": 1337,
+ "face_overlay_polys": 242
+}

@@ -83,7 +83,12 @@ namespace Haengin.Tests
             var hs = pc.GetComponentInChildren<HandShape>();
             Assert.IsNotNull(hs, "프리팹에 HandShape");
             yield return Frames(3);
-            Assert.IsTrue(hs.Ready, "시우 메시에 Fist_L·Fist_R·Grip_L·Grip_R 셰이프 키");
+            Assert.IsTrue(hs.Ready, "시우 손: 셰이프 키 4개 또는 정식 모델 손가락 뼈(HandPoser)");
+            // 2026-10-25 기준 갱신(09 6-1 6단계): 시우 = 정식 모델 → 손가락 뼈(HandPoser), 적 = 셰이프 키 그대로(C14c)
+            Assert.IsTrue(hs.UsesPoser, "시우는 정식 모델 — HandShape 가 HandPoser(손가락 뼈 30)를 몬다");
+            var poser = pc.GetComponentInChildren<HandPoser>();
+            var idx = poser.HandOf(true).GetComponentsInChildren<Transform>().First(t => t.name == "RightHandIndex2");
+            var idxRest = idx.localRotation;
             var d = CombatFactory.Dummy("허수아비", new Vector3(0f, 0f, 0.8f), 180f, 999, null, 1.80f, 0.30f, tune);
             yield return Frames(10);
             var log = new List<string>();
@@ -100,6 +105,9 @@ namespace Haengin.Tests
             log.Add($"전투: Fist_R 100 까지 {toFist}f · Grip_L {hs.Weight("Grip_L"):F0}");
             Assert.That(toFist, Is.InRange(want - 1, want + 1), "전투 들어가면 주먹 0.08초 ± 1f");
             Assert.That(hs.Weight("Grip_L"), Is.EqualTo(0f).Within(0.5f), "전투 Grip_L 0");
+            float bent = Quaternion.Angle(idxRest, idx.localRotation);
+            log.Add($"주먹 검지 2마디 {bent:F0}°");
+            Assert.That(bent, Is.GreaterThan(60f), "주먹 100 이면 검지 2마디 뼈가 실제로 굽음(> 60°)");
 
             pc.Press(Btn.Grab);
             yield return Until(() => Near(hs.Weight("Grip_L"), 100f), 40, f);

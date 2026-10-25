@@ -1,0 +1,412 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 056da9bcb11964e499d8d9ba9d3825c3, type: 3}
+  m_Name: HandPoses_Taeo
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HandPoseSet
+  Left:
+  - Name: "\uD3B8 \uC190"
+    F:
+    - A: 3.0317752
+      B: 3.0317752
+      C: 3.0317752
+      Spread: 0
+    - A: 8
+      B: 10
+      C: 5
+      Spread: -2
+    - A: 10
+      B: 12
+      C: 6
+      Spread: 0
+    - A: 12
+      B: 14
+      C: 7
+      Spread: -2
+    - A: 14
+      B: 16
+      C: 8
+      Spread: -3
+    ThumbOpp: 6.0635505
+  - Name: "\uC8FC\uBA39"
+    F:
+    - A: 1.5956539
+      B: 2.233915
+      C: 1.9147842
+      Spread: 0
+    - A: 71.94401
+      B: 84.64
+      C: 50.784
+      Spread: 0
+    - A: 74.4832
+      B: 84.64
+      C: 50.784
+      Spread: 0
+    - A: 82.8
+      B: 92
+      C: 55.2
+      Spread: 0
+    - A: 77.8688
+      B: 84.64
+      C: 50.784
+      Spread: 0
+    ThumbOpp: 2.5530453
+  - Name: "\uBA71\uC0B4 \uC7A1\uAE30"
+    F:
+    - A: 0.6027248
+      B: 0.7534062
+      C: 0.6027248
+      Spread: 0
+    - A: 55
+      B: 70
+      C: 45
+      Spread: 0
+    - A: 58
+      B: 72
+      C: 45
+      Spread: 0
+    - A: 60
+      B: 72
+      C: 45
+      Spread: 0
+    - A: 62
+      B: 72
+      C: 45
+      Spread: 0
+    ThumbOpp: 1.0547686
+  - Name: "\uC5C4\uC9C0 \uCC99"
+    F:
+    - A: -5
+      B: 0
+      C: 0
+      Spread: 10
+    - A: 71.94401
+      B: 84.64
+      C: 50.784
+      Spread: 0
+    - A: 74.4832
+      B: 84.64
+      C: 50.784
+      Spread: 0
+    - A: 82.8
+      B: 92
+      C: 55.2
+      Spread: 0
+    - A: 77.8688
+      B: 84.64
+      C: 50.784
+      Spread: 0
+    ThumbOpp: 0
+  - Name: "\uD53C\uC2A4"
+    F:
+    - A: 30
+      B: 40
+      C: 30
+      Spread: 0
+    - A: 0
+      B: 0
+      C: 0
+      Spread: 10
+    - A: 0
+      B: 0
+      C: 0
+      Spread: 10
+    - A: 78.200005
+      B: 92
+      C: 55.2
+      Spread: 0
+    - A: 74.4832
+      B: 84.64
+      C: 50.784
+      Spread: 0
+    ThumbOpp: 45
+  - Name: "\uBCD1 \uC950\uAE30"
+    F:
+    - A: 0.25217104
+      B: 0.25217104
+      C: 0.16811402
+      Spread: 0
+    - A: 45
+      B: 55
+      C: 35
+      Spread: 0
+    - A: 45
+      B: 55
+      C: 35
+      Spread: 0
+    - A: 45
+      B: 55
+      C: 35
+      Spread: 0
+    - A: 45
+      B: 55
+      C: 35
+      Spread: 0
+    ThumbOpp: 0.9246269
+  - Name: "\uC8FC\uBA38\uB2C8 \uC190"
+    F:
+    - A: -5
+      B: 0
+      C: 0
+      Spread: 15
+    - A: 25
+      B: 30
+      C: 20
+      Spread: -3
+    - A: 25
+      B: 30
+      C: 20
+      Spread: 0
+    - A: 25
+      B: 30
+      C: 20
+      Spread: -3
+    - A: 25
+      B: 30
+      C: 20
+      Spread: -3
+    ThumbOpp: 0
+  - Name: "\uC190\uBAA9 \uADF8\uB9BD"
+    F:
+    - A: 1.4680016
+      B: 1.1744008
+      C: 0.8808007
+      Spread: 0
+    - A: 65
+      B: 75
+      C: 45
+      Spread: 0
+    - A: 65
+      B: 75
+      C: 45
+      Spread: 0
+    - A: 65
+      B: 75
+      C: 45
+      Spread: 0
+    - A: 65
+      B: 75
+      C: 45
+      Spread: 0
+    ThumbOpp: 3.523203
+  Right:
+  - Name: "\uD3B8 \uC190"
+    F:
+    - A: 0.13862671
+      B: 0.13862671
+      C: 0.13862671
+      Spread: 0
+    - A: 8
+      B: 10
+      C: 5
+      Spread: -2
+    - A: 10
+      B: 12
+      C: 6
+      Spread: 0
+    - A: 12
+      B: 14
+      C: 7
+      Spread: -2
+    - A: 14
+      B: 16
+      C: 8
+      Spread: -3
+    ThumbOpp: 0.27725342
+  - Name: "\uC8FC\uBA39"
+    F:
+    - A: 13.946167
+      B: 19.524633
+      C: 16.735401
+      Spread: 0
+    - A: 78.200005
+      B: 92
+      C: 55.2
+      Spread: 0
+    - A: 68.52454
+      B: 77.8688
+      C: 46.721283
+      Spread: 0
+    - A: 39.094967
+      B: 43.438854
+      C: 26.063313
+      Spread: 0
+    - A: 92
+      B: 100
+      C: 60
+      Spread: 0
+    ThumbOpp: 22.313866
+  - Name: "\uBA71\uC0B4 \uC7A1\uAE30"
+    F:
+    - A: 10.264379
+      B: 12.830474
+      C: 10.264379
+      Spread: 0
+    - A: 55
+      B: 70
+      C: 45
+      Spread: 0
+    - A: 58
+      B: 72
+      C: 45
+      Spread: 0
+    - A: 39.544895
+      B: 47.453873
+      C: 29.658672
+      Spread: 0
+    - A: 62
+      B: 72
+      C: 45
+      Spread: 0
+    ThumbOpp: 17.962664
+  - Name: "\uC5C4\uC9C0 \uCC99"
+    F:
+    - A: -5
+      B: 0
+      C: 0
+      Spread: 10
+    - A: 78.200005
+      B: 92
+      C: 55.2
+      Spread: 0
+    - A: 68.52454
+      B: 77.8688
+      C: 46.721283
+      Spread: 0
+    - A: 39.094967
+      B: 43.438854
+      C: 26.063313
+      Spread: 0
+    - A: 92
+      B: 100
+      C: 60
+      Spread: 0
+    ThumbOpp: 0
+  - Name: "\uD53C\uC2A4"
+    F:
+    - A: 30
+      B: 40
+      C: 30
+      Spread: 0
+    - A: 0
+      B: 0
+      C: 0
+      Spread: 10
+    - A: 0
+      B: 0
+      C: 0
+      Spread: 8.5
+    - A: 40.133728
+      B: 47.216145
+      C: 28.329687
+      Spread: 1.5
+    - A: 88
+      B: 100
+      C: 60
+      Spread: 0
+    ThumbOpp: 45
+  - Name: "\uBCD1 \uC950\uAE30"
+    F:
+    - A: 5.994562
+      B: 5.994562
+      C: 3.9963746
+      Spread: 0
+    - A: 45
+      B: 55
+      C: 35
+      Spread: 0
+    - A: 45
+      B: 55
+      C: 35
+      Spread: 0
+    - A: 38.088
+      B: 46.552002
+      C: 29.624
+      Spread: 0
+    - A: 45
+      B: 55
+      C: 35
+      Spread: 0
+    ThumbOpp: 21.980059
+  - Name: "\uC8FC\uBA38\uB2C8 \uC190"
+    F:
+    - A: -5
+      B: 0
+      C: 0
+      Spread: 15
+    - A: 25
+      B: 30
+      C: 20
+      Spread: -3
+    - A: 25
+      B: 30
+      C: 20
+      Spread: 0
+    - A: 25
+      B: 30
+      C: 20
+      Spread: -3
+    - A: 25
+      B: 30
+      C: 20
+      Spread: -3
+    ThumbOpp: 0
+  - Name: "\uC190\uBAA9 \uADF8\uB9BD"
+    F:
+    - A: 25
+      B: 20
+      C: 15
+      Spread: 0
+    - A: 65
+      B: 75
+      C: 45
+      Spread: 0
+    - A: 65
+      B: 75
+      C: 45
+      Spread: 0
+    - A: 39.41308
+      B: 45.47663
+      C: 27.285978
+      Spread: 0
+    - A: 65
+      B: 75
+      C: 45
+      Spread: 0
+    ThumbOpp: 60
+  PenLeft:
+  - 2.748637
+  - 2.8880494
+  - 3.5661693
+  - 3.3250182
+  - 0.68643564
+  - 3.589321
+  - 0
+  - 3.062089
+  PenRight:
+  - 0
+  - 3.4009163
+  - 3.394845
+  - 2.3154516
+  - 0
+  - 3.2574432
+  - 0
+  - 0
+  Note: "2026-10-25 FormalSetup.FitHands \u2014 \uAE30\uC900 3.6mm(D13 4mm), \uD734\uC9C0
+    \uC790\uC138 \uBD99\uC74C \uBE8C, \uC190\uAC00\uB77D 2\xB73\uB9C8\uB514 \uC815\uC810
+    \uAC80\uC0AC. \uAC80\uC9C01 \uC704\uCE58 (193.05, 938.40, 271.96) \xB7 \uC815\uC810
+    34140 \xB7 \uC190\uAC00\uB77D 1149 \xB7 \uC190\uBC14\uB2E5 988 \xB7 \uAC80\uC0AC
+    307/315(\uBB3C\uAC08\uD034 \uBE8C 9) \xB7 \uC5B4\uAE0B\uB09C \uC904\uAE30 L0/R16
+    \xB7 \uD3B8 \uC190 2.7/0.0mm(43\uD68C) \xB7 \uC8FC\uBA39 2.9/3.4mm(34\uD68C)
+    \xB7 \uBA71\uC0B4 \uC7A1\uAE30 3.6/3.4mm(38\uD68C) \xB7 \uC5C4\uC9C0 \uCC99 3.3/2.3mm(10\uD68C)
+    \xB7 \uD53C\uC2A4 0.7/0.0mm(9\uD68C) \xB7 \uBCD1 \uC950\uAE30 3.6/3.3mm(47\uD68C)
+    \xB7 \uC8FC\uBA38\uB2C8 \uC190 0.0/0.0mm(0\uD68C) \xB7 \uC190\uBAA9 \uADF8\uB9BD
+    3.1/0.0mm(34\uD68C)"

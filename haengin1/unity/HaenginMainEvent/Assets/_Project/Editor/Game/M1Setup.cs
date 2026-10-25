@@ -132,21 +132,11 @@ namespace Haengin.EditorGame
             var ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(CharSetup.SiwooCtrl) ?? throw new Exception("애니메이터 컨트롤러가 없습니다: " + CharSetup.SiwooCtrl);
             var avatar = CharSetup.AvatarOf(SiwooModel) ?? throw new Exception("시우 아바타가 없습니다(CharSetup)");
             var toon = AssetDatabase.LoadAssetAtPath<Material>(ToonMat);
-            var inst = (PrefabUtility.InstantiatePrefab(model) as GameObject) ?? Object.Instantiate(model);
+            if (CharSetup.IsFormal(model) && AssetDatabase.LoadAssetAtPath<HandPoseSet>(FormalSetup.PoseSetPath("Siwoo")) == null) FormalSetup.FitAll();
+            // 2026-10-25 정식 모델(09 4-2): 몸 재질 + 얼굴 데칼 재질 + FaceRig · HandPoser · FormalModel · 소켓 5 · LOD 3단(FormalSetup.Instance)
+            var inst = FormalSetup.Instance("Siwoo", SiwooModel, ToonMat, ctrl, 7);
             inst.name = "Siwoo_Model";
             inst.transform.localRotation = Quaternion.Euler(0f, ModelYaw, 0f);
-            foreach (var r in inst.GetComponentsInChildren<Renderer>(true))
-            {
-                if (toon != null)
-                {
-                    var ms = r.sharedMaterials;
-                    for (int i = 0; i < ms.Length; i++) ms[i] = toon;
-                    r.sharedMaterials = ms;
-                }
-                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-                r.receiveShadows = true;
-                if (r is SkinnedMeshRenderer smr) smr.updateWhenOffscreen = false;
-            }
             var anim = inst.GetComponent<Animator>() ?? inst.AddComponent<Animator>();
             anim.avatar = avatar;
             anim.runtimeAnimatorController = ctrl;
@@ -159,19 +149,42 @@ namespace Haengin.EditorGame
             inst.transform.localPosition = Vector3.zero;
             inst.transform.localRotation = Quaternion.Euler(0f, ModelYaw, 0f);
             inst.transform.localScale = Vector3.one;
-            var skin = inst.GetComponentInChildren<SkinnedMeshRenderer>(true);
+            var skin = CharSetup.MainSkin(inst);
             float bindH = skin != null ? skin.sharedMesh.bounds.size.z * skin.transform.lossyScale.x : -1f;   // Blender Z-up 메시: z = 키
             var loco = inst.AddComponent<LocoAnim>();
             loco.Motor = rig.Motor;
             // M2(08 문서 10-1): 전투 부품(Fighter·HitReact·LockOn·PlayerCombat) — 탐색 중에는 꺼진 채(전투 시작 때 CombatMode 가 켬)
             CombatSetup.AddCombatToPlayer(rig.Player);
+            // 7단계(09 4-2 #9): 배달복(후드 + 주황 배달 조끼) — 같은 Visual 아래 꺼 둔 두 번째 모델, Outfit 이 하나만 켬
+            string outfitNote = "교복만";
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(CharSetup.SiwooDeliveryFbx) != null)
+            {
+                var del = FormalSetup.Instance("SiwooDelivery", CharSetup.SiwooDeliveryFbx, CharSetup.SiwooDeliveryMat, ctrl, 11);
+                del.name = "SiwooDelivery_Model";
+                del.transform.SetParent(rig.Visual, false);
+                del.transform.localPosition = Vector3.zero;
+                del.transform.localRotation = Quaternion.Euler(0f, ModelYaw, 0f);
+                del.transform.localScale = Vector3.one;
+                foreach (var t in del.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = Layers.Player;
+                foreach (var c in del.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(c);
+                var loco2 = del.AddComponent<LocoAnim>();
+                loco2.Motor = rig.Motor;
+                CombatSetup.AddAnimParts(del.GetComponent<Animator>());
+                var outfit = rig.Player.AddComponent<Outfit>();
+                outfit.Models = new[] { inst, del };
+                outfit.Names = new[] { Outfit.Uniform, Outfit.Delivery };
+                del.SetActive(false);
+                outfitNote = "교복 + 배달복(Outfit, 꺼 둠)";
+            }
+            // 8단계 배달 자전거(09 2-6): BikeMotor(꺼 둠)·SoupGauge·BikeInput, 의상 모델마다 BikeRider
+            BikeSetup.AddToPlayer(rig.Player);
             var b = ModelFit.WorldBounds(inst.transform);
             string fit = $"배율 {inst.transform.localScale.x:F4} · 자리 {inst.transform.localPosition}";
             PrefabUtility.SaveAsPrefabAsset(rig.Player, PrefabPath, out bool ok);
             Object.DestroyImmediate(rig.Player);
             if (!ok) throw new Exception("프리팹 저장 실패: " + PrefabPath);
             Debug.Log($"{Tag} 프리팹 저장: {PrefabPath} | 모델 {SiwooModel} 바인드 자세 키 {bindH:F3}m · 편집 모드 경계(첫 프레임 자세) 높이 {b.size.y:F3}m 발 y {b.min.y:F3} · {fit} | " +
-                      $"툰 재질 {(toon != null ? toon.name : "없음")} · 애니메이터 {ctrl.name}(아바타 {avatar.name}, 루트 모션 끔) + LocoAnim");
+                      $"툰 재질 {(toon != null ? toon.name : "없음")} · 애니메이터 {ctrl.name}(아바타 {avatar.name}, 루트 모션 끔) + LocoAnim · 의상 {outfitNote}");
         }
 
         // ───────────────────────── 장면에 붙이기
@@ -250,6 +263,8 @@ namespace Haengin.EditorGame
             StorySetup.AddStoryToZone1(rig, zoneRoot);
             // 맵 아트 패스(docs/11 7장·docs/10 P3): 건물 키트·소품·간판·창문 불·원경 — 회색 상자는 보이지만 않게(충돌 그대로)
             EnvSetup.AttachKit(d, zoneRoot);
+            // 8단계 배달 자전거(09 2-6): 1화 코스·CM_Bike·주행 화면·자전거·태오 러너 + 꼭대기 집 꾸미기
+            BikeSetup.AddToZone1(rig, zoneRoot, d);
 
             EditorSceneManager.MarkSceneDirty(scene);
             Debug.Log($"{Tag} 리그 붙임: Player @ ({feet.x:F2}, {feet.y:F2}, {feet.z:F2}) yaw {d.SpawnYaw}° (데이터 y {d.SpawnPos.y:F2}) · " +

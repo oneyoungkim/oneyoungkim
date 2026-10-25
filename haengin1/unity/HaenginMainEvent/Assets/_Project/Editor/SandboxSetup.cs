@@ -184,12 +184,7 @@ namespace Haengin.EditorTools
             go.name = name;
             go.transform.SetPositionAndRotation(pos, Quaternion.identity);
             var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
-            foreach (var r in go.GetComponentsInChildren<Renderer>(true))
-            {
-                if (mat != null) { var ms = r.sharedMaterials; for (int i = 0; i < ms.Length; i++) ms[i] = mat; r.sharedMaterials = ms; }
-                r.shadowCastingMode = ShadowCastingMode.On;
-                r.receiveShadows = true;
-            }
+            CharSetup.Paint(go, mat, CharSetup.FaceMatFor(matPath));
             var anim = go.GetComponent<Animator>() ?? go.AddComponent<Animator>();
             anim.avatar = CharSetup.AvatarOf(fbx);
             anim.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ctrlPath);

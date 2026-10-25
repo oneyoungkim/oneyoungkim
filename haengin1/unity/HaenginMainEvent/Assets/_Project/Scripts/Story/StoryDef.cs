@@ -19,6 +19,10 @@ namespace Haengin
         /// 퀘스트 「하늘이 생일」 메모(2화 원고 〈반하늘 11세 생일 요구사항〉 — 손글씨 글꼴)
         public string QuestHead = "";
         public string[] QuestMemo = new string[0];
+        /// 새 게임 첫 화면 1막 소개 카드(누가·어디서·무엇을 — m3_story.json "intro")
+        public string IntroTitle = "";
+        public string[] Intro = new string[0];
+        public string IntroNote = "";
 
         public SceneDef[] List(bool test) => test ? Test : Scenes;
 

@@ -1,0 +1,91 @@
+{
+ "src": "siwoo_delivery_idle243.glb",
+ "tex": [
+  4096,
+  4096
+ ],
+ "head_scale": 1.0691857996266816,
+ "body_rescale": 0.9888480752389868,
+ "heads_target": 7.4,
+ "head_h_before": 0.2224,
+ "height_before": 1.7400000358186638,
+ "height": 1.7400000358186638,
+ "tris_src": 76634,
+ "front": [
+  3.5313746341720018e-09,
+  -1.0,
+  0.0
+ ],
+ "decimate_ratio": 0.7562500238418579,
+ "kept_verts": 4320,
+ "tris_lod0_body": 57954,
+ "fingers": {
+  "Left": {
+   "Thumb": {
+    "length": 0.1144,
+    "verts": 143
+   },
+   "Index": {
+    "length": 0.064,
+    "verts": 68
+   },
+   "Middle": {
+    "length": 0.0826,
+    "verts": 94
+   },
+   "Ring": {
+    "length": 0.0765,
+    "verts": 110
+   },
+   "Pinky": {
+    "length": 0.0726,
+    "verts": 175
+   },
+   "hand_verts": 1008
+  },
+  "Right": {
+   "Thumb": {
+    "length": 0.1081,
+    "verts": 120
+   },
+   "Index": {
+    "length": 0.0616,
+    "verts": 62
+   },
+   "Middle": {
+    "length": 0.0763,
+    "verts": 128
+   },
+   "Ring": {
+    "length": 0.0692,
+    "verts": 109
+   },
+   "Pinky": {
+    "length": 0.075,
+    "verts": 99
+   },
+   "hand_verts": 951
+  }
+ },
+ "face_box": {
+  "x0": -0.1026839400925562,
+  "x1": 0.1017677550580137,
+  "z0": 1.480004072189331,
+  "z1": 1.7316176891326904,
+  "width": 0.2044516951505699,
+  "height": 0.2516136169433594,
+  "center": [
+   -0.0046102245615099085,
+   -0.10130114177351489,
+   1.6007036707481417
+  ]
+ },
+ "head_top": 1.738465428352356,
+ "chin": 1.480004072189331,
+ "face_tris": 1579,
+ "face_overlay_polys": 242,
+ "tris_face": 1337,
+ "tris_lod1": 28977,
+ "tris_lod2": 11590,
+ "tris_lod0": 59291
+}

@@ -10,9 +10,9 @@ namespace Haengin
 {
     public static class InputMaps
     {
-        public const string Explore = "Explore", Combat = "Combat", Talk = "Talk", Menu = "Menu";
-        /// 조작 맵(Menu 는 GameUi 가 늘 켜 둠 — 셈에서 뺌)
-        public static readonly string[] Play = { Explore, Combat, Talk };
+        public const string Explore = "Explore", Combat = "Combat", Talk = "Talk", Menu = "Menu", Bike = "Bike";
+        /// 조작 맵(Menu 는 GameUi 가 늘 켜 둠 — 셈에서 뺌). Bike = 8단계 배달 자전거(2026-10-25)
+        public static readonly string[] Play = { Explore, Combat, Talk, Bike };
 
         /// map 하나만 켜고 나머지 조작 맵은 끈다(null = 다 끔)
         public static void Use(InputActionAsset a, string map)

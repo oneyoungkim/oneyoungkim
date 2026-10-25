@@ -57,15 +57,22 @@ namespace Haengin.Tests
             var fails = new List<string>();
             r.Bot = StoryRunner.BotMode.None;
             r.Begin(false, null, null);
+            // 2026-10-25 새 게임 첫 화면 = 1막 소개 카드(누를 때까지) → 넘김
+            yield return Lab.Frames(4);
+            if (r.Board != null && r.Board.Shown) r.Press();
             float maxLoad = 0f, maxTotal = 0f;
             string prevStage = null;
             foreach (var s in r.Def.Scenes)
             {
                 yield return M3Lab.WaitScene(s.Id);
                 yield return Lab.Frames(4);
+                // 조작 장면 앞 소개 카드(2026-10-25) → 넘기고 출발한 뒤를 잰다(자리 장면 카드는 그대로 둔 채 잼)
+                if (r.Board != null && r.Board.Shown && r.Board.Mode == "조작") { r.Press(); yield return Lab.Frames(6); }
                 var m = M3Lab.Motor;
                 var ld = r.Loader;
-                bool grounded = m.Grounded;
+                // 주행 장면(8단계)은 PlayerMotor 가 꺼지고 BikeMotor 가 땅을 잡는다
+                var bm = m.GetComponent<BikeMotor>();
+                bool grounded = bm != null && bm.Mounted ? bm.Grounded : m.Grounded;
                 int maps = InputMaps.EnabledCount(r.Actions);
                 string mapName = InputMaps.Enabled(r.Actions);
                 var hud = Object.FindAnyObjectByType<RouteHud>(FindObjectsInactive.Include);

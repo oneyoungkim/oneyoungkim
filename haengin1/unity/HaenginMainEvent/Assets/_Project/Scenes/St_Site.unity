@@ -971,6 +971,11 @@ MonoBehaviour:
   - {fileID: 1250934657}
   - {fileID: 1856511169}
   Placeholder: 1
+  CamRadius: 0
+  CamFov: 0
+  CamTargetHeight: 0
+  CamPitch: 0
+  CamPitchMax: 0
 --- !u!1 &1856511168
 GameObject:
   m_ObjectHideFlags: 0

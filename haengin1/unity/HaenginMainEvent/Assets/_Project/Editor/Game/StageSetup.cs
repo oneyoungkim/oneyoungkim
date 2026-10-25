@@ -80,7 +80,7 @@ namespace Haengin.EditorGame
                 var go = (PrefabUtility.InstantiatePrefab(taeo) as GameObject) ?? Object.Instantiate(taeo);
                 go.name = "Referee";
                 var mat = GreyMat(1);
-                foreach (var r in go.GetComponentsInChildren<Renderer>(true)) { var ms = r.sharedMaterials; for (int i = 0; i < ms.Length; i++) ms[i] = mat; r.sharedMaterials = ms; }
+                CharSetup.Paint(go, mat, null);    // 정식 태오 모델 — 얼굴 데칼은 끔(짙은 회색 심판)
                 foreach (var c in go.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(c);
                 var anim = go.GetComponent<Animator>() ?? go.AddComponent<Animator>();
                 anim.avatar = CharSetup.AvatarOf(CharSetup.TaeoFbx);

@@ -24,7 +24,11 @@ namespace Haengin
         {
             if (Motor == null) Motor = GetComponentInParent<PlayerMotor>();
             rends = GetComponentsInChildren<Renderer>(true);
+            modes = new ShadowCastingMode[rends.Length];
+            for (int i = 0; i < rends.Length; i++) modes[i] = rends[i] != null ? rends[i].shadowCastingMode : ShadowCastingMode.On;
         }
+
+        ShadowCastingMode[] modes;   // 숨기기 전 그림자 설정(정식 모델 얼굴 데칼은 그림자를 안 드리움 — 다시 보일 때 되돌림)
 
         void Start()
         {
@@ -81,8 +85,13 @@ namespace Haengin
                 if (h != hidden)
                 {
                     hidden = h;
-                    foreach (var r in rends)
-                        if (r != null) r.shadowCastingMode = h ? ShadowCastingMode.ShadowsOnly : ShadowCastingMode.On;
+                    for (int i = 0; i < rends.Length; i++)
+                    {
+                        var r = rends[i];
+                        if (r == null) continue;
+                        var keep = modes != null && i < modes.Length ? modes[i] : ShadowCastingMode.On;
+                        r.shadowCastingMode = h ? ShadowCastingMode.ShadowsOnly : keep;   // 숨김 = 그림자만(얼굴 껍데기는 머리 그림자 안이라 티 안 남)
+                    }
                 }
             }
         }

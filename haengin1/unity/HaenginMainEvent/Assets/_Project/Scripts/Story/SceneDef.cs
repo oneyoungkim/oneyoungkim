@@ -51,6 +51,11 @@ namespace Haengin
         public string[] Effects = new string[0];
         /// 시작할 때 적용(화면만 — 퀘스트 메모 등. 상태를 바꾸는 명령은 Effects 에)
         public string[] Start = new string[0];
+        /// 스토리보드 카드(2026-10-25, tools/storyboard.py): 원고 흐름 3~5줄 · 핵심 대사 "화자|대사" 2~3개 — 자리 장면·조작 장면 시작에 보임
+        public string[] Board = new string[0];
+        public string[] Quotes = new string[0];
+        /// 의상(7단계, Outfit): "교복" · "배달복"(새벽 배달 1-1~1-4 · 현장 4-1~4-3). 빈칸 = 교복
+        public string Outfit = "";
 
         public string DateLabel => $"{Month}월 {Day}일({GameClock.WeekdayOf(Month, Day)})";
         public string TimeLabel => $"{Hour:00}:{Minute:00}";

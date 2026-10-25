@@ -128,6 +128,16 @@ namespace Haengin.EditorGame
         public static CombatTuning Tuning => AssetDatabase.LoadAssetAtPath<CombatTuning>(TuningPath);
         public static MoveSet Moves => AssetDatabase.LoadAssetAtPath<MoveSet>(MovesPath);
 
+        /// 모델(Animator)에 전투 클립 재생기 + 손 모양(정식 모델이면 HandShape 가 HandPoser 를 몬다). 의상 모델마다 따로(Outfit)
+        public static void AddAnimParts(Animator anim)
+        {
+            var table = AssetDatabase.LoadAssetAtPath<ClipTable>(ClipSetup.TablePath);
+            if (anim == null || table == null) return;
+            var fa = anim.GetComponent<FighterAnim>() ?? anim.gameObject.AddComponent<FighterAnim>();
+            fa.Clips = table;
+            if (anim.GetComponent<HandShape>() == null) anim.gameObject.AddComponent<HandShape>();
+        }
+
         /// 프리팹 원본 플레이어에 전투 부품(M1Setup.BuildPlayerPrefab 이 부름)
         public static void AddCombatToPlayer(GameObject player)
         {
@@ -138,9 +148,7 @@ namespace Haengin.EditorGame
             string extra = "";
             if (anim != null && table != null)
             {
-                var fa = anim.GetComponent<FighterAnim>() ?? anim.gameObject.AddComponent<FighterAnim>();
-                fa.Clips = table;
-                if (anim.GetComponent<HandShape>() == null) anim.gameObject.AddComponent<HandShape>();
+                AddAnimParts(anim);
                 extra = " · FighterAnim(전투 클립) · HandShape(주먹·잡기 손)";
             }
             var kit = AssetDatabase.LoadAssetAtPath<FxKit>(FxSetup.KitPath);
@@ -378,14 +386,7 @@ namespace Haengin.EditorGame
             var go = PrefabUtility.InstantiatePrefab(model) as GameObject ?? Object.Instantiate(model);
             go.name = "Dummy_Model";
             var mat = DummyMaterial();
-            foreach (var r in go.GetComponentsInChildren<Renderer>(true))
-            {
-                var ms = r.sharedMaterials;
-                for (int i = 0; i < ms.Length; i++) ms[i] = mat;
-                r.sharedMaterials = ms;
-                r.shadowCastingMode = ShadowCastingMode.On;
-                r.receiveShadows = true;
-            }
+            CharSetup.Paint(go, mat, null);     // 정식 모델 얼굴 데칼은 끔(회색 허수아비)
             var anim = go.GetComponent<Animator>() ?? go.AddComponent<Animator>();
             anim.avatar = CharSetup.AvatarOf(CharSetup.TaeoFbx);
             anim.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(CharSetup.TaeoCtrl);

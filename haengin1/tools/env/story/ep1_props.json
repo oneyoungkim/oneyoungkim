@@ -1,0 +1,12 @@
+{
+  "prefix": "Game prop texture, a single image that fills the whole canvas edge to edge, no border, no frame, no text, no watermark.",
+  "common": "Flat-color manga illustration look with confident black ink outlines and soft paper grain, muted warm palette, slightly faded like an old print.",
+  "defaults": { "quality": "medium", "resolution": "1k", "aspect": "3:4" },
+  "items": [
+    {
+      "name": "ep1_dad_photo",
+      "out": "unity/HaenginMainEvent/Assets/_Project/Art/Story/DadPhoto.png",
+      "prompt": "An old family snapshot photograph: a Korean construction worker in his late thirties wearing a white safety helmet and a dusty work vest, smiling widely with crinkled eyes at a building site, scaffolding and concrete behind him, natural daylight, framed from the chest up, amateur snapshot composition."
+    }
+  ]
+}

@@ -87,12 +87,33 @@ namespace Haengin
         {
             Faces[who ?? ""] = face;
             Log.Add($"표정:{who}:{face}");
+            // 정식 모델(09 4-2 #4): 얼굴 데칼 칸 바꾸기 — 켜진 의상의 FaceRig
+            var a = Actor(who);
+            var fr = a != null ? a.GetComponentInChildren<FaceRig>(false) : null;
+            if (fr != null) fr.Set(face);
+        }
+
+        /// 대사 줄이 바꾼 표정은 장면이 끝나면 되돌림(건너뛰기와 끝 상태가 같게 — D05)
+        public static void ClearFace(string who)
+        {
+            if (!Faces.Remove(who ?? "")) return;
+            var a = Actor(who);
+            var fr = a != null ? a.GetComponentInChildren<FaceRig>(false) : null;
+            if (fr != null) fr.Set("normal");
         }
 
         public static void Hand(string who, string pose, float weight)
         {
             Log.Add($"손:{who}:{pose}");
             var a = Actor(who);
+            // 정식 모델: 손 자세 8종(HandPoser — 편 손·주먹·멱살 잡기·엄지 척·피스·병 쥐기·주머니 손·손목 그립). 이름이 '해제'·빈칸이면 풂
+            var hp = a != null ? a.GetComponentInChildren<HandPoser>(false) : null;
+            if (hp != null && hp.Ready)
+            {
+                bool known = System.Array.IndexOf(HandPoseLib.Names, pose) >= 0;
+                hp.Force(known ? pose : null, known ? weight : 0f);
+                return;
+            }
             var hs = a != null ? a.GetComponentInChildren<HandShape>() : null;
             if (hs != null) hs.ForceFist = pose == "주먹" ? 100f * weight : -1f;
         }
@@ -116,6 +137,7 @@ namespace Haengin
             var parts = socket.Split('/');
             var a = Actor(parts[0]);
             if (a == null || parts.Length < 2) return a;
+            foreach (var t in a.GetComponentsInChildren<Transform>(false)) if (t.name == parts[1]) return t;   // 켜진 의상의 소켓 먼저(FormalModel 소켓 5)
             return FindDeep(a, parts[1]) ?? a;
         }
 

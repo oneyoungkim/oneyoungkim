@@ -133,6 +133,10 @@ namespace Haengin.EditorGame
             var quest = Obj(Get(j, "quest"));
             def.QuestHead = Str(Get(quest, "head"));
             def.QuestMemo = Arr(Get(quest, "items")).Select(o => Str(o)).ToArray();
+            var intro = Obj(Get(j, "intro"));
+            def.IntroTitle = Str(Get(intro, "title"));
+            def.Intro = Arr(Get(intro, "lines")).Select(o => Str(o)).ToArray();
+            def.IntroNote = Str(Get(intro, "note"));
             def.Scenes = Arr(Get(j, "scenes")).Select(Scene).ToArray();
             def.Test = Arr(Get(j, "test")).Select(Scene).ToArray();
             Validate(def);
@@ -182,6 +186,10 @@ namespace Haengin.EditorGame
             }).ToArray();
             s.Effects = Arr(Get(e, "effects")).Select(x => Str(x)).ToArray();
             s.Start = Arr(Get(e, "start")).Select(x => Str(x)).ToArray();
+            var board = Obj(Get(e, "board"));
+            s.Board = Arr(Get(board, "lines")).Select(x => Str(x)).ToArray();
+            s.Quotes = Arr(Get(board, "quotes")).Select(q => { var a = Arr(q); return a.Count >= 2 ? Str(a[0]) + "|" + Str(a[1]) : Str(q); }).ToArray();
+            s.Outfit = Str(Get(e, "outfit"));
             return s;
         }
 
@@ -342,11 +350,13 @@ namespace Haengin.EditorGame
             var ledger = Ui<LedgerUi>("가계부"); ledger.Fonts = fonts;
             var names = Ui<NameBookUi>("도감"); names.Fonts = fonts;
             var card = Ui<EpisodeCard>("회차 카드"); card.Fonts = fonts;
+            var board = Ui<StoryBoardUi>("스토리보드"); board.Fonts = fonts;
+            var braid = Ui<BraidGame>("양갈래 땋기"); braid.Fonts = fonts;
             var wipe = Ui<InkWipe>("먹 닦기");
 
             runner.Def = def; runner.Dialogue = book; runner.Cuts = cuts; runner.Actions = actions; runner.Fonts = fonts;
             runner.Loader = loader; runner.Hud = hud; runner.Talk = talk; runner.TalkIn = talkIn; runner.Cut = cut;
-            runner.Card = card; runner.LedgerUi = ledger; runner.NameUi = names; runner.Endure = endure; runner.Light = day;
+            runner.Card = card; runner.Board = board; runner.Braid = braid; runner.LedgerUi = ledger; runner.NameUi = names; runner.Endure = endure; runner.Light = day;
             runner.M2Stages = scene.GetRootGameObjects().FirstOrDefault(g => g.name == "Stages");
             loader.Wipe = wipe; loader.Motor = rig.Motor; loader.Cam = rig.CamRig; loader.ZoneRoot = zoneRoot.gameObject;
             talkIn.Actions = actions;
@@ -541,12 +551,21 @@ namespace Haengin.EditorGame
                     var pot = GameObject.CreatePrimitive(PrimitiveType.Cylinder); pot.name = "가마솥"; Object.DestroyImmediate(pot.GetComponent<Collider>());
                     pot.transform.SetParent(root.transform, false); pot.transform.localPosition = new Vector3(-2.6f, 0.45f, 2.4f); pot.transform.localScale = new Vector3(1.1f, 0.45f, 1.1f);
                     pot.GetComponent<Renderer>().sharedMaterial = propM;
-                    var scarf = GameObject.CreatePrimitive(PrimitiveType.Cube); scarf.name = "목도리"; Object.DestroyImmediate(scarf.GetComponent<Collider>());
-                    scarf.transform.SetParent(root.transform, false); scarf.transform.localPosition = new Vector3(-1.6f, 1.0f, 2.6f); scarf.transform.localScale = new Vector3(0.30f, 0.07f, 0.14f);
+                    var scarf = GameObject.CreatePrimitive(PrimitiveType.Cylinder); scarf.name = "목도리"; Object.DestroyImmediate(scarf.GetComponent<Collider>());     // 목에 감는 띠(납작 원기둥)
+                    scarf.transform.SetParent(root.transform, false); scarf.transform.localPosition = new Vector3(-1.6f, 1.0f, 2.6f); scarf.transform.localScale = new Vector3(0.22f, 0.04f, 0.2f);
                     scarf.GetComponent<Renderer>().sharedMaterial = Mat("M_St_Scarf", new Color(0.62f, 0.25f, 0.22f));
                 }
                 if (key == "School")
                     for (int k = 0; k < 6; k++) Actor(root.transform, $"반 친구 {k + 1}", new Vector3(-3f + (k % 3) * 3f, 0f, -1f + (k / 3) * 2.5f), 180f, 1.7f, actorM);
+                // 1화 배역·가구(2026-10-25 — CastSetup: 엄마·하늘·도경민·태오·민재·건우·임찬·반 친구, 교실 칸막이·뒷문 스폰)
+                string dressed = CastSetup.Dress(key, root.transform, info.size, spawns);
+                place.Spawns = spawns.ToArray();
+                if (!string.IsNullOrEmpty(dressed))
+                {
+                    Notes.Add($"무대 {key} 꾸밈: {dressed}");
+                    var lb = root.transform.Find("이름판");
+                    if (lb != null) UnityEngine.Object.DestroyImmediate(lb.gameObject);   // 꾸민 무대엔 '자리 무대' 이름판 없음
+                }
                 string spawnNames = string.Join(",", spawns.Select(s => s.name));
                 EditorSceneManager.SaveScene(scene, path);
                 Stable(path);
