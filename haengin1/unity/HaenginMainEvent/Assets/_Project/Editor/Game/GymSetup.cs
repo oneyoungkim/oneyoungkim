@@ -37,7 +37,13 @@ namespace Haengin.EditorGame
         public const string SparDefPath = Root + "/Settings/Enemy_Gojun.asset";
         public const string DrillJson = Root + "/Data/Drill/drills.json";
         public const string RingTex = GymDir + "/T_DrillRing.png";
-        public static readonly string[] Npcs = { "Yunjun", "Gojun" };
+        public static readonly string[] Npcs = { "Yunjun", "Gojun", "Seungyeon", "JinsooSon", "JinsooSeo" };
+        /// NPC id · 보이는 이름(출장 레슨 코치 3 = 실존 인물, 본인 허락 2026-10-25 — docs/02 조연 표)
+        public static readonly Dictionary<string, (string id, string name)> NpcNames = new Dictionary<string, (string, string)>
+        {
+            { "Yunjun", ("yunjun", "이윤준") }, { "Gojun", ("gojun", "고준") }, { "Seungyeon", ("seungyeon", "김승연") }, { "JinsooSon", ("jinsoo_son", "손진수") }, { "JinsooSeo", ("jinsoo_seo", "서진수") },
+        };
+        public static readonly string[] GuestNpcs = { "Seungyeon", "JinsooSon", "JinsooSeo" };
         public static readonly List<string> Notes = new List<string>();
 
         public static void Build() => Run(() => { Assets(); Scene(); M1Setup.SetBuildScenes(); });
@@ -360,7 +366,7 @@ namespace Haengin.EditorGame
                 var oc = Override($"{Root}/Anim/Gym_{n}.overrideController", ctrl, baseIdle, Clip(NpcFbx(n), "Idle"));
                 var go = NpcInstance(model, NpcMat(n), oc, CharSetup.AvatarOf(NpcFbx(n)));
                 go.name = "Npc_" + n;
-                var npc = go.AddComponent<GymNpc>(); npc.Id = n.ToLower(); npc.DisplayName = n == "Yunjun" ? "이윤준" : "고준"; npc.Anim = go.GetComponentInChildren<Animator>();
+                var npc = go.AddComponent<GymNpc>(); npc.Id = NpcNames[n].id; npc.DisplayName = NpcNames[n].name; npc.Anim = go.GetComponentInChildren<Animator>();
                 PrefabUtility.SaveAsPrefabAsset(go, NpcPrefab(n)); Object.DestroyImmediate(go);
             }
             // 관원 8: 적 모델 4 × 옷 색 2(체육관 옷 = 티셔츠 색 tint)

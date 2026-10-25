@@ -191,11 +191,137 @@ namespace Haengin.Tests
             Assert.GreaterOrEqual(w.AutoRuns, 1, "주간 계획 맡기기");
             if (full)
             {
+                // 14-6 밸런스: 돈 쓸 곳(레슨·먹을 것)이 생긴 뒤 4월 말 지갑 = 쓸 데가 있어 빠듯한 10~25만
+                var apr = m.S.Days.FirstOrDefault(l => l.StartsWith("4/30 "));
+                int wallet = apr != null ? int.Parse(System.Text.RegularExpressions.Regex.Match(apr, @"지갑 ([\d,]+)").Groups[1].Value.Replace(",", "")) : -1;
+                Debug.Log($"[W] {tag} 날마다:\n{string.Join("\n", m.S.Days)}");
+                Debug.Log($"[W] {tag} 4월 말 지갑 {wallet:N0} · 레슨 {m.Count("lesson"):0}(직접 {w.LessonsRun}) · 레슨에 쓴 돈 {m.Count("spent.lesson"):N0} · 먹을 것 {m.Count("spent.food"):N0} · 노쇼 {m.Count("noshow"):0} · {apr}");
+                Assert.That(wallet, Is.InRange(100000, 250000), "4월 말 지갑 10~25만: " + apr);
+                Assert.GreaterOrEqual(m.Count("lesson"), 4f, "레슨(맡기기 포함)");
+                Assert.Greater(m.Count("spent.food"), 0f, "먹을 것");
                 Assert.Greater(m.Count("job.counter"), 0, "편의점 정식");
                 Assert.Greater(bot.Drills, 0, "체육관 드릴");
                 Assert.GreaterOrEqual(bot.Sides, 2, "사연 2");
                 Assert.GreaterOrEqual(bot.Fights, 1, "시비 1");
             }
+        }
+
+        /// 그 날까지 지나간 '놓칠 수 없는' 카드(따라잡기 안 뜨게) + 더 넣을 것
+        static string[] Past(WorldDef def, int day, params string[] more)
+        {
+            int Start(CardDef c) => c.Date > 0 ? c.Date : c.WinFrom;
+            return more.Concat(def.Cards.Where(c => c.Demo && c.Miss == "never" && Start(c) > 0 && Start(c) <= day).Select(c => c.Id)).Distinct().ToArray();
+        }
+
+        // ───────────────────────── W23 개인레슨 장면(체육관): 고준 → 김승연(출장) · 노쇼
+        [UnityTest, Timeout(1200000)]
+        public IEnumerator W23_Lesson_Play()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var def = w.Def;
+            var save = Mid(def, Past(def, 314, "C1-01", "C1-02", "C1-03", "C1-04", "N01", "N02", "C1-L0", "C1-L1"), 314, 15 * 60 + 30, SceneLoader.Zone1, m => m.L.SetWallet(300000));
+            w.Begin(save);
+            yield return Lab.Frames(10);
+            yield return Free(w);
+            Assert.IsTrue(w.Model.Unlocked("lesson") && w.Model.Unlocked("lesson.guests"), "C1-L0 · C1-L1");
+            Assert.AreEqual("", w.BookNext("gojun"), "토 16:00 고준");
+            Assert.AreEqual("", w.BookNext("seungyeon"), "토 17:30 김승연(딥마카이)");
+            Assert.AreEqual(300000 - 20000 - 50000, w.Model.L.Wallet);
+            yield return w.Loader.Go(SceneLoader.Gym, "Spawn", false, Vector3.zero, 0f);
+            GymManager gm = null;
+            for (int i = 0; i < 300 && gm == null; i++) { gm = GymManager.Instance; yield return null; }
+            Assert.NotNull(gm);
+            Assert.NotNull(gm.Guest("seungyeon"), "출장 코치 NPC(김승연)");
+            Assert.NotNull(gm.Guest("jinsoo_son"), "출장 코치 NPC(손진수)");
+            Assert.NotNull(gm.Guest("jinsoo_seo"), "출장 코치 NPC(서진수)");
+            int st0 = GymState.Current.Stats.Sum();
+            float rel0 = w.Model.Rel("gojun");
+            GameClock.AdvanceTo(15 * 60 + 50);
+            for (int i = 0; i < 60 * 600 && w.LessonsRun < 1; i++) yield return null;
+            yield return Free(w);
+            var b0 = w.Model.S.Lessons[0];
+            Assert.AreEqual(1, b0.State, "레슨 받음: " + w.LastLessonLine);
+            Assert.Contains(b0.Drill, def.Shop.Coach("gojun").Drills, "고준 드릴(스파링·그라운드)");
+            Assert.AreEqual(rel0 + 1f, w.Model.Rel("gojun"), 0.01f, "신뢰 +1");
+            Assert.Greater(GymState.Current.Stats.Sum(), st0, "스탯");
+            // 출장 레슨(김승연) — 시작 전 기다림 → 시계를 그 시각으로
+            GameClock.AdvanceTo(17 * 60 + 20);
+            for (int i = 0; i < 60 * 600 && w.LessonsRun < 2; i++) yield return null;
+            yield return Free(w);
+            var b1 = w.Model.S.Lessons[1];
+            Assert.AreEqual(1, b1.State, "출장 레슨 받음: " + w.LastLessonLine);
+            Assert.Contains(b1.Drill, def.Shop.Coach("seungyeon").Drills, "타격 기본기 드릴");
+            Assert.IsFalse(gm.Guest("seungyeon").gameObject.activeSelf, "끝나면 출장 코치는 감");
+            // 노쇼: 다음 예약을 잡고 시간을 넘김
+            Assert.AreEqual("", w.BookNext("yunjun"));
+            var b2 = w.Model.S.Lessons[2];
+            int wl = w.Model.L.Wallet;
+            GameClock.SetDate(2026, b2.Day / 100, b2.Day % 100, b2.At + def.Shop.GraceAfter + 5);
+            for (int i = 0; i < 60 * 300 && b2.State == 0; i++) yield return null;
+            Assert.AreEqual(2, b2.State, "노쇼");
+            Assert.AreEqual(wl, w.Model.L.Wallet, "돈은 날아감");
+            Debug.Log($"[W] W23 레슨: {string.Join(" | ", w.Trace.Where(x => x.StartsWith("레슨") || x.StartsWith("노쇼")))} · 스탯 {st0} → {GymState.Current.Stats.Sum()} · {w.LastLessonLine}");
+        }
+
+        // ───────────────────────── W24 가게 앞 판매창 · 휴대폰 레슨/가방 · HUD 효과 아이콘
+        [UnityTest, Timeout(600000)]
+        public IEnumerator W24_Shop_Play()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var def = w.Def;
+            var save = Mid(def, Past(def, 314, "C1-01", "C1-02", "C1-03", "C1-04", "N01", "N02", "C1-L0"), 314, 15 * 60 + 10, SceneLoader.Zone1, m => { m.L.SetWallet(100000); m.G.Fatigue = 60; });
+            w.Begin(save);
+            yield return Lab.Frames(10);
+            yield return Free(w);
+            var fronts = PlaceMarker.All.Where(p => p != null && p.Place == SceneLoader.Zone1 && p.Func.StartsWith("shop_")).ToList();
+            Assert.AreEqual(3, fronts.Count, "Zone1 판매창 3(약국·삼계탕·장어)");
+            Assert.IsTrue(fronts.All(p => p.GetComponent<WorldMarker>() != null), "표시 자리 연결");
+            var sg = fronts.First(p => p.Func == "shop_samgye");
+            M3Lab.Motor.Teleport(sg.transform.position, 0f);
+            yield return Lab.Frames(5);
+            StringAssert.Contains("차림표", w.MarkerPrompt("shop_samgye"));
+            double t0 = GameClock.Minutes;
+            w.UseMarker("shop_samgye", sg.transform);
+            yield return Lab.Frames(2);
+            yield return Free(w);
+            Assert.AreEqual(100000 - 18000, w.Model.L.Wallet, "삼계탕 18,000(2025 서울 평균)");
+            Assert.Greater(w.Model.HpBonus, 0f, "체력 효과");
+            Assert.Less(w.Model.G.Fatigue, 60, "피로 회복");
+            Assert.AreEqual(t0 + 40, GameClock.Minutes, 3.0, "앉아서 40분");
+            yield return Lab.Frames(20);
+            StringAssert.Contains("체", w.Hud.BuffLine, "HUD 효과 아이콘");
+            // 약국 → 비타민(가방 · 하루 한 알)
+            yield return w.BotShop("pharmacy", "vitamin");
+            Assert.AreEqual(29, w.Model.Doses("vitamin"));
+            // 휴대폰 '레슨' · '가방'
+            w.OpenPhone(7); yield return Lab.Frames(3);
+            StringAssert.Contains("이윤준", w.Phone.Body);
+            w.Phone.SetTab(8); yield return Lab.Frames(3);
+            StringAssert.Contains("종합비타민", w.Phone.Body);
+            w.Phone.Close();
+            Debug.Log($"[W] W24 가게: {w.LastMealLine} · HUD {w.Hud.BuffLine} · {w.Model.Status}");
+        }
+
+        // ───────────────────────── W25 빌드 인자 -mute(시작부터 끝까지 소리 0)
+        [UnityTest]
+        public IEnumerator W25_Mute_Arg()
+        {
+            var go = new GameObject("소리 시험");
+            var src = go.AddComponent<AudioSource>();
+            MuteArg.Apply();
+            Assert.AreEqual(0f, AudioListener.volume);
+            Assert.IsTrue(src.mute, "있던 소리");
+            var go2 = new GameObject("나중 소리");
+            var src2 = go2.AddComponent<AudioSource>();
+            AudioListener.volume = 1f;     // 누가 다시 올려도
+            float tw = 0f; while (tw < 2f && !(src2.mute && AudioListener.volume == 0f)) { tw += Time.unscaledDeltaTime; yield return null; }
+            yield return null;
+            Assert.IsTrue(src2.mute, "나중에 생긴 소리");
+            Assert.AreEqual(0f, AudioListener.volume, "다시 0");
+            MuteArg.Release();
+            Object.Destroy(go); Object.Destroy(go2);
         }
     }
 }

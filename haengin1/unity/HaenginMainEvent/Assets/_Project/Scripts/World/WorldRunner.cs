@@ -109,6 +109,7 @@ namespace Haengin
             GameUi.TitleHook = SaveAndTitle;
             GymManager.Gate = GymGate;
             GymManager.Finished += OnDrillFinished;
+            ShopBegin();
             StageDoor.Gate = DoorGate;
             Encounter.Suppress = true;
             SetYacha(false);
@@ -130,6 +131,7 @@ namespace Haengin
             busy.Clear();
             GymManager.Gate = null;
             GymManager.Finished -= OnDrillFinished;
+            ShopStop();
             GameUi.BookLabel = "도감";
             StageDoor.Gate = null;
             Encounter.Suppress = false;
@@ -232,6 +234,8 @@ namespace Haengin
             // 놓칠 수 없는 시각 카드
             var tc = Director.Pick("time");
             if (tc != null) { StartCoroutine(Run("카드", RunCard(tc, true))); return; }
+            // 개인레슨: 노쇼 · 미리 알림 · 체육관에 있으면 시작(14-6)
+            if (LessonTick()) return;
             // 창이 지나간 카드
             foreach (var oc in Director.Overdue())
             {

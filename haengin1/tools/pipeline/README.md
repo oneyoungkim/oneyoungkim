@@ -17,3 +17,6 @@ M3 인물 12명의 프롬프트는 `concept/art/fujimoto/m3/prompts/`.
 
 ## 이윤준(혜화 MMA 관장, 실존 인물) — 2026-10-24, 체육관 작업과 함께
 스크립트는 `tools/env/gym/char/`(이 README 의 순서 그대로, 경로만 체육관 작업 폴더). 색 설정화(2.75, 공개 사진 2장 참조 — `concept/art/fujimoto/README.md` 출처) → A포즈 4k 16:9(4.25) → `crop4.py` → `concept/art/3d/m3/input/yunjun_*.png` → Tripo detailed(18) `yunjun_tripo.glb` → `reorient.py` 1.75m `yunjun_front.glb` → 커밋 9c96853 raw 주소로 `3d_rigging` + 243 Idle_3(8) `yunjun_idle243.glb`(뼈 24). 합계 33cr. 사진 참조는 GPT Image 2.5 가 거부하지 않았다.
+
+## 김승연·손진수·서진수(딥마카이 진행자 코치 3명, 실존 인물) — 2026-10-25
+범용 `tools/env/gym/char/char_gen.ps1 -Name <이름> -Step color|apose|tripo|rig`(프롬프트 `char/<이름>_{color,apose}.txt`). 이름 `seungyeon`·`jinsoo_son`·`jinsoo_seo`, 키 1.80·1.68·1.70 m(공개 프로필 — `concept/art/fujimoto/README.md` 출처). 사람마다 color 2.75(사진 2장 참조) → apose 4.25 → `crop4.py` → Tripo detailed 18 → `reorient.py` → 커밋 a437f75 raw 주소로 rig 243 Idle_3 8(뼈 24) = 33, 셋 합계 99cr. 업로드 520(과금 없음) 두 번은 `generate list` 확인 뒤 재실행. **Tripo 좌우 규약**: '왼쪽' 이미지(화면 왼쪽을 향한 뷰) = 캐릭터 왼쪽 옆면(이윤준 왼손목 시계로 확인) — 좌우가 다른 무늬(김승연 왼팔 문신)는 시트의 반대쪽 뷰에 그려지면 그 뷰를 덧칠하고 넣을 것. FBX `Art/Characters/M3/{Seungyeon,JinsooSon,JinsooSeo}.fbx`(glb2fbx `Idle`, 메시 1·손 0 = Yunjun 과 같음) + `*Tex.jpg`(GLB 안 JPEG 그대로).

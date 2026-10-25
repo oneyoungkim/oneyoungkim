@@ -3331,6 +3331,161 @@ MonoBehaviour:
     Weight: 1
     Limit: 0
     Demo: 1
+  - Id: C1-L0
+    Group: 
+    Title: "\uAD00\uC7A5 \uAC1C\uC778\uB808\uC2A8"
+    Chapter: 1
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-6
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uC0AC\uBB34\uC2E4 \uBB38\uC5D0 \uC885\uC774 \uD55C \uC7A5 \u2014 '\uAC1C\uC778\uB808\uC2A8
+      1\uD68C 100,000\uC6D0 / 10\uD68C 900,000\uC6D0'. \uADF8 \uBC11\uC5D0 \uBCFC\uD39C\uC73C\uB85C
+      '\uD559\uC0DD \uBC18\uAC12'."
+    - "\uACE0\uC900 \uC774\uB984 \uC606\uC5D4 '\uBC25\uAC12(2\uB9CC)'\uC774\uB77C\uACE0
+      \uC801\uD600 \uC788\uB2E4."
+    Quotes:
+    - "\uC774\uC724\uC900|\uD559\uC0DD\uC774\uB77C \uBC18\uB9CC \uBC1B\uB294\uB2E4.
+      \uB300\uC2E0 \uD55C \uC2DC\uAC04 \uB3D9\uC548\uC740 \uB0B4 \uB9D0\uB9CC \uB4E4\uC5B4."
+    - "\uACE0\uC900|\uB09C \uBC25\uAC12\uB9CC \uBC1B\uC744\uAC8C. \uADF8\uB77C\uC6B4\uB4DC\uB791
+      \uC2A4\uD30C\uB9C1\uC740 \uB098\uD55C\uD14C \uC640."
+    Date: 0
+    WinFrom: 309
+    WinTo: 1231
+    Monthly: 0
+    Days: 
+    Bands: []
+    From: -1
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    Need:
+    - gym.trial>=1
+    - card:N02
+    Block: []
+    After:
+    - unlock:lesson
+    - "phone:\uC774\uC724\uC900:\uB808\uC2A8 \uC608\uC57D\uC740 \uD734\uB300\uD3F0
+      '\uB808\uC2A8' \uCE78\uC5D0\uC11C. \uC2DC\uAC04 \uC9C0\uB098\uBA74 \uB178\uC1FC\uB2E4
+      \u2014 \uB3C8\uC740 \uBABB \uB3CC\uB824\uC900\uB2E4."
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 1
+  - Id: C1-L1
+    Group: 
+    Title: "\uD615\uB4E4 \uBD88\uB800\uB2E4"
+    Chapter: 1
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-6
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uC0AC\uBB34\uC2E4 \uD654\uC774\uD2B8\uBCF4\uB4DC\uC5D0 \uC774\uB984 \uC138
+      \uAC1C\uAC00 \uC0C8\uB85C \uBD99\uC5C8\uB2E4."
+    - "\uD1A0 17:30 \uAE40\uC2B9\uC5F0(\uB525\uB9C8\uCE74\uC774) \xB7 \uC77C 11:00
+      \uC190\uC9C4\uC218(\uCF54\uB108\uB9E8) \xB7 \uC77C 19:30 \uC11C\uC9C4\uC218(\uD30C\uC774\uBE0C\uB77C\uC6B4\uC988)."
+    Quotes:
+    - "\uC774\uC724\uC900|\uD615\uB4E4 \uBD88\uB800\uB2E4. \uC8FC\uB9D0\uC5D0 \uD55C
+      \uBC88\uC529 \uC640\uC11C \uBD10 \uC904 \uAC70\uC57C."
+    - "\uC774\uC724\uC900|\uB2E4 \uC790\uAE30 \uCCB4\uC721\uAD00 \uD558\uB294 \uC0AC\uB78C\uB4E4\uC774\uC57C.
+      \uC608\uC57D\uD574 \uB193\uACE0 \uC548 \uC624\uBA74 \uB098 \uB9DD\uC2E0\uC774\uB2E4."
+    - "\uACE0\uC900|\uC640, \uC9C4\uC9DC\uC694? \uC800\uB3C4 \uC606\uC5D0\uC11C \uBD10\uB3C4
+      \uB3FC\uC694?"
+    Date: 0
+    WinFrom: 321
+    WinTo: 1231
+    Monthly: 0
+    Days: 
+    Bands: []
+    From: -1
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    - wake
+    Need:
+    - unlocked:lesson
+    - gym.member>=1
+    Block: []
+    After:
+    - unlock:lesson.guests
+    - "phone:\uC774\uC724\uC900:\uCD9C\uC7A5 \uB808\uC2A8 \uD68C\uB2F9 50,000\uC6D0.
+      \uBC18\uC740 \uB0B4\uAC00 \uB0B8\uB2E4. \uD734\uB300\uD3F0 '\uB808\uC2A8' \uCE78\uC5D0\uC11C
+      \uC608\uC57D."
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 1
+  - Id: N11
+    Group: 
+    Title: "\uC5C4\uB9C8 \uACF0\uD0D5"
+    Chapter: 1
+    Kind: 4
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-6
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uC77C\uC694\uC77C \uC544\uCE68. \uBD80\uC5CC\uC5D0\uC11C \uACF0\uD0D5 \uB0C4\uC0C8\uAC00
+      \uB09C\uB2E4. \uC5C4\uB9C8\uAC00 \uB9D0\uC5C6\uC774 \uD070 \uADF8\uB987\uC744
+      \uB0B4\uBBFC\uB2E4."
+    Quotes:
+    - "\uC5C4\uB9C8|\uB2E4 \uBA39\uACE0 \uB098\uAC00. \uB0A8\uAE30\uBA74 \uC800\uB141\uC5D0
+      \uB610 \uB098\uC628\uB2E4."
+    Date: 0
+    WinFrom: 308
+    WinTo: 1231
+    Monthly: 0
+    Days: 
+    Bands: []
+    From: -1
+    To: -1
+    Place: Home
+    Zone: siu_house
+    At:
+    - wake
+    Need:
+    - fatigue>=30
+    Block: []
+    After:
+    - eat:gomtang
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: lost
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 0.6
+    Limit: 1
+    Demo: 1
   - Id: C2-01
     Group: 
     Title: "\uC120\uC218\uBC18"
@@ -5937,3 +6092,702 @@ MonoBehaviour:
   - jjimjilbang
   - car_center
   Drills: {fileID: 11400000, guid: 9376d98efa3d4c04a8ec8710ca6b9602, type: 2}
+  Shop:
+    Minutes: 40
+    GraceBefore: 15
+    GraceAfter: 20
+    NoticeBefore: 60
+    NoshowRel: -2
+    LessonRel: 1
+    BlockRel: -4
+    BlockDays: 7
+    AutoMul: 0.75
+    CueEvery: 7
+    Coaches:
+    - Id: yunjun
+      Name: "\uC774\uC724\uC900"
+      Title: "\uAD00\uC7A5 \uAC1C\uC778\uB808\uC2A8"
+      Gym: "\uD61C\uD654 MMA"
+      Bio: 
+      Unlock: unlocked:lesson
+      Visit: 0
+      Slots:
+      - Days: "\uC6D4\uC218\uAE08"
+        Label: "\uC544\uCE68 PT"
+        At: 430
+      - Days: "\uD654\uBAA9"
+        Label: "\uBC24 \uAC1C\uC778 \uC9C0\uB3C4"
+        At: 1275
+      Week: 2
+      Price: 50000
+      List: 100000
+      Ticket10: 450000
+      List10: 900000
+      Mul: 1.8
+      Bonus: 8
+      Metric: 0.06
+      FatigueMul: 1.5
+      Fix: 0
+      Drills:
+      - D03
+      - D04
+      - D05
+      - D06
+      - D07
+      - D10
+      HasTech: 1
+      Tech:
+        Id: tech.onetwo
+        Name: "\uAC70\uB9AC \uC7AC\uACE0 \uC6D0\uD22C"
+        Text: "\uB4E4\uC5B4\uAC00\uAE30 \uC804\uC5D0 \uD55C \uBC1C \uC7AC\uACE0,
+          \uCE58\uACE0 \uB098\uC11C \uBC14\uB85C \uBE60\uC9C4\uB2E4 \u2014 \uCF64\uBCF4
+          \uD638\uCD9C\xB7\uBBF8\uD2B8 \uD310\uC815 +4"
+        Lessons: 2
+        Grade: 2
+        Drills:
+        - D03
+        - D04
+        Plus: 4
+    - Id: gojun
+      Name: "\uACE0\uC900"
+      Title: "\uC120\uBC30 \uB808\uC2A8(\uC2A4\uD30C\uB9C1\xB7\uADF8\uB77C\uC6B4\uB4DC)"
+      Gym: "\uD61C\uD654 MMA"
+      Bio: 
+      Unlock: unlocked:lesson
+      Visit: 0
+      Slots:
+      - Days: "\uD1A0"
+        Label: "\uD1A0\uC694\uC77C \uADF8\uB77C\uC6B4\uB4DC"
+        At: 960
+      - Days: "\uC77C"
+        Label: "\uC77C\uC694\uC77C \uC624\uC804 \uC2A4\uD30C\uB9C1"
+        At: 600
+      - Days: "\uC77C"
+        Label: "\uC77C\uC694\uC77C \uC800\uB141 \uADF8\uB77C\uC6B4\uB4DC"
+        At: 1140
+      Week: 3
+      Price: 20000
+      List: 30000
+      Ticket10: 180000
+      List10: 0
+      Mul: 1.4
+      Bonus: 4
+      Metric: 0.03
+      FatigueMul: 1.3
+      Fix: 0
+      Drills:
+      - D07
+      - D08
+      - D10
+      - D11
+      HasTech: 1
+      Tech:
+        Id: tech.wallwalk
+        Name: "\uBCBD \uC9DA\uACE0 \uC77C\uC5B4\uB098\uAE30"
+        Text: "\uAE54\uB824\uB3C4 \uB4F1\uC744 \uCCA0\uB9DD\uC5D0 \uBD99\uC774\uACE0
+          \uB2E4\uB9AC\uBD80\uD130 \uC138\uC6B4\uB2E4 \u2014 \uADF8\uB77C\uC6B4\uB4DC\xB7\uD14C\uC774\uD06C\uB2E4\uC6B4
+          \uD310\uC815 +4"
+        Lessons: 2
+        Grade: 2
+        Drills:
+        - D10
+        - D08
+        Plus: 4
+    - Id: seungyeon
+      Name: "\uAE40\uC2B9\uC5F0"
+      Title: "\uCD9C\uC7A5 \uB808\uC2A8 \u2014 \uD0C0\uACA9 \uAE30\uBCF8\uAE30"
+      Gym: "\uB525\uB9C8\uCE74\uC774"
+      Bio: "\uB525\uB9C8\uCE74\uC774 \xB7 \u300C\uC8FC\uBA39\uC774 \uC6B4\uB2E4\u300D
+        \uC6B0\uC2B9 \uCD9C\uC2E0 \xB7 2015\uB144 5\uC6D4 \uB85C\uB4DCFC 023 \uD504\uB85C
+        \uB370\uBDD4 \xB7 \uB85C\uB4DCFC 026 39\uCD08 \uD380\uCE58 KO\uC2B9 \xB7
+        \uAC00\uB77C\uB370\uB97C \uC624\uB798 \uC218\uB828\uD55C \uD0C0\uACA9 \uAE30\uBCF8\uAE30
+        \xB7 \uBCC4\uBA85 '\uBB34\uD638\uD761 \uD30C\uC774\uD130'"
+      Unlock: unlocked:lesson.guests
+      Visit: 1
+      Slots:
+      - Days: "\uD1A0"
+        Label: "\uD1A0\uC694\uC77C \uCD9C\uC7A5 \uB808\uC2A8"
+        At: 1050
+      Week: 1
+      Price: 50000
+      List: 120000
+      Ticket10: 0
+      List10: 0
+      Mul: 1.8
+      Bonus: 6
+      Metric: 0.05
+      FatigueMul: 1.5
+      Fix: 0
+      Drills:
+      - D03
+      - D04
+      - D05
+      - D06
+      HasTech: 0
+      Tech:
+        Id: 
+        Name: 
+        Text: 
+        Lessons: 2
+        Grade: 2
+        Drills: []
+        Plus: 4
+    - Id: jinsoo_son
+      Name: "\uC190\uC9C4\uC218"
+      Title: "\uCD9C\uC7A5 \uB808\uC2A8 \u2014 \uCE74\uC6B4\uD130\xB7\uC6B4\uC601"
+      Gym: "\uCF54\uB108\uB9E8"
+      Bio: "\uCF54\uB108\uB9E8 \xB7 \uCF54\uB9AC\uC548\uC880\uBE44MMA \uCD9C\uC2E0
+        \xB7 '\uC57D\uB300\uC0DD \uD30C\uC774\uD130' \xB7 2018\uB144 9\uC6D4 UFC
+        \uD30C\uC774\uD2B8 \uB098\uC774\uD2B8 136 \uB370\uBDD4"
+      Unlock: unlocked:lesson.guests
+      Visit: 1
+      Slots:
+      - Days: "\uC77C"
+        Label: "\uC77C\uC694\uC77C \uCD9C\uC7A5 \uB808\uC2A8"
+        At: 660
+      Week: 1
+      Price: 50000
+      List: 120000
+      Ticket10: 0
+      List10: 0
+      Mul: 1.7
+      Bonus: 6
+      Metric: 0.05
+      FatigueMul: 1.5
+      Fix: 0
+      Drills:
+      - D04
+      - D07
+      - D08
+      - D10
+      HasTech: 0
+      Tech:
+        Id: 
+        Name: 
+        Text: 
+        Lessons: 2
+        Grade: 2
+        Drills: []
+        Plus: 4
+    - Id: jinsoo_seo
+      Name: "\uC11C\uC9C4\uC218"
+      Title: "\uCD9C\uC7A5 \uB808\uC2A8 \u2014 \uB3D9\uC791 \uAD50\uC815"
+      Gym: "\uD30C\uC774\uBE0C\uB77C\uC6B4\uC988"
+      Bio: "\uD30C\uC774\uBE0C\uB77C\uC6B4\uC988 \uD55C\uB0A8\uC810 \uAD00\uC7A5
+        \xB7 \uD504\uB85C MMA 8\uC804 5\uC2B9 3\uD328 \xB7 \uCF54\uB9AC\uC548 \uC880\uBE44
+        MMA \uC18C\uC18D \uC774\uB825 \xB7 \uD2C0\uB9B0 \uB3D9\uC791 \uD558\uB098\uB97C
+        \uC9DA\uC5B4 \uACE0\uCCD0 \uC8FC\uB294 \uAD50\uC815\uD615 \uC124\uBA85"
+      Unlock: unlocked:lesson.guests
+      Visit: 1
+      Slots:
+      - Days: "\uC77C"
+        Label: "\uC77C\uC694\uC77C \uC800\uB141 \uAD50\uC815 \uB808\uC2A8"
+        At: 1170
+      Week: 1
+      Price: 50000
+      List: 120000
+      Ticket10: 0
+      List10: 0
+      Mul: 1.5
+      Bonus: 5
+      Metric: 0.05
+      FatigueMul: 1.4
+      Fix: 12
+      Drills:
+      - '*'
+      HasTech: 0
+      Tech:
+        Id: 
+        Name: 
+        Text: 
+        Lessons: 2
+        Grade: 2
+        Drills: []
+        Plus: 4
+    FullCap: 12
+    SuppDays: 3
+    SuppMiss: 2
+    SameDay:
+    - 1
+    - 0.6
+    - 0.35
+    - 0.2
+    StreakMul: 0.85
+    StreakMin: 0.55
+    Shops:
+    - Id: conv
+      Name: "\uD558\uB8E8\uD3B8\uC758\uC810 \uACC4\uC0B0\uB300"
+      Place: Conv
+    - Id: pharmacy
+      Name: "\uC131\uACFD\uC57D\uAD6D \uD310\uB9E4\uCC3D"
+      Place: Zone1
+    - Id: gukbap
+      Name: "\uAD6D\uBC25\uC9D1 \u2014 \uC9C1\uC6D0\uAC00"
+      Place: Gukbap
+    - Id: samgye
+      Name: "\uC640\uB8E1 \uC0BC\uACC4\uD0D5"
+      Place: Zone1
+    - Id: eel
+      Name: "\uC640\uB8E1 \uC7A5\uC5B4"
+      Place: Zone1
+    - Id: home
+      Name: "\uC5C4\uB9C8 \uBD80\uC5CC"
+      Place: Home
+    Foods:
+    - Id: gimbap
+      Name: "\uC0BC\uAC01\uAE40\uBC25"
+      Shop: conv
+      Supp: 
+      Effect: 
+      Price: 1300
+      List: 0
+      Minutes: 0
+      Full: 3
+      Doses: 0
+      Heal: 0
+      Fatigue: 2
+      Carry: 1
+      Free: 0
+      Aka:
+      - "\uD3D0\uAE30 \uC9C1\uC804 \uC0BC\uAC01\uAE40\uBC25"
+      Buffs: []
+    - Id: banana
+      Name: "\uBC14\uB098\uB098\uC6B0\uC720"
+      Shop: conv
+      Supp: 
+      Effect: 
+      Price: 1700
+      List: 0
+      Minutes: 0
+      Full: 1
+      Doses: 0
+      Heal: 0
+      Fatigue: 2
+      Carry: 1
+      Free: 0
+      Aka: []
+      Buffs:
+      - Kind: cond
+        Minutes: 90
+        Value: 2
+    - Id: bar
+      Name: "\uC5D0\uB108\uC9C0\uBC14"
+      Shop: conv
+      Supp: 
+      Effect: 
+      Price: 1800
+      List: 0
+      Minutes: 0
+      Full: 1
+      Doses: 0
+      Heal: 0
+      Fatigue: 1
+      Carry: 1
+      Free: 0
+      Aka: []
+      Buffs:
+      - Kind: stamina
+        Minutes: 120
+        Value: 10
+    - Id: protein
+      Name: "\uB2E8\uBC31\uC9C8 \uC74C\uB8CC"
+      Shop: conv
+      Supp: 
+      Effect: 
+      Price: 2800
+      List: 0
+      Minutes: 0
+      Full: 1
+      Doses: 0
+      Heal: 0
+      Fatigue: 4
+      Carry: 1
+      Free: 0
+      Aka: []
+      Buffs:
+      - Kind: stamina
+        Minutes: 90
+        Value: 5
+    - Id: vitamin
+      Name: "\uC885\uD569\uBE44\uD0C0\uBBFC(30\uC77C\uBD84)"
+      Shop: pharmacy
+      Supp: vitamin
+      Effect: "3\uC77C \uC774\uC0C1 \uAFB8\uC900\uD788 \u2014 \uC7A0 \uD68C\uBCF5
+        \xD71.15"
+      Price: 18000
+      List: 0
+      Minutes: 0
+      Full: 0
+      Doses: 30
+      Heal: 0
+      Fatigue: 0
+      Carry: 1
+      Free: 0
+      Aka: []
+      Buffs: []
+    - Id: magnesium
+      Name: "\uB9C8\uADF8\uB124\uC298(30\uC77C\uBD84)"
+      Shop: pharmacy
+      Supp: magnesium
+      Effect: "3\uC77C \uC774\uC0C1 \uAFB8\uC900\uD788 \u2014 \uADFC\uC721\uD1B5
+        \uB35C\uD568\xB7\uBD80\uC0C1 \uD558\uB8E8 \uBE68\uB9AC"
+      Price: 15000
+      List: 0
+      Minutes: 0
+      Full: 0
+      Doses: 30
+      Heal: 0
+      Fatigue: 0
+      Carry: 1
+      Free: 0
+      Aka: []
+      Buffs: []
+    - Id: gukbap_special
+      Name: "\uD2B9\uAD6D\uBC25"
+      Shop: gukbap
+      Supp: 
+      Effect: 
+      Price: 9000
+      List: 12000
+      Minutes: 25
+      Full: 4
+      Doses: 0
+      Heal: 0
+      Fatigue: 8
+      Carry: 0
+      Free: 0
+      Aka: []
+      Buffs:
+      - Kind: hp
+        Minutes: 180
+        Value: 10
+    - Id: suyuk
+      Name: "\uC218\uC721 \uD55C \uC811\uC2DC"
+      Shop: gukbap
+      Supp: 
+      Effect: 
+      Price: 15000
+      List: 25000
+      Minutes: 35
+      Full: 5
+      Doses: 0
+      Heal: 0
+      Fatigue: 10
+      Carry: 0
+      Free: 0
+      Aka: []
+      Buffs:
+      - Kind: hp
+        Minutes: 240
+        Value: 15
+      - Kind: cond
+        Minutes: 240
+        Value: 3
+    - Id: samgyetang
+      Name: "\uC0BC\uACC4\uD0D5"
+      Shop: samgye
+      Supp: 
+      Effect: 
+      Price: 18000
+      List: 0
+      Minutes: 40
+      Full: 6
+      Doses: 0
+      Heal: 1
+      Fatigue: 15
+      Carry: 0
+      Free: 0
+      Aka: []
+      Buffs:
+      - Kind: hp
+        Minutes: 360
+        Value: 20
+      - Kind: stamina
+        Minutes: 360
+        Value: 10
+    - Id: eel
+      Name: "\uC7A5\uC5B4\uAD6C\uC774 1\uC778\uBD84"
+      Shop: eel
+      Supp: 
+      Effect: 
+      Price: 42000
+      List: 0
+      Minutes: 60
+      Full: 7
+      Doses: 0
+      Heal: 1
+      Fatigue: 20
+      Carry: 0
+      Free: 0
+      Aka: []
+      Buffs:
+      - Kind: stamina
+        Minutes: 480
+        Value: 20
+      - Kind: hp
+        Minutes: 480
+        Value: 20
+      - Kind: cond
+        Minutes: 480
+        Value: 4
+    - Id: gomtang
+      Name: "\uC5C4\uB9C8 \uACF0\uD0D5"
+      Shop: home
+      Supp: 
+      Effect: 
+      Price: 0
+      List: 0
+      Minutes: 25
+      Full: 5
+      Doses: 0
+      Heal: 0
+      Fatigue: 12
+      Carry: 0
+      Free: 1
+      Aka: []
+      Buffs:
+      - Kind: hp
+        Minutes: 360
+        Value: 15
+      - Kind: cond
+        Minutes: 360
+        Value: 3
+    BuffKinds:
+    - stamina
+    - hp
+    - cond
+    BuffNames:
+    - "\uC2A4\uD0DC\uBBF8\uB098"
+    - "\uCCB4\uB825"
+    - "\uCEE8\uB514\uC158"
+    BuffNotes:
+    - "\uB4DC\uB294 \uD53C\uB85C \u2212%"
+    - "\uC2F8\uC6C0 \uCCB4\uB825 +%"
+    - "\uB4DC\uB9B4 \uD310\uC815 +"
+    Lines:
+    - Coach: yunjun
+      Kind: intro
+      Text: "\uD559\uC0DD\uC774\uB77C \uBC18\uB9CC \uBC1B\uB294\uB2E4. \uB300\uC2E0
+        \uD55C \uC2DC\uAC04 \uB3D9\uC548\uC740 \uB0B4 \uB9D0\uB9CC \uB4E4\uC5B4."
+    - Coach: yunjun
+      Kind: start
+      Text: "\uC624\uB298\uC740 \uD558\uB098\uB9CC \uACE0\uCE5C\uB2E4. \uD558\uB098."
+    - Coach: yunjun
+      Kind: start
+      Text: "MMA\uB294 \uC608\uC220\uC774\uB2E4. \uC120 \uD558\uB098\uC529 \uAE0B\uB294
+        \uAC70\uC57C."
+    - Coach: yunjun
+      Kind: start
+      Text: "\uBAB8 \uD480\uB838\uC9C0. \uBC14\uB85C \uAC04\uB2E4."
+    - Coach: yunjun
+      Kind: cue
+      Text: "\uD131."
+    - Coach: yunjun
+      Kind: cue
+      Text: "\uBC1C \uBA3C\uC800."
+    - Coach: yunjun
+      Kind: cue
+      Text: "\uC228 \uB0B4\uC26C\uBA74\uC11C \uCCD0."
+    - Coach: yunjun
+      Kind: cue
+      Text: "\uCE58\uACE0 \uBE60\uC838."
+    - Coach: yunjun
+      Kind: cue
+      Text: "\uC5B4\uAE68 \uD798 \uBE7C."
+    - Coach: yunjun
+      Kind: cue
+      Text: "\uAC70\uB9AC. \uAC70\uB9AC \uBD10."
+    - Coach: yunjun
+      Kind: good
+      Text: "\uADF8\uAC70\uC57C. \uC9C0\uAE08 \uADF8 \uB290\uB08C \uAE30\uC5B5\uD574."
+    - Coach: yunjun
+      Kind: ok
+      Text: "\uBC18\uC740 \uB410\uB2E4. \uB098\uBA38\uC9C0 \uBC18\uC740 \uB2E4\uC74C
+        \uC2DC\uAC04\uC5D0."
+    - Coach: yunjun
+      Kind: bad
+      Text: "\uAD1C\uCC2E\uC544. \uD2C0\uB9B0 \uAC78 \uC54C\uBA74 \uBC18\uC740 \uACE0\uCE5C
+        \uAC70\uB2E4."
+    - Coach: yunjun
+      Kind: tech
+      Text: "\uC774\uC81C \uADF8\uB0E5 \uC6D0\uD22C\uAC00 \uC544\uB2C8\uB77C, \uAC70\uB9AC\uB97C
+        \uC7AC\uACE0 \uCE58\uB294 \uC6D0\uD22C\uB2E4."
+    - Coach: yunjun
+      Kind: noshow
+      Text: "\uB808\uC2A8 \uC2DC\uAC04 \uC9C0\uB0AC\uB2E4. \uB3C8\uC740 \uBABB \uB3CC\uB824\uC900\uB2E4.
+        \uB2E4\uC74C\uC5D4 \uBBF8\uB9AC \uB9D0\uD574."
+    - Coach: yunjun
+      Kind: book
+      Text: "\uC608\uC57D \uBC1B\uC558\uB2E4. \uB2A6\uC9C0 \uB9C8."
+    - Coach: gojun
+      Kind: intro
+      Text: "\uC120\uBC30\uAC00 \uB3C8 \uBC1B\uB294 \uAC70 \uC880 \uADF8\uB807\uC9C0?
+        \uBC25\uAC12\uB9CC \uBC1B\uB294\uB2E4. \uB300\uC2E0 \uBD10\uC8FC\uB294 \uAC70
+        \uC5C6\uB2E4."
+    - Coach: gojun
+      Kind: start
+      Text: "\uC624\uB298\uC740 \uAE54\uB9AC\uB294 \uC5F0\uC2B5\uBD80\uD130. \uAE54\uB824
+        \uBD10\uC57C \uC548\uB2E4."
+    - Coach: gojun
+      Kind: start
+      Text: "\uC2A4\uD30C\uB9C1\uC740 \uC774\uAE30\uB824\uACE0 \uD558\uB294 \uAC8C
+        \uC544\uB2C8\uC57C. \uBC30\uC6B0\uB824\uACE0 \uD558\uB294 \uAC70\uC9C0."
+    - Coach: gojun
+      Kind: cue
+      Text: "\uACE8\uBC18 \uBD99\uC5EC!"
+    - Coach: gojun
+      Kind: cue
+      Text: "\uD314 \uBED7\uC9C0 \uB9C8, \uC7A1\uD78C\uB2E4!"
+    - Coach: gojun
+      Kind: cue
+      Text: "\uC228 \uC26C\uC5B4, \uC228!"
+    - Coach: gojun
+      Kind: cue
+      Text: "\uBCBD! \uBCBD \uC368!"
+    - Coach: gojun
+      Kind: cue
+      Text: "\uC88B\uC544, \uD55C \uBC88 \uB354!"
+    - Coach: gojun
+      Kind: good
+      Text: "\uC57C, \uC774\uAC70 \uB098\uBCF4\uB2E4 \uB0AB\uB2E4? \u2026\uB18D\uB2F4\uC774\uB2E4."
+    - Coach: gojun
+      Kind: ok
+      Text: "\uB098\uC058\uC9C0 \uC54A\uC544. \uAD00\uC7A5\uB2D8\uD55C\uD150 \uBE44\uBC00\uB85C
+        \uD574 \uC904\uAC8C."
+    - Coach: gojun
+      Kind: bad
+      Text: "\uCC98\uC74C\uC5D4 \uB2E4 \uADF8\uB798. \uB098\uB3C4 \uB9E8\uB0A0 \uAE54\uB838\uC5B4."
+    - Coach: gojun
+      Kind: tech
+      Text: "\uADF8\uAC8C \uC6D4\uC6CC\uD06C\uC57C. \uC774\uC81C \uAE54\uB824\uB3C4
+        \uB35C \uBB34\uC12D\uC9C0?"
+    - Coach: gojun
+      Kind: noshow
+      Text: "\uC57C \uC5B4\uB514\uC57C? \uB9E4\uD2B8 \uAE54\uC544 \uB193\uACE0 \uAE30\uB2E4\uB838\uB2E4.
+        \uB3C8\uC740\u2026 \uAD00\uC7A5\uB2D8\uC774 \uC6D0\uB798 \uADF8\uB7F0 \uAC70\uB798."
+    - Coach: gojun
+      Kind: book
+      Text: "\uC624\uCF00\uC774, \uADF8 \uC2DC\uAC04\uC5D0 \uB9E4\uD2B8 \uBE44\uC6CC
+        \uB193\uC744\uAC8C."
+    - Coach: seungyeon
+      Kind: intro
+      Text: "\uAD00\uC7A5\uB2D8\uD55C\uD14C \uC598\uAE30 \uB4E4\uC5C8\uC5B4. \uAE30\uBCF8\uBD80\uD130
+        \uAC19\uC774 \uBCF4\uC790."
+    - Coach: seungyeon
+      Kind: start
+      Text: "\uAE30\uBCF8\uBD80\uD130 \uB2E4\uC2DC \uBCF4\uC790."
+    - Coach: seungyeon
+      Kind: cue
+      Text: "\uAC00\uB4DC \uC62C\uB9AC\uACE0."
+    - Coach: seungyeon
+      Kind: cue
+      Text: "\uC8FC\uBA39 \uB05D\uAE4C\uC9C0 \uBED7\uACE0."
+    - Coach: seungyeon
+      Kind: cue
+      Text: "\uBC1C \uBD99\uC774\uACE0 \uCCD0."
+    - Coach: seungyeon
+      Kind: cue
+      Text: "\uB2E4\uC2DC, \uD55C \uBC88 \uB354."
+    - Coach: seungyeon
+      Kind: good
+      Text: "\uC88B\uC544. \uADF8\uAC8C \uAE30\uBCF8\uC774\uC57C."
+    - Coach: seungyeon
+      Kind: ok
+      Text: "\uAD1C\uCC2E\uC544. \uACC4\uC18D \uD558\uBA74 \uB41C\uB2E4."
+    - Coach: seungyeon
+      Kind: bad
+      Text: "\uCC9C\uCC9C\uD788. \uBE68\uB9AC \uD558\uB294 \uAC74 \uB098\uC911\uC774\uC57C."
+    - Coach: seungyeon
+      Kind: tip
+      Text: "\uAE30\uBCF8\uAE30\uAC00 \uC81C\uC77C \uBE60\uB978 \uAE38\uC774\uC57C."
+    - Coach: seungyeon
+      Kind: noshow
+      Text: "\uC624\uB298 \uC2DC\uAC04 \uBE44\uC6CC \uB480\uB294\uB370 \uBABB \uBD24\uB124.
+        \uB2E4\uC74C\uC5D0 \uBCF4\uC790."
+    - Coach: seungyeon
+      Kind: book
+      Text: "\uD1A0\uC694\uC77C\uC5D0 \uBCF4\uC790."
+    - Coach: jinsoo_son
+      Kind: intro
+      Text: "\uAD00\uC7A5\uB2D8\uC774 \uC798 \uBD10 \uB2EC\uB77C\uACE0 \uD558\uC168\uC5B4.
+        \uD3B8\uD558\uAC8C \uD574."
+    - Coach: jinsoo_son
+      Kind: start
+      Text: "\uC624\uB298\uC740 \uC0C1\uB300\uAC00 \uB4E4\uC5B4\uC62C \uB54C\uB97C
+        \uBCF4\uC790."
+    - Coach: jinsoo_son
+      Kind: cue
+      Text: "\uBCF4\uACE0 \uCCD0."
+    - Coach: jinsoo_son
+      Kind: cue
+      Text: "\uB4E4\uC5B4\uC62C \uB54C."
+    - Coach: jinsoo_son
+      Kind: cue
+      Text: "\uC790\uC138 \uC720\uC9C0."
+    - Coach: jinsoo_son
+      Kind: cue
+      Text: "\uC88B\uC544, \uADF8\uB300\uB85C."
+    - Coach: jinsoo_son
+      Kind: good
+      Text: "\uC88B\uB2E4. \uADF8 \uD0C0\uC774\uBC0D\uC774\uC57C."
+    - Coach: jinsoo_son
+      Kind: ok
+      Text: "\uAD1C\uCC2E\uC544. \uAC10\uC740 \uC7A1\uC558\uC5B4."
+    - Coach: jinsoo_son
+      Kind: bad
+      Text: "\uAE09\uD558\uAC8C \uD558\uC9C0 \uB9C8. \uD558\uB098\uC529."
+    - Coach: jinsoo_son
+      Kind: tip
+      Text: "\uB9DE\uACE0 \uB098\uC11C \uCE58\uB294 \uAC8C \uC544\uB2C8\uB77C, \uB4E4\uC5B4\uC62C
+        \uB54C \uCE5C\uB2E4."
+    - Coach: jinsoo_son
+      Kind: noshow
+      Text: "\uC624\uB298 \uBABB \uBD24\uB124. \uB2E4\uC74C\uC5D0 \uC2DC\uAC04 \uB9DE\uCDB0
+        \uBCF4\uC790."
+    - Coach: jinsoo_son
+      Kind: book
+      Text: "\uC77C\uC694\uC77C\uC5D0 \uBCF4\uC790."
+    - Coach: jinsoo_seo
+      Kind: intro
+      Text: "\uB3D9\uC791 \uD558\uB098\uB9CC \uBCF4\uC790. \uB9CE\uC774 \uACE0\uCE58\uBA74
+        \uD558\uB098\uB3C4 \uC548 \uB0A8\uC544."
+    - Coach: jinsoo_seo
+      Kind: start
+      Text: "\uC9C0\uB09C\uBC88\uC5D0 \uD558\uB358 \uAC70 \uADF8\uB300\uB85C \uD55C
+        \uBC88 \uD574 \uBD10."
+    - Coach: jinsoo_seo
+      Kind: cue
+      Text: "\uAC70\uAE30."
+    - Coach: jinsoo_seo
+      Kind: cue
+      Text: "\uADF8 \uBD80\uBD84\uB9CC \uB2E4\uC2DC."
+    - Coach: jinsoo_seo
+      Kind: cue
+      Text: "\uC88B\uC544, \uBC29\uAE08 \uADF8\uAC70."
+    - Coach: jinsoo_seo
+      Kind: cue
+      Text: "\uD798 \uBE7C\uACE0."
+    - Coach: jinsoo_seo
+      Kind: good
+      Text: "\uADF8\uAC70\uC57C. \uC774\uC81C \uB9DE\uAC8C \uD558\uACE0 \uC788\uC5B4."
+    - Coach: jinsoo_seo
+      Kind: ok
+      Text: "\uBC29\uD5A5\uC740 \uB9DE\uC544. \uBC18\uBCF5\uB9CC \uD558\uBA74 \uB3FC."
+    - Coach: jinsoo_seo
+      Kind: bad
+      Text: "\uAD1C\uCC2E\uC544. \uC5B4\uB514\uAC00 \uD2C0\uB838\uB294\uC9C0 \uC54C\uC558\uC796\uC544."
+    - Coach: jinsoo_seo
+      Kind: fix
+      Text: "{\uC9C0\uD45C} \uCABD\uC774 \uD2C0\uB838\uC5B4. \uC774\uAC70 \uD558\uB098\uB9CC
+        \uACE0\uCE58\uC790. \uB2E4\uC74C\uC5D0 \uD560 \uB550 \uC774\uAC83\uB9CC \uC0DD\uAC01\uD574."
+    - Coach: jinsoo_seo
+      Kind: tip
+      Text: "\uB04A\uC5B4 \uCE58\uB294 \uAC70\uB791 \uBC00\uC5B4 \uCE58\uB294 \uAC70,
+        \uB458\uC740 \uB2EC\uB77C."
+    - Coach: jinsoo_seo
+      Kind: noshow
+      Text: "\uC624\uB298 \uBABB \uC654\uAD6C\uB098. \uACE0\uCE60 \uAC70 \uC801\uC5B4
+        \uB458\uAC8C."
+    - Coach: jinsoo_seo
+      Kind: book
+      Text: "\uC77C\uC694\uC77C \uC800\uB141\uC5D0 \uBCF4\uC790."

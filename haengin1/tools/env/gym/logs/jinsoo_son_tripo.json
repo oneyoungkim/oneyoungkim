@@ -1,0 +1,60 @@
+﻿[
+  {
+    "created_at": "2026-10-25T15:12:53.831741Z",
+    "display_name": "Tripo H3.1 Multiview to 3D",
+    "id": "7e522cfd-cb12-4b9e-9229-486880413df5",
+    "job_type": "tripo_h3_1_multiview_to_3d",
+    "min_result_url": null,
+    "params": {
+      "auto_size": false,
+      "face_limit": 80000,
+      "folder_id": null,
+      "geometry_quality": "detailed",
+      "medias": [
+        {
+          "data": {
+            "id": "21f34c36-4490-4d75-bfe8-bcee2e5a6c1f",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/21f34c36-4490-4d75-bfe8-bcee2e5a6c1f.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "330e9429-dd68-4ef8-a93f-dfa6265f48ac",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/330e9429-dd68-4ef8-a93f-dfa6265f48ac.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "0d6d290f-94c2-4668-9da5-c44e7a92d5de",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/0d6d290f-94c2-4668-9da5-c44e7a92d5de.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "e0fc488c-afb1-40d8-bcce-3f19e732b7b8",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/e0fc488c-afb1-40d8-bcce-3f19e732b7b8.png"
+          },
+          "role": "image"
+        }
+      ],
+      "orientation": "align_image",
+      "pbr": false,
+      "quad": false,
+      "seed": null,
+      "texture": true,
+      "texture_alignment": "original_image",
+      "texture_quality": "detailed",
+      "texture_seed": null
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261025_151253_7e522cfd-cb12-4b9e-9229-486880413df5.glb",
+    "status": "completed"
+  }
+]
+

@@ -197,6 +197,8 @@ namespace Haengin
         public string[] MapZones = new string[0];
         /// 체육관 드릴(Settings/DrillBook.asset) — 주간 계획 맡기기·체험 드릴
         public DrillBook Drills;
+        /// 돈 쓸 곳 — 개인레슨·영양제·보양식(Data/World/shop.json · lesson_lines.tsv, docs/13 14-6)
+        public ShopDef Shop = new ShopDef();
 
         public ChapterDef Chapter(string id) => Array.Find(Chapters, c => c.Id == id);
         public ActivityDef Activity(string id) => Array.Find(Activities, a => a.Id == id);

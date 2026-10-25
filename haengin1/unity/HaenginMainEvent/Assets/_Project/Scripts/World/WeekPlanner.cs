@@ -3,6 +3,7 @@
 // 멈춤: 날짜 박힌 핵심 카드가 있는 날(이벤트 날) 아침, 또는 자동 진행 중 핵심 카드가 뜨는 자리(그 직전). 계절·조건·사연·문자 카드는 요약(결과만).
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Haengin
@@ -84,6 +85,9 @@ namespace Haengin
                 if (ev != null) { rep.Stopped = ev; rep.StopWhy = "이벤트 날"; break; }
                 var line = new List<string>();
                 string w = M.Weekday;
+                // 매주 고정 레슨은 그 날 아침에 예약(돈·회권 규칙 그대로 — 14-6)
+                M.RenewStanding(M.Today);
+                bool nightLesson = M.LessonsOn(M.Today).Any(x => x.At >= 21 * 60);
                 // 새벽
                 if (p.Dawn == "배달" && !Job("job.delivery", line, rep)) break;
                 // 토: 노가다 / 평일: 학교
@@ -97,9 +101,12 @@ namespace Haengin
                 if (p.Evening == "국밥집" && !Job("job.gukbap", line, rep)) break;
                 if (p.Evening == "체육관") GymAuto(2, line);
                 // 밤
-                if (p.Night == "입고" && !Job("job.stock", line, rep)) break;
+                if (p.Night == "입고" && nightLesson) line.Add("입고 대신 레슨");
+                else if (p.Night == "입고" && !Job("job.stock", line, rep)) break;
                 if (p.Night == "청소") { if (!Job("gym.clean", line, rep)) break; GymAuto(1, line); }
                 if (p.Evening == "쉼" && p.Night == "쉼" && (w == "토" || w == "일")) { M.AddFatigue(-M.B.RestDay / 2f); line.Add("쉼"); }
+                // 그 날 예약한 개인레슨(매주 고정 포함) — 계획이 대신 감(B × 0.75, 14-6)
+                foreach (var bk in M.LessonsOn(M.Today)) { string ls = M.LessonAuto(bk); if (ls.Length > 0) line.Add(ls.Split('·')[0].Trim() + "(맡김)"); }
                 // 잠 전 카드(계절·문자는 요약, 핵심이면 멈춤)
                 if (!Cards("sleep", line, rep)) break;
                 rep.Days.Add($"{GameClock.DateText} — {(line.Count > 0 ? string.Join(" · ", line) : "쉼")}");

@@ -47,6 +47,32 @@ namespace Haengin
         public string Dawn = "", Evening = "", Night = "", Weekend = "";
     }
 
+    /// 개인레슨 예약(docs/13 14-6): 0 예약 · 1 받음 · 2 노쇼 · 3 맡김(주간 계획이 대신 감)
+    [Serializable]
+    public sealed class Booking
+    {
+        public string Coach = "", Drill = "";
+        public int Day, At, Paid, State, Grade = -1;
+        public bool Ticket;
+    }
+
+    /// 먹은 것 효과(시간 제한) — Until = 시작일부터 센 분(WorldModel.AbsNow)
+    [Serializable]
+    public sealed class Buff
+    {
+        public string Kind = "", Src = "";
+        public float Value;
+        public int Until;
+    }
+
+    /// 무엇을 언제 몇 번 먹었나(체감 감소)
+    [Serializable]
+    public sealed class Eaten
+    {
+        public string Id = "";
+        public int Day, Times;
+    }
+
     [Serializable]
     public sealed class WorldSave
     {
@@ -91,6 +117,13 @@ namespace Haengin
         public int DemoState;
         /// 다음 아침에 볼 것(문자·근육통 등) — 표시용
         public int Slept;
+        /// 돈 쓸 곳(14-6): 레슨 예약 · 먹은 효과 · 먹은 기록(오늘·어제) · 오늘 배부름
+        public List<Booking> Lessons = new List<Booking>();
+        /// 매주 고정 레슨(Day = 요일 0 월 ~ 6 일) — 그 날 아침 자동 예약(돈·회권 규칙 그대로)
+        public List<Booking> Standing = new List<Booking>();
+        public List<Buff> Buffs = new List<Buff>();
+        public List<Eaten> Eats = new List<Eaten>();
+        public int Full;
 
         public WorldSave Clone() => JsonUtility.FromJson<WorldSave>(JsonUtility.ToJson(this));
 

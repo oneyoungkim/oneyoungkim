@@ -21,6 +21,11 @@ namespace Haengin
         public UiFonts Fonts;
         public GymLights Lights;
         public GymNpc Yunjun, Gojun;
+        /// 출장 레슨 코치(김승연·손진수·서진수 — 오픈월드 레슨 때만 켬, docs/13 14-6)
+        public List<GymNpc> Guests = new List<GymNpc>();
+        /// 레슨 중인 코치 이름(드릴 큐의 '이윤준' 자리를 그 코치로 — 빈칸 = 그대로)
+        [NonSerialized] public string CoachName = "";
+        public GymNpc Guest(string id) => Guests.Find(g => g != null && g.Id == id);
         public List<GymNpc> Members = new List<GymNpc>();
         public List<Transform> Sockets = new List<Transform>();
         public List<DrillMarker> Markers = new List<DrillMarker>();
@@ -104,7 +109,7 @@ namespace Haengin
                 Yunjun = Yunjun, Gojun = Gojun, Bags = Bags, Dummy = Dummy, SpeedBag = SpeedBag,
                 Mode = FindAnyObjectByType<CombatMode>(), Tuning = pc != null ? pc.T : null, Moves = pc != null ? pc.Moves : null,
                 GojunFighterPrefab = GojunFighterPrefab, SparDef = SparDef, Clips = Clips,
-                Say = (who, line) => { LastCoachLine = line; Hud.Say(who, line); },
+                Say = (who, line) => { LastCoachLine = line; Hud.Say(who == "이윤준" && !string.IsNullOrEmpty(CoachName) ? CoachName : who, line); },
                 Toast = s => Hud.ShowToast(s),
             };
             if (Yunjun != null && Actors.Mitt == null)

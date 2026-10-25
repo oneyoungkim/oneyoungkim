@@ -26,6 +26,10 @@ namespace Haengin
         public readonly List<string> Log = new List<string>();
         public readonly HashSet<string> JobsDone = new HashSet<string>();
         public int Drills, Sides, Fights;
+        /// 돈 쓰기(Full 봇 — docs/13 14-6 밸런스): 레슨 예약·출석 · 먹을 것 · 영양제. 남겨 둘 돈(이 밑으로는 안 씀)
+        public bool Spend = true;
+        public int Reserve = 60000;
+        public int Booked, Meals, Snacks, Supps;
         bool hooked;
 
         WorldModel M => W.Model;
@@ -62,7 +66,7 @@ namespace Haengin
                 yield return null;
             }
             Seconds = Time.realtimeSinceStartup - t0;
-            Log.Add($"봇 끝: {(Done ? "데모 끝 카드" : "실패 " + Fail)} · {GameClock.DateText} · 실제 {Seconds:F1}초 · 카드 {W.CardsRun} · 활동 {W.ActivitiesRun} · 잠 {W.Sleeps} · 드릴 {Drills} · 사연 {Sides} · 시비 {Fights} · 알바 [{string.Join(",", JobsDone)}]");
+            Log.Add($"봇 끝: {(Done ? "데모 끝 카드" : "실패 " + Fail)} · {GameClock.DateText} · 실제 {Seconds:F1}초 · 카드 {W.CardsRun} · 활동 {W.ActivitiesRun} · 잠 {W.Sleeps} · 드릴 {Drills} · 사연 {Sides} · 시비 {Fights} · 레슨 {W.LessonsRun}(예약 {Booked}·노쇼 {M.Count("noshow"):0}) · 식사 {Meals} · 간식 {Snacks} · 영양제 {Supps} · 알바 [{string.Join(",", JobsDone)}]");
         }
 
         /// 지금 시각에 할 일 하나
@@ -72,6 +76,28 @@ namespace Haengin
             string w = M.Weekday;
             var b = W.Def.Balance;
             if (now < b.Wake) { yield return Do("Home", "sleep"); yield break; }
+            // 돈 쓰기(Full): 하루 한 번 예약·영양제 → 오늘 레슨이 가까우면 체육관으로
+            if (Full && Spend)
+            {
+                PlanSpending();
+                var nx = M.NextLesson();
+                if (nx != null && nx.Day == M.Today && now >= nx.At - 45 && now <= nx.At + M.Sh.GraceAfter)
+                {
+                    int l0 = W.LessonsRun;
+                    if (W.Loader.Place != SceneLoader.Gym) yield return Go(SceneLoader.Gym);
+                    if (M.Now < nx.At - 10) GameClock.AdvanceTo(nx.At - 10);
+                    for (int i = 0; i < 240 && W.Free && W.LessonsRun == l0; i++) yield return null;
+                    for (int i = 0; i < 60 * 900 && !W.Free; i++) yield return null;
+                    if (W.LessonsRun == l0) { Log.Add($"{GameClock.DateText} {GameClock.TimeText} 레슨 못 받음 {nx.Coach}"); GameClock.Advance(30); }
+                    yield break;
+                }
+                if (w == "토" && now >= 15 * 60 && now < 15 * 60 + 40 && M.Count("bot.meal." + M.Today) < 1 && M.G.Fatigue >= 45 && M.L.Wallet >= Reserve + 18000)
+                {
+                    M.AddCount("bot.meal." + M.Today, 1);
+                    yield return Shop("samgye", "samgyetang"); Meals++;
+                    yield break;
+                }
+            }
             // 새벽 배달
             if (Can("job.delivery")) { yield return Do("Gukbap", "job_delivery"); yield break; }
             // 토 노가다
@@ -79,7 +105,7 @@ namespace Haengin
             // 학교
             if (M.SchoolDay(M.Today) && Can("school")) { yield return Do("School", "seat"); yield break; }
             // 일 편의점 정식
-            if (Can("job.counter")) { yield return Do("Conv", "job_counter"); yield break; }
+            if (Can("job.counter")) { yield return Do("Conv", "job_counter"); yield return AfterWork("Conv"); yield break; }
             // 오후: 사연(Full) — 와룡공원 벽보 → 고양이 자리
             if (Full && now >= 16 * 60 && now < 17 * 60 + 30)
             {
@@ -89,10 +115,10 @@ namespace Haengin
             // 저녁: 체육관(Full · 회원이면 화·목) 또는 국밥집
             bool gymDay = Full && M.S.GymMember > 0 && (w == "화" || w == "목") && now < 20 * 60;
             if (gymDay && M.Count("gym.day." + M.Today) < 1) { M.AddCount("gym.day." + M.Today, 1); yield return Gym(2); yield break; }
-            if (Can("job.gukbap")) { yield return Do("Gukbap", "job_serving"); yield break; }
+            if (Can("job.gukbap")) { yield return Do("Gukbap", "job_serving"); yield return AfterWork("Gukbap"); yield break; }
             // 밤: 청소 관원(월·수·금) 또는 입고
             if (Full && Can("gym.clean")) { yield return GymClean(); yield break; }
-            if (Can("job.stock")) { yield return Do("Conv", "job_stock"); yield break; }
+            if (Can("job.stock")) { yield return Do("Conv", "job_stock"); yield return AfterWork("Conv"); yield break; }
             // 3화: 국밥집 일 끝나고 하루편의점 앞(21:00~21:30) — 입고가 열리는 자리
             if (!M.Unlocked("job.stock") && M.CardDone("C1-04") && M.Today >= 309 && "월화수목금".Contains(w) && now <= 21 * 60 + 30 && now >= 20 * 60 && M.Count("conv.visit." + M.Today) < 1)
             {
@@ -109,8 +135,71 @@ namespace Haengin
             // 아직 이른 시각이면 다음 일 시각까지 기다림(시계를 그 시각으로)
             int next = NextStart(now);
             if (next > now && next < 22 * 60) { GameClock.AdvanceTo(next); yield return null; yield break; }
+            // 오늘 레슨이 남았으면 그때까지 기다림
+            if (Full && Spend) { var nl = M.NextLesson(); if (nl != null && nl.Day == M.Today && nl.At - 45 > now) { GameClock.AdvanceTo(nl.At - 45); yield break; } }
             // 집에서 잠
             yield return Do("Home", "sleep");
+        }
+
+        // ───────────────────────── 돈 쓰기(14-6)
+        /// 오늘 받을 레슨과 겹치나(15분 전 ~ 끝)
+        bool LessonClash(int from, int to)
+        {
+            foreach (var bk in M.LessonsOn(M.Today))
+                if (from < bk.At + M.Sh.Minutes && to > bk.At - M.Sh.GraceBefore) return true;
+            return false;
+        }
+
+        /// 하루 한 번: 영양제(있으면 먹고, 없으면 일요일에 약국) · 레슨 예약(이윤준 주 1 · 고준 주 1 · 출장 코치 주 1 돌아가며)
+        void PlanSpending()
+        {
+            if (M.Count("bot.plan." + M.Today) > 0) return;
+            M.AddCount("bot.plan." + M.Today, 1);
+            var vit = M.Sh.Food("vitamin");
+            if (vit != null && M.Doses("vitamin") > 0 && M.CanEat(vit, true).Length == 0) { M.Eat(vit, true); Supps++; }
+            // 매주 고정(사람이 PT 를 고정 시간에 잡듯): 이윤준 화·목 21:15 · 고준 토 16:00 · 출장이 열리면 김승연 토 17:30 — 주간 계획 맡기기 중에도 그 날 아침 자동 예약
+            foreach (var (id, wd, at) in StandingPlan)
+            {
+                var c = M.Sh.Coach(id);
+                if (c == null || !M.CoachOpen(c)) continue;
+                int key = -1;
+                for (int d = 0; d < 7 && key < 0; d++) { int k = GameClock.KeyPlus(M.Today, d); if (GameClock.WeekdayOfKey(k) == wd) key = k; }
+                if (key >= 0 && !M.IsStanding(id, key, at)) M.SetStanding(c, key, at);
+            }
+            var yj = M.Sh.Coach("yunjun");
+            if (yj != null && M.CoachOpen(yj) && M.Tickets("yunjun") == 0 && M.L.Wallet >= yj.Ticket10 + Reserve) M.BuyTicket(yj);
+            int l0 = M.S.Lessons.Count;
+            M.RenewStanding(M.Today);
+            Booked += M.S.Lessons.Count - l0;
+        }
+
+        /// 봇의 매주 고정 레슨(코치 · 요일 · 시각)
+        public (string id, string wd, int at)[] StandingPlan = { ("yunjun", "화", 21 * 60 + 15), ("yunjun", "목", 21 * 60 + 15), ("gojun", "토", 16 * 60), ("seungyeon", "토", 17 * 60 + 30), ("jinsoo_seo", "일", 19 * 60 + 30) };
+
+        /// 일 끝나고(피로가 높으면): 편의점 = 에너지바(지갑 여유면) · 국밥집 = 특국밥(직원가) · 일요일 아침 약국
+        IEnumerator AfterWork(string place)
+        {
+            if (!Full || !Spend || !W.Active) yield break;
+            if (place == "Conv" && M.G.Fatigue >= 40 && M.L.Wallet >= Reserve + 2000) { yield return W.BotShop("conv", M.G.Fatigue >= 60 ? "protein" : "bar"); Snacks++; }
+            if (place == "Gukbap" && M.G.Fatigue >= 60 && M.L.Wallet >= Reserve + 9000) { yield return W.BotShop("gukbap", "gukbap_special"); Meals++; }
+            if (place == "Conv" && M.Weekday == "일" && M.Doses("vitamin") <= 2 && M.L.Wallet >= Reserve + 18000) { yield return Shop("pharmacy", "vitamin"); }
+        }
+
+        /// 가게에 가서 고름(Zone1 판매창이면 그 앞으로)
+        public IEnumerator Shop(string shopId, string foodId)
+        {
+            var sp = M.Sh.Shop(shopId);
+            if (sp == null) yield break;
+            if (sp.Place == SceneLoader.Zone1)
+            {
+                var pm = PlaceMarker.All.FirstOrDefault(m => m != null && m.Func == "shop_" + shopId);
+                if (W.Loader.Place != SceneLoader.Zone1 || pm != null) yield return W.Loader.Go(SceneLoader.Zone1, null, pm != null, pm != null ? pm.transform.position : Vector3.zero, 0f);
+                for (int i = 0; i < 30; i++) yield return null;
+                for (int i = 0; i < 60 * 300 && !W.Free; i++) yield return null;
+            }
+            else yield return Go(sp.Place);
+            yield return W.BotShop(shopId, foodId);
+            for (int i = 0; i < 60 * 300 && !W.Free; i++) yield return null;
         }
 
         bool SidePending() => (!M.CardDone("N09") && M.Today >= 307 && M.Today <= 430) || (M.F.Has("cat_search") && !M.CardDone("N09b"));
@@ -124,6 +213,7 @@ namespace Haengin
             if (at > a.Latest) return false;
             if (M.CanStart(a, at).Length > 0) return false;
             if (W.TimedCardInside(a, Mathf.Max(at, a.Start), out _)) return false;
+            if (Full && Spend && LessonClash(Mathf.Max(at, a.Open), a.End)) return false;
             if (now < a.Open) return a.Open - now <= 90;     // 한 시간 반 안이면 미리 가서 기다림
             return true;
         }

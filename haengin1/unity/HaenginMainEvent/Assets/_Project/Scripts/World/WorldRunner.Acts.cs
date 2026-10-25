@@ -13,6 +13,7 @@ namespace Haengin
         public void UseMarker(string func, Transform at)
         {
             if (!Free) return;
+            if (func.StartsWith("shop_")) { StartCoroutine(Run("가게", ShopFlow(func.Substring(5)))); return; }
             var a = Def.ActivityForMarker(func);
             if (a == null) { Hud?.Toast("여기선 할 일이 없다"); return; }
             switch (a.Kind)
@@ -30,6 +31,7 @@ namespace Haengin
         public string MarkerPrompt(string func)
         {
             if (!Active || Model == null) return "";
+            if (ShopMarker(func, out var shopPrompt)) return shopPrompt;
             var a = Def.ActivityForMarker(func);
             if (a == null) return "";
             switch (a.Kind)
@@ -333,7 +335,7 @@ namespace Haengin
         string GymGate(DrillDef d)
         {
             if (!Active) return "";
-            if (Model.S.GymMember == 0 && !inTrial) return "회원만 — 사무실에서 관장에게(회비 또는 청소 관원)";
+            if (Model.S.GymMember == 0 && !inTrial && !inLesson) return "회원만 — 사무실에서 관장에게(회비 또는 청소 관원)";
             if (!GymOpenHour(Model.Now, Def.Balance)) return "문 닫았다";
             return "";
         }
@@ -342,6 +344,7 @@ namespace Haengin
         void OnDrillFinished(DrillDef d, DrillResult r, DrillReward w)
         {
             if (!Active) return;
+            LessonDrillFinished(d, r, w);
             GameClock.Advance(Def.Balance.DrillMinutes);
             Model.AddCount("drill." + d.Id, 1);
             Trace.Add($"드릴 {d.Id} {DrillGrader.Letter(r.Grade)}");
@@ -400,6 +403,9 @@ namespace Haengin
             yield return null;
             var d = enc.Def;
             enc.ResetAll(true);
+            // 먹은 효과 '체력': 싸움 최대 체력 +%(14-6)
+            int hpBase = pc.Me.MaxHp;
+            if (Model.HpBonus > 0f) { pc.Me.MaxHp = Mathf.RoundToInt(hpBase * (1f + Model.HpBonus)); pc.Me.Hp = pc.Me.MaxHp; Hud?.Toast($"체력 효과 — 최대 체력 {hpBase} → {pc.Me.MaxHp}"); }
             (pc.Me.Body as PlayerBody)?.Place(d.ToWorld(d.RetryLocal) + Vector3.up * 0.1f, d.Yaw + 180f);
             Loader.Cam?.SnapBehind();
             Encounter.Suppress = false;
@@ -431,6 +437,7 @@ namespace Haengin
             if (bot != null) Destroy(bot);
             if (pin != null) pin.enabled = true;
             pc.Me.DebugInvuln = false;
+            if (pc.Me.MaxHp != hpBase) { pc.Me.MaxHp = hpBase; pc.Me.Hp = Mathf.Min(pc.Me.Hp, hpBase); }
             Encounter.Suppress = true;
             watched = enc; watchedPhase = enc.State;
             var b = Def.Balance;

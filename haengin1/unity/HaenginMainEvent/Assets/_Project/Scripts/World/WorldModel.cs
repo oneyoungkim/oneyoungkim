@@ -29,7 +29,7 @@ namespace Haengin
         public string Summary;
     }
 
-    public sealed class WorldModel
+    public sealed partial class WorldModel
     {
         public readonly WorldDef Def;
         public WorldSave S;
@@ -132,7 +132,7 @@ namespace Haengin
         /// 스탯 값(정수 + 소수)
         public float StatValue(string name) { int i = StatIndex(name); return i < 0 ? 0f : G.Stats[i] + S.StatFrac[i]; }
 
-        public void AddFatigue(float v) { G.Fatigue = Mathf.Clamp(G.Fatigue + Mathf.RoundToInt(v), 0, 100); }
+        public void AddFatigue(float v) { if (v > 0f) v *= 1f - StaminaCut; G.Fatigue = Mathf.Clamp(G.Fatigue + Mathf.RoundToInt(v), 0, 100); }
 
         public void AddRep(float v)
         {
@@ -271,6 +271,7 @@ namespace Haengin
                     foreach (var h in S.Holes) if (h.Name == arg && !h.Paid) { h.Paid = true; S.Household -= h.Amount; Say($"집 구멍 메움 — {h.Name} {Ledger.Won(h.Amount)}원(생활비에서)"); }
                     break;
                 case "gym": Gym(arg); break;
+                case "eat": { var fd = Def.Shop.Food(arg); if (fd != null) Say(Eat(fd, false, true)); break; }
                 case "phone": Phone(p[0], p.Length > 1 ? arg.Substring(p[0].Length + 1) : ""); break;
                 case "done":
                     {
@@ -377,6 +378,8 @@ namespace Haengin
             if (Weekday == "월") S.WeekMinutes = 0;
             F.Set.Remove("sore_today");
             F.Set.Remove("gym_later_today");
+            S.Full = 0;
+            S.Eats.RemoveAll(e => GameClock.DaysBetween(e.Day, Today) > 7);
         }
 
         public int Worked(string work) { BeginDayIfNeeded(); return S.Worked(work); }
@@ -503,9 +506,11 @@ namespace Haengin
             int fromMonth = GameClock.Month;
             int toMonth = wd / 100;
             if (toMonth != fromMonth) { r.Shortfall = MonthEnd(fromMonth); r.MonthSettled = true; }
-            float rec = B.SleepPerHour * mins / 60f;
+            float rec = B.SleepPerHour * mins / 60f * (SuppOn("vitamin") ? VitaminSleep : 1f);
             bool tiredSleep = G.Fatigue >= B.Tired;
-            G.Fatigue = Mathf.Clamp(Mathf.RoundToInt(G.Fatigue - rec) + (tiredSleep ? B.SleptTiredAdd : 0) + (forced ? B.NightOut : 0), 0, 100);
+            int tiredAdd = tiredSleep ? (SuppOn("magnesium") ? B.SleptTiredAdd / 2 : B.SleptTiredAdd) : 0;
+            G.Fatigue = Mathf.Clamp(Mathf.RoundToInt(G.Fatigue - rec) + tiredAdd + (forced ? B.NightOut : 0), 0, 100);
+            if (SuppOn("magnesium") && G.InjuryUntil >= 0) Heal(1);
             r.FatigueAfter = G.Fatigue;
             r.WakeDay = wd; r.WakeMin = wm;
             int y = GameClock.Year;

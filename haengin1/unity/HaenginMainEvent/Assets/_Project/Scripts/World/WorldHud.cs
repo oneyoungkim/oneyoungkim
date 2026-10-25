@@ -22,7 +22,9 @@ namespace Haengin
 
         Image plate, fatBack, fatFill;
         TextMeshProUGUI dateText, moneyText, fatText, goalText, nextText;
-        RectTransform toastRoot;
+        RectTransform toastRoot, buffRoot;
+        readonly List<(Image p, TextMeshProUGUI t)> chips = new List<(Image, TextMeshProUGUI)>();
+        public string BuffLine { get; private set; } = "";
         readonly List<(TextMeshProUGUI t, Image p, float left)> live = new List<(TextMeshProUGUI, Image, float)>();
         readonly Queue<string> pending = new Queue<string>();
         float gap;
@@ -51,6 +53,8 @@ namespace Haengin
             UiKit.Place(goalText.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -130f), new Vector2(520f, 30f));
             nextText = UiKit.Text("다음", plate.transform, Fonts != null ? Fonts.B : null, 21f, UiKit.Warm, TextAlignmentOptions.Left);
             UiKit.Place(nextText.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -166f), new Vector2(520f, 30f));
+            buffRoot = UiKit.Node("효과 아이콘", plate.transform);
+            UiKit.Place(buffRoot, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, -8f), new Vector2(560f, 40f));
             toastRoot = UiKit.Node("알림", transform);
             UiKit.Place(toastRoot, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(28f, 150f), new Vector2(760f, 400f));
         }
@@ -68,6 +72,35 @@ namespace Haengin
             fatText.text = $"{fatigue}{(fatigue >= 85 ? " 한계" : fatigue >= 70 ? " 지침" : "")}";
             goalText.text = goal;
             nextText.text = next;
+        }
+
+        /// 먹은 효과 아이콘(판 아래 줄): (글자 한 자 · 남은 시간 글 · 색)
+        public void SetBuffs(IList<(string tag, string text, Color color)> list)
+        {
+            Build();
+            var sb = new System.Text.StringBuilder();
+            for (int i = 0; i < list.Count || i < chips.Count; i++)
+            {
+                if (i >= chips.Count)
+                {
+                    var p = UiKit.Panel("효과 " + i, buffRoot, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(130f, 36f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.82f));
+                    var t = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 19f, UiKit.Paper, TextAlignmentOptions.Left);
+                    UiKit.Place(t.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(8f, 0f), new Vector2(240f, 34f));
+                    chips.Add((p, t));
+                }
+                var (pl, tx) = chips[i];
+                bool on = i < list.Count;
+                pl.gameObject.SetActive(on);
+                if (!on) continue;
+                var (tag, text, col) = list[i];
+                tx.text = $"<mark=#{ColorUtility.ToHtmlStringRGB(col)}cc><color=#F4EFE6> {tag} </color></mark> {text}";
+                float w = Mathf.Min(260f, tx.preferredWidth + 18f);
+                pl.rectTransform.sizeDelta = new Vector2(w, 36f);
+                float x = 0f; for (int k = 0; k < i; k++) x += chips[k].p.rectTransform.sizeDelta.x + 8f;
+                pl.rectTransform.anchoredPosition = new Vector2(x, 0f);
+                sb.Append(tag).Append(' ').Append(text).Append(" | ");
+            }
+            BuffLine = sb.ToString();
         }
 
         /// 왼쪽 아래 알림(3.2초, 최대 4줄 — 넘치면 줄 서서 기다림)

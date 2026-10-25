@@ -30,6 +30,7 @@ namespace Haengin
                 goal = Model.S.DemoState == 1 ? "데모 목표 달성 — 계속 돌아다녀도 된다" : $"목표: {(ch.HasDemo ? ch.DemoGoal : ch.Goal)} ({done}/{gs.Length})";
             }
             Hud.Set(date, money, Model.G.Fatigue, goal, NextHint(out _, out _));
+            HudBuffs();
         }
 
         /// '다음' 한 줄 + 길잡이 자리(Zone1 지점)
@@ -107,6 +108,7 @@ namespace Haengin
 
         string PhoneText(int tab)
         {
+            if (tab >= 7) return ShopPhoneText(tab);
             var sb = new StringBuilder();
             var b = Def.Balance;
             switch (tab)
@@ -247,6 +249,9 @@ namespace Haengin
             var b = Def.Balance;
             MakeZoneDoor("bus_stop", SceneLoader.Gym, "Spawn", "마을버스 1번 — 혜화 MMA(대학로 북쪽)");
             MakeZoneDoor("site_sign", "Site", "Spawn", "현장 가기 — 언덕 빌라 신축 현장");
+            // Zone1 가게 앞 판매창(약국·삼계탕·장어 — WorldSetup.AddShopFronts)
+            foreach (var pm in FindObjectsByType<PlaceMarker>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (pm.Place == SceneLoader.Zone1 && pm.Func.StartsWith("shop_") && pm.GetComponent<WorldMarker>() == null) pm.gameObject.AddComponent<WorldMarker>().Bind(this, pm);
         }
 
         void MakeZoneDoor(string pointId, string target, string spawn, string label)
@@ -302,6 +307,9 @@ namespace Haengin
                 if (pm.GetComponent<WorldMarker>() == null) pm.gameObject.AddComponent<WorldMarker>().Bind(this, pm);
             if (st.Key == "Gukbap") EnsureMarker(st, "job_delivery", "배달통 — 새벽 배달", new Vector3(-1.1f, 0f, 1.5f), 0f);
             if (st.Key == "Site") EnsureMarker(st, "job_site", "곽반장 — 노가다", new Vector3(1.2f, 0f, 2.0f), 0f);
+            // 돈 쓸 곳(14-6): 편의점 계산대 손님 쪽 · 국밥집 홀(직원가)
+            if (st.Key == "Conv") EnsureMarker(st, "shop_conv", "하루편의점 계산대", new Vector3(2.3f, 0f, -2.6f), 90f);
+            if (st.Key == "Gukbap") EnsureMarker(st, "shop_gukbap", "국밥집 — 직원가", new Vector3(0.2f, 0f, 0.4f), 180f);
             if (st.Key == SceneLoader.Gym)
             {
                 var desk = st.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "Sock_NPC_Coach_Desk");

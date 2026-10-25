@@ -183,6 +183,21 @@
      "window": ["03-09", "04-30"], "place": "Zone1", "zone": "top_house", "at": "after:job.delivery", "need": ["count.delivery_good>=3"],
      "board": ["세 번 제때 도착한 날, 꼭대기 집 할아버지가 국그릇을 받으며 성곽 돌을 가리킨다.", "\"저 돌 하나하나 이름이 있었어. 쌓은 놈 이름.\" 반촌 씨름 이야기는 다음에 하자며 문을 닫는다."],
      "quotes": ["꼭대기 집 할아버지|어이. 오늘은 안 늦었네."],
-     "after": ["rep.town:+3", "flag:stone_wall"], "miss": "wait", "demo": true}
+     "after": ["rep.town:+3", "flag:stone_wall"], "miss": "wait", "demo": true},
+    {"id": "C1-L0", "title": "관장 개인레슨", "kind": "cond", "motif": ["원"], "src": ["docs/13 14-6"], "window": ["03-09", "12-31"], "place": "Gym", "zone": "hyehwa_mma",
+     "at": "enter:Gym|after:drill", "need": ["gym.trial>=1", "card:N02"],
+     "board": ["사무실 문에 종이 한 장 — '개인레슨 1회 100,000원 / 10회 900,000원'. 그 밑에 볼펜으로 '학생 반값'.", "고준 이름 옆엔 '밥값(2만)'이라고 적혀 있다."],
+     "quotes": ["이윤준|학생이라 반만 받는다. 대신 한 시간 동안은 내 말만 들어.", "고준|난 밥값만 받을게. 그라운드랑 스파링은 나한테 와."],
+     "after": ["unlock:lesson", "phone:이윤준:레슨 예약은 휴대폰 '레슨' 칸에서. 시간 지나면 노쇼다 — 돈은 못 돌려준다."], "miss": "wait", "demo": true},
+    {"id": "C1-L1", "title": "형들 불렀다", "kind": "cond", "motif": ["원"], "src": ["docs/13 14-6"], "window": ["03-21", "12-31"], "place": "Gym", "zone": "hyehwa_mma",
+     "at": "enter:Gym|after:drill|wake", "need": ["unlocked:lesson", "gym.member>=1"],
+     "board": ["사무실 화이트보드에 이름 세 개가 새로 붙었다.", "토 17:30 김승연(딥마카이) · 일 11:00 손진수(코너맨) · 일 19:30 서진수(파이브라운즈)."],
+     "quotes": ["이윤준|형들 불렀다. 주말에 한 번씩 와서 봐 줄 거야.", "이윤준|다 자기 체육관 하는 사람들이야. 예약해 놓고 안 오면 나 망신이다.", "고준|와, 진짜요? 저도 옆에서 봐도 돼요?"],
+     "after": ["unlock:lesson.guests", "phone:이윤준:출장 레슨 회당 50,000원. 반은 내가 낸다. 휴대폰 '레슨' 칸에서 예약."], "miss": "wait", "demo": true},
+    {"id": "N11", "title": "엄마 곰탕", "kind": "repeat", "motif": ["원"], "src": ["docs/13 14-6"], "window": ["03-08", "12-31"], "days": ["일"], "place": "Home", "zone": "siu_house",
+     "at": "wake", "need": ["fatigue>=30"], "weight": 0.6, "limit": 1,
+     "board": ["일요일 아침. 부엌에서 곰탕 냄새가 난다. 엄마가 말없이 큰 그릇을 내민다."],
+     "quotes": ["엄마|다 먹고 나가. 남기면 저녁에 또 나온다."],
+     "after": ["eat:gomtang"], "miss": "lost", "demo": true}
   ]
 }

@@ -112,6 +112,8 @@ namespace Haengin
         public double Score;
         public Grade Grade;
         public bool Aborted, Concussion;
+        /// 판정 보정으로 더한 점수(레슨·컨디션·기술·교정)
+        public double Assist;
         public double MinScore { get { double m = 1; foreach (var s in Scores) m = Math.Min(m, s); return Scores.Length > 0 ? m : 0; } }
         public override string ToString()
         {

@@ -255,8 +255,74 @@ namespace Haengin
             }
         }
 
+        /// 돈 쓸 곳(shop.json + lesson_lines.tsv) → def.Shop(docs/13 14-6). tsv = 코치 id · 종류 · 대사(# 줄은 주석)
+        public static void FillShop(WorldDef def, string shop, string lines)
+        {
+            var sh = new ShopDef();
+            if (!string.IsNullOrEmpty(shop))
+            {
+                var j = O(Parse(shop));
+                var ls = O(G(j, "lesson"));
+                sh.Minutes = (int)N(G(ls, "minutes"), 40); sh.GraceBefore = (int)N(G(ls, "grace_before"), 15); sh.GraceAfter = (int)N(G(ls, "grace_after"), 20);
+                sh.NoticeBefore = (int)N(G(ls, "notice_before"), 60); sh.NoshowRel = (int)N(G(ls, "noshow_rel"), -2); sh.LessonRel = (int)N(G(ls, "lesson_rel"), 1);
+                sh.BlockRel = (int)N(G(ls, "block_rel"), -4); sh.BlockDays = (int)N(G(ls, "block_days"), 7);
+                sh.AutoMul = (float)N(G(ls, "auto_mul"), 0.75); sh.CueEvery = (float)N(G(ls, "cue_every"), 7);
+                sh.Coaches = A(G(j, "coaches")).Select(x =>
+                {
+                    var e = O(x);
+                    var c = new CoachDef
+                    {
+                        Id = S(G(e, "id")), Name = S(G(e, "name")), Title = S(G(e, "title")), Gym = S(G(e, "gym")), Bio = S(G(e, "bio")), Unlock = S(G(e, "unlock")),
+                        Visit = B(G(e, "visit")), Week = (int)N(G(e, "week"), 1), Price = (int)N(G(e, "price")), List = (int)N(G(e, "list")),
+                        Ticket10 = (int)N(G(e, "ticket10")), List10 = (int)N(G(e, "list10")), Mul = (float)N(G(e, "mul"), 1.5), Bonus = (float)N(G(e, "bonus")),
+                        Metric = (float)N(G(e, "metric")), FatigueMul = (float)N(G(e, "fatigue_mul"), 1.5), Fix = (float)N(G(e, "fix")), Drills = SA(G(e, "drills")),
+                    };
+                    c.Slots = A(G(e, "slots")).Select(s => { var p = A(s); return new LessonSlot { Days = S(p[0]), At = Hm(S(p[1])), Label = p.Count > 2 ? S(p[2]) : "" }; }).ToArray();
+                    if (G(e, "tech") is Dictionary<string, object> te)
+                    {
+                        c.HasTech = true;
+                        string g = S(G(te, "grade"), "B");
+                        c.Tech = new TechDef
+                        {
+                            Id = S(G(te, "id")), Name = S(G(te, "name")), Text = S(G(te, "text")), Lessons = (int)N(G(te, "lessons"), 2), Drills = SA(G(te, "drills")), Plus = (float)N(G(te, "plus"), 4),
+                            Grade = g == "S" ? 4 : g == "A" ? 3 : g == "B" ? 2 : g == "C" ? 1 : 0,
+                        };
+                    }
+                    return c;
+                }).ToArray();
+                var fr = O(G(j, "food_rules"));
+                sh.FullCap = (int)N(G(fr, "full_cap"), 12); sh.StreakMul = (float)N(G(fr, "streak_mul"), 0.85); sh.StreakMin = (float)N(G(fr, "streak_min"), 0.55);
+                sh.SuppDays = (int)N(G(fr, "supp_days"), 3); sh.SuppMiss = (int)N(G(fr, "supp_miss"), 2);
+                var sd = FA(G(fr, "same_day")); if (sd.Length > 0) sh.SameDay = sd;
+                sh.Shops = A(G(j, "shops")).Select(x => { var p = A(x); return new ShopPlace { Id = S(p[0]), Name = S(p[1]), Place = S(p[2]) }; }).ToArray();
+                sh.Foods = A(G(j, "foods")).Select(x =>
+                {
+                    var e = O(x);
+                    return new FoodDef
+                    {
+                        Id = S(G(e, "id")), Name = S(G(e, "name")), Shop = S(G(e, "shop")), Supp = S(G(e, "supp")), Effect = S(G(e, "effect")),
+                        Price = (int)N(G(e, "price")), List = (int)N(G(e, "list")), Minutes = (int)N(G(e, "minutes")), Full = (int)N(G(e, "full")), Doses = (int)N(G(e, "doses")),
+                        Heal = (int)N(G(e, "heal")), Fatigue = (float)N(G(e, "fatigue")), Carry = B(G(e, "carry")), Free = B(G(e, "free")), Aka = SA(G(e, "aka")),
+                        Buffs = A(G(e, "buffs")).Select(b => { var p = A(b); return new BuffSpec { Kind = S(p[0]), Minutes = (int)N(p[1]), Value = (float)N(p[2]) }; }).ToArray(),
+                    };
+                }).ToArray();
+                var bn = A(G(j, "buff_names")).Select(x => A(x)).ToArray();
+                sh.BuffKinds = bn.Select(p => S(p[0])).ToArray(); sh.BuffNames = bn.Select(p => S(p[1])).ToArray(); sh.BuffNotes = bn.Select(p => p.Count > 2 ? S(p[2]) : "").ToArray();
+            }
+            var ll = new List<LessonLine>();
+            if (!string.IsNullOrEmpty(lines))
+                foreach (var raw in lines.Replace("\r", "").Split('\n'))
+                {
+                    if (raw.Length == 0 || raw.StartsWith("#")) continue;
+                    var p = raw.Split('\t');
+                    if (p.Length >= 3) ll.Add(new LessonLine { Coach = p[0].Trim(), Kind = p[1].Trim(), Text = p[2].Trim() });
+                }
+            sh.Lines = ll.ToArray();
+            def.Shop = sh;
+        }
+
         /// 비교용 한 줄(W01 — 두 번 변환해 같은지)
-        public static string Dump(WorldDef def) => JsonUtility.ToJson(new Wrap { Version = def.Version, Chapters = def.Chapters, Activities = def.Activities, Cards = def.Cards, Balance = def.Balance, MapZones = def.MapZones });
+        public static string Dump(WorldDef def) => JsonUtility.ToJson(new Wrap { Version = def.Version, Chapters = def.Chapters, Activities = def.Activities, Cards = def.Cards, Balance = def.Balance, MapZones = def.MapZones, Shop = def.Shop });
 
         [Serializable]
         sealed class Wrap
@@ -267,6 +333,7 @@ namespace Haengin
             public CardDef[] Cards;
             public BalanceDef Balance;
             public string[] MapZones;
+            public ShopDef Shop;
         }
     }
 }

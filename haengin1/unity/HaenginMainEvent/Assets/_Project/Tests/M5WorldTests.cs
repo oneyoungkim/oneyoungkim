@@ -90,7 +90,7 @@ namespace Haengin.Tests
                     foreach (var (name, re, except) in rules)
                     {
                         if (!re.IsMatch(line)) continue;
-                        if (except != null && line.Contains(except)) { exceptions++; continue; }
+                        if (except != null && except.Split(',').Any(x => x.Length > 0 && line.Contains(x))) { exceptions++; continue; }
                         hits.Add($"{Path.GetFileName(f)}:{n} '{name}' — {line.Trim().Substring(0, Math.Min(80, line.Trim().Length))}");
                     }
                 }
@@ -98,7 +98,7 @@ namespace Haengin.Tests
             // 데이터 에셋 글(카드·장)도 — 변환 결과에 새는 것
             var dump = WorldJson.Dump(Def());
             foreach (var (name, re, except) in rules) if (re.IsMatch(dump) && except == null) hits.Add($"World.asset '{name}'");
-            Debug.Log($"[W] W00 금칙어: 파일 {files.Count} · 줄 {lines} · 이름 {rules.Count} · 예외(이윤준 이력) {exceptions} · 걸린 것 {hits.Count}\n{string.Join("\n", hits)}");
+            Debug.Log($"[W] W00 금칙어: 파일 {files.Count} · 줄 {lines} · 이름 {rules.Count} · 예외(이윤준·출장 코치 3 이력) {exceptions} · 걸린 것 {hits.Count}\n{string.Join("\n", hits)}");
             Assert.IsEmpty(hits, "실존 단체·인물 이름\n" + string.Join("\n", hits));
         }
 
@@ -132,6 +132,8 @@ namespace Haengin.Tests
             var a = ScriptableObject.CreateInstance<WorldDef>(); var b = ScriptableObject.CreateInstance<WorldDef>();
             WorldJson.Fill(a, Read("chapters.json"), Read("activities.json"), Read("balance.json"), ev, zonesTxt);
             WorldJson.Fill(b, Read("chapters.json"), Read("activities.json"), Read("balance.json"), ev, zonesTxt);
+            WorldJson.FillShop(a, Read("shop.json"), Read("lesson_lines.tsv"));
+            WorldJson.FillShop(b, Read("shop.json"), Read("lesson_lines.tsv"));
             string da = WorldJson.Dump(a), db = WorldJson.Dump(b), dd = WorldJson.Dump(def);
             Assert.AreEqual(da, db, "두 번 변환 같음");
             Assert.AreEqual(da, dd, "에셋 = 원본 JSON(손으로 고친 것 없음 — WorldSetup.DataOnly)");

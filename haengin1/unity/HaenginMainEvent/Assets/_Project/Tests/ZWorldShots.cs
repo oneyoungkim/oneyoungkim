@@ -360,5 +360,87 @@ namespace Haengin.Tests
             File.WriteAllText(Path.Combine(dir, "notes_world.txt"), string.Join("\n", notes), new UTF8Encoding(true));
             Debug.Log("[WShots]\n" + string.Join("\n", notes));
         }
+
+        // ───────────────────────── 돈 쓸 곳 녹화·사진(14-6): 출장 레슨(김승연) · 가게 앞 판매창 식사 · 고르기·휴대폰 레슨/가방 · HUD 효과 아이콘
+        [UnityTest, Timeout(1800000)]
+        public IEnumerator Z_World_Shop_Shots()
+        {
+            dir = Shots.Arg("-worldshots");
+            if (string.IsNullOrEmpty(dir) || !Shots.Graphics) { Assert.Ignore("-worldshots <폴더> + 그래픽 필요"); yield break; }
+#if UNITY_EDITOR
+            UnityEditor.ShaderUtil.allowAsyncCompilation = false;
+#endif
+            Directory.CreateDirectory(dir);
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var def = w.Def;
+            int Start(CardDef c) => c.Date > 0 ? c.Date : c.WinFrom;
+            var done = Early.Concat(new[] { "N01", "N02", "C1-L0", "C1-L1" }).Concat(def.Cards.Where(c => c.Demo && c.Miss == "never" && Start(c) > 0 && Start(c) <= 314).Select(c => c.Id)).Distinct().ToArray();
+            // ── e. 출장 레슨(3/14 토 17:30 김승연 · 딥마카이): 카드 → 드릴(코치 큐) → 결과 카드
+            w.Begin(Mid(def, done, 314, 16 * 60 + 50, SceneLoader.Zone1, null, m => { m.L.SetWallet(240000); m.G.Fatigue = 30; }));
+            w.Story.Bot = StoryRunner.BotMode.Read;
+            yield return Lab.Frames(10); yield return Free(w);
+            Assert.AreEqual("", w.BookNext("seungyeon"));
+            yield return w.Loader.Go(SceneLoader.Gym, "Spawn", false, Vector3.zero, 0f);
+            GymManager gm = null;
+            for (int i = 0; i < 300 && gm == null; i++) { gm = GymManager.Instance; yield return null; }
+            yield return Lab.Frames(30);
+            w.BotLessonDrill = c => "D04";
+            var rec = StartRec("e_lesson", 3);
+            GameClock.AdvanceTo(17 * 60 + 20);
+            bool cardShot = false, cueShot = false;
+            for (int i = 0; i < 60 * 900 && w.LessonsRun < 1; i++)
+            {
+                if (!cardShot && w.Story.Board != null && w.Busy == "레슨" && gm.Runner.State == DrillRunner.Phase.Idle && i > 20) { yield return Lab.Frames(8); SavePng(Camera.main, Path.Combine(dir, "st_lesson_card.png"), 1920, 1080); cardShot = true; }
+                if (!cueShot && gm.Runner.State == DrillRunner.Phase.Round && gm.Runner.T > 9f) { SavePng(Camera.main, Path.Combine(dir, "st_lesson_cue.png"), 1920, 1080); cueShot = true; }
+                yield return null;
+            }
+            yield return Lab.Frames(90);
+            StopRec(rec, $"e 출장 레슨 — {w.LastLessonLine}");
+            yield return Free(w);
+            // ── f. 가게 앞 판매창(와룡 삼계탕) 식사
+            GameClock.SetDate(2026, 3, 15, 12 * 60 + 10);
+            var front = Object.FindObjectsByType<PlaceMarker>(FindObjectsInactive.Include, FindObjectsSortMode.None).FirstOrDefault(p => p.Func == "shop_samgye");
+            Assert.NotNull(front, "판매창 표시 자리");
+            var fp = front.transform.position; var ff = front.transform.parent.forward;
+            yield return w.Loader.Go(SceneLoader.Zone1, null, true, fp + ff * 1.2f, Quaternion.LookRotation(-ff).eulerAngles.y);
+            yield return Lab.Frames(60);
+            var cgo = new GameObject("사진 카메라"); var cam = cgo.AddComponent<Camera>(); cam.CopyFrom(Camera.main);
+            cgo.transform.position = fp + ff * 6.5f + Vector3.up * 1.7f - front.transform.parent.right * 1.2f;
+            cgo.transform.rotation = Quaternion.LookRotation((fp + Vector3.up * 1.6f) - cgo.transform.position);
+            cam.fieldOfView = 50f;
+            yield return Lab.Frames(10);
+            Shots.Shot(cam, Path.Combine(dir, "st_shopfront.png"), 1920, 1080, 2, false);
+            Object.Destroy(cgo);
+            w.Model.G.Fatigue = 62;
+            rec = StartRec("f_meal", 3);
+            w.UseMarker("shop_samgye", front.transform);
+            bool mealShot = false;
+            for (int i = 0; i < 60 * 120 && (w.MealsRun < 1 || !w.Free); i++)
+            {
+                if (!mealShot && w.Busy == "가게" && w.MealsRun >= 1) { yield return Lab.Frames(6); SavePng(Camera.main, Path.Combine(dir, "st_meal_card.png"), 1920, 1080); mealShot = true; }
+                yield return null;
+            }
+            yield return Lab.Frames(60);
+            StopRec(rec, $"f 식사 — {w.LastMealLine}");
+            SavePng(Camera.main, Path.Combine(dir, "ui_hud_buffs.png"), 1920, 1080);
+            // ── 사람 모드 화면: 편의점 차림표(고르기) · 휴대폰 레슨 · 가방
+            w.Model.L.Items.Add("에너지바"); w.Model.L.Items.Add("바나나우유"); w.Model.L.Items.Add("폐기 직전 삼각김밥");
+            w.Model.SetStanding(def.Shop.Coach("yunjun"), 317, 21 * 60 + 15);
+            float bs = w.BotSkill; w.BotSkill = 0f;
+            var pick = w.Picker;
+            w.StartCoroutine(pick.Pick("하루편의점 계산대 — 지갑 " + Ledger.Won(w.Model.L.Wallet), def.Shop.Foods.Where(f => f.Shop == "conv").Select(f => $"{f.Name} {Ledger.Won(f.Price)}원").ToArray(), null, v => { }));
+            yield return Lab.Frames(6);
+            SavePng(Camera.main, Path.Combine(dir, "ui_pick_shop.png"), 1920, 1080);
+            pick.Force(-1); yield return Lab.Frames(4);
+            w.OpenPhone(7); yield return Lab.Frames(5);
+            SavePng(Camera.main, Path.Combine(dir, "ui_phone_lesson.png"), 1920, 1080);
+            w.Phone.SetTab(8); yield return Lab.Frames(3);
+            SavePng(Camera.main, Path.Combine(dir, "ui_phone_bag.png"), 1920, 1080);
+            w.Phone.Close(); w.BotSkill = bs;
+            Note("사진 st_lesson_card · st_lesson_cue · st_shopfront · st_meal_card · ui_hud_buffs · ui_pick_shop · ui_phone_lesson · ui_phone_bag");
+            File.WriteAllText(Path.Combine(dir, "notes_shop.txt"), string.Join("\n", notes), new UTF8Encoding(true));
+            Debug.Log("[WShots]\n" + string.Join("\n", notes));
+        }
     }
 }

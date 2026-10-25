@@ -37,11 +37,24 @@ namespace Haengin
             return Grade.D;
         }
 
+        /// 판정 보정(오픈월드 — 레슨 코치 큐·컨디션·익힌 기술·교정, docs/13 14-6): (점수 +, 최저 지표 +). 연습장·체육관 단독에선 null
+        public static Func<DrillDef, (double score, double metric)> Assist;
+
         public static DrillResult Evaluate(DrillDef def, DrillLog log)
         {
             var r = Evaluate(def, DrillMetrics.Compute(def, log));
             r.Aborted = log.Aborted;
             r.Concussion = log.Concussion;
+            if (Assist != null && !log.Aborted)
+            {
+                var (s, m) = Assist(def);
+                if (s != 0 || m != 0)
+                {
+                    r.Assist = s;
+                    r.Score = Math.Min(100.0, Math.Round(r.Score + s, 1, MidpointRounding.AwayFromZero));
+                    r.Grade = GradeOf(r.Score, (def.MetricCount > 0 ? r.MinScore : 0) + m);
+                }
+            }
             return r;
         }
 

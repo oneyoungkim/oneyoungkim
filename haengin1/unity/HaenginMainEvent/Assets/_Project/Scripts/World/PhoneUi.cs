@@ -13,7 +13,10 @@ namespace Haengin
     {
         public UiFonts Fonts;
         public InputActionAsset Actions;
-        public static readonly string[] Tabs = { "문자", "지도", "일정", "가계부", "목표", "몸", "이름" };
+        public static readonly string[] Tabs = { "문자", "지도", "일정", "가계부", "목표", "몸", "이름", "레슨", "가방" };
+        /// 탭에서 Enter · × — 그 탭의 일(레슨 예약 · 가방 먹기). WorldRunner 가 넣음. 돌려주는 것 = 그 탭에 할 일이 있나
+        public Func<int, bool> Act;
+        public Func<int, string> ActLabel;
         /// 탭 글(번호 → 글) — WorldRunner 가 넣음
         public Func<int, string> Content;
         public bool Shown => root != null && root.activeSelf;
@@ -39,9 +42,9 @@ namespace Haengin
             tabPlate = new Image[Tabs.Length];
             for (int i = 0; i < Tabs.Length; i++)
             {
-                var p = UiKit.Panel("탭 " + Tabs[i], screen.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(10f + i * 95f, -10f), new Vector2(90f, 50f), UiKit.Ink);
+                var p = UiKit.Panel("탭 " + Tabs[i], screen.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(10f + i * (660f / Tabs.Length), -10f), new Vector2(660f / Tabs.Length - 4f, 50f), UiKit.Ink);
                 tabPlate[i] = p;
-                tabText[i] = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 21f, UiKit.Paper, TextAlignmentOptions.Center);
+                tabText[i] = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 19f, UiKit.Paper, TextAlignmentOptions.Center);
                 UiKit.Stretch(tabText[i].rectTransform);
                 tabText[i].text = Tabs[i];
             }
@@ -89,6 +92,8 @@ namespace Haengin
                 tabPlate[i].color = sel ? UiKit.Accent : UiKit.Ink;
             }
             body.text = Content != null ? Content(Tab) ?? "" : "";
+            string al = ActLabel != null ? ActLabel(Tab) : "";
+            foot.text = string.IsNullOrEmpty(al) ? "← → 탭   ○ · Esc · Tab 닫기" : $"← → 탭   Enter · × {al}   ○ · Esc 닫기";
         }
 
         void Update()
@@ -104,7 +109,9 @@ namespace Haengin
             if (kb != null && (kb.escapeKey.wasPressedThisFrame || kb.tabKey.wasPressedThisFrame || kb.backspaceKey.wasPressedThisFrame)) c = true;
             var gp = Gamepad.current;
             if (gp != null && (gp.buttonEast.wasPressedThisFrame || gp.selectButton.wasPressedThisFrame)) c = true;
-            if (c) Close();
+            if (c) { Close(); return; }
+            bool ok = (kb != null && (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame)) || (gp != null && gp.buttonSouth.wasPressedThisFrame);
+            if (ok && Act != null && Time.frameCount > openFrame + 1) Act(Tab);
         }
     }
 }

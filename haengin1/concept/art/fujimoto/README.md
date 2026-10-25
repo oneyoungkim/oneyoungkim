@@ -297,3 +297,18 @@ The reference images are black-and-white model sheets of this same character: ke
 - https://www.sportsseoul.com/news/read/652695
 - https://www.xportsnews.com/article/766653
 - https://www.artkoreatv.com/news/articleView.html?idxno=62396
+
+## 김승연·손진수·서진수(딥마카이 진행자 코치 3명, 실존 인물) 설정화 참조 — 2026-10-25
+`m3/{seungyeon,jinsoo_son,jinsoo_seo}_{color,apose}.png` 는 대표 허락(본인 허락, 2026-10-25)으로 아래 공개 사진을 참조해 후지모토풍으로 스타일화했다. 참조 사진은 저장소에 두지 않는다(세션 scratchpad 에만). 확인되지 않은 신체 특징은 넣지 않았다. 옷은 체육관 무지 반팔 티(김승연 와인 #5C3B40 · 손진수 네이비 #35405A · 서진수 올리브 카키 #67684F, 이윤준 짙은 회색과 구별).
+- **김승연** 1.80 m(라이트급) — 키: https://www.ufcalendar.com/fighters/seung-yeon-kim (Tapology 자료, 로드FC 023·026 전적 일치)
+  - https://sports.khan.co.kr/article/201706091645053 (2017 로드FC 039 계체 사진 — 참조로 씀)
+  - 위 UFCalendar 프로필 계체 사진(Tapology 이미지 — 참조로 씀)
+  - https://www.dailian.co.kr/news/view/531864/ (무호흡 파이터·로드FC 026 39초 KO)
+  - 왼팔 전체 문신 소매는 두 사진에서 확인돼 넣었다(무늬는 글자 없는 추상 잉크로 바꿈). 오른팔 작은 문신·가슴 문신은 뺐다. A포즈 시트의 오른쪽 뷰가 오른팔에도 문신을 그려 `3d/m3/input/seungyeon_right.png` 의 팔만 피부색으로 덧칠했다(원본 시트는 그대로).
+- **손진수** 1.68 m(밴텀급) — 키: https://kr.ufc.com/athlete/jin-soo-son (66 in)
+  - 위 UFC 공식 선수 페이지의 전신·얼굴 사진(참조로 씀)
+  - https://www.ufcalendar.com/fighters/jin-soo-son (5'6", 코리안 좀비 MMA)
+  - https://www.insight.co.kr/news/237202 (약대생 파이터)
+- **서진수** 1.70 m(밴텀급) — 키: https://www.sherdog.com/fighter/Jin-Soo-Seo-174929 (5'7", 8전 5승 3패, Korean Zombie MMA)
+  - https://blog.naver.com/five_rounds2022/222916799312 (파이브라운즈 대표 소개 — 여기 실린 AFC 기자회견 보도 사진(뉴스프리즌)과 AFC 공식 프로필 사진을 참조로 씀)
+  - 머리는 최근 모습(어깨 길이 검은 생머리 — 파이브라운즈 유튜브 썸네일로 확인, 사진 참조는 안 함)으로 글로 지정. 양팔 문신은 있지만 모양을 정확히 옮길 수 없어 실제 체육관 사진에서 입은 검은 팔토시로 가렸다.

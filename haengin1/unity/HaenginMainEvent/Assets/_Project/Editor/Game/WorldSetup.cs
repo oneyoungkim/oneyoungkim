@@ -16,7 +16,7 @@ using Object = UnityEngine.Object;
 
 namespace Haengin.EditorGame
 {
-    public static class WorldSetup
+    public static partial class WorldSetup
     {
         const string Tag = "[WorldSetup]";
         public const string Root = "Assets/_Project";
@@ -69,6 +69,7 @@ namespace Haengin.EditorGame
             var def = AssetDatabase.LoadAssetAtPath<WorldDef>(WorldPath);
             if (def == null) { def = ScriptableObject.CreateInstance<WorldDef>(); AssetDatabase.CreateAsset(def, WorldPath); }
             WorldJson.Fill(def, src.chapters, src.activities, src.balance, src.events, src.zones);
+            WorldJson.FillShop(def, File.ReadAllText(DataDir + "/shop.json"), File.ReadAllText(DataDir + "/lesson_lines.tsv"));
             def.Drills = AssetDatabase.LoadAssetAtPath<DrillBook>(GymSetup.BookPath);
             Validate(def);
             EditorUtility.SetDirty(def);
@@ -114,9 +115,11 @@ namespace Haengin.EditorGame
             var plan = Ui<PlannerUi>("주간 계획"); plan.Fonts = fonts; plan.Actions = actions;
             var ch = Ui<ChapterUi>("챕터 카드"); ch.Fonts = fonts; ch.Actions = actions;
             var job = Ui<JobGame>("알바 미니게임"); job.Fonts = fonts; job.Actions = actions;
+            var pick = Ui<PickUi>("고르기"); pick.Fonts = fonts; pick.Actions = actions;
             w.Def = def; w.Story = story; w.Loader = loader; w.Actions = actions; w.Fonts = fonts;
-            w.Hud = hud; w.Phone = phone; w.PlannerView = plan; w.ChapterView = ch; w.Job = job;
-            Debug.Log($"{Tag} Zone1 세계 루트: World(WorldRunner + 화면 5) · 카드 {def.Cards.Length} · 이야기 {(story != null ? "연결" : "없음")}");
+            w.Hud = hud; w.Phone = phone; w.PlannerView = plan; w.ChapterView = ch; w.Job = job; w.Picker = pick;
+            int fronts = AddShopFronts(root.transform);
+            Debug.Log($"{Tag} Zone1 세계 루트: World(WorldRunner + 화면 6) · 가게 앞 {fronts} · 카드 {def.Cards.Length} · 이야기 {(story != null ? "연결" : "없음")}");
         }
 
         // ───────────────────────── 실내 2차(StorySetup.Stages 가 무대를 다시 만들 때)
