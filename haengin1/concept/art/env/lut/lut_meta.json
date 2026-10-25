@@ -1,0 +1,194 @@
+{
+ "LUT_Z1_Night": {
+  "group": "Night",
+  "fit_pairs": [
+   [
+    "shot_1_night.png",
+    "f01_hoomun_street_night.png"
+   ]
+  ],
+  "size": 33,
+  "strength": 0.85,
+  "grid_smooth_sigma": 0.9,
+  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
+  "shadow_target_lab": [
+   33.411224365234375,
+   5.573215007781982,
+   4.901523113250732
+  ],
+  "lit_target_lab": [
+   67.67575073242188,
+   7.372339248657227,
+   23.168956756591797
+  ],
+  "line_color_lab": [
+   16.400373458862305,
+   2.6950032711029053,
+   4.552443981170654
+  ]
+ },
+ "LUT_Z1_Dusk": {
+  "group": "Dusk",
+  "fit_pairs": [
+   [
+    "shot_2.png",
+    "f02_parking_sunset.png"
+   ]
+  ],
+  "size": 33,
+  "strength": 0.85,
+  "grid_smooth_sigma": 0.9,
+  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
+  "shadow_target_lab": [
+   41.08073425292969,
+   5.702114105224609,
+   8.677831649780273
+  ],
+  "lit_target_lab": [
+   67.19052124023438,
+   7.972345352172852,
+   20.26169776916504
+  ],
+  "line_color_lab": [
+   22.987932205200195,
+   3.645310640335083,
+   8.433338165283203
+  ]
+ },
+ "LUT_Z1_Dawn": {
+  "group": "Dawn",
+  "fit_pairs": [
+   [
+    "shot_3.png",
+    "f03_alley_stairs_dawn.png"
+   ],
+   [
+    "shot_4.png",
+    "f05_waryong_climb_dawn.png"
+   ]
+  ],
+  "size": 33,
+  "strength": 0.85,
+  "grid_smooth_sigma": 0.9,
+  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
+  "shadow_target_lab": [
+   35.86024570465088,
+   3.6108027696609497,
+   5.663062214851379
+  ],
+  "lit_target_lab": [
+   70.1238899230957,
+   3.2244895696640015,
+   10.858983755111694
+  ],
+  "line_color_lab": [
+   24.72732925415039,
+   0.1330651193857193,
+   5.244924902915955
+  ]
+ },
+ "LUT_Z1_Day": {
+  "group": "Day",
+  "fit_pairs": [
+   [
+    "shot_5.png",
+    "f06_fortress_trail_day.png"
+   ],
+   [
+    "shot_8.png",
+    "f04_siwoo_house_morning.png"
+   ]
+  ],
+  "size": 33,
+  "strength": 0.85,
+  "grid_smooth_sigma": 0.9,
+  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
+  "shadow_target_lab": [
+   44.15229034423828,
+   4.091328263282776,
+   10.238315105438232
+  ],
+  "lit_target_lab": [
+   80.11383819580078,
+   3.5206665992736816,
+   16.409296989440918
+  ],
+  "line_color_lab": [
+   25.913460731506348,
+   0.5129623562097549,
+   7.116076707839966
+  ]
+ },
+ "LUT_Gym": {
+  "group": "Gym",
+  "fit_pairs": [
+   [
+    "g01.png",
+    "g01_stairs_overview.png"
+   ],
+   [
+    "g02.png",
+    "g02_cage_sparring.png"
+   ]
+  ],
+  "size": 33,
+  "strength": 0.85,
+  "grid_smooth_sigma": 0.9,
+  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
+  "shadow_target_lab": [
+   29.26651954650879,
+   1.9051567912101746,
+   1.9786737561225891
+  ],
+  "lit_target_lab": [
+   67.2247543334961,
+   2.0082614421844482,
+   10.91948938369751
+  ],
+  "line_color_lab": [
+   17.547283172607422,
+   1.3625589609146118,
+   2.452384829521179
+  ]
+ },
+ "LUT_Stage": {
+  "group": "Stage",
+  "fit_pairs": [
+   [
+    "stage_s02.png",
+    "s02_gukbap_hall_evening.png"
+   ],
+   [
+    "stage_s01.png",
+    "s01_gukbap_kitchen_dawn.png"
+   ],
+   [
+    "stage_s03.png",
+    "s03_home_morning.png"
+   ],
+   [
+    "stage_s04.png",
+    "s04_home_night.png"
+   ]
+  ],
+  "size": 33,
+  "strength": 0.85,
+  "grid_smooth_sigma": 0.9,
+  "space": "sRGB(display) → sRGB, 톤매핑 뒤",
+  "shadow_target_lab": [
+   29.12214994430542,
+   6.60580039024353,
+   5.098544746637344
+  ],
+  "lit_target_lab": [
+   57.1787691116333,
+   8.58043885231018,
+   19.736204862594604
+  ],
+  "line_color_lab": [
+   17.75733780860901,
+   4.263683319091797,
+   4.216736078262329
+  ]
+ }
+}
