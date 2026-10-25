@@ -1,0 +1,1362 @@
+{
+ "generator": "haengin1/tools/env/stages/build_stages.py",
+ "doc": "haengin1/docs/09_M3_버티컬슬라이스_설계.md 9단계",
+ "key": "Gukbap",
+ "title": "국밥집",
+ "room": {
+  "w": 10.0,
+  "d": 8.0,
+  "h": 2.8
+ },
+ "axes": "Unity 무대 로컬(X 동, Y 위, Z 북), 원점 = 방 가운데 바닥. 프리팹을 무대 루트 아래 원점·회전 0·배율 1 로",
+ "materials": {
+  "M_AC_White": {
+   "color": "#E6E2D8",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "흰 새시 틀·흰 방범창(docs/10 3-1)·(--prop-geometry 때) 실외기",
+   "texture": "concept/art/env/textures/M_AC_White.png",
+   "tiling": 1.0
+  },
+  "M_Black_Plastic": {
+   "color": "#2A2A2C",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "검은 플라스틱(TV 틀·계산기·스피커)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Ceiling": {
+   "color": "#EDE7D8",
+   "tile": 0.6,
+   "uv": "world",
+   "note": "천장 텍스 판 60cm",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Ceiling.png",
+   "tiling": 1.6667
+  },
+  "M_Concrete": {
+   "color": "#B9B6AF",
+   "tile": 2.4,
+   "uv": "world",
+   "owner": "conv",
+   "note": "옹벽·기초·갓돌·필로티·학교 층 띠·전봇대",
+   "texture": "concept/art/env/textures/M_Concrete.png",
+   "tiling": 0.4167
+  },
+  "M_Fluor_Panel": {
+   "color": "#F2F5EF",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "형광등·천장 등판(발광)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Glass_Frosted": {
+   "color": "#D7E0E3",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "김 서린 유리",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Metal_Grey": {
+   "color": "#8C8F93",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "상가 새시·셔터 박스·간판 틀·빗물관·실외기 받침",
+   "texture": "concept/art/env/textures/M_Metal_Grey.png",
+   "tiling": 1.0
+  },
+  "M_Paper_Blue": {
+   "color": "#8FA6C2",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_Green": {
+   "color": "#9DB592",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_Pink": {
+   "color": "#D9A3A8",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_White": {
+   "color": "#F1ECE0",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "흰 종이·달력",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_Yellow": {
+   "color": "#E3CC7E",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Plaster_Cream": {
+   "color": "#E3D5B8",
+   "tile": 2.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "크림 뿜칠(단독·담장·학교)·층 띠",
+   "texture": "concept/art/env/textures/M_Plaster_Cream.png",
+   "tiling": 0.5
+  },
+  "M_Plastic_Red": {
+   "color": "#B5473C",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "빨간 플라스틱(김치통 뚜껑·바구니)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Stainless": {
+   "color": "#BFC4C7",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "스테인리스(조리대·식탁·그릇)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Stainless_Dark": {
+   "color": "#7E8488",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "어두운 스테인리스(후드·다리)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Steel_Frame": {
+   "color": "#7D8287",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "책상 다리·창틀·옷걸이",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_TV_Screen": {
+   "color": "#3A4A55",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "TV 화면",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Terrazzo": {
+   "color": "#A9A8A2",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "젖은 회색 테라조 바닥(주방)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Terrazzo.png",
+   "tiling": 1.0
+  },
+  "M_Tile_Floor": {
+   "color": "#B98E6A",
+   "tile": 0.6,
+   "uv": "world",
+   "note": "갈색 바닥 타일 30cm(국밥집 홀)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Tile_Floor.png",
+   "tiling": 1.6667
+  },
+  "M_Tile_WhiteWall": {
+   "color": "#E9E6DE",
+   "tile": 0.6,
+   "uv": "world",
+   "note": "흰 사각 벽 타일 15cm + 회색 줄눈",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Tile_WhiteWall.png",
+   "tiling": 1.6667
+  },
+  "M_View_Dawn": {
+   "color": "#9DB6CF",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "간유리 새벽빛(Unlit)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_View_Dawn.png",
+   "tiling": 1.0
+  },
+  "M_View_Night": {
+   "color": "#2B3446",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "창밖 밤거리(절차 그림, Unlit)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_View_Night.png",
+   "tiling": 1.0
+  },
+  "M_Wainscot": {
+   "color": "#8E6444",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "나무 굽도리·홀 아랫벽",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Wainscot.png",
+   "tiling": 1.0
+  },
+  "M_Wall_Cream": {
+   "color": "#E6DAC0",
+   "tile": 2.0,
+   "uv": "world",
+   "note": "크림 페인트 벽",
+   "owner": "stage",
+   "tiling": 0.5
+  },
+  "M_Wood_Counter": {
+   "color": "#9A6B45",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "나무 계산대",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Wood_Counter.png",
+   "tiling": 1.0
+  },
+  "M_Wood_Light": {
+   "color": "#C9A77A",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "밝은 나무(교탁·밥상·책상)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Wood_Light.png",
+   "tiling": 1.0
+  }
+ },
+ "tris": {
+  "Shell": 844,
+  "Fixtures": 176,
+  "Kitchen": 2486,
+  "Hall": 1620
+ },
+ "tris_total": 5126,
+ "sockets": [
+  {
+   "name": "Prop_gamasot_stove_01",
+   "kind": "prop",
+   "pos": [
+    -3.95,
+    0.0,
+    3.25
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "gamasot_stove",
+    "glb": "concept/art/env/stages/props/gamasot_stove.glb"
+   }
+  },
+  {
+   "name": "Prop_gamasot_stove_02",
+   "kind": "prop",
+   "pos": [
+    -2.7,
+    0.0,
+    3.25
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "gamasot_stove",
+    "glb": "concept/art/env/stages/props/gamasot_stove.glb"
+   }
+  },
+  {
+   "name": "Prop_stockpot_burner_01",
+   "kind": "prop",
+   "pos": [
+    -1.45,
+    0.0,
+    2.85
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "stockpot_burner",
+    "glb": "concept/art/env/stages/props/stockpot_burner.glb"
+   }
+  },
+  {
+   "name": "Prop_rice_cooker_01",
+   "kind": "prop",
+   "pos": [
+    -2.95,
+    0.85,
+    1.05
+   ],
+   "fwd": [
+    -0.342,
+    0.0,
+    -0.94
+   ],
+   "info": {
+    "prop": "rice_cooker",
+    "glb": "concept/art/env/stages/props/rice_cooker.glb"
+   }
+  },
+  {
+   "name": "Prop_yangeun_kettle_01",
+   "kind": "prop",
+   "pos": [
+    1.05,
+    0.86,
+    3.7
+   ],
+   "fwd": [
+    -0.342,
+    0.0,
+    -0.94
+   ],
+   "info": {
+    "prop": "yangeun_kettle",
+    "glb": "concept/art/env/stages/props/yangeun_kettle.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_01",
+   "kind": "prop",
+   "pos": [
+    -4.15,
+    0.0,
+    -2.55
+   ],
+   "fwd": [
+    0.052,
+    0.0,
+    0.999
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_02",
+   "kind": "prop",
+   "pos": [
+    -3.05,
+    0.0,
+    -2.55
+   ],
+   "fwd": [
+    -0.242,
+    0.0,
+    0.97
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_03",
+   "kind": "prop",
+   "pos": [
+    -3.56,
+    0.0,
+    -3.07
+   ],
+   "fwd": [
+    0.156,
+    0.0,
+    0.988
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_04",
+   "kind": "prop",
+   "pos": [
+    -3.56,
+    0.0,
+    -2.03
+   ],
+   "fwd": [
+    -0.139,
+    0.0,
+    0.99
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_yangeun_kettle_02",
+   "kind": "prop",
+   "pos": [
+    -3.35,
+    0.72,
+    -2.35
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "yangeun_kettle",
+    "glb": "concept/art/env/stages/props/yangeun_kettle.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_05",
+   "kind": "prop",
+   "pos": [
+    -1.8,
+    0.0,
+    -2.55
+   ],
+   "fwd": [
+    0.208,
+    0.0,
+    0.978
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_06",
+   "kind": "prop",
+   "pos": [
+    -0.7,
+    0.0,
+    -2.55
+   ],
+   "fwd": [
+    -0.087,
+    0.0,
+    0.996
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_07",
+   "kind": "prop",
+   "pos": [
+    -1.21,
+    0.0,
+    -3.07
+   ],
+   "fwd": [
+    0.309,
+    0.0,
+    0.951
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_08",
+   "kind": "prop",
+   "pos": [
+    -1.21,
+    0.0,
+    -2.03
+   ],
+   "fwd": [
+    0.017,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_yangeun_kettle_03",
+   "kind": "prop",
+   "pos": [
+    -1.0,
+    0.72,
+    -2.35
+   ],
+   "fwd": [
+    0.5,
+    0.0,
+    0.866
+   ],
+   "info": {
+    "prop": "yangeun_kettle",
+    "glb": "concept/art/env/stages/props/yangeun_kettle.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_09",
+   "kind": "prop",
+   "pos": [
+    -4.15,
+    0.0,
+    -0.95
+   ],
+   "fwd": [
+    -0.326,
+    0.0,
+    0.946
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_10",
+   "kind": "prop",
+   "pos": [
+    -3.05,
+    0.0,
+    -0.95
+   ],
+   "fwd": [
+    0.07,
+    0.0,
+    0.998
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_11",
+   "kind": "prop",
+   "pos": [
+    -3.56,
+    0.0,
+    -1.47
+   ],
+   "fwd": [
+    -0.225,
+    0.0,
+    0.974
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_12",
+   "kind": "prop",
+   "pos": [
+    -3.56,
+    0.0,
+    -0.43
+   ],
+   "fwd": [
+    0.174,
+    0.0,
+    0.985
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_yangeun_kettle_04",
+   "kind": "prop",
+   "pos": [
+    -3.35,
+    0.72,
+    -0.75
+   ],
+   "fwd": [
+    0.866,
+    0.0,
+    0.5
+   ],
+   "info": {
+    "prop": "yangeun_kettle",
+    "glb": "concept/art/env/stages/props/yangeun_kettle.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_13",
+   "kind": "prop",
+   "pos": [
+    -1.8,
+    0.0,
+    -0.95
+   ],
+   "fwd": [
+    -0.174,
+    0.0,
+    0.985
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_14",
+   "kind": "prop",
+   "pos": [
+    -0.7,
+    0.0,
+    -0.95
+   ],
+   "fwd": [
+    0.225,
+    0.0,
+    0.974
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_15",
+   "kind": "prop",
+   "pos": [
+    -1.21,
+    0.0,
+    -1.47
+   ],
+   "fwd": [
+    -0.07,
+    0.0,
+    0.998
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_16",
+   "kind": "prop",
+   "pos": [
+    -1.21,
+    0.0,
+    -0.43
+   ],
+   "fwd": [
+    0.326,
+    0.0,
+    0.946
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_yangeun_kettle_05",
+   "kind": "prop",
+   "pos": [
+    -1.0,
+    0.72,
+    -0.75
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "yangeun_kettle",
+    "glb": "concept/art/env/stages/props/yangeun_kettle.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_17",
+   "kind": "prop",
+   "pos": [
+    2.75,
+    0.0,
+    1.35
+   ],
+   "fwd": [
+    -0.017,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_19",
+   "kind": "prop",
+   "pos": [
+    3.34,
+    0.0,
+    0.83
+   ],
+   "fwd": [
+    0.087,
+    0.0,
+    0.996
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_20",
+   "kind": "prop",
+   "pos": [
+    3.34,
+    0.0,
+    1.87
+   ],
+   "fwd": [
+    -0.208,
+    0.0,
+    0.978
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_yangeun_kettle_06",
+   "kind": "prop",
+   "pos": [
+    3.55,
+    0.72,
+    1.55
+   ],
+   "fwd": [
+    0.866,
+    0.0,
+    -0.5
+   ],
+   "info": {
+    "prop": "yangeun_kettle",
+    "glb": "concept/art/env/stages/props/yangeun_kettle.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_21",
+   "kind": "prop",
+   "pos": [
+    2.75,
+    0.0,
+    3.05
+   ],
+   "fwd": [
+    0.139,
+    0.0,
+    0.99
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_23",
+   "kind": "prop",
+   "pos": [
+    3.34,
+    0.0,
+    2.53
+   ],
+   "fwd": [
+    0.242,
+    0.0,
+    0.97
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_stool_red_24",
+   "kind": "prop",
+   "pos": [
+    3.34,
+    0.0,
+    3.57
+   ],
+   "fwd": [
+    -0.052,
+    0.0,
+    0.999
+   ],
+   "info": {
+    "prop": "plastic_stool_red",
+    "glb": "concept/art/env/stages/props/plastic_stool_red.glb"
+   }
+  },
+  {
+   "name": "Prop_yangeun_kettle_07",
+   "kind": "prop",
+   "pos": [
+    3.55,
+    0.72,
+    3.25
+   ],
+   "fwd": [
+    0.5,
+    0.0,
+    -0.866
+   ],
+   "info": {
+    "prop": "yangeun_kettle",
+    "glb": "concept/art/env/stages/props/yangeun_kettle.glb"
+   }
+  },
+  {
+   "name": "Prop_water_cooler_01",
+   "kind": "prop",
+   "pos": [
+    4.65,
+    0.0,
+    -1.0
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    -0.0
+   ],
+   "info": {
+    "prop": "water_cooler",
+    "glb": "concept/art/env/stages/props/water_cooler.glb"
+   }
+  },
+  {
+   "name": "Sock_Light_Hall_A",
+   "kind": "light",
+   "pos": [
+    -2.4,
+    2.5,
+    -1.8
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "color": "#FFE9C4",
+    "intensity": 2.2,
+    "range": 7.0,
+    "light": "point"
+   }
+  },
+  {
+   "name": "Sock_Light_Hall_B",
+   "kind": "light",
+   "pos": [
+    3.2,
+    2.5,
+    1.6
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "color": "#FFE9C4",
+    "intensity": 1.6,
+    "range": 5.5,
+    "light": "point"
+   }
+  },
+  {
+   "name": "Sock_Light_Kitchen",
+   "kind": "light",
+   "pos": [
+    -1.6,
+    2.5,
+    2.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "color": "#F4F1E4",
+    "intensity": 2.0,
+    "range": 6.0,
+    "light": "point"
+   }
+  },
+  {
+   "name": "Sock_Light_Dawn",
+   "kind": "light",
+   "pos": [
+    -2.8,
+    1.8,
+    3.6
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "color": "#9DB8DA",
+    "intensity": 0.8,
+    "range": 3.0,
+    "light": "point"
+   }
+  },
+  {
+   "name": "Sock_Spawn_Spawn",
+   "kind": "spawn",
+   "pos": [
+    0.7,
+    0.0,
+    1.05
+   ],
+   "fwd": [
+    -0.94,
+    0.0,
+    0.342
+   ],
+   "info": {}
+  },
+  {
+   "name": "Sock_Spawn_Hall",
+   "kind": "spawn",
+   "pos": [
+    -2.4,
+    0.0,
+    -1.25
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {}
+  },
+  {
+   "name": "Sock_Door_Front",
+   "kind": "door",
+   "pos": [
+    3.0,
+    0.0,
+    -3.45
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "label": "나가기 — 상가거리",
+    "to": "Zone1"
+   }
+  },
+  {
+   "name": "Sock_Marker_Job_Serving",
+   "kind": "marker",
+   "pos": [
+    -2.5,
+    0.0,
+    -0.25
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "func": "job_serving",
+    "label": "서빙 시작"
+   }
+  },
+  {
+   "name": "Sock_Marker_Job_Dishes",
+   "kind": "marker",
+   "pos": [
+    -0.2,
+    0.0,
+    3.05
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "func": "job_dishes",
+    "label": "설거지 시작"
+   }
+  },
+  {
+   "name": "Sock_Cam_s01",
+   "kind": "cam",
+   "pos": [
+    1.05,
+    1.6,
+    0.75
+   ],
+   "fwd": [
+    -0.778,
+    0.0,
+    0.629
+   ],
+   "info": {
+    "look": [
+     -2.6,
+     1.15,
+     3.7
+    ],
+    "fov": 48.0
+   }
+  },
+  {
+   "name": "Sock_Cam_s02",
+   "kind": "cam",
+   "pos": [
+    3.6,
+    1.6,
+    -3.6
+   ],
+   "fwd": [
+    -0.735,
+    0.0,
+    0.678
+   ],
+   "info": {
+    "look": [
+     -1.6,
+     1.0,
+     1.2
+    ],
+    "fov": 48.0
+   }
+  },
+  {
+   "name": "Sock_Actor_엄마",
+   "kind": "actor",
+   "pos": [
+    -2.05,
+    0.0,
+    2.35
+   ],
+   "fwd": [
+    0.866,
+    0.0,
+    -0.5
+   ],
+   "info": {
+    "state": "TalkHip"
+   }
+  }
+ ],
+ "colliders": [
+  [
+   -5.0,
+   5.0,
+   -0.3,
+   0.0,
+   -4.0,
+   4.0,
+   "Ground"
+  ],
+  [
+   -5.0,
+   -3.3,
+   0.0,
+   2.6,
+   4.0,
+   4.12,
+   "Wall"
+  ],
+  [
+   -2.3,
+   1.5,
+   0.0,
+   2.6,
+   4.0,
+   4.12,
+   "Wall"
+  ],
+  [
+   -3.3,
+   -2.3,
+   0.0,
+   1.4,
+   4.0,
+   4.12,
+   "Wall"
+  ],
+  [
+   1.5,
+   5.0,
+   0.0,
+   2.6,
+   4.0,
+   4.12,
+   "Wall"
+  ],
+  [
+   -5.12,
+   -5.0,
+   0.0,
+   2.6,
+   0.3,
+   4.0,
+   "Wall"
+  ],
+  [
+   -5.12,
+   -5.0,
+   0.0,
+   2.6,
+   -4.0,
+   0.3,
+   "Wall"
+  ],
+  [
+   5.0,
+   5.12,
+   0.0,
+   2.6,
+   -4.0,
+   4.0,
+   "Wall"
+  ],
+  [
+   -5.0,
+   -4.6,
+   0.0,
+   2.6,
+   -4.12,
+   -4.0,
+   "Wall"
+  ],
+  [
+   1.8,
+   2.4,
+   0.0,
+   2.6,
+   -4.12,
+   -4.0,
+   "Wall"
+  ],
+  [
+   3.6,
+   5.0,
+   0.0,
+   2.6,
+   -4.12,
+   -4.0,
+   "Wall"
+  ],
+  [
+   -4.6,
+   1.8,
+   0.0,
+   0.35,
+   -4.12,
+   -4.0,
+   "Wall"
+  ],
+  [
+   -5.0,
+   5.0,
+   0.0,
+   2.6,
+   -4.4,
+   -4.12,
+   "Wall"
+  ],
+  [
+   -5.0,
+   -3.6,
+   0.0,
+   2.6,
+   0.3,
+   0.42,
+   "Wall"
+  ],
+  [
+   -3.6,
+   -1.4,
+   0.0,
+   1.0,
+   0.3,
+   0.42,
+   "Wall"
+  ],
+  [
+   -1.4,
+   0.2,
+   0.0,
+   2.6,
+   0.3,
+   0.42,
+   "Wall"
+  ],
+  [
+   1.2,
+   1.5,
+   0.0,
+   2.6,
+   0.3,
+   0.42,
+   "Wall"
+  ],
+  [
+   1.5,
+   1.62,
+   0.0,
+   2.6,
+   0.42,
+   4.0,
+   "Wall"
+  ],
+  [
+   -1.9,
+   1.38,
+   0.0,
+   0.82,
+   3.35,
+   4.0,
+   "Default"
+  ],
+  [
+   -5.0,
+   -4.45,
+   0.0,
+   1.7,
+   0.6,
+   2.6,
+   "Default"
+  ],
+  [
+   -4.15,
+   -2.65,
+   0.0,
+   0.85,
+   0.65,
+   1.35,
+   "Default"
+  ],
+  [
+   0.62,
+   1.38,
+   0.0,
+   1.9,
+   2.25,
+   3.05,
+   "Default"
+  ],
+  [
+   -4.6,
+   -2.0,
+   0.0,
+   1.0,
+   2.6,
+   3.9,
+   "Default"
+  ],
+  [
+   -4.05,
+   -3.15,
+   0.0,
+   0.72,
+   -2.975,
+   -2.125,
+   "Default"
+  ],
+  [
+   -1.7,
+   -0.8,
+   0.0,
+   0.72,
+   -2.975,
+   -2.125,
+   "Default"
+  ],
+  [
+   -4.05,
+   -3.15,
+   0.0,
+   0.72,
+   -1.375,
+   -0.525,
+   "Default"
+  ],
+  [
+   -1.7,
+   -0.8,
+   0.0,
+   0.72,
+   -1.375,
+   -0.525,
+   "Default"
+  ],
+  [
+   2.85,
+   3.75,
+   0.0,
+   0.72,
+   0.925,
+   1.775,
+   "Default"
+  ],
+  [
+   2.85,
+   3.75,
+   0.0,
+   0.72,
+   2.625,
+   3.475,
+   "Default"
+  ],
+  [
+   1.85,
+   2.95,
+   0.0,
+   1.0,
+   -2.75,
+   -1.75,
+   "Default"
+  ]
+ ],
+ "fbx_bytes": 211420
+}

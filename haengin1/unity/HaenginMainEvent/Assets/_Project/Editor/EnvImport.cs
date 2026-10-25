@@ -14,7 +14,7 @@ namespace Haengin.EditorTools
 
         void OnPreprocessModel()
         {
-            if (!assetPath.StartsWith(Root + "/Buildings/") && !assetPath.StartsWith(Root + "/Gym/")) return;
+            if (!assetPath.StartsWith(Root + "/Buildings/") && !assetPath.StartsWith(Root + "/Gym/") && !assetPath.StartsWith(Root + "/Stages/")) return;   // Stages = 무대 4곳 키트(09 9단계)
             var imp = (ModelImporter)assetImporter;
             imp.globalScale = 1f;
             imp.useFileUnits = true;
@@ -46,7 +46,7 @@ namespace Haengin.EditorTools
             if (!assetPath.StartsWith(Root + "/")) return;
             var imp = (TextureImporter)assetImporter;
             string name = System.IO.Path.GetFileNameWithoutExtension(assetPath);
-            bool tex = assetPath.StartsWith(Root + "/Textures/") || assetPath.StartsWith(Root + "/Props/Tex/") || assetPath.StartsWith(Root + "/Gym/Textures/") || assetPath.StartsWith(Root + "/Gym/Props/Tex/");
+            bool tex = assetPath.StartsWith(Root + "/Textures/") || assetPath.StartsWith(Root + "/Props/Tex/") || assetPath.StartsWith(Root + "/Gym/Textures/") || assetPath.StartsWith(Root + "/Gym/Props/Tex/") || assetPath.StartsWith(Root + "/Stages/Textures/") || assetPath.StartsWith(Root + "/Stages/Props/Tex/");
             bool sky = assetPath.StartsWith(Root + "/Sky/");
             bool signs5 = assetPath.StartsWith(Root + "/Signs5/");   // 5차: 간판 면(힉스필드 그림, 알파 컷아웃) · 현수막 · 표면 데칼 · 벽화
             imp.textureType = TextureImporterType.Default;
@@ -70,7 +70,7 @@ namespace Haengin.EditorTools
                 bool clump = name.StartsWith("Clump_");   // 4차: 카드 전용 수관의 잎 덩어리 2×2 아틀라스
                 bool atlas = name.EndsWith("_Atlas") || name == "M_Cage_Mesh" || name == "M_Glass_Clear" || name.StartsWith("Leaf_") || clump;   // Leaf_* = 잎 카드(3차)   // 체육관: 철망 알파 컷아웃 · 유리 알파(둘은 Repeat)
                 imp.sRGBTexture = true;
-                imp.wrapMode = name.EndsWith("_Atlas") || clump ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
+                imp.wrapMode = name.EndsWith("_Atlas") || clump || name.StartsWith("M_View_") ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
                 imp.alphaIsTransparency = atlas;
                 imp.alphaSource = atlas ? TextureImporterAlphaSource.FromInput : TextureImporterAlphaSource.None;
                 if (clump || name.StartsWith("Leaf_")) { imp.mipMapsPreserveCoverage = true; imp.alphaTestReferenceValue = 0.4f; }   // 멀어져도 잎이 빠지지 않게

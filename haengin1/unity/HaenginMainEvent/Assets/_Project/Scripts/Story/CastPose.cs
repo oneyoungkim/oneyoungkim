@@ -25,7 +25,8 @@ namespace Haengin
             hash = 0;
             if (an == null || an.runtimeAnimatorController == null || string.IsNullOrEmpty(State)) return;
             int h = Animator.StringToHash(State);
-            if (!an.HasState(0, h) && State == "Sit") h = Animator.StringToHash("Ride");     // 태오(정식 모델 = 시우 컨트롤러): 앉기 = 자전거 'Ride'(의자 앉기 동작)
+            if (!an.HasState(0, h) && State == "Sit") h = Animator.StringToHash("Ride");     // 'Sit' 이 없는 컨트롤러: 자전거 'Ride'(의자 앉기 동작)
+            if (!an.HasState(0, h) && (State == "SitTalk" || State == "SitFloor")) h = Animator.StringToHash("Sit");
             if (!an.HasState(0, h)) return;
             hash = h;
             float off = Mathf.Abs(name.GetHashCode() % 97) / 97f;

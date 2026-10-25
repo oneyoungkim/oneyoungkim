@@ -1,0 +1,598 @@
+{
+ "generator": "haengin1/tools/env/stages/build_stages.py",
+ "doc": "haengin1/docs/09_M3_버티컬슬라이스_설계.md 9단계",
+ "key": "Conv",
+ "title": "하루편의점",
+ "room": {
+  "w": 8.0,
+  "d": 10.0,
+  "h": 2.7
+ },
+ "axes": "Unity 무대 로컬(X 동, Y 위, Z 북), 원점 = 방 가운데 바닥. 프리팹을 무대 루트 아래 원점·회전 0·배율 1 로",
+ "materials": {
+  "M_AC_White": {
+   "color": "#E6E2D8",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "흰 새시 틀·흰 방범창(docs/10 3-1)·(--prop-geometry 때) 실외기",
+   "texture": "concept/art/env/textures/M_AC_White.png",
+   "tiling": 1.0
+  },
+  "M_Black_Plastic": {
+   "color": "#2A2A2C",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "검은 플라스틱(TV 틀·계산기·스피커)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Ceiling": {
+   "color": "#EDE7D8",
+   "tile": 0.6,
+   "uv": "world",
+   "note": "천장 텍스 판 60cm",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Ceiling.png",
+   "tiling": 1.6667
+  },
+  "M_Concrete": {
+   "color": "#B9B6AF",
+   "tile": 2.4,
+   "uv": "world",
+   "owner": "conv",
+   "note": "옹벽·기초·갓돌·필로티·학교 층 띠·전봇대",
+   "texture": "concept/art/env/textures/M_Concrete.png",
+   "tiling": 0.4167
+  },
+  "M_Fluor_Panel": {
+   "color": "#F2F5EF",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "형광등·천장 등판(발광)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Glass_Fridge": {
+   "color": "#CFE3E6",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "냉장고 유리문(투명)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Glass_Frosted": {
+   "color": "#D7E0E3",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "김 서린 유리",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Haru_Cream": {
+   "color": "#E9E1CC",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "하루편의점 크림",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Haru_Slate": {
+   "color": "#5B6B7A",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "하루편의점 슬레이트 블루",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Metal_Grey": {
+   "color": "#8C8F93",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "상가 새시·셔터 박스·간판 틀·빗물관·실외기 받침",
+   "texture": "concept/art/env/textures/M_Metal_Grey.png",
+   "tiling": 1.0
+  },
+  "M_Plaster_Cream": {
+   "color": "#E3D5B8",
+   "tile": 2.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "크림 뿜칠(단독·담장·학교)·층 띠",
+   "texture": "concept/art/env/textures/M_Plaster_Cream.png",
+   "tiling": 0.5
+  },
+  "M_Plastic_Blue": {
+   "color": "#4E6E9A",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "파란 플라스틱(폐기 바구니)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Products": {
+   "color": "#C99A6A",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "상품 진열 면(T_Products, 0~1 UV)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Products.png",
+   "tiling": 1.0
+  },
+  "M_Shelf_White": {
+   "color": "#E6E4DF",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "흰 진열대",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Steel_Frame": {
+   "color": "#7D8287",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "책상 다리·창틀·옷걸이",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_TV_Screen": {
+   "color": "#3A4A55",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "TV 화면",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Tile_Store": {
+   "color": "#E4E2DC",
+   "tile": 1.2,
+   "uv": "world",
+   "note": "편의점 흰 바닥 타일 60cm",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Tile_Store.png",
+   "tiling": 0.8333
+  },
+  "M_View_Night": {
+   "color": "#2B3446",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "창밖 밤거리(절차 그림, Unlit)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_View_Night.png",
+   "tiling": 1.0
+  },
+  "M_Wall_Cream": {
+   "color": "#E6DAC0",
+   "tile": 2.0,
+   "uv": "world",
+   "note": "크림 페인트 벽",
+   "owner": "stage",
+   "tiling": 0.5
+  }
+ },
+ "tris": {
+  "Shell": 434,
+  "Fixtures": 288,
+  "Store": 1934
+ },
+ "tris_total": 2656,
+ "sockets": [
+  {
+   "name": "Prop_ice_cream_freezer_01",
+   "kind": "prop",
+   "pos": [
+    2.15,
+    0.0,
+    -4.35
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    -0.0
+   ],
+   "info": {
+    "prop": "ice_cream_freezer",
+    "glb": "concept/art/env/stages/props/ice_cream_freezer.glb"
+   }
+  },
+  {
+   "name": "Prop_plastic_crates_stack_01",
+   "kind": "prop",
+   "pos": [
+    3.45,
+    0.0,
+    4.4
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "prop": "plastic_crates_stack",
+    "glb": "concept/art/env/stages/props/plastic_crates_stack.glb"
+   }
+  },
+  {
+   "name": "Prop_cardboard_boxes_01",
+   "kind": "prop",
+   "pos": [
+    -3.5,
+    0.0,
+    3.55
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "cardboard_boxes",
+    "glb": "concept/art/env/stages/props/cardboard_boxes.glb"
+   }
+  },
+  {
+   "name": "Sock_Light_Store_A",
+   "kind": "light",
+   "pos": [
+    -1.6,
+    2.5,
+    -1.0
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "color": "#EEF6F2",
+    "intensity": 2.4,
+    "range": 8.0,
+    "light": "point"
+   }
+  },
+  {
+   "name": "Sock_Light_Store_B",
+   "kind": "light",
+   "pos": [
+    -0.6,
+    2.5,
+    3.0
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "color": "#EEF6F2",
+    "intensity": 2.0,
+    "range": 7.0,
+    "light": "point"
+   }
+  },
+  {
+   "name": "Sock_Light_Counter",
+   "kind": "light",
+   "pos": [
+    3.2,
+    2.5,
+    -2.2
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "color": "#F6F2E6",
+    "intensity": 1.4,
+    "range": 5.0,
+    "light": "point"
+   }
+  },
+  {
+   "name": "Sock_Spawn_Spawn",
+   "kind": "spawn",
+   "pos": [
+    1.5,
+    0.0,
+    -1.6
+   ],
+   "fwd": [
+    -0.259,
+    0.0,
+    0.966
+   ],
+   "info": {}
+  },
+  {
+   "name": "Sock_Spawn_Counter",
+   "kind": "spawn",
+   "pos": [
+    3.5,
+    0.0,
+    -2.2
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    -0.0
+   ],
+   "info": {}
+  },
+  {
+   "name": "Sock_Door_Front",
+   "kind": "door",
+   "pos": [
+    1.5,
+    0.0,
+    -4.4
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "label": "나가기 — 상가거리",
+    "to": "Zone1"
+   }
+  },
+  {
+   "name": "Sock_Marker_Job_Counter",
+   "kind": "marker",
+   "pos": [
+    3.5,
+    0.0,
+    -2.2
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    -0.0
+   ],
+   "info": {
+    "func": "job_counter",
+    "label": "계산대"
+   }
+  },
+  {
+   "name": "Sock_Marker_Job_Stock",
+   "kind": "marker",
+   "pos": [
+    2.9,
+    0.0,
+    3.7
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "func": "job_stock",
+    "label": "진열(창고 상자)"
+   }
+  },
+  {
+   "name": "Sock_Marker_Job_Waste",
+   "kind": "marker",
+   "pos": [
+    1.95,
+    0.0,
+    0.25
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "func": "job_waste",
+    "label": "폐기"
+   }
+  },
+  {
+   "name": "Sock_Cam_s05",
+   "kind": "cam",
+   "pos": [
+    0.3,
+    1.65,
+    -4.55
+   ],
+   "fwd": [
+    -0.307,
+    0.0,
+    0.952
+   ],
+   "info": {
+    "look": [
+     -2.2,
+     1.0,
+     3.2
+    ],
+    "fov": 48.0
+   }
+  },
+  {
+   "name": "Sock_Cam_s06",
+   "kind": "cam",
+   "pos": [
+    3.65,
+    1.6,
+    -3.9
+   ],
+   "fwd": [
+    -0.51,
+    0.0,
+    0.86
+   ],
+   "info": {
+    "look": [
+     -0.8,
+     1.1,
+     3.6
+    ],
+    "fov": 48.0
+   }
+  }
+ ],
+ "colliders": [
+  [
+   -4.0,
+   4.0,
+   -0.3,
+   0.0,
+   -5.0,
+   5.0,
+   "Ground"
+  ],
+  [
+   -4.0,
+   2.6,
+   0.0,
+   2.6,
+   5.0,
+   5.12,
+   "Wall"
+  ],
+  [
+   3.6,
+   4.0,
+   0.0,
+   2.6,
+   5.0,
+   5.12,
+   "Wall"
+  ],
+  [
+   -4.12,
+   -4.0,
+   0.0,
+   2.6,
+   -5.0,
+   5.0,
+   "Wall"
+  ],
+  [
+   4.0,
+   4.12,
+   0.0,
+   2.6,
+   -5.0,
+   5.0,
+   "Wall"
+  ],
+  [
+   -4.0,
+   -3.85,
+   0.0,
+   2.6,
+   -5.12,
+   -5.0,
+   "Wall"
+  ],
+  [
+   0.6,
+   0.9,
+   0.0,
+   2.6,
+   -5.12,
+   -5.0,
+   "Wall"
+  ],
+  [
+   2.1,
+   4.0,
+   0.0,
+   2.6,
+   -5.12,
+   -5.0,
+   "Wall"
+  ],
+  [
+   -4.0,
+   4.0,
+   0.0,
+   2.6,
+   -5.4,
+   -5.12,
+   "Wall"
+  ],
+  [
+   -4.0,
+   1.7,
+   0.0,
+   0.15,
+   4.25,
+   5.0,
+   "Default"
+  ],
+  [
+   -4.0,
+   1.7,
+   0.0,
+   2.45,
+   4.25,
+   5.0,
+   "Default"
+  ],
+  [
+   -3.06,
+   -2.14,
+   0.0,
+   1.5,
+   -2.96,
+   2.76,
+   "Default"
+  ],
+  [
+   -1.01,
+   -0.09,
+   0.0,
+   1.5,
+   -2.96,
+   2.76,
+   "Default"
+  ],
+  [
+   2.3,
+   2.95,
+   0.0,
+   1.0,
+   -3.7,
+   -0.7,
+   "Default"
+  ],
+  [
+   2.3,
+   4.0,
+   0.0,
+   1.0,
+   -0.7,
+   -0.1,
+   "Default"
+  ],
+  [
+   3.65,
+   4.0,
+   0.0,
+   2.1,
+   -3.8,
+   -0.8,
+   "Default"
+  ],
+  [
+   1.75,
+   2.2,
+   0.0,
+   0.3,
+   -0.5,
+   -0.1,
+   "Default"
+  ]
+ ],
+ "fbx_bytes": 99196
+}

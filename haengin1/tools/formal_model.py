@@ -254,6 +254,35 @@ for sd in ('Left', 'Right'):
             raise SystemExit(f'{hand}: {nm} 정점이 {int(m.sum())}개라 손가락 뼈를 만들 수 없음')
         d, base, length = hk._finger_axis(co[m], wrist)
         chains[nm] = dict(d=d, base=base, length=float(length), n=int(m.sum()))
+    # 2026-10-25 새끼 줄기 고침: 정점 묶음 PCA 가 손 옆 날(손바닥 가장자리)까지 먹으면 축이 손등 쪽으로 눕는다(태오·배달복 오른손 새끼 —
+    # D13 '어긋난 줄기 R16'). 가운데 손가락 축과 30° 넘게 벌어진 줄기는 그 축을 가운데 손가락 쪽으로 돌리고(옆 벌어짐 12° 까지만 남김)
+    # 그 손가락 정점을 새 축에 다시 투영해 시작점·길이를 잰다
+    mid = chains['Middle']['d']
+    fixed = []
+    for nm in ('Index', 'Ring', 'Pinky'):
+        ch = chains[nm]
+        ang = math.degrees(math.acos(float(np.clip(ch['d'] @ mid, -1.0, 1.0))))
+        if ang <= 30.0:
+            continue
+        sel = (label == FINGERS.index(nm)) & (u > fr['u_k'] - 0.004)        # 밑 마디선 앞(손가락 몸통)만 — 손바닥 가장자리 정점이 축을 끌어당기지 않게
+        if sel.sum() < 8:
+            sel = label == FINGERS.index(nm)
+        P = co[sel]
+        cP = P.mean(0)
+        # 옆 벌어짐 방향 = 이웃 손가락(검지·약지 ← 가운데, 새끼 ← 약지) 정점 중심에서 멀어지는 쪽(예전 축의 옆 성분은 이웃 쪽을 가리켜 굽히면 겹침)
+        nb = 'Ring' if nm == 'Pinky' else 'Middle'
+        side = cP - co[label == FINGERS.index(nb)].mean(0)
+        side = side - mid * (side @ mid)
+        side = side - p * (side @ p)            # 손바닥 쪽 성분은 빼고 옆 벌어짐만
+        sn = np.linalg.norm(side)
+        dnew = mid * math.cos(math.radians(5.0)) + (side / sn) * math.sin(math.radians(5.0)) if sn > 1e-6 else mid.copy()
+        dnew = dnew / np.linalg.norm(dnew)
+        t = (P - cP) @ dnew
+        t0, t1 = np.quantile(t, 0.01), np.quantile(t, 0.995)
+        ch.update(d=dnew, base=cP + dnew * t0, length=float(t1 - t0))
+        fixed.append(f'{nm} {ang:.0f}°')
+    if fixed:
+        info.setdefault('finger_axis_fixed', {})[sd] = fixed
     # 손바닥 가운데(밑 마디선 앞 절반) · 손바닥 쪽 표시
     palm = (label == -1) & (u > 0.15 * fr['L']) & (u < fr['u_k'])
     pc = co[palm].mean(0) if palm.any() else wrist + a * 0.5 * fr['u_k']
@@ -547,6 +576,38 @@ if not closed:
     for fc in fcs:
         fc.update()
 sc.frame_start, sc.frame_end = int(f0), int(f1_) + (0 if closed else 1)
+# 2026-10-25: 손가락만 고쳐 다시 뽑을 때 예전 FBX 의 얼굴 데칼(Face_LOD0~2)을 그대로 옮겨 붙임(환경 변수 FORMAL_KEEP_FACE = 예전 FBX).
+# 얼굴 데칼은 표정 아틀라스·Face.json 과 짝이라, 다시 만들면(덧댄 겹 판정이 달라지면) Unity 쪽 칸이 어긋난다
+keep_face = os.environ.get('FORMAL_KEEP_FACE')
+if keep_face:
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.fbx(filepath=keep_face, automatic_bone_orientation=False)
+    newobjs = [o for o in bpy.data.objects if o not in before]
+    olds = {o.name.split('.')[0]: o for o in newobjs if o.type == 'MESH' and o.name.startswith('Face_LOD')}
+    repl = []
+    for cur in (face, f1, f2):
+        nm = cur.name
+        o = olds.get(nm)
+        if o is None:
+            raise SystemExit('예전 FBX 에 ' + nm + ' 없음')
+        mwo = o.matrix_world.copy()
+        o.parent = arm
+        o.matrix_world = mwo
+        mods = [md for md in o.modifiers if md.type == 'ARMATURE']
+        if not mods:
+            mods = [o.modifiers.new('Armature', 'ARMATURE')]
+        for md in mods:
+            md.object = arm
+        bpy.data.objects.remove(cur, do_unlink=True)
+        o.name = nm
+        o.data.name = nm
+        repl.append(o)
+    face, f1, f2 = repl
+    for o in newobjs:
+        if o not in repl:
+            bpy.data.objects.remove(o, do_unlink=True)
+    info['face_kept_from'] = os.path.basename(keep_face)
+    info['face_kept_bbox_z'] = [round(min((face.matrix_world @ v.co).z for v in face.data.vertices), 4), round(max((face.matrix_world @ v.co).z for v in face.data.vertices), 4)]
 bpy.ops.object.select_all(action='DESELECT')
 arm.select_set(True)
 for o in [body, face, f1, f2] + lods:

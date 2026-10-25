@@ -58,7 +58,7 @@ namespace Haengin
             }
             GameState.SetPaused(false);
             GameState.LockCursor(false);
-            if (!Application.isEditor && Array.Exists(Environment.GetCommandLineArgs(), a => a == "-m2smoke" || a == "-practice" || a == "-bikesmoke"))
+            if (!Application.isEditor && Array.Exists(Environment.GetCommandLineArgs(), a => a == "-m2smoke" || a == "-practice" || a == "-bikesmoke" || a == "-stagesmoke"))
             {
                 Debug.Log("[M3] 타이틀: -m2smoke/-practice → 연습장 Zone1 로 바로");
                 StoryBoot.Go(new StoryBoot.Req { Mode = StoryBoot.Mode.Practice });

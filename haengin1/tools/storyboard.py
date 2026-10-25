@@ -148,6 +148,8 @@ def main():
             s.update(BIKE[s["id"]])
         if s["id"] == "1-6":
             s["spawn"] = "BackDoor"     # 1화 교실(CastSetup): 뒷문 앞에서 출석을 듣는다
+        if s["id"] in ("2-2", "2-3", "2-4", "7-3"):
+            s["spawn"] = "Hall"         # 9단계 국밥집 키트: 홀 장면은 홀 스폰(기본 'Spawn' = 주방)
     d["intro"] = INTRO
     STORY.write_text(dump(d), encoding="utf-8", newline="\n")
     print(f"[storyboard] 장면 {n}개 board + 1막 소개 → {STORY.name}")

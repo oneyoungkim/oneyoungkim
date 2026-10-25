@@ -1,0 +1,53 @@
+{
+  "note": "09 설계 9단계 무대 4곳 스타일 프레임 8장(장소당 2). GPT Image 2.5 high 2k 16:9, 2.75cr/장. 화풍 = 체육관 프레임(tools/env/gym/specs/frames.json)과 같은 렌더링 문단. 참조 = 시우 설정화.",
+  "defaults": {
+    "quality": "high",
+    "resolution": "2k",
+    "aspect": "16:9",
+    "refs": ["concept/art/fujimoto/siwoo_color_v2.png"]
+  },
+  "prefix": "In-game screenshot of a polished stylized 3D action-adventure game set in Hyehwa-dong, Seoul, Korea, inside a small real-life interior.",
+  "common": "RENDERING STYLE: cel-shaded 3D that reads like a flat-colored anime background painting. Every surface is a flat color area with exactly one crisp shadow tone (a warm grey multiply of the base color, never black or muddy), thin warm-black ink outlines (#1A1417) on silhouettes, frames, furniture and object edges; outlines get thinner with distance. No gradients on walls, no photographic textures, no realistic dirt: materials are suggested only by sparse hand-drawn marks (a few ink dots, short hatching strokes, tile seams, wood grain lines). Muted low-saturation palette, subtle paper grain over the whole image, gentle split toning. Shapes are clean and readable like a real-time 3D game built from modular pieces, yet rich in lived-in props. CAMERA: third-person game camera, lens height about 1.6 m, 35 mm lens, natural eye-level perspective, the whole room readable. The reference image shows the player character (a lanky 17-year-old Korean boy with curly black hair): draw him small, standing in the lower left third and filling about one third of the image height. No HUD, no UI, no watermark. Posters, boards, menus and labels are simple blocks of color or tiny illegible scribbles: absolutely no readable letters, no Korean or English text, no numbers, no logos, no brand marks anywhere. No alcohol, no cigarettes.",
+  "items": [
+    {
+      "name": "s01_gukbap_kitchen_dawn",
+      "out": "concept/art/env/stages/frames/s01_gukbap_kitchen_dawn.png",
+      "prompt": "SETTING: the cramped open kitchen of an old family-run gukbap (Korean pork soup) restaurant near a university back gate, 5:30 am before opening. White square ceramic wall tiles with grey grout up to 1.5 m and a cream painted wall above; a wet grey terrazzo floor with a drain grate; a long stainless-steel work counter and sink along the back wall, a row of stainless ladles and strainers hanging on a rail; two huge black cast-iron cauldrons (gamasot) on low round gas burners pouring thick white steam; stacked stainless bowls, red plastic kimchi containers, a yellow aluminium kettle, a big rice cooker, a stainless pass-through shelf opening to the dining hall; a single small window with frosted glass showing pale blue dawn; one bare fluorescent tube. The player character, in a grey hoodie under an orange delivery vest, holds an insulated delivery box; a short sturdy middle-aged woman in a red apron (his mother) ladles soup and turns toward him. Cool blue dawn from the window against the warm yellow fluorescent light and white steam."
+    },
+    {
+      "name": "s02_gukbap_hall_evening",
+      "out": "concept/art/env/stages/frames/s02_gukbap_hall_evening.png",
+      "prompt": "SETTING: the dining hall of the same old gukbap restaurant in the evening rush, about 10 by 8 meters, seen from the entrance. Six square stainless-steel tables each with four round red plastic stools, stainless water cups, a yellow aluminium kettle, little dishes of kimchi and radish, napkin dispensers; cream walls with a long wooden menu board of plain color panels above the pass-through window to the kitchen, an old small flat TV on a wall bracket in a corner, a standing water purifier, a calendar shape, a coat hook row; the warm wood counter with a cash register by the door; fluorescent ceiling panels; a steamed-up glass front door with the dark street outside. A few customers eat: two construction workers in dusty jackets, a student pair. The player character in a black school blazer carries a tray with four bowls, seen from behind. Warm yellow light, steam over the bowls."
+    },
+    {
+      "name": "s03_home_morning",
+      "out": "concept/art/env/stages/frames/s03_home_morning.png",
+      "prompt": "SETTING: the tiny second-floor home of a poor family in an old red-brick multi-family villa under the Seoul fortress wall, 6:50 am on a spring school day. One small living room that is also kitchen and bedroom, about 6 by 5 meters, ceiling 2.4 m: warm yellow vinyl floor (jangpan) with an electric heating mat and a folded blanket; cream floral wallpaper slightly faded; a round foldable low wooden dining table (jwasik bapsang) in the middle with breakfast dishes; a small girl of ten in a lilac sweatshirt sits on a floor cushion at the table, her long black hair half-braided; behind her the player character kneels in a black school blazer braiding her hair with both hands; a child's small study desk with a desk lamp and school bag; a metal clothes hanger rack with school uniforms; a small kitchenette along one wall (two-burner stove, small fridge, rice cooker); a framed photo of a smiling man in a white safety helmet on the wall with an old worn hammer hung next to it; an aluminium sliding window with security bars showing the grey granite fortress wall and pine trees in cool morning light. Soft clean morning light, cozy but cramped."
+    },
+    {
+      "name": "s04_home_night",
+      "out": "concept/art/env/stages/frames/s04_home_night.png",
+      "prompt": "SETTING: the same tiny home at night. The round low dining table is folded and leaning on the wall; two thin futon mattresses are laid on the warm yellow vinyl floor over the electric heating mat; the child's study desk with a warm desk lamp switched on is the main light, plus one ceiling light turned off; the clothes hanger rack, the small kitchenette in shadow, the framed helmet photo and the hammer on the wall catching the lamp light; the window shows a dark indigo sky with the floodlit fortress wall. The ten-year-old girl in pajamas sleeps under a blanket; the player character in a grey hoodie sits on the floor against the wall writing in a small notebook by the lamp. Warm orange lamp pool against cool blue moonlight from the window."
+    },
+    {
+      "name": "s05_conv_aisle_night",
+      "out": "concept/art/env/stages/frames/s05_conv_aisle_night.png",
+      "prompt": "SETTING: inside a small 24-hour neighborhood convenience store at 11 pm, about 8 by 10 meters. The store brand color is a muted slate grey-blue (#5B6B7A) with cream accents: slate blue shelf end-caps, slate blue counter front, cream price rails. Three rows of low white metal gondola shelves full of snacks, ramen cups, bread, triangle kimbap drawn as simple colorful blocks with no readable labels; a whole wall of glass-door drink refrigerators glowing (soft drinks, milk, water only); a hot water dispenser and a tiny eating counter with stools by the window; a wire basket of expired food; bright cool-white ceiling panels; the big glass front shows the dark street with an orange sodium lamp. The player character in a black school blazer stocks a shelf from a plastic crate, crouching; behind the slate blue counter a girl part-timer with a ponytail writes in a notebook. Strong teal-white store light."
+    },
+    {
+      "name": "s06_conv_counter_stock",
+      "out": "concept/art/env/stages/frames/s06_conv_counter_stock.png",
+      "prompt": "SETTING: the same convenience store seen from behind the counter: the slate grey-blue counter with a cash register, a card reader, a tray of gum and batteries, a small steamed-bun warmer and a hot drinks case; behind the counter a door into a narrow back stockroom with stacked cardboard boxes and plastic crates, a mop bucket and a small desk; by the door a blue plastic basket labeled only with a colored sticker holding expired triangle kimbap and lunch boxes; the store aisles beyond, the glass front with the night street. The player character carries a stack of plastic crates out of the stockroom. Cool fluorescent light, a little warm light from the stockroom bulb."
+    },
+    {
+      "name": "s07_classroom_backdoor",
+      "out": "concept/art/env/stages/frames/s07_classroom_backdoor.png",
+      "prompt": "SETTING: a Korean high-school classroom of class 2-3 on the first morning of the school year, 8:23 am, seen from the open rear sliding door. About 9 by 8 meters: six columns by five rows of single student desks with light wood tops on grey steel frames and matching chairs; about twenty-five students in black blazers, white shirts and dark ties sit at the desks, several turning around in their seats to look back at the door; at the front a big dark green chalkboard with a few illegible chalk scribbles, a wooden teacher's lectern and a young male teacher in a beige cardigan; a wall clock and a small speaker above the board; tall aluminium windows along the left wall with cream curtains half drawn, showing the old grey granite Seoul fortress wall and pine trees on the hill outside in bright morning light; a row of grey steel cubby lockers along the back wall under a cork bulletin board with blank colored papers; fluorescent ceiling lights; a mop and bucket in the corner. The player character stands in the rear doorway in a black school blazer, seen from behind. Clean bright spring morning light."
+    },
+    {
+      "name": "s08_classroom_front",
+      "out": "concept/art/env/stages/frames/s08_classroom_front.png",
+      "prompt": "SETTING: the same high-school classroom seen from beside the teacher's lectern at the front, looking toward the back: the rows of single desks with students in black blazers, a tall athletic boy with slicked-back hair in the front row by the window turning to grin and raise a thumb, a heavy-set boy smirking in the second row; the back wall with grey steel cubby lockers, the cork bulletin board with blank colored papers, the rear sliding door open with the corridor light; the tall left windows with the fortress wall and pines outside; dust motes in the morning sun shafts across the desks. The player character stands at the back door in a black school blazer, small in the distance. Bright morning light with soft cool shadows."
+    }
+  ]
+}

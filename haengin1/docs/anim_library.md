@@ -113,3 +113,15 @@
 | 59, 403, 412 | Victory_Cheer, Victory_Fist_Pump, victory |
 
 무기·총·검 동작(97, 102, 147~155, 177, 180~186, 199, 202, 219~221 등)은 17세 맨손 격투 게임에 맞지 않아 쓰지 않는다.
+
+## 바른 앉기 (2026-10-25 — 반 친구가 책상에 엎드린 듯 보임, 크레딧 32)
+시우 리그(`siwoo_tripo_v2_front.glb`, 커밋 9c96853 raw 주소)로 후보 4개 → `concept/art/3d/anim/m3/sit/siwoo_sit<번호>.glb`(`tools/pipeline/sit_clips.ps1`), 클립 전체를 재는 `tools/pipeline/sit_metrics.py`(상체 숙임 = 골반→목이 수직과 이루는 각). 띠 그림 `m3_shots/sit_compare.jpg`.
+
+| 번호 | 이름 | 숙임 평균·최대 | 머리(골반 위) | 판정 |
+|---|---|---:|---:|---|
+| 33 | Chair_Sit_Idle_M(지금) | 34.2° · 50.5° | 0.36m | 팔꿈치를 무릎에 대고 숙임 — 책상 앞에선 엎드린 듯 보임 |
+| 32 | Chair_Sit_Idle_F | 22.8° · 52.9° | 0.41m | 탈락 — 중간에 손으로 얼굴을 괴며 크게 숙임 |
+| **364** | Sit_on_Chair_Arms_Crossed | **3.8° · 8.6°** | 0.46m | **채택 — Sit**(58프레임 중 끝 46~57 = 팔짱 낀 바른 자세만 반복) |
+| **307** | Sitting_Answering_Questions | 6.4° · 19.4° | 0.49m | **채택 — SitTalk**(바르게 앉아 손짓, 7.8초 반복) |
+| **363** | Sit_Cross_Legged_on_Floor | 0.8° · 0.9° | 0.44m | **채택 — SitFloor**(바닥 양반다리, 끝 45~60 반복 — 시우네 좌식 밥상) |
+

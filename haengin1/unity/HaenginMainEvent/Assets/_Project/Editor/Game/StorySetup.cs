@@ -508,8 +508,12 @@ namespace Haengin.EditorGame
                 var place = root.AddComponent<StagePlace>();
                 place.Key = key; place.Title = info.title; place.Indoor = info.indoor; place.KillY = -10f; place.Placeholder = true;
                 float w = info.size.x, d = info.size.y, h = 3.0f;
-                Box(root.transform, "바닥", new Vector3(0f, -0.25f, 0f), new Vector3(w + 2f, 0.5f, d + 2f), Layers.Ground, floor);
-                if (info.indoor)
+                // 9단계(2026-10-25): 키트가 있으면 실제 공간(StageKitSetup — 키트·충돌·소품·불·문·표시 자리), 없으면 자리 무대
+                var kp = StageKitSetup.Place(key, root.transform);
+                if (kp != null) { place.Placeholder = false; w = kp.Size.x; d = kp.Size.z; Notes.Add($"무대 {key} 키트: {kp.Summary}"); }
+                if (kp == null) Box(root.transform, "바닥", new Vector3(0f, -0.25f, 0f), new Vector3(w + 2f, 0.5f, d + 2f), Layers.Ground, floor);
+                if (kp != null) { }
+                else if (info.indoor)
                 {
                     Box(root.transform, "벽 북", new Vector3(0f, h / 2f, d / 2f + 0.1f), new Vector3(w + 0.4f, h, 0.2f), Layers.Wall, wall);
                     Box(root.transform, "벽 남", new Vector3(0f, h / 2f, -d / 2f - 0.1f), new Vector3(w + 0.4f, h, 0.2f), Layers.Wall, wall);
@@ -522,14 +526,15 @@ namespace Haengin.EditorGame
                                                        ("울타리 동", new Vector3(w / 2f + 1f, 1f, 0f), new Vector3(0.2f, 2f, d + 2f)), ("울타리 서", new Vector3(-w / 2f - 1f, 1f, 0f), new Vector3(0.2f, 2f, d + 2f)) })
                         Box(root.transform, n, c, s, Layers.Wall, wall);
                 }
-                // 방 불(늘 켬)
+                // 방 불(늘 켬) — 키트 무대는 키트의 불 자리
                 var lgo = new GameObject("방 불");
                 lgo.transform.SetParent(root.transform, false);
                 lgo.transform.localPosition = new Vector3(0f, h - 0.3f, 0f);
                 var lt = lgo.AddComponent<Light>();
                 lt.type = LightType.Point; lt.range = Mathf.Max(w, d) * 1.1f; lt.intensity = info.indoor ? 3f : 1.5f; lt.color = new Color(1f, 0.95f, 0.86f); lt.shadows = LightShadows.None;
+                if (kp != null) Object.DestroyImmediate(lgo);
                 // 이름판
-                if (font != null)
+                if (font != null && kp == null)
                 {
                     var label = new GameObject("이름판");
                     label.transform.SetParent(root.transform, false);
@@ -540,25 +545,31 @@ namespace Haengin.EditorGame
                     tmp.rectTransform.sizeDelta = new Vector2(Mathf.Max(4f, w - 0.6f), 2f);
                 }
                 // 스폰 자리
-                var spawns = new List<Transform> { Spawn(root.transform, "Spawn", new Vector3(0f, 0f, -d / 2f + Mathf.Min(3.3f, d / 2f + 1.3f)), 0f) };
-                if (key == "Site") { spawns.Add(Spawn(root.transform, "Gate", new Vector3(-w / 2f + 4f, 0f, -d / 2f + 5f), 30f)); spawns.Add(Spawn(root.transform, "Stairs", new Vector3(w / 2f - 3f, 0f, 2f), 0f)); }
-                if (key == "School") spawns.Add(Spawn(root.transform, "Hall", new Vector3(0f, 0f, d / 2f - 4.5f), 180f));
+                var spawns = new List<Transform>();
+                if (kp != null) foreach (var kv in kp.Spawns) spawns.Add(Spawn(root.transform, kv.Key, kv.Value.pos, kv.Value.yaw));
+                if (!spawns.Any(t => t.name == "Spawn")) spawns.Insert(0, Spawn(root.transform, "Spawn", new Vector3(0f, 0f, -d / 2f + Mathf.Min(3.3f, d / 2f + 1.3f)), 0f));
+                if (kp != null) { }
+                else if (key == "Site") { spawns.Add(Spawn(root.transform, "Gate", new Vector3(-w / 2f + 4f, 0f, -d / 2f + 5f), 30f)); spawns.Add(Spawn(root.transform, "Stairs", new Vector3(w / 2f - 3f, 0f, 2f), 0f)); }
+                if (key == "School" && kp == null) spawns.Add(Spawn(root.transform, "Hall", new Vector3(0f, 0f, d / 2f - 4.5f), 180f));
                 place.Spawns = spawns.ToArray();
                 // 시험 컷신 배우(국밥집): 엄마 캡슐 · 가마솥 · 목도리 / 학교: 반 친구 캡슐 몇
                 if (key == "Gukbap")
                 {
                     Actor(root.transform, "엄마", new Vector3(-1.2f, 0f, 1.2f), 200f, 1.62f, actorM);
-                    var pot = GameObject.CreatePrimitive(PrimitiveType.Cylinder); pot.name = "가마솥"; Object.DestroyImmediate(pot.GetComponent<Collider>());
-                    pot.transform.SetParent(root.transform, false); pot.transform.localPosition = new Vector3(-2.6f, 0.45f, 2.4f); pot.transform.localScale = new Vector3(1.1f, 0.45f, 1.1f);
-                    pot.GetComponent<Renderer>().sharedMaterial = propM;
+                    if (kp == null)
+                    {
+                        var pot = GameObject.CreatePrimitive(PrimitiveType.Cylinder); pot.name = "가마솥"; Object.DestroyImmediate(pot.GetComponent<Collider>());
+                        pot.transform.SetParent(root.transform, false); pot.transform.localPosition = new Vector3(-2.6f, 0.45f, 2.4f); pot.transform.localScale = new Vector3(1.1f, 0.45f, 1.1f);
+                        pot.GetComponent<Renderer>().sharedMaterial = propM;
+                    }
                     var scarf = GameObject.CreatePrimitive(PrimitiveType.Cylinder); scarf.name = "목도리"; Object.DestroyImmediate(scarf.GetComponent<Collider>());     // 목에 감는 띠(납작 원기둥)
                     scarf.transform.SetParent(root.transform, false); scarf.transform.localPosition = new Vector3(-1.6f, 1.0f, 2.6f); scarf.transform.localScale = new Vector3(0.22f, 0.04f, 0.2f);
                     scarf.GetComponent<Renderer>().sharedMaterial = Mat("M_St_Scarf", new Color(0.62f, 0.25f, 0.22f));
                 }
-                if (key == "School")
+                if (key == "School" && kp == null)
                     for (int k = 0; k < 6; k++) Actor(root.transform, $"반 친구 {k + 1}", new Vector3(-3f + (k % 3) * 3f, 0f, -1f + (k / 3) * 2.5f), 180f, 1.7f, actorM);
                 // 1화 배역·가구(2026-10-25 — CastSetup: 엄마·하늘·도경민·태오·민재·건우·임찬·반 친구, 교실 칸막이·뒷문 스폰)
-                string dressed = CastSetup.Dress(key, root.transform, info.size, spawns);
+                string dressed = CastSetup.Dress(key, root.transform, new Vector2(w, d), spawns, kp);
                 place.Spawns = spawns.ToArray();
                 if (!string.IsNullOrEmpty(dressed))
                 {

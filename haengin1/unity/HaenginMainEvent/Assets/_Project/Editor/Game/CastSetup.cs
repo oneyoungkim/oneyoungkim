@@ -31,9 +31,12 @@ namespace Haengin.EditorGame
             ("Mom", "엄마"), ("Haneul", "하늘"), ("Dokyungmin", "도경민"), ("Minjae", "민재"), ("Geonwoo", "건우"),
             ("StudentM", "남학생"), ("StudentF", "여학생"), ("Gwak", "곽반장"),
         };
-        static readonly (string file, string state, bool loop)[] Clips =
+        /// 동작(파일 · 상태 · 처음·끝 프레임(−1 = 전부)). 2026-10-25 바른 앉기: Sit = 364 Sit_on_Chair_Arms_Crossed 끝 자세(팔짱, 숙임 3.8°) ·
+        /// SitTalk = 307 Sitting_Answering_Questions(손짓, 숙임 6.4°) · SitFloor = 363 Sit_Cross_Legged_on_Floor 끝 자세(좌식 밥상) — 예전 Sit = 33 Chair_Sit_Idle_M(숙임 34°, 책상에 엎드린 듯)
+        static readonly (string file, string state, int first, int last)[] Clips =
         {
-            ("ChairSit", "Sit", true), ("TalkOpen", "TalkOpen", true), ("TalkHip", "TalkHip", true), ("SitClap", "SitClap", true), ("SitFist", "SitFist", true),
+            ("SitUp", "Sit", 46, 57), ("SitTalk", "SitTalk", -1, -1), ("SitFloor", "SitFloor", 45, 60),
+            ("TalkOpen", "TalkOpen", -1, -1), ("TalkHip", "TalkHip", -1, -1), ("SitClap", "SitClap", -1, -1), ("SitFist", "SitFist", -1, -1),
         };
         public static readonly List<string> Notes = new List<string>();
 
@@ -55,12 +58,11 @@ namespace Haengin.EditorGame
         {
             Notes.Clear();
             // 동작 클립
-            foreach (var (file, state, _) in Clips)
+            foreach (var (file, state, first, last) in Clips)
             {
                 string f = $"{ClipDir}/{file}.fbx";
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(f) == null) { Notes.Add($"동작 없음: {f}"); continue; }
-                string clipName = file == "ChairSit" ? "ChairSit" : state;
-                if (!AssetDatabase.LoadAllAssetsAtPath(f).OfType<AnimationClip>().Any(c => c.name == clipName)) CharSetup.Human(f, clipName, -1, -1, false, null);
+                if (!AssetDatabase.LoadAllAssetsAtPath(f).OfType<AnimationClip>().Any(c => c.name == state)) CharSetup.Human(f, state, first, last, false, null);
             }
             // 모델
             foreach (var (k, n) in Cast)
@@ -82,11 +84,22 @@ namespace Haengin.EditorGame
             }
             var baseIdle = CharSetup.Clip(CharSetup.SiwooFbx, "Idle");
             var idle = St("Idle", baseIdle);
-            foreach (var (file, state, _) in Clips)
+            foreach (var (file, state, _, _) in Clips)
             {
                 string f = $"{ClipDir}/{file}.fbx";
-                var c = AssetDatabase.LoadAllAssetsAtPath(f).OfType<AnimationClip>().FirstOrDefault(x => x.name == (file == "ChairSit" ? "ChairSit" : state));
+                var c = AssetDatabase.LoadAllAssetsAtPath(f).OfType<AnimationClip>().FirstOrDefault(x => x.name == state);
                 if (c != null) St(state, c);
+            }
+            // 태오(정식 모델 = 시우 컨트롤러)도 바른 앉기: Siwoo.controller 에 'Sit' 상태(전이 없음 — CastPose 가 부름)
+            var sc = AssetDatabase.LoadAssetAtPath<AnimatorController>(CharSetup.SiwooCtrl);
+            var sitClip = AssetDatabase.LoadAllAssetsAtPath($"{ClipDir}/SitUp.fbx").OfType<AnimationClip>().FirstOrDefault(x => x.name == "Sit");
+            if (sc != null && sitClip != null)
+            {
+                var ssm = sc.layers[0].stateMachine;
+                var st = ssm.states.Select(x => x.state).FirstOrDefault(x => x.name == "Sit") ?? ssm.AddState("Sit", new Vector3(600f, 400f, 0f));
+                st.motion = sitClip; st.writeDefaultValues = true; st.iKOnFeet = true;
+                EditorUtility.SetDirty(sc);
+                Notes.Add("Siwoo.controller: 'Sit' 상태(바른 앉기)");
             }
             sm.defaultState = idle;
             var cls = ctrl.layers;
@@ -185,7 +198,113 @@ namespace Haengin.EditorGame
         }
 
         /// 무대에 배역·가구. 캡슐 배우가 있으면 같은 이름 모델로 바꿈. 돌려준 값 = 로그용 요약
-        public static string Dress(string key, Transform root, Vector2 size, List<Transform> spawns)
+        /// 무대 꾸밈: 키트 무대(9단계 — StageKitSetup.Placed)면 소켓 자리에 배역만, 아니면 예전 자리 무대 꾸밈(상자 가구)
+        public static string Dress(string key, Transform root, Vector2 size, List<Transform> spawns, StageKitSetup.Placed kp)
+        {
+            if (kp == null) return DressPlaceholder(key, root, size, spawns);
+            if (!Ready) return "배역 프리팹 없음(CastSetup.Build 먼저)";
+            var log = new List<string>();
+            void Replace(string name)
+            {
+                var old = root.Find(name);
+                if (old != null) Object.DestroyImmediate(old.gameObject);
+            }
+            Transform Mark(string name, (Vector3 pos, float yaw, string state) at)
+            {
+                var t = new GameObject(name).transform; t.SetParent(root, false);
+                t.localPosition = at.pos; t.localRotation = Quaternion.Euler(0f, at.yaw, 0f);
+                return t;
+            }
+            if (key == "Gukbap")
+            {
+                Replace("엄마");
+                (Vector3 pos, float yaw, string state) at = kp.Actors.TryGetValue("엄마", out var a0) ? a0 : (new Vector3(-2f, 0f, 2.3f), 120f, "TalkHip");
+                var mom = Put(root, "Mom", "엄마", at.pos, at.yaw, at.state ?? "TalkHip");
+                log.Add(mom != null ? "엄마(주방 가마솥 앞)" : "엄마 없음");
+            }
+            else if (key == "Home")
+            {
+                (Vector3 pos, float yaw, string state) at = kp.Actors.TryGetValue("하늘", out var a0) ? a0 : (new Vector3(0.3f, 0.06f, 1.8f), 180f, "SitFloor");
+                var h = Put(root, "Haneul", "하늘", at.pos, at.yaw, at.state ?? "SitFloor");
+                if (kp.Seats.TryGetValue("Braid", out var br)) Mark("땋기 자리", br);
+                if (kp.Photos.TryGetValue("Dad", out var ph))
+                {
+                    // 아빠 사진: 키트의 액자 틀 앞에 사진 면(Unlit). 배우 이름 '아빠 사진'(대사 카메라 "근접:아빠 사진")
+                    var photo = new GameObject("아빠 사진").transform; photo.SetParent(root, false);
+                    photo.localPosition = ph.pos; photo.localRotation = Quaternion.Euler(0f, ph.yaw, 0f);
+                    var ptex = AssetDatabase.LoadAssetAtPath<Texture2D>($"{Root}/Art/Story/DadPhoto.png");
+                    if (ptex != null)
+                    {
+                        string pm = $"{StorySetup.StageMatDir}/M_DadPhoto.mat";
+                        var mat = AssetDatabase.LoadAssetAtPath<Material>(pm);
+                        if (mat == null) { mat = new Material(Shader.Find("Universal Render Pipeline/Unlit")); AssetDatabase.CreateAsset(mat, pm); }
+                        mat.SetTexture("_BaseMap", ptex); mat.SetColor("_BaseColor", new Color(0.92f, 0.9f, 0.86f));
+                        EditorUtility.SetDirty(mat);
+                        var face = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                        face.name = "사진 면"; Object.DestroyImmediate(face.GetComponent<Collider>());
+                        face.transform.SetParent(photo, false);
+                        face.transform.localPosition = Vector3.zero;
+                        face.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);      // 쿼드 앞면(-Z)을 방 쪽(+Z 로컬 = 소켓 앞)으로
+                        face.transform.localScale = new Vector3(ph.w * 0.86f, ph.h * 0.88f, 1f);
+                        face.GetComponent<Renderer>().sharedMaterial = mat;
+                        face.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    }
+                }
+                log.Add(h != null ? "하늘(방석에 앉음)·아빠 사진" : "하늘 없음");
+            }
+            else if (key == "School")
+            {
+                (Vector3 pos, float yaw, string state) at = kp.Actors.TryGetValue("도경민", out var a0) ? a0 : (new Vector3(-2f, 0f, 11.9f), 180f, "TalkOpen");
+                var teacher = Put(root, "Dokyungmin", "도경민", at.pos, at.yaw, at.state ?? "TalkOpen");
+                if (kp.Seats.TryGetValue("시우", out var me)) Mark("시우 자리", me);
+                Color[] tints = { new Color(0.85f, 0.85f, 0.88f), new Color(0.80f, 0.82f, 0.90f), new Color(0.92f, 0.88f, 0.84f), new Color(0.78f, 0.80f, 0.84f) };
+                // 6 × 5 = 30 자리: 시우 자리(뒷줄 4) + 빈자리 4 → 25 명. 배역: 태오(앞줄 창가) · 민재 · 건우 · 임찬
+                var empty = new HashSet<(int, int)> { (4, 4), (4, 5), (3, 0), (2, 5), (4, 1) };
+                int students = 0;
+                foreach (var (r, c, pos, yaw) in kp.Desks.OrderBy(x => x.row).ThenBy(x => x.col))
+                {
+                    if (empty.Contains((r, c))) continue;
+                    string who = (r, c) == (0, 0) ? "태오" : (r, c) == (1, 1) ? "민재" : (r, c) == (2, 0) ? "건우" : (r, c) == (1, 2) ? "임찬" : null;
+                    string state = (r * 6 + c) % 5 == 2 ? "SitTalk" : "Sit";
+                    if (who == "태오")
+                    {
+                        var tf = AssetDatabase.LoadAssetAtPath<GameObject>(FormalSetup.TaeoPrefab);
+                        if (tf != null)
+                        {
+                            var t = (GameObject)PrefabUtility.InstantiatePrefab(tf, root.gameObject.scene);
+                            t.name = "태오"; t.transform.SetParent(root, false); t.transform.localPosition = pos; t.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+                            t.AddComponent<CastPose>().State = "Sit";
+                        }
+                    }
+                    else if (who == "민재") Put(root, "Minjae", "민재", pos, yaw, "Sit");
+                    else if (who == "건우") Put(root, "Geonwoo", "건우", pos, yaw, "Sit");
+                    else if (who == "임찬")
+                    {
+                        var kk = AssetDatabase.LoadAssetAtPath<GameObject>(ClipSetup.EnemyFbx("Kkanjok"));
+                        if (kk != null)
+                        {
+                            var g = (GameObject)PrefabUtility.InstantiatePrefab(kk, root.gameObject.scene);
+                            g.name = "임찬"; g.transform.SetParent(root, false); g.transform.localPosition = pos; g.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+                            CharSetup.Paint(g, AssetDatabase.LoadAssetAtPath<Material>(ClipSetup.EnemyMat("Kkanjok")), null);
+                            var an = g.GetComponent<Animator>() ?? g.AddComponent<Animator>();
+                            an.avatar = CharSetup.AvatarOf(ClipSetup.EnemyFbx("Kkanjok"));
+                            an.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(CastCtrl);
+                            g.AddComponent<CastPose>().State = "Sit";
+                        }
+                    }
+                    else
+                    {
+                        bool girl = (r + c) % 2 == 1;
+                        Put(root, girl ? "StudentF" : "StudentM", $"반 친구 {++students}", pos, yaw, state, tints[(r * 6 + c) % tints.Length]);
+                    }
+                }
+                log.Add($"교실 키트: 도경민·태오·민재·건우·임찬·반 친구 {students}(책상 30, 시우 자리 비움)");
+                if (teacher == null) log.Add("도경민 없음");
+            }
+            return string.Join(" · ", log);
+        }
+
+        static string DressPlaceholder(string key, Transform root, Vector2 size, List<Transform> spawns)
         {
             if (!Ready) return "배역 프리팹 없음(CastSetup.Build 먼저)";
             var wood = M("M_St_Wood", new Color(0.55f, 0.40f, 0.28f));

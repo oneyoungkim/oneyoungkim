@@ -1,0 +1,31 @@
+{
+ "note": "무대 4곳 소품 참조 그림(흰 배경, 3/4 뷰) → Hunyuan3D v3. 2.75cr/장 + 3D 11cr.",
+ "defaults": {
+  "quality": "high",
+  "resolution": "2k",
+  "aspect": "1:1"
+ },
+ "common": "Reference image for building a 3D game prop. Single isolated object in a three-quarter front view from slightly above (camera about 35 degrees to the left of the front and 20 degrees above), the whole object fully visible and centered with generous margin, on a pure white background, no floor, no cast shadow, nothing else in the image. Stylized hand-painted look for a cel-shaded game: flat matte base colors only (albedo), even shadowless lighting, no specular highlights, no reflections, no ambient occlusion, no gradients, no black outlines. Simple clean readable shapes with crisp edges and correct real-world proportions. Muted low-saturation palette that fits small Korean interiors drawn in a flat-colored anime background style. No text, no letters, no numbers, no logos, no brand marks.",
+ "items": [
+  {
+   "name": "school_desk_chair",
+   "out": "concept/art/env/stages/props/ref/school_desk_chair.png",
+   "prompt": "OBJECT: one Korean high-school student desk with its chair pushed in behind it, as one set: the desk has a flat light birch-wood top 65 cm wide and 45 cm deep at 72 cm height with a thin grey steel tube frame and a small open shelf under the top; the chair has a light birch-wood seat and a curved wooden backrest on a matching grey steel tube frame, seat at 44 cm; the chair stands right behind the desk facing it, slightly pulled out. Light wood #C9A77A, grey steel #8C8F93"
+  },
+  {
+   "name": "plastic_stool_red",
+   "out": "concept/art/env/stages/props/ref/plastic_stool_red.png",
+   "prompt": "OBJECT: one round red plastic stool of the kind used in cheap Korean restaurants: about 45 cm tall, round seat 30 cm across with a small hand hole in the middle, slightly flared legs molded as one piece with ribbed sides. Muted tomato red #B5473C"
+  },
+  {
+   "name": "yangeun_kettle",
+   "out": "concept/art/env/stages/props/ref/yangeun_kettle.png",
+   "prompt": "OBJECT: one old yellow dented aluminium kettle (yangeun jujeonja) used on Korean restaurant tables for water or barley tea: round squat body 18 cm across and 16 cm tall, short straight spout, a lid with a small knob, a curved wire handle on top. Muted yellow-gold aluminium #C9A44A with slightly darker dents"
+  },
+  {
+   "name": "rice_cooker",
+   "out": "concept/art/env/stages/props/ref/rice_cooker.png",
+   "prompt": "OBJECT: one large electric rice cooker of a Korean family kitchen: rounded white-cream body 30 cm across and 28 cm tall, a domed lid with a small grey handle at the front, a simple control panel strip at the front shown only as a plain grey band without any marks, a coiled cord at the back. Cream #E6E0D2, grey #8C8F93"
+  }
+ ]
+}

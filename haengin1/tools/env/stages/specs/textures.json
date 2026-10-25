@@ -1,0 +1,28 @@
+{
+ "note": "무대 텍스처·그림 3장(GPT Image 2.5, 2.75cr) — 나머지 재질은 make_textures.py 가 절차로",
+ "defaults": {
+  "quality": "high",
+  "resolution": "2k"
+ },
+ "common": "Flat-colored anime background painting style for a cel-shaded game: flat matte colors, thin warm-black ink lines, subtle paper grain, muted low-saturation palette. No text, no letters, no numbers, no logos, no brand marks.",
+ "items": [
+  {
+   "name": "T_Products",
+   "out": "concept/art/env/stages/textures/src/T_Products.png",
+   "aspect": "16:9",
+   "prompt": "A straight-on flat front view filling the whole image edge to edge of densely packed convenience store shelf facings in 4 horizontal rows with no shelf edges visible: row 1 colorful snack bags, row 2 cup ramen and instant noodle bowls, row 3 boxed cookies and bread, row 4 soft drink bottles, milk cartons and water bottles. Every package is a simple block of flat color with a plain darker band or circle, absolutely no readable writing. No alcohol, no cigarettes."
+  },
+  {
+   "name": "T_FortressView",
+   "out": "concept/art/env/stages/textures/src/T_FortressView.png",
+   "aspect": "21:9",
+   "prompt": "A wide flat background view as seen through a window on a bright spring morning: the old Seoul fortress wall of large grey granite blocks running along a green hill with pine trees and a few blossoming trees, a low traditional pavilion roof far away on the ridge, pale cream sky. Painted as a flat anime background, no frame, no people."
+  },
+  {
+   "name": "T_Wallpaper",
+   "out": "concept/art/env/stages/textures/src/T_Wallpaper.png",
+   "aspect": "1:1",
+   "prompt": "A seamless tileable pattern of old faded Korean apartment wallpaper filling the whole image: cream background #E7DCC4 with small scattered pale brown and dusty pink floral sprigs in a regular half-drop repeat, very low contrast, flat colors, no shading, no border."
+  }
+ ]
+}

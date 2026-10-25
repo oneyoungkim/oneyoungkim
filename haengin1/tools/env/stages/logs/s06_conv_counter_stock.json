@@ -1,0 +1,33 @@
+[
+  {
+    "created_at": "2026-10-25T05:44:55.082859Z",
+    "display_name": "GPT Image 2.5",
+    "id": "9acceb58-8604-4e84-a753-0491f5ab72c5",
+    "job_type": "gpt_image_2_5",
+    "min_result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261025_054455_9acceb58-8604-4e84-a753-0491f5ab72c5_min.webp",
+    "params": {
+      "aspect_ratio": "16:9",
+      "height": 1520,
+      "medias": [
+        {
+          "data": {
+            "id": "1fc53d80-cdfa-4e48-a606-be2e626853f7",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/1fc53d80-cdfa-4e48-a606-be2e626853f7.png"
+          },
+          "role": "image"
+        }
+      ],
+      "model": "flare",
+      "prompt": "In-game screenshot of a polished stylized 3D action-adventure game set in Hyehwa-dong, Seoul, Korea, inside a small real-life interior. SETTING: the same convenience store seen from behind the counter: the slate grey-blue counter with a cash register, a card reader, a tray of gum and batteries, a small steamed-bun warmer and a hot drinks case; behind the counter a door into a narrow back stockroom with stacked cardboard boxes and plastic crates, a mop bucket and a small desk; by the door a blue plastic basket labeled only with a colored sticker holding expired triangle kimbap and lunch boxes; the store aisles beyond, the glass front with the night street. The player character carries a stack of plastic crates out of the stockroom. Cool fluorescent light, a little warm light from the stockroom bulb. RENDERING STYLE: cel-shaded 3D that reads like a flat-colored anime background painting. Every surface is a flat color area with exactly one crisp shadow tone (a warm grey multiply of the base color, never black or muddy), thin warm-black ink outlines (#1A1417) on silhouettes, frames, furniture and object edges; outlines get thinner with distance. No gradients on walls, no photographic textures, no realistic dirt: materials are suggested only by sparse hand-drawn marks (a few ink dots, short hatching strokes, tile seams, wood grain lines). Muted low-saturation palette, subtle paper grain over the whole image, gentle split toning. Shapes are clean and readable like a real-time 3D game built from modular pieces, yet rich in lived-in props. CAMERA: third-person game camera, lens height about 1.6 m, 35 mm lens, natural eye-level perspective, the whole room readable. The reference image shows the player character (a lanky 17-year-old Korean boy with curly black hair): draw him small, standing in the lower left third and filling about one third of the image height. No HUD, no UI, no watermark. Posters, boards, menus and labels are simple blocks of color or tiny illegible scribbles: absolutely no readable letters, no Korean or English text, no numbers, no logos, no brand marks anywhere. No alcohol, no cigarettes.",
+      "quality": "high",
+      "reference_elements": [],
+      "remove_bg": false,
+      "resolution": "2k",
+      "width": 2688
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261025_054455_9acceb58-8604-4e84-a753-0491f5ab72c5.png",
+    "status": "completed"
+  }
+]
+

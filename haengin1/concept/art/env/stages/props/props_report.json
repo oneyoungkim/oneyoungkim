@@ -1,0 +1,134 @@
+{
+ "plastic_stool_red": {
+  "name": "plastic_stool_red",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5000,
+  "w": 0.369,
+  "d": 0.388,
+  "h": 0.45,
+  "want": [
+   0.32,
+   0.32,
+   0.45
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    57.8,
+    43.4
+   ],
+   "ab_sat": [
+    64.3,
+    49.6
+   ]
+  },
+  "bytes": 1200088
+ },
+ "rice_cooker": {
+  "name": "rice_cooker",
+  "model": "hunyuan",
+  "faces_in": 499734,
+  "tris": 4996,
+  "w": 0.337,
+  "d": 0.322,
+  "h": 0.28,
+  "want": [
+   0.32,
+   0.34,
+   0.28
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    72.8,
+    82.6
+   ],
+   "ab_sat": [
+    8.6,
+    8.4
+   ]
+  },
+  "bytes": 1542412
+ },
+ "school_desk_chair": {
+  "name": "school_desk_chair",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5000,
+  "w": 0.603,
+  "d": 0.795,
+  "h": 0.82,
+  "want": [
+   0.65,
+   0.85,
+   0.82
+  ],
+  "fit": "h",
+  "tex": [
+   [
+    2048,
+    2048
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    56.6,
+    64.4
+   ],
+   "ab_sat": [
+    17.0,
+    14.6
+   ]
+  },
+  "bytes": 4424668
+ },
+ "yangeun_kettle": {
+  "name": "yangeun_kettle",
+  "model": "hunyuan",
+  "faces_in": 500000,
+  "tris": 5000,
+  "w": 0.22,
+  "d": 0.182,
+  "h": 0.218,
+  "want": [
+   0.22,
+   0.18,
+   0.2
+  ],
+  "fit": "w",
+  "tex": [
+   [
+    1024,
+    1024
+   ]
+  ],
+  "yaw": 0.0,
+  "recolor_L_from_to": {
+   "L": [
+    63.4,
+    61.4
+   ],
+   "ab_sat": [
+    44.6,
+    39.9
+   ]
+  },
+  "bytes": 1526176
+ }
+}

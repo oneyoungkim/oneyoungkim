@@ -91,7 +91,9 @@ namespace Haengin.Tests
                 {
                     if (!grounded) fails.Add(s.Id + " 접지 아님");
                     // 2026-10-24 탐색 B(5.5m): 야외는 골목·담장에서 벽 당김(CamClearance)·가림 당김(Deoccluder)이 정상 → 실내 값(2.8~3.0)과 갈리는지만 본다
-                    bool okDist = ld.Indoor ? Mathf.Abs(dist + pull - want) <= 0.1f : dist <= want + 0.1f && dist >= want - 1.6f;
+                    // 9단계 키트 무대(실제 방 — 벽·칸막이가 가까움)는 벽 당김이 정상: 목표보다 길지만 않으면(0.6m 이상)
+                    bool kit = ld.Stage != null && !ld.Stage.Placeholder;
+                    bool okDist = ld.Indoor ? (kit ? dist <= want + 0.1f && dist >= 0.6f : Mathf.Abs(dist + pull - want) <= 0.1f) : dist <= want + 0.1f && dist >= want - 1.6f;
                     if (!okDist) fails.Add($"{s.Id} 카메라 거리 {dist:F2}(+당김 {pull:F2}) ≠ {want:F2}{(ld.Indoor ? "" : "(야외 −1.6m 까지 허용)")}");
                     if (hudOn != wantHud) fails.Add($"{s.Id} HUD {(hudOn ? "보임" : "숨김")} — 데이터는 {(wantHud ? "보임" : "숨김")}");
                     if (!stageOk) fails.Add($"{s.Id} 무대 장면 [{string.Join(",", stages)}] (기대 {(want1 == "" ? "없음" : want1)})");

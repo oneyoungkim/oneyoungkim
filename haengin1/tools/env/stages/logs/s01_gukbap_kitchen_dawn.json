@@ -1,0 +1,33 @@
+[
+  {
+    "created_at": "2026-10-25T05:44:15.939662Z",
+    "display_name": "GPT Image 2.5",
+    "id": "16a28c0a-eb1b-4f11-82f3-719d7b0e2c0b",
+    "job_type": "gpt_image_2_5",
+    "min_result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261025_054415_16a28c0a-eb1b-4f11-82f3-719d7b0e2c0b_min.webp",
+    "params": {
+      "aspect_ratio": "16:9",
+      "height": 1520,
+      "medias": [
+        {
+          "data": {
+            "id": "a029cc05-abd9-4f0b-aff0-3e65c7cd4a25",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/a029cc05-abd9-4f0b-aff0-3e65c7cd4a25.png"
+          },
+          "role": "image"
+        }
+      ],
+      "model": "flare",
+      "prompt": "In-game screenshot of a polished stylized 3D action-adventure game set in Hyehwa-dong, Seoul, Korea, inside a small real-life interior. SETTING: the cramped open kitchen of an old family-run gukbap (Korean pork soup) restaurant near a university back gate, 5:30 am before opening. White square ceramic wall tiles with grey grout up to 1.5 m and a cream painted wall above; a wet grey terrazzo floor with a drain grate; a long stainless-steel work counter and sink along the back wall, a row of stainless ladles and strainers hanging on a rail; two huge black cast-iron cauldrons (gamasot) on low round gas burners pouring thick white steam; stacked stainless bowls, red plastic kimchi containers, a yellow aluminium kettle, a big rice cooker, a stainless pass-through shelf opening to the dining hall; a single small window with frosted glass showing pale blue dawn; one bare fluorescent tube. The player character, in a grey hoodie under an orange delivery vest, holds an insulated delivery box; a short sturdy middle-aged woman in a red apron (his mother) ladles soup and turns toward him. Cool blue dawn from the window against the warm yellow fluorescent light and white steam. RENDERING STYLE: cel-shaded 3D that reads like a flat-colored anime background painting. Every surface is a flat color area with exactly one crisp shadow tone (a warm grey multiply of the base color, never black or muddy), thin warm-black ink outlines (#1A1417) on silhouettes, frames, furniture and object edges; outlines get thinner with distance. No gradients on walls, no photographic textures, no realistic dirt: materials are suggested only by sparse hand-drawn marks (a few ink dots, short hatching strokes, tile seams, wood grain lines). Muted low-saturation palette, subtle paper grain over the whole image, gentle split toning. Shapes are clean and readable like a real-time 3D game built from modular pieces, yet rich in lived-in props. CAMERA: third-person game camera, lens height about 1.6 m, 35 mm lens, natural eye-level perspective, the whole room readable. The reference image shows the player character (a lanky 17-year-old Korean boy with curly black hair): draw him small, standing in the lower left third and filling about one third of the image height. No HUD, no UI, no watermark. Posters, boards, menus and labels are simple blocks of color or tiny illegible scribbles: absolutely no readable letters, no Korean or English text, no numbers, no logos, no brand marks anywhere. No alcohol, no cigarettes.",
+      "quality": "high",
+      "reference_elements": [],
+      "remove_bg": false,
+      "resolution": "2k",
+      "width": 2688
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261025_054415_16a28c0a-eb1b-4f11-82f3-719d7b0e2c0b.png",
+    "status": "completed"
+  }
+]
+

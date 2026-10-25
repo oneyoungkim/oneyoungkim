@@ -1,0 +1,717 @@
+{
+ "generator": "haengin1/tools/env/stages/build_stages.py",
+ "doc": "haengin1/docs/09_M3_버티컬슬라이스_설계.md 9단계",
+ "key": "Home",
+ "title": "시우네",
+ "room": {
+  "w": 6.0,
+  "d": 7.0,
+  "h": 2.4
+ },
+ "axes": "Unity 무대 로컬(X 동, Y 위, Z 북), 원점 = 방 가운데 바닥. 프리팹을 무대 루트 아래 원점·회전 0·배율 1 로",
+ "materials": {
+  "M_AC_White": {
+   "color": "#E6E2D8",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "흰 새시 틀·흰 방범창(docs/10 3-1)·(--prop-geometry 때) 실외기",
+   "texture": "concept/art/env/textures/M_AC_White.png",
+   "tiling": 1.0
+  },
+  "M_Black_Plastic": {
+   "color": "#2A2A2C",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "검은 플라스틱(TV 틀·계산기·스피커)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Cabinet_Green": {
+   "color": "#8FA08A",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "부엌 찬장(연초록)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Ceiling": {
+   "color": "#EDE7D8",
+   "tile": 0.6,
+   "uv": "world",
+   "note": "천장 텍스 판 60cm",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Ceiling.png",
+   "tiling": 1.6667
+  },
+  "M_Concrete": {
+   "color": "#B9B6AF",
+   "tile": 2.4,
+   "uv": "world",
+   "owner": "conv",
+   "note": "옹벽·기초·갓돌·필로티·학교 층 띠·전봇대",
+   "texture": "concept/art/env/textures/M_Concrete.png",
+   "tiling": 0.4167
+  },
+  "M_Cushion": {
+   "color": "#7E8FB0",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "방석",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Fabric_Futon": {
+   "color": "#D7AFA6",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "분홍 꽃 이불·전기장판 덮개",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Fabric_Navy": {
+   "color": "#2C3442",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "교복 상의(옷걸이)·책가방",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Fabric_White": {
+   "color": "#E9E4DA",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "kit",
+   "note": "4차: 흰 빨래",
+   "tiling": 1.0
+  },
+  "M_Fluor_Panel": {
+   "color": "#F2F5EF",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "형광등·천장 등판(발광)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Jangpan": {
+   "color": "#D9B46A",
+   "tile": 1.8,
+   "uv": "world",
+   "note": "노란 장판",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Jangpan.png",
+   "tiling": 0.5556
+  },
+  "M_Metal_Green": {
+   "color": "#4F6B58",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "철대문·현관 철문·외부 철계단·캠퍼스 펜스·난간",
+   "texture": "concept/art/env/textures/M_Metal_Green.png",
+   "tiling": 1.0
+  },
+  "M_Metal_Grey": {
+   "color": "#8C8F93",
+   "tile": 1.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "상가 새시·셔터 박스·간판 틀·빗물관·실외기 받침",
+   "texture": "concept/art/env/textures/M_Metal_Grey.png",
+   "tiling": 1.0
+  },
+  "M_Paper_Blue": {
+   "color": "#8FA6C2",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_Green": {
+   "color": "#9DB592",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_Pink": {
+   "color": "#D9A3A8",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_White": {
+   "color": "#F1ECE0",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "흰 종이·달력",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Paper_Yellow": {
+   "color": "#E3CC7E",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "게시물·메뉴판 칸",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Plaster_Cream": {
+   "color": "#E3D5B8",
+   "tile": 2.0,
+   "uv": "world",
+   "owner": "conv",
+   "note": "크림 뿜칠(단독·담장·학교)·층 띠",
+   "texture": "concept/art/env/textures/M_Plaster_Cream.png",
+   "tiling": 0.5
+  },
+  "M_Plastic_Red": {
+   "color": "#B5473C",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "빨간 플라스틱(김치통 뚜껑·바구니)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Stainless": {
+   "color": "#BFC4C7",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "스테인리스(조리대·식탁·그릇)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Stainless_Dark": {
+   "color": "#7E8488",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "어두운 스테인리스(후드·다리)",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Steel_Frame": {
+   "color": "#7D8287",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "책상 다리·창틀·옷걸이",
+   "owner": "stage",
+   "tiling": 1.0
+  },
+  "M_Terrazzo": {
+   "color": "#A9A8A2",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "젖은 회색 테라조 바닥(주방)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Terrazzo.png",
+   "tiling": 1.0
+  },
+  "M_View_Fortress": {
+   "color": "#B9C4A8",
+   "tile": 1.0,
+   "uv": "unit",
+   "note": "창밖 성곽(T_FortressView, 0~1 UV, Unlit)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_View_Fortress.png",
+   "tiling": 1.0
+  },
+  "M_Wainscot": {
+   "color": "#8E6444",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "나무 굽도리·홀 아랫벽",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Wainscot.png",
+   "tiling": 1.0
+  },
+  "M_Wallpaper": {
+   "color": "#E7DCC4",
+   "tile": 0.8,
+   "uv": "world",
+   "note": "바랜 꽃무늬 벽지",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Wallpaper.png",
+   "tiling": 1.25
+  },
+  "M_Wood_Counter": {
+   "color": "#9A6B45",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "나무 계산대",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Wood_Counter.png",
+   "tiling": 1.0
+  },
+  "M_Wood_Light": {
+   "color": "#C9A77A",
+   "tile": 1.0,
+   "uv": "world",
+   "note": "밝은 나무(교탁·밥상·책상)",
+   "owner": "stage",
+   "texture": "concept/art/env/stages/textures/M_Wood_Light.png",
+   "tiling": 1.0
+  }
+ },
+ "tris": {
+  "Shell": 650,
+  "Fixtures": 134,
+  "Kitchenette": 338,
+  "Living": 1064
+ },
+ "tris_total": 2186,
+ "sockets": [
+  {
+   "name": "Prop_rice_cooker_01",
+   "kind": "prop",
+   "pos": [
+    -2.7,
+    0.88,
+    -0.85
+   ],
+   "fwd": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "info": {
+    "prop": "rice_cooker",
+    "glb": "concept/art/env/stages/props/rice_cooker.glb"
+   }
+  },
+  {
+   "name": "Prop_stand_fan_01",
+   "kind": "prop",
+   "pos": [
+    1.0,
+    0.0,
+    -3.05
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "stand_fan",
+    "glb": "concept/art/env/stages/props/stand_fan.glb"
+   }
+  },
+  {
+   "name": "Sock_Photo_Dad",
+   "kind": "photo",
+   "pos": [
+    -1.75,
+    1.42,
+    3.465
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "w": 0.36,
+    "h": 0.46
+   }
+  },
+  {
+   "name": "Prop_shoe_rack_01",
+   "kind": "prop",
+   "pos": [
+    2.7,
+    -0.15,
+    -2.85
+   ],
+   "fwd": [
+    -1.0,
+    0.0,
+    -0.0
+   ],
+   "info": {
+    "prop": "shoe_rack",
+    "glb": "concept/art/env/stages/props/shoe_rack.glb"
+   }
+  },
+  {
+   "name": "Prop_slippers_pile_01",
+   "kind": "prop",
+   "pos": [
+    2.1,
+    -0.15,
+    -3.0
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "prop": "slippers_pile",
+    "glb": "concept/art/env/stages/props/slippers_pile.glb"
+   }
+  },
+  {
+   "name": "Sock_Light_Ceiling",
+   "kind": "light",
+   "pos": [
+    0.2,
+    2.2,
+    0.8
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "color": "#FFF1DA",
+    "intensity": 1.8,
+    "range": 6.0,
+    "light": "point"
+   }
+  },
+  {
+   "name": "Sock_Light_Window",
+   "kind": "light",
+   "pos": [
+    0.4,
+    1.6,
+    3.1
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "color": "#E9F0F4",
+    "intensity": 1.0,
+    "range": 4.0,
+    "light": "point"
+   }
+  },
+  {
+   "name": "Sock_Spawn_Spawn",
+   "kind": "spawn",
+   "pos": [
+    0.3,
+    0.0,
+    -0.55
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {}
+  },
+  {
+   "name": "Sock_Door_Front",
+   "kind": "door",
+   "pos": [
+    2.3,
+    -0.15,
+    -2.95
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "label": "나가기 — 골목",
+    "to": "Zone1"
+   }
+  },
+  {
+   "name": "Sock_Marker_Sleep",
+   "kind": "marker",
+   "pos": [
+    -2.0,
+    0.0,
+    -1.65
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "func": "sleep",
+    "label": "잠자기"
+   }
+  },
+  {
+   "name": "Sock_Marker_Save",
+   "kind": "marker",
+   "pos": [
+    2.35,
+    0.0,
+    2.45
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "func": "save",
+    "label": "공책(저장)"
+   }
+  },
+  {
+   "name": "Sock_Marker_Ledger",
+   "kind": "marker",
+   "pos": [
+    0.3,
+    0.0,
+    0.53
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "info": {
+    "func": "ledger",
+    "label": "가계부"
+   }
+  },
+  {
+   "name": "Sock_Marker_Haneul",
+   "kind": "marker",
+   "pos": [
+    0.85,
+    0.0,
+    1.7
+   ],
+   "fwd": [
+    -0.707,
+    0.0,
+    -0.707
+   ],
+   "info": {
+    "func": "haneul",
+    "label": "하늘이"
+   }
+  },
+  {
+   "name": "Sock_Cam_s03",
+   "kind": "cam",
+   "pos": [
+    2.5,
+    1.55,
+    -2.45
+   ],
+   "fwd": [
+    -0.57,
+    0.0,
+    0.822
+   ],
+   "info": {
+    "look": [
+     -1.0,
+     0.8,
+     2.6
+    ],
+    "fov": 48.0
+   }
+  },
+  {
+   "name": "Sock_Cam_s04",
+   "kind": "cam",
+   "pos": [
+    2.55,
+    1.5,
+    2.9
+   ],
+   "fwd": [
+    -0.654,
+    0.0,
+    -0.756
+   ],
+   "info": {
+    "look": [
+     -1.6,
+     0.45,
+     -1.9
+    ],
+    "fov": 48.0
+   }
+  },
+  {
+   "name": "Sock_Actor_하늘",
+   "kind": "actor",
+   "pos": [
+    0.3,
+    0.06,
+    1.81
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {
+    "state": "SitFloor"
+   }
+  },
+  {
+   "name": "Sock_Seat_Braid",
+   "kind": "seat",
+   "pos": [
+    0.3,
+    0.0,
+    2.27
+   ],
+   "fwd": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "info": {}
+  }
+ ],
+ "colliders": [
+  [
+   -3.0,
+   3.0,
+   -0.3,
+   0.0,
+   -3.5,
+   3.5,
+   "Ground"
+  ],
+  [
+   -3.0,
+   -0.9,
+   0.0,
+   2.4,
+   3.5,
+   3.62,
+   "Wall"
+  ],
+  [
+   1.7,
+   3.0,
+   0.0,
+   2.4,
+   3.5,
+   3.62,
+   "Wall"
+  ],
+  [
+   -0.9,
+   1.7,
+   0.0,
+   0.9,
+   3.5,
+   3.62,
+   "Wall"
+  ],
+  [
+   -3.0,
+   1.85,
+   0.0,
+   2.4,
+   -3.62,
+   -3.5,
+   "Wall"
+  ],
+  [
+   2.75,
+   3.0,
+   0.0,
+   2.4,
+   -3.62,
+   -3.5,
+   "Wall"
+  ],
+  [
+   -3.12,
+   -3.0,
+   0.0,
+   2.4,
+   -3.5,
+   3.5,
+   "Wall"
+  ],
+  [
+   3.0,
+   3.12,
+   0.0,
+   2.4,
+   -3.5,
+   3.5,
+   "Wall"
+  ],
+  [
+   -3.0,
+   3.0,
+   0.0,
+   2.6,
+   -3.9,
+   -3.62,
+   "Wall"
+  ],
+  [
+   -3.0,
+   -2.4,
+   0.0,
+   0.85,
+   -1.3,
+   1.45,
+   "Default"
+  ],
+  [
+   -2.98,
+   -2.38,
+   0.0,
+   1.42,
+   1.5,
+   2.1,
+   "Default"
+  ],
+  [
+   -0.15,
+   0.75,
+   0.0,
+   0.32,
+   0.7,
+   1.6,
+   "Default"
+  ],
+  [
+   1.85,
+   2.9,
+   0.0,
+   1.25,
+   2.95,
+   3.5,
+   "Default"
+  ],
+  [
+   -0.7,
+   0.6,
+   0.0,
+   0.85,
+   -3.5,
+   -3.18,
+   "Default"
+  ],
+  [
+   2.43,
+   2.93,
+   0.0,
+   1.6,
+   -0.3,
+   1.1,
+   "Default"
+  ]
+ ],
+ "fbx_bytes": 114828
+}
