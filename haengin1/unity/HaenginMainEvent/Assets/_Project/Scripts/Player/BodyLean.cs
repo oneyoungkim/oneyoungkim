@@ -81,6 +81,10 @@ namespace Haengin
             if (Cam != null && Cam.T != null)
             {
                 float d = Cam.Distance;
+                // QA Q20(3차): 실제로 그리는 카메라 기준 — 알바·컷 카메라(2m 밖)가 살아 있는데 바깥 카메라(CamRig)가 계산대 뒤 진열대에 막혀 0.5m 로 접히면
+                // 시우를 숨겨(그림자만) 편의점 계산대 알바 화면에 시우가 통째로 안 보였음
+                var mc = Camera.main;
+                if (mc != null && ct != null) d = Vector3.Distance(mc.transform.position, ct.position);
                 bool h = hidden ? d < Cam.T.showDist : d < Cam.T.hideDist;
                 if (h != hidden)
                 {

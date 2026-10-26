@@ -541,7 +541,8 @@ namespace Haengin.EditorGame
                     label.transform.localPosition = new Vector3(0f, 2.2f, d / 2f - 0.05f);
                     var tmp = label.AddComponent<TextMeshPro>();
                     tmp.font = font; tmp.fontSize = 6f; tmp.alignment = TextAlignmentOptions.Center; tmp.color = UiKit.Ink;
-                    tmp.text = $"{info.title}\n<size=60%>자리 무대 — 9단계에서 키트로</size>";
+                    // QA(2026-10-26): 개발용 '자리 무대 — 9단계에서 키트로' 글이 현장 알바 화면에 그대로 보였음 → 현장 = 공사 안내판, 나머지는 빈 판
+                    tmp.text = key == "Site" ? "안전 제일\n<size=60%>혜화동 다세대 신축 현장</size>" : "";
                     tmp.rectTransform.sizeDelta = new Vector2(Mathf.Max(4f, w - 0.6f), 2f);
                 }
                 // 스폰 자리

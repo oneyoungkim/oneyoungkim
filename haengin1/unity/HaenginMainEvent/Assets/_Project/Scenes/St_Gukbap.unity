@@ -13573,6 +13573,9 @@ MonoBehaviour:
   - {fileID: 912144578}
   SteamFrom: 330
   SteamTo: 1320
+  ViewDawn: {r: 0.7, g: 0.76, b: 0.92, a: 1}
+  ViewDusk: {r: 1, g: 0.74, b: 0.58, a: 1}
+  ViewNight: {r: 0.2, g: 0.23, b: 0.36, a: 1}
 --- !u!1001 &942288384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22627,7 +22630,7 @@ Transform:
   m_GameObject: {fileID: 1782865088}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.4, y: 0.175, z: -4.06}
+  m_LocalPosition: {x: -1.4, y: 0.3, z: -4.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22652,7 +22655,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6.3999996, y: 0.35, z: 0.119999886}
+  m_Size: {x: 6.3999996, y: 0.6, z: 0.119999886}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1793636992
 GameObject:

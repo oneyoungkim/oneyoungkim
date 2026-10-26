@@ -151,13 +151,36 @@ namespace Haengin
             InputMaps.Use(Actions, null);
             GameState.Modal = true;
             CutCamDriver cam = null;
-            if (motor != null) { cam = CutCams.Make(CamPreset.Mid, motor.transform, null); cam.SetLive(true); }
+            if (motor != null) { cam = CutCams.Make(CamPreset.Mid, motor.transform, null); cam.AvoidProps = true; cam.Snap(); cam.SetLive(true); }     // QA Q20: 포스기·모니터가 시우를 가리면 돌려 피함
             float score = 0.6f;
             if (Job != null && !string.IsNullOrEmpty(mode)) yield return Job.Play(mode, BotSkill, Model.S.Seed ^ (Model.Today * 31 + a.Id.Length), v => score = v);
             if (cam != null) CutCams.Release(cam);
+            RoomAfterJob();
             GameState.Modal = false;
             InputMaps.Use(Actions, InputMaps.Explore);
             done(Model.GradeOf(score));
+        }
+
+        /// QA Q20(2차): 좁은 일자리(편의점 계산대 안쪽 — 앞 계산대·뒤 담배 진열대)에서 끝나면 바깥 카메라가 머리 속으로 당겨져 손만 보였음
+        /// → 실내면 카메라 뒤 공간(1.6m)이 나는 자리·방향(지금 방향 · 옆 · 뒤 중)으로 몇 걸음 옮김
+        public void RoomAfterJob()
+        {
+            var motor = Loader != null ? Loader.Motor : null;
+            if (motor == null || !Loader.Indoor) return;
+            const float want = 1.6f;
+            var bestP = motor.Position; float bestYaw = motor.Yaw;
+            float bestC = SceneLoader.BackClear(bestP, Quaternion.Euler(0f, bestYaw, 0f) * Vector3.forward);
+            if (bestC >= want) return;
+            foreach (float off in new[] { 0f, 90f, -90f, 180f })
+            {
+                float y = motor.Yaw + off;
+                var p = SceneLoader.RoomForCamera(motor.Position, ref y, want);
+                float c = SceneLoader.BackClear(p, Quaternion.Euler(0f, y, 0f) * Vector3.forward);
+                if (c > bestC + 0.2f) { bestC = c; bestP = p; bestYaw = y; }
+            }
+            if ((bestP - motor.Position).sqrMagnitude < 1e-4f && Mathf.Approximately(bestYaw, motor.Yaw)) return;
+            motor.Teleport(bestP, bestYaw);
+            Loader.Cam?.SnapBehind();
         }
 
         /// 새벽 배달 = 1화 자전거 코스(국밥집 앞 → 경비실 → 와룡 오르막 → 꼭대기 집 → 내리막). 지각·국물로 등급
@@ -298,8 +321,9 @@ namespace Haengin
             var rows = new List<string> { $"[{GameClock.Month}월] 생활비로 들어간 돈  {Ledger.Won(Model.S.Household)}원", $"말일에 나갈 돈  {Ledger.Won(due)}원" };
             foreach (var f in b.Fixed) rows.Add($"  · {f.Name}  {Ledger.Won(f.Amount)}");
             foreach (var h in Model.S.Holes) if (!h.Paid) rows.Add($"  · 집 구멍 — {h.Name}  {Ledger.Won(h.Amount)}");
-            rows.Add($"지갑 {Ledger.Won(Model.L.Wallet)}원 · {Model.L.EnvelopeText}");
-            if (ui != null) { ui.RevealNow(rows); }
+            rows.Add($"지갑 {Ledger.Won(Model.L.Wallet)}원{(EnvelopeKnown ? " · " + Model.L.EnvelopeText : "")}");
+            // QA Q03: RevealNow 는 줄만 기록하고 표를 띄우지 않아(이야기 '건너뛰기'용) 사람이 공책 옆 가계부를 눌러도 빈 화면이었음 → 사람은 표를 써 나감
+            if (ui != null) { if (BotSkill > 0f) ui.RevealNow(rows); else { GameState.InputLocked = true; yield return ui.Reveal(rows); GameState.InputLocked = false; } }
             float t = 0f; while (t < (BotSkill > 0f ? BotRead : 0.4f)) { t += UiKit.RealDt; yield return null; }
             // 봉투에 넣기(목표 전·지갑 5,000 이상)
             if (Model.F.Has("cake_quest") && Model.L.Envelope < b.EnvelopeGoal && Model.L.Wallet >= b.EnvelopeSunday)
@@ -354,6 +378,9 @@ namespace Haengin
         IEnumerator AfterDrill()
         {
             yield return null;
+            // QA Q16: '첫 S' 같은 드릴 뒤 카드가 드릴 결과 카드 위에 겹쳐 떴음 → 결과 카드를 닫을 때까지 기다림
+            var gm = GymManager.Instance;
+            for (int i = 0; i < 60 * 600 && gm != null && ((gm.Card != null && gm.Card.Visible) || gm.Busy); i++) yield return null;
             var c = Director.Pick("after:drill");
             if (c != null) yield return RunCard(c);
         }
@@ -444,6 +471,7 @@ namespace Haengin
             if (won) { Model.S.StreetWins++; Model.AddRep(b.StreetWinMany); Model.Apply("rumor:3"); Model.AddFatigue(b.StreetFatigue); Hud?.Toast($"시비 승 — 동네 평판 +{b.StreetWinMany}"); }
             else { Model.S.StreetLosses++; Model.AddRep(b.StreetLoss); Model.AddFatigue(b.StreetFatigue); Hud?.Toast("시비 패 — 다음에(평판 −1)"); }
             Trace.Add($"시비 {(won ? "승" : "패")}");
+            Model.AddCount("street.day", Model.Today - Model.Count("street.day"));     // 같은 날엔 다시 안 걸림(Q27)
             Debug.Log($"[World] 시비 {c?.Id}: {(won ? "승" : "패")} · 전투 {w:F1}초 · 평판 {Model.S.TownRep:0.#}");
         }
 
@@ -464,11 +492,13 @@ namespace Haengin
             if (!want) { Encounter.Suppress = true; return; }
             if (watched == null) watched = FindAnyObjectByType<Encounter>(FindObjectsInactive.Include);
             if (watched == null) return;
+            // QA Q27: 이긴 뒤(Cleared)엔 다시 안 걸렸음 → 하루 지나고 주차장 45m 안으로 다시 오면 시비를 다시 걸어 둠(하루 한 번)
+            if (watched.State == Encounter.Phase.Cleared && Model.Count("street.day") != Model.Today) { watched.Rearm(); watchedPhase = watched.State; }
             Encounter.Suppress = false;
             var ph = watched.State;
             if (ph != watchedPhase)
             {
-                if (ph == Encounter.Phase.Cleared && watchedPhase == Encounter.Phase.Result) { Model.S.StreetWins++; Model.AddRep(Def.Balance.StreetWinMany); Hud?.Toast($"시비 승 — 평판 +{Def.Balance.StreetWinMany}"); }
+                if (ph == Encounter.Phase.Cleared && watchedPhase == Encounter.Phase.Result) { Model.S.StreetWins++; Model.AddRep(Def.Balance.StreetWinMany); Hud?.Toast($"시비 승 — 평판 +{Def.Balance.StreetWinMany}"); Model.AddCount("street.day", Model.Today - Model.Count("street.day")); }
                 if (ph == Encounter.Phase.Lost) { Model.S.StreetLosses++; Model.AddRep(Def.Balance.StreetLoss); }
                 watchedPhase = ph;
             }
@@ -497,6 +527,8 @@ namespace Haengin
                 AutoRuns++;
                 Debug.Log($"[World] 주간 계획 맡기기 {round + 1}번째: {rep} · {Model.Status}");
                 yield return PlannerView.Montage(rep.Days, rep.ToString(), BotSkill > 0f);
+                // QA Q19: 2주를 맡기면 그동안 쌓인 알림(레슨 예약 3/24·일요일 봉투…)이 5/1 에 줄줄이 떠 지난 소식처럼 보였음 → 몽타주가 결산이므로 비움
+                Hud?.ClearToasts();
                 yield return HostCommands();
                 if (rep.Stopped != null || rep.DaysRun == 0 || Model.S.DemoState != 0) { StoppedAt(rep); break; }
                 fromDay = Model.Today;

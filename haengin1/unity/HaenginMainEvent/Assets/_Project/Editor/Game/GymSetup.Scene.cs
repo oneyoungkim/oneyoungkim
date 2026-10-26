@@ -264,6 +264,7 @@ namespace Haengin.EditorGame
             var door = new GameObject("Door_Zone1(대학로, 자리만)"); door.transform.SetParent(root.transform, false); door.transform.localPosition = new Vector3(0.9f, 3.42f, 14.9f);
 
             // 장면 설정(안개는 바탕 장면 Zone1 의 DayLight 가 가짐 — 여기서는 건드리지 않음)
+            foreach (var go in scene.GetRootGameObjects()) EnvSetup.LodDedup(go.transform, out _);     // QA Q25: 키트 뿌리 LOD 묶음 ↔ 부품별 LOD 묶음 겹침
             EditorSceneManager.SaveScene(scene, SceneLoader.GymScene);
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             StableIds.RewriteScene(SceneLoader.GymScene, "", new Dictionary<long, long>());

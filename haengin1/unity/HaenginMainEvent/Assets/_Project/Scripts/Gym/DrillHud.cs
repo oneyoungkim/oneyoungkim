@@ -16,6 +16,11 @@ namespace Haengin
         bool built;
         GameObject root;
         TextMeshProUGUI nameText, round, timer, cueWho, cueText, hint, toast, metrics;
+        RectTransform topRt;
+        CombatHud combatHud;
+        public float PlateY => topRt != null ? topRt.anchoredPosition.y : 0f;
+        public string HintText => hint != null && hint.gameObject.activeInHierarchy ? hint.text : "";
+        public void ClearHint() { if (hint != null) hint.text = ""; }
         Image cuePlate, beatPlate, beatLine, toastPlate;
         readonly List<Image> ticks = new List<Image>();
         readonly List<TextMeshProUGUI> tickMarks = new List<TextMeshProUGUI>();
@@ -40,6 +45,7 @@ namespace Haengin
             var f = Fonts != null ? Fonts.B : null; var br = Fonts != null ? Fonts.Br : null;
             var c5 = new Vector2(0.5f, 0.5f);
             var top = UiKit.Panel("이름판", root.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -36f), new Vector2(520f, 64f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.85f));
+            topRt = top.rectTransform;
             nameText = UiKit.Text("이름", top.transform, br, 30f, UiKit.Paper, TextAlignmentOptions.Left); UiKit.Place(nameText.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(18f, 0f), new Vector2(380f, 60f));
             round = UiKit.Text("라운드", top.transform, f, 24f, UiKit.Paper, TextAlignmentOptions.Right); UiKit.Place(round.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-16f, 0f), new Vector2(140f, 60f));
             timer = UiKit.Text("타이머", root.transform, br, 84f, UiKit.Ink, TextAlignmentOptions.Center); UiKit.Place(timer.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(400f, 110f));
@@ -77,7 +83,23 @@ namespace Haengin
             var c = AudioClip.Create("drill_tick", n, 1, sr, false); c.SetData(data, 0); return c;
         }
 
-        public void Show(bool on) { Build(); root.SetActive(on); if (!on) { cueLeft = 0f; toastLeft = 0f; } }
+        public void Show(bool on) { Build(); root.SetActive(on); if (!on) { cueLeft = 0f; toastLeft = 0f; } NoticeOnly(false); }
+
+        /// QA Q34: 드릴을 못 시작할 때(문 닫음·회원만·막힘) 관장 말만 — 예전엔 Show(true) 로 지난 드릴의 이름판·타이머(0:40·R3/3)·안내까지 다시 떠 세계 HUD 와 겹쳤음
+        public void Notice(string who, string line)
+        {
+            Build(); root.SetActive(true); NoticeOnly(true); Say(who, line);
+        }
+        public bool NoticeShown => root != null && root.activeSelf && topRt != null && !topRt.gameObject.activeSelf;
+
+        void NoticeOnly(bool on)
+        {
+            if (topRt != null) topRt.gameObject.SetActive(!on);
+            if (timer != null) timer.gameObject.SetActive(!on);
+            if (hint != null) hint.gameObject.SetActive(!on);
+            if (metrics != null && on) metrics.gameObject.SetActive(false);
+            if (beatPlate != null && on) beatPlate.gameObject.SetActive(false);
+        }
 
         public void Say(string who, string line)
         {
@@ -98,13 +120,19 @@ namespace Haengin
             var d = Runner.Def;
             if (d == null) return;
             nameText.text = $"{d.Id} {d.NameKr}";
+            // QA Q32: 스파링(D11)은 전투 HUD(왼쪽 위 '반시우' 체력·기세)가 같이 떠서 이름판과 겹쳐 'D시우기술 스파링'으로 읽혔음 → 그때는 이름판을 그 아래로
+            if (combatHud == null) combatHud = FindAnyObjectByType<CombatHud>(FindObjectsInactive.Include);
+            if (topRt != null) topRt.anchoredPosition = new Vector2(40f, combatHud != null && combatHud.Visible ? -176f : -36f);
             round.text = Runner.State == DrillRunner.Phase.Rest ? "휴식" : Runner.State == DrillRunner.Phase.Intro ? "준비" : $"R{Runner.Round} / {d.Rounds}";
             double left = Runner.State == DrillRunner.Phase.Round ? Runner.RoundLeft : Runner.State == DrillRunner.Phase.Rest ? d.RestSec : d.RoundSec;
             int li = Mathf.CeilToInt((float)left);
             timer.text = $"{li / 60}:{li % 60:00}";
             if (WallTimer != null) WallTimer.text = timer.text;
             var st = Runner.Station;
-            hint.text = st != null ? st.Hint : "";
+            // QA Q35: 결과 카드의 '× (A) · Enter — 닫기' 와 드릴 안내('박자에 × 점프 — 발끝')가 화면 아래에서 겹쳤음 → 결과·대기 땐 안내를 비움
+            var gmI = GymManager.Instance;
+            bool cardUp = gmI != null && gmI.Card != null && gmI.Card.Visible;
+            hint.text = st != null && !cardUp && Runner.State != DrillRunner.Phase.Result && Runner.State != DrillRunner.Phase.Idle ? st.Hint : "";
             // 박자 띠
             var beat = st != null && Runner.State == DrillRunner.Phase.Round ? st.Beat : null;
             beatPlate.gameObject.SetActive(beat != null);
@@ -138,7 +166,7 @@ namespace Haengin
                 bool ok = judged && combo.Ok[i];
                 icons[i].color = !judged ? (i == combo.Next ? UiKit.Warm : UiKit.Paper) : ok ? new Color(0.72f, 0.82f, 0.68f) : UiKit.Ink;
                 iconTexts[i].color = judged && !ok ? UiKit.Accent : UiKit.Ink;
-                if (judged && !ok) iconTexts[i].text = "✕";
+                if (judged && !ok) iconTexts[i].text = "×";      // QA Q26: 예전 글자(U+2715 굵은 곱셈표)는 붓 글꼴(KR_Brush_SDF)에 없어 네모로 — 붓 글꼴에 있는 U+00D7
             }
             float x0 = -(combo != null ? (combo.Tokens.Count - 1) * 50f : 0f);
             for (int i = 0; i < MaxIcons; i++) icons[i].rectTransform.anchoredPosition = new Vector2(x0 + i * 100f, 150f);

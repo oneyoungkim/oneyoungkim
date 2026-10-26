@@ -69,8 +69,40 @@ namespace Haengin
                 if (steam && !p.isPlaying) p.Play();
                 else if (!steam && p.isPlaying) p.Stop();
             }
+            TintViews(pa, pb, k);
             Applied++;
         }
+
+        // QA Q07: 창밖 그림(M_View_Fortress·M_View_Dawn — Unlit 낮 그림)이 밤에도 한낮처럼 밝던 것 → 시간대 색을 곱함(밤 거리 그림 M_View_Night 은 그대로)
+        Renderer[] views; int[][] viewSlots; MaterialPropertyBlock mpb;
+        static readonly int IdBase = Shader.PropertyToID("_BaseColor");
+        public Color ViewDawn = new Color(0.70f, 0.76f, 0.92f), ViewDusk = new Color(1f, 0.74f, 0.58f), ViewNight = new Color(0.20f, 0.23f, 0.36f);
+        public Color LastViewTint { get; private set; } = Color.white;
+
+        void TintViews(DayPart pa, DayPart pb, float k)
+        {
+            if (views == null)
+            {
+                var rs = new System.Collections.Generic.List<Renderer>(); var sl = new System.Collections.Generic.List<int[]>();
+                foreach (var r in GetComponentsInChildren<Renderer>(true))
+                {
+                    var ms = r.sharedMaterials; var idx = new System.Collections.Generic.List<int>();
+                    for (int i = 0; i < ms.Length; i++) if (ms[i] != null && (ms[i].name.StartsWith("M_View_Fortress") || ms[i].name.StartsWith("M_View_Dawn"))) idx.Add(i);
+                    if (idx.Count > 0) { rs.Add(r); sl.Add(idx.ToArray()); }
+                }
+                views = rs.ToArray(); viewSlots = sl.ToArray(); mpb = new MaterialPropertyBlock();
+            }
+            if (views.Length == 0) return;
+            Color c = Color.Lerp(ViewCol(pa), ViewCol(pb), k);
+            LastViewTint = c;
+            for (int v = 0; v < views.Length; v++)
+            {
+                var r = views[v]; if (r == null) continue;
+                foreach (int i in viewSlots[v]) { r.GetPropertyBlock(mpb, i); mpb.SetColor(IdBase, c); r.SetPropertyBlock(mpb, i); }
+            }
+        }
+
+        Color ViewCol(DayPart p) => p switch { DayPart.Dawn => ViewDawn, DayPart.Dusk => ViewDusk, DayPart.Night => ViewNight, _ => Color.white };
 
         Color Col(DayPart p) => p switch { DayPart.Dawn => DawnColor, DayPart.Dusk => DuskColor, DayPart.Night => NightColor, _ => DayColor };
         float Int(DayPart p) => p switch { DayPart.Night => NightIntensity, DayPart.Dawn => DayIntensity * 0.55f, DayPart.Dusk => DayIntensity * 0.7f, _ => DayIntensity };

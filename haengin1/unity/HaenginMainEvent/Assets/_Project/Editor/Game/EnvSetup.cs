@@ -262,6 +262,7 @@ namespace Haengin.EditorGame
                 lg.fadeMode = LODFadeMode.None;
                 lg.RecalculateBounds();
                 GameObjectUtility.SetStaticEditorFlags(root, StaticEditorFlags.OccludeeStatic);
+                SolidCollider(root, name);      // QA Q30: 세워 둔 트럭은 몸·카메라가 뚫고 지나가지 않게
                 string pp = $"{PrefabDir}/P_{name}.prefab";
                 PrefabUtility.SaveAsPrefabAsset(root, pp);
                 Object.DestroyImmediate(root);
@@ -698,6 +699,7 @@ namespace Haengin.EditorGame
             // 룩데브 ⑤⑥(2026-10-26): 햇빛 얼룩·창틀 화분·빨래집게·전단·낙서·상자 — 합치기 뒤(Detail14_Z1 루트로 켜고 끔)
             Physics.SyncTransforms();
             Notes.Add(Pass8(d, zoneRoot, env, objs, Prefab));
+            Notes.Add(LodDedup(zoneRoot, out _));      // QA Q25: 구역 FBX 뿌리 LOD 묶음 ↔ 건물별 LOD 묶음 겹침
             // 원경 카드
             SkyRig(zoneRoot);
             Physics.SyncTransforms();

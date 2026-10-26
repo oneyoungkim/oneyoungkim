@@ -73,6 +73,10 @@ namespace Haengin.EditorGame
                 CharSetup.Ground(Fbx(k), "Idle", Fbx(k));
                 CharSetup.Toon(CharSetup.Load<GameObject>(Fbx(k)), Mat(k), Tex(k));
             }
+            // QA Q04(2026-10-26): 하늘 양반다리(SitFloor = 363 끝 자세)가 원본 루트 높이 그대로 구워져 엉덩이가 바닥 위 0.83m — 방석 위 공중에 앉아 있었음
+            //   → 하늘 아바타로 재생해 메시 가장 낮은 점(접은 발)을 루트 높이(배우 자리 = 방석 위)로
+            string sitFloor = $"{ClipDir}/SitFloor.fbx";
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(sitFloor) != null && AssetDatabase.LoadAssetAtPath<GameObject>(Fbx("Haneul")) != null) CharSetup.Ground(sitFloor, "SitFloor", Fbx("Haneul"));
             // 컨트롤러
             var ctrl = AssetDatabase.LoadAssetAtPath<AnimatorController>(CastCtrl) ?? AnimatorController.CreateAnimatorControllerAtPath(CastCtrl);
             var sm = ctrl.layers[0].stateMachine;

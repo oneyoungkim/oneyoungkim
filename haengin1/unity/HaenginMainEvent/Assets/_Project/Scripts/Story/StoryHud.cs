@@ -92,6 +92,16 @@ namespace Haengin
             screen.gameObject.SetActive(!string.IsNullOrEmpty(text));
         }
 
+        /// 날짜 판·시각 칩만 끔(오픈월드 HUD 가 다시 뜰 때 — 같은 왼쪽 위에 겹치던 것)
+        public void HideDate()
+        {
+            if (datePlate == null) return;
+            if (datePlate.gameObject.activeSelf) datePlate.gameObject.SetActive(false);
+            if (chip.gameObject.activeSelf && !KeepChip) chip.gameObject.SetActive(false);
+            dateLeft = 0f;
+        }
+
+
         public void HideAll()
         {
             Build();

@@ -74,6 +74,39 @@ namespace Haengin
 
         public void SetLive(bool on) { if (Cam != null) Cam.Priority = on ? CutCams.LivePriority : 0; }
 
+        /// QA Q20(2차): 소품(충돌 없는 포스기·모니터·진열 상자)이 카메라–대상 사이를 가리면 돌려 피함 — 알바 미니게임 카메라만 켬(이야기 컷 구도는 그대로)
+        public bool AvoidProps;
+        readonly List<Bounds> props = new List<Bounds>();
+
+        void GatherProps()
+        {
+            props.Clear();
+            if (!AvoidProps || Subject == null) return;
+            var c = Subject.position;
+            foreach (var r in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
+            {
+                if (!r.enabled || r.transform.IsChildOf(Subject)) continue;
+                var b = r.bounds;
+                if (b.size.x > 3f || b.size.z > 3f || b.size.y > 2.6f) continue;      // 벽·바닥·큰 진열대 판은 빼고(벽은 Clear 가 맡음)
+                if ((b.center - c).sqrMagnitude > 16f || b.max.y < c.y + 0.9f) continue;   // 허리 아래 것(계산대 위 작은 물건)은 가슴 높이 시선을 안 가림
+                b.Expand(-0.04f);
+                props.Add(b);
+            }
+        }
+
+        bool PropBlocked(Vector3 pos, Vector3 look)
+        {
+            var end = Vector3.Lerp(pos, look, 0.85f);
+            var d = end - pos; float len = d.magnitude;
+            if (len < 1e-3f) return false;
+            var ray = new Ray(pos, d / len);
+            foreach (var b in props)
+                if (b.Contains(pos) || (b.IntersectRay(ray, out float t) && t <= len)) return true;
+            return false;
+        }
+
+        static readonly float[] SpinsWide = { 0f, 25f, -25f, 45f, -45f, 70f, -70f, 100f, -100f, 135f, -135f, 180f };
+
         /// 대상 발·키·앞·머리. 사람 모델이면 머리 뼈 기준(앉은 배우는 스킨 경계가 선 자세 그대로라 경계 높이로 재면 머리 위를 찍음 — 2026-10-25 1화)
         static void Measure(Transform t, out Vector3 feet, out float h, out Vector3 fwd, out Vector3 head)
         {
@@ -130,8 +163,21 @@ namespace Haengin
                             var o = Other.position - feet; o.y = 0f;
                             if (o.sqrMagnitude > 0.25f && o.sqrMagnitude < 400f) dir = o.normalized;
                         }
-                        var side = Vector3.Cross(Vector3.up, dir);
                         var chest = Vector3.Lerp(feet, head, 0.78f);
+                        // QA Q20: 앞이 막혔으면(편의점 계산대 알바 — 계산대·진열대에 막혀 카메라가 시우 몸 속으로) 옆·뒤로 빈 쪽을 찾음
+                        if (Other == null && Open(chest, dir) < 1.5f)
+                        {
+                            float bestOpen = Open(chest, dir); var bestDir = dir;
+                            foreach (float a in new[] { 60f, -60f, 120f, -120f, 180f })
+                            {
+                                var d2 = Quaternion.Euler(0f, a, 0f) * fwd;
+                                float o2 = Open(chest, d2);
+                                if (o2 > bestOpen + 0.2f) { bestOpen = o2; bestDir = d2; }
+                                if (o2 >= 2.0f) break;
+                            }
+                            dir = bestDir;
+                        }
+                        var side = Vector3.Cross(Vector3.up, dir);
                         pos = chest + dir * 2.1f + side * 0.3f + Vector3.up * 0.12f;
                         look = chest + Vector3.up * 0.05f;
                         break;
@@ -159,6 +205,13 @@ namespace Haengin
         }
 
         static readonly int Block = Layers.Mask(Layers.Default, Layers.Ground, Layers.Wall, Layers.CamBlock);
+
+        /// 가슴에서 그 방향(조금 위)으로 막히지 않은 거리(최대 2.4m)
+        static float Open(Vector3 from, Vector3 dir)
+        {
+            var d = (dir + Vector3.up * 0.06f).normalized;
+            return Physics.SphereCast(from, 0.12f, d, out var hit, 2.4f, Block, QueryTriggerInteraction.Ignore) ? hit.distance : 2.4f;
+        }
 
         /// 보는 점 → 카메라 자리 사이에 벽이 있으면 그 앞까지 당김(작은 실내 무대에서 와이드·등 뒤가 벽 밖으로 나가지 않게)
         static Vector3 Clear(Vector3 look, Vector3 pos)
@@ -195,6 +248,7 @@ namespace Haengin
         /// 카메라 → 보는 점(85%까지) 선분이 다른 배우 머리(0.2m)·가슴·골반(0.28m)을 지나는가
         public bool Blocked(Vector3 pos, Vector3 look)
         {
+            if (props.Count > 0 && (PropBlocked(pos, look) || Vector3.Distance(pos, look) < 1.0f)) return true;
             var end = Vector3.Lerp(pos, look, 0.85f);
             foreach (var a in others)
             {
@@ -215,12 +269,13 @@ namespace Haengin
         public void Snap()
         {
             Gather();
+            GatherProps();
             Want(out var p0, out var l, out var o);
             bool track = Preset == CamPreset.BackTrack || Preset == CamPreset.SideTrack;
             spin = 0f;
             var p = Clear(o, p0);
-            if (!track && others.Count > 0)
-                foreach (var d in Spins)
+            if (!track && (others.Count > 0 || props.Count > 0))
+                foreach (var d in props.Count > 0 ? SpinsWide : Spins)
                 {
                     var c = Clear(o, Spin(p0, l, d));
                     if (!Blocked(c, l)) { spin = d; p = c; break; }
@@ -229,8 +284,13 @@ namespace Haengin
             if (Cam != null) Cam.PreviousStateIsValid = false;
         }
 
+        bool propsSnapped;
+
         void LateUpdate()
         {
+            // 알바 카메라는 시우를 자리로 옮긴 그 프레임에 만들어져 Snap 이 옮기기 전 머리 뼈·경계로 돌림 각을 골랐음(빌드: 카메라가 몸 속 → 진열대만 보임)
+            // → 첫 LateUpdate(애니메이션이 새 자리로 돈 뒤)에 한 번 더 고름
+            if (AvoidProps && !propsSnapped) { propsSnapped = true; Snap(); return; }
             Want(out var p, out var l, out var o);
             p = Clear(o, Spin(p, l, spin));
             bool track = Preset == CamPreset.BackTrack || Preset == CamPreset.SideTrack;

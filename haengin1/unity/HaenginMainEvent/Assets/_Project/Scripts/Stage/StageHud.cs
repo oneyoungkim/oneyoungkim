@@ -171,7 +171,9 @@ namespace Haengin
             // 상호작용 안내(탐색 중, 창이 없을 때)
             var pc = GetComponentInParent<PlayerCombat>();
             Interactable near = null;
-            if (pc != null && !pc.Active && !GameState.Modal && !GameState.InputLocked) near = Interactable.Nearest(pc.transform.position);
+            // QA Q01: 이야기 장면(컷신·대사·이동 장면)·오픈월드 카드·휴대폰 중엔 안내를 숨김 — 자막 뒤로 '× 국밥집 — 직원가' 가 비치던 것
+            bool storyBusy = StoryRunner.Active || (WorldRunner.On && !WorldRunner.Instance.Free);
+            if (pc != null && !pc.Active && !GameState.Modal && !GameState.InputLocked && !storyBusy) near = Interactable.Nearest(pc.transform.position);
             bool showP = near != null;
             if (prompt.activeSelf != showP) prompt.SetActive(showP);
             if (showP) promptText.text = (CombatHud.PadLast ? "× " : "E ") + near.Prompt;

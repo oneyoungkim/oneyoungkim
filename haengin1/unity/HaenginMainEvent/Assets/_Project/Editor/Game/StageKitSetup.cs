@@ -76,6 +76,9 @@ namespace Haengin.EditorGame
         static Dictionary<string, object> Man(string key) => File.Exists(ManifestPath(key)) ? MiniJson.Parse(File.ReadAllText(ManifestPath(key))) as Dictionary<string, object> : null;
         static Dictionary<string, object> D(object o) => o as Dictionary<string, object>;
         static List<object> L(object o) => o as List<object>;
+        /// QA Q31: 바닥에서 솟은(아래 0.05m 안) 낮은 상자의 윗면이 0.2~0.5m 면 0.6m 로 — 몸(계단 0.3 + 피부)이 못 올라탐. 계단·턱은 0.2m 아래라 그대로
+        public static float LowTop(float bottom, float top) => bottom < 0.05f && top > 0.2f && top < 0.5f ? 0.6f : top;
+
         static float F(object o, float def = 0f) => o is double d ? (float)d : o is long l ? l : o is int i ? i : def;
         static object G(Dictionary<string, object> d, string k) => d != null && d.TryGetValue(k, out var v) ? v : null;
         static string S(Dictionary<string, object> d, string k) => d != null && d.TryGetValue(k, out var v) && v != null ? v.ToString() : null;
@@ -299,10 +302,11 @@ namespace Haengin.EditorGame
                 var c = L(co); if (c == null || c.Count < 7) continue;
                 var go = new GameObject("Col_" + cols); go.transform.SetParent(colRoot, false);
                 var a = new Vector3(F(c[0]), F(c[2]), F(c[4])); var b = new Vector3(F(c[1]), F(c[3]), F(c[5]));
+                if ((c[6] as string) != "Ground") b.y = LowTop(a.y, b.y);     // QA Q31: 계단 높이(0.3)만 한 낮은 상자(창 밑 턱·밥상·받침)는 몸이 올라타 걸어 다녔음
                 go.transform.localPosition = (a + b) * 0.5f;
                 var bc = go.AddComponent<BoxCollider>(); bc.size = new Vector3(Mathf.Abs(b.x - a.x), Mathf.Abs(b.y - a.y), Mathf.Abs(b.z - a.z));
                 string layer = c[6] as string;
-                go.layer = layer == "Ground" ? Layers.Ground : layer == "Wall" ? Layers.Wall : 0;
+                go.layer = layer == "Ground" ? Layers.Ground : layer == "Wall" ? Layers.Wall : layer == "CamBlock" ? Layers.CamBlock : 0;     // CamBlock = 카메라만 막음(QA Q20 포스기 화면)
                 cols++;
             }
             // ③ 소켓 → 소품·불·자리

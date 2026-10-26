@@ -31,8 +31,10 @@ namespace Haengin
             if (root != null) return;
             UiKit.Canvas(gameObject, 62);
             root = UiKit.Panel("땋기", transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-330f, 290f), new Vector2(600f, 470f), UiKit.Paper);   // 오른쪽 — 왼쪽엔 하늘(3D)이 보이게
-            title = UiKit.Text("제목", root.transform, Fonts != null ? Fonts.Br : null, 44f, UiKit.Ink, TextAlignmentOptions.Center);
-            UiKit.Place(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -24f), new Vector2(600f, 60f));
+            // QA Q14: 제목(44, 가운데)이 오른쪽 위 '박자 0/8' 과 붙어 '1번째박자 0/8' 로 읽히던 것 → 제목을 줄이고 왼쪽으로(점수 칸 비움)
+            title = UiKit.Text("제목", root.transform, Fonts != null ? Fonts.Br : null, 36f, UiKit.Ink, TextAlignmentOptions.Left);
+            UiKit.Place(title.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(28f, -24f), new Vector2(360f, 60f));
+            title.enableAutoSizing = true; title.fontSizeMin = 24f; title.fontSizeMax = 36f;
             strandL = UiKit.Panel("왼 가닥", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-90f, 10f), new Vector2(34f, 240f), new Color(0.20f, 0.16f, 0.15f));
             strandC = UiKit.Panel("가운데 가닥", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 10f), new Vector2(34f, 240f), new Color(0.30f, 0.24f, 0.22f));
             strandR = UiKit.Panel("오른 가닥", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(90f, 10f), new Vector2(34f, 240f), new Color(0.24f, 0.19f, 0.18f));

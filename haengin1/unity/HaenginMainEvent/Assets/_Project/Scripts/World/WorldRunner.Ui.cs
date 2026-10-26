@@ -11,16 +11,29 @@ namespace Haengin
     public sealed partial class WorldRunner
     {
         // ───────────────────────── HUD
+        PlayerCombat fightCache;
+        Encounter encCache;
+        public bool HudShown => Hud != null && Hud.Shown;
+
         void UpdateHud()
         {
             if (Hud == null || Model == null) return;
-            bool show = busy.Count == 0 && (Story == null || !Story.InScene) && (Phone == null || !Phone.Shown) && (ChapterView == null || !ChapterView.Shown) && (Job == null || !Job.Shown);
+            // QA Q10: 드릴 중(체육관 DrillRunner·결과 카드·메뉴)에도 세계 HUD(날짜·지갑)가 드릴 이름판 위에 겹쳐 떴음 → 숨김
+            bool drill = GymManager.Instance != null && GymManager.Instance.Busy;
+            // QA Q36: 주차장 시비(길거리 싸움) 중에도 세계 HUD(날짜·지갑·목표)가 전투 HUD('반시우' 체력)와 왼쪽 위에서 겹쳐 '응화 10일'로 읽혔음 → 싸우는 동안 숨김
+            if (fightCache == null) fightCache = FindAnyObjectByType<PlayerCombat>(FindObjectsInactive.Include);
+            if ((encCache == null || !encCache.isActiveAndEnabled) && Time.frameCount % 20 == 0) encCache = FindAnyObjectByType<Encounter>();
+            var es = encCache != null && encCache.isActiveAndEnabled ? encCache.State : Encounter.Phase.Armed;
+            bool fight = (fightCache != null && fightCache.Active) || es == Encounter.Phase.Taunt || es == Encounter.Phase.Fight || es == Encounter.Phase.Finish;   // 시비 말 걸기부터(전투가 켜지는 그 프레임에 한 번 겹치던 것)
+            bool show = busy.Count == 0 && !drill && !fight && (Story == null || !Story.InScene) && (Phone == null || !Phone.Shown) && (ChapterView == null || !ChapterView.Shown) && (Job == null || !Job.Shown);
             Hud.Shown = show;
             if (!show) return;
+            // QA Q21: 이야기 체인이 끝난 뒤 몇 초 남는 이야기 날짜 판('5월 1일(금) 17:50 저녁')이 세계 HUD 날짜 줄과 왼쪽 위에서 겹쳤음
+            if (Story != null && Story.Hud != null) Story.Hud.HideDate();
             string band = Model.Band(Model.Now);
             string date = $"{GameClock.Month}월 {GameClock.Day}일({GameClock.Weekday}) {GameClock.TimeText} · {band}{(Model.RainToday ? " · 비" : "")}";
             int due = Def.Balance.FixedTotal(GameClock.Month);
-            string money = $"지갑 {Ledger.Won(Model.L.Wallet)} · 봉투 {Ledger.Won(Model.L.Envelope)} · 생활비 {Ledger.Won(Model.S.Household)}/{Ledger.Won(due)}";
+            string money = $"지갑 {Ledger.Won(Model.L.Wallet)}{(EnvelopeKnown ? $" · 봉투 {Ledger.Won(Model.L.Envelope)}" : "")} · 생활비 {Ledger.Won(Model.S.Household)}/{Ledger.Won(due)}";
             var ch = Def.Chapter(Model.S.Chapter);
             string goal = "";
             if (ch != null)
@@ -32,6 +45,9 @@ namespace Haengin
             Hud.Set(date, money, Model.G.Fatigue, goal, NextHint(out _, out _));
             HudBuffs();
         }
+
+        /// QA Q18: 하늘 케이크 봉투는 3/6(C1-03) 뒤에 생기는데 첫날부터 '봉투 0'·'하늘 케이크 0 / 40,000' 이 보였음 → 봉투가 생긴 뒤에만
+        public bool EnvelopeKnown => Model != null && (Model.F.Has("cake_quest") || Model.L.Envelope > 0);
 
         /// '다음' 한 줄 + 길잡이 자리(Zone1 지점)
         string NextHint(out string pointId, out string label)
@@ -86,7 +102,13 @@ namespace Haengin
         {
             var day = Story != null ? Story.Light : null;
             if (day == null || Loader == null) return;
-            if (Loader.Place != SceneLoader.Zone1 || (Story.InScene && !Free)) return;
+            if (Story.InScene && !Free) return;
+            if (Loader.Place != SceneLoader.Zone1)
+            {
+                // QA Q06: 실내(창으로 해가 드는 무대 — StageLights.KeepSun)에선 해가 들어올 때 시각 그대로 멈춰 있어 밤 9시에도 창으로 햇살 줄기가 들던 것 → 실내에서도 해만 시계를 따라감
+                var sl = Loader.Stage != null ? Loader.Stage.GetComponentInChildren<StageLights>() : null;
+                if (sl == null || !sl.KeepSun) return;
+            }
             day.ApplyClock(GameClock.Minutes);
         }
 
@@ -119,7 +141,9 @@ namespace Haengin
                     break;
                 case 1:
                     sb.Append($"<b>오늘 {GameClock.DateText}</b>{(Model.RainToday ? " · 비" : "")} — 뜰 수 있는 이야기\n");
-                    foreach (var c in Director.Today()) sb.Append($"◆ {(c.From >= 0 ? GameClock.Hm(c.From) + " " : "")}「{c.Title}」 — {PlaceName(c.Place)}\n");
+                    int nToday = 0;
+                    foreach (var c in Director.Today()) { sb.Append($"◆ {(c.From >= 0 ? GameClock.Hm(c.From) + " " : "")}「{c.Title}」 — {PlaceName(c.Place)}\n"); nToday++; }
+                    if (nToday == 0) sb.Append("  오늘은 없음 — 알바·체육관·동네를 돌아다녀 보자\n");     // QA Q22: 빈 칸 대신 '없음'
                     sb.Append("\n<b>열린 곳</b>\n");
                     foreach (var p in b.Points) sb.Append($"· {p.Label}\n");
                     break;
@@ -139,7 +163,7 @@ namespace Haengin
                 case 3:
                     {
                         int due = b.FixedTotal(GameClock.Month);
-                        sb.Append($"지갑 <b>{Ledger.Won(Model.L.Wallet)}원</b> · {Model.L.EnvelopeText}\n");
+                        sb.Append($"지갑 <b>{Ledger.Won(Model.L.Wallet)}원</b>{(EnvelopeKnown ? " · " + Model.L.EnvelopeText : "")}\n");
                         sb.Append($"{GameClock.Month}월 생활비(엄마 통장) {Ledger.Won(Model.S.Household)} / 말일 {Ledger.Won(due)}\n");
                         foreach (var f in b.Fixed) sb.Append($"  · {f.Name} {Ledger.Won(f.Amount)}\n");
                         foreach (var h in Model.S.Holes) sb.Append($"  · 집 구멍 {h.Name} {Ledger.Won(h.Amount)}{(h.Paid ? "(메움)" : "")}\n");
@@ -290,6 +314,12 @@ namespace Haengin
                 Hud?.Toast($"마을버스 {Def.Balance.BusMinutes}분");
             }
             else if (d.Key == SceneLoader.Gym && d.Target == SceneLoader.Zone1) { GameClock.Advance(Def.Balance.BusMinutes); }
+            else if (d.Target == "School" && (Model.Now >= 19 * 60 || Model.Now < 7 * 60))
+            {
+                // QA Q23: 밤 9시에도 혜성고 방면 표지로 학교(불 켜진 교실)에 들어가졌음 → 밤엔 교문이 닫힘(학교는 07:30~)
+                Hud?.Toast("혜성고 — 교문이 닫혀 있다(07:00~19:00)");
+                return false;
+            }
             else if (d.Target == "Site")
             {
                 if (!Model.F.Has("site_booked")) { Hud?.Toast("공사 현장 — 아직 갈 일이 없다"); return false; }

@@ -66,6 +66,7 @@ namespace Haengin
         public MoveTuning T => Tuning != null ? Tuning : (fallback != null ? fallback : fallback = ScriptableObject.CreateInstance<MoveTuning>());
         public CharacterController Controller => cc;
         public int Respawns { get; private set; }
+        bool killWait;
         /// 지난 이동에서 옆으로 부딪힌 것(전투 벽꽝 검사)
         public Collider LastSideHit => sideHit;
 
@@ -311,12 +312,21 @@ namespace Haengin
                 safeTimer = 0f;
                 if (grounded && groundAngle <= cc.slopeLimit) LastSafePos = pos;
             }
-            if (pos.y < KillY)
+            // QA Q29: 무대(x 2000~·y 0)에 선 채 장소만 Zone1 로 되돌린 순간(SceneLoader.Reset → 이어하기·시험 정리) KillY 가 Zone1 값(5)이라
+            // 매 프레임 '맵 밖으로 떨어짐' 경고 + 리스폰 수가 쌓였음(한 바퀴 830번) → 안전 지점도 그 선 아래면 곧 옮겨질 자리: 그 자리에 붙들어 두기만(경고·리스폰 수 없이)
+            if (pos.y < KillY && LastSafePos.y < KillY)
             {
+                if (!killWait) { killWait = true; Debug.Log($"[PlayerMotor] 안전 지점({LastSafePos.y:F1})도 KillY({KillY:F1}) 아래 — 장소 옮김 대기"); }
+                Teleport(LastSafePos, yaw);
+            }
+            else if (pos.y < KillY)
+            {
+                killWait = false;
                 Respawns++;
                 Debug.LogWarning($"[PlayerMotor] 맵 밖으로 떨어짐(y {pos.y:F1} < {KillY:F1}) → 마지막 안전 지점 {LastSafePos}");
                 Teleport(LastSafePos, yaw);
             }
+            else killWait = false;
         }
 
         void OnControllerColliderHit(ControllerColliderHit hit)

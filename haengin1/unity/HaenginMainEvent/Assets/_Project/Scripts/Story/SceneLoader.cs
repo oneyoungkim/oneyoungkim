@@ -134,6 +134,8 @@ namespace Haengin
                 var sp = Stage.SpawnPoint(spawn);
                 feet = sp.position; y = sp.eulerAngles.y;
                 hasPos = true;
+                // QA Q02: 실내 문 스폰은 문 바로 앞이라 등 뒤 벽에 카메라가 막혀 머리 뒤통수로 화면이 가득 찼음 → 이야기 장면이 아니면 카메라 자리가 날 때까지 방 안쪽으로 몇 걸음
+                if (Stage.Indoor && (!StoryRunner.Active || spawn == "Door")) feet = RoomForCamera(feet, ref y, 0.75f * (Stage.CamRadius > 0f ? Stage.CamRadius : (Indoors() != null ? Indoors().radius : 2.8f)));
             }
             if (Motor != null && hasPos)
             {
@@ -157,6 +159,50 @@ namespace Haengin
             Transitions++;
             GameState.InputLocked = false;
             Busy = false;
+        }
+
+        /// 등 뒤(카메라 쪽) 빈 거리가 want 가 될 때까지 앞으로 0.2m 씩(최대 2.4m) · 몸 방향 ±25°·±50° 도 — 몸이 들어가고 발밑에 땅이 있는 자리만. 더 나은 자리가 없으면 그대로
+        public static Vector3 RoomForCamera(Vector3 feet, float yaw, float want) => RoomForCamera(feet, ref yaw, want);
+
+        public static Vector3 RoomForCamera(Vector3 feet, ref float yaw, float want)
+        {
+            Vector3 best = feet; float bestYaw = yaw;
+            float bestClear = BackClear(feet, Quaternion.Euler(0f, yaw, 0f) * Vector3.forward);
+            if (bestClear >= want) return feet;
+            int body = Layers.Mask(Layers.Default, Layers.Wall);
+            float bestScore = bestClear;
+            var walk = Quaternion.Euler(0f, yaw, 0f) * Vector3.forward;         // 들어가는 쪽은 문 방향
+            var side = Quaternion.Euler(0f, yaw + 90f, 0f) * Vector3.forward;
+            foreach (float lat in new[] { 0f, 0.6f, -0.6f, 1.2f, -1.2f })
+                for (float d = 0f; d <= 2.41f; d += 0.3f)
+                {
+                    var p = feet + walk * d + side * lat;
+                    if (d > 0f || lat != 0f)
+                    {
+                        if (Physics.CheckCapsule(p + Vector3.up * 0.45f, p + Vector3.up * 1.5f, 0.28f, body, QueryTriggerInteraction.Ignore)) continue;
+                        if (Physics.Linecast(feet + Vector3.up * 1.0f, p + Vector3.up * 1.0f, body, QueryTriggerInteraction.Ignore)) continue;     // 벽·계산대 너머 말고 문에서 걸어갈 수 있는 곳
+                        if (!Physics.Raycast(p + Vector3.up * 0.6f, Vector3.down, out var h, 1.5f, Layers.Solid, QueryTriggerInteraction.Ignore)) continue;
+                        if (Mathf.Abs(h.point.y - feet.y) > 0.3f) continue;
+                        p.y = h.point.y;
+                    }
+                    foreach (float dy in new[] { 0f, 25f, -25f, 50f, -50f, 75f, -75f })
+                    {
+                        float y = yaw + dy;
+                        float c = BackClear(p, Quaternion.Euler(0f, y, 0f) * Vector3.forward);
+                        float score = Mathf.Min(c, want) - (d + Mathf.Abs(lat)) * 0.04f - Mathf.Abs(dy) / 600f;
+                        if (score > bestScore + 0.05f) { bestScore = score; bestClear = c; best = p; bestYaw = y; }
+                    }
+                }
+            yaw = bestYaw;
+            return best;
+        }
+
+        /// 머리 높이에서 등 뒤로(조금 위로) 카메라가 설 수 있는 거리
+        public static float BackClear(Vector3 feet, Vector3 fwd)
+        {
+            var o = feet + Vector3.up * 1.5f;
+            var dir = (-fwd + Vector3.up * 0.15f).normalized;
+            return Physics.SphereCast(o, 0.15f, dir, out var hit, 4f, Layers.CameraBlock, QueryTriggerInteraction.Ignore) ? hit.distance : 4f;
         }
 
         /// 이야기를 끝내거나 테스트를 정리할 때: 무대를 내리고 Zone1 루트를 켠다(먹 닦기 없이)

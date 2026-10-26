@@ -19,6 +19,8 @@ namespace Haengin
         public float FatigueFill { get; private set; }
         public readonly List<string> Toasts = new List<string>();
         public int ToastCount { get; private set; }
+        /// 아직 안 뜬 알림 + 떠 있는 알림 수(시험)
+        public int PendingToasts => pending.Count + live.Count;
 
         Image plate, fatBack, fatFill;
         TextMeshProUGUI dateText, moneyText, fatText, goalText, nextText;
@@ -120,7 +122,16 @@ namespace Haengin
             var t = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 22f, UiKit.Paper, TextAlignmentOptions.Left);
             UiKit.Place(t.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(16f, 0f), new Vector2(720f, 36f));
             t.text = line;
-            p.rectTransform.sizeDelta = new Vector2(Mathf.Min(740f, t.preferredWidth + 32f), 40f);
+            // QA Q08: 긴 알림(배달 B — 돈·피로·스탯 …)이 한 줄로 판 밖까지 나가 화면 가운데 '× 들어가기' 안내와 겹치던 것 → 판 안에서 줄 바꿈, 판 높이를 글에 맞춤
+            float w = t.preferredWidth;
+            if (w > 720f)
+            {
+                t.textWrappingMode = TextWrappingModes.Normal;
+                float h = Mathf.Max(36f, t.GetPreferredValues(line, 720f, 0f).y + 4f);
+                t.rectTransform.sizeDelta = new Vector2(720f, h);
+                p.rectTransform.sizeDelta = new Vector2(752f, h + 4f);
+            }
+            else p.rectTransform.sizeDelta = new Vector2(Mathf.Min(752f, w + 32f), 40f);
             live.Add((t, p, 3.2f));
         }
 
@@ -128,6 +139,9 @@ namespace Haengin
         {
             if (plate == null) return;
             if (plate.gameObject.activeSelf != Shown) plate.gameObject.SetActive(Shown);
+            // QA Q15: 카드·미니게임 판·휴대폰이 떠 있는 동안(HUD 숨김)에도 알림 줄이 왼쪽 아래에 떠서 판 글자와 겹치던 것 → 그동안 알림을 멈추고 숨김(끝나면 이어서)
+            if (toastRoot.gameObject.activeSelf != Shown) toastRoot.gameObject.SetActive(Shown);
+            if (!Shown) return;
             float rdt = UiKit.RealDt;
             gap -= rdt;
             if (pending.Count > 0 && live.Count < 4 && gap <= 0f) { Spawn(pending.Dequeue()); gap = 0.25f; }
@@ -141,7 +155,8 @@ namespace Haengin
                 p.color = new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.78f * a);
                 t.alpha = a;
             }
-            for (int i = 0; i < live.Count; i++) live[i].p.rectTransform.anchoredPosition = new Vector2(0f, (live.Count - 1 - i) * 46f);
+            float y = 0f;
+            for (int i = live.Count - 1; i >= 0; i--) { live[i].p.rectTransform.anchoredPosition = new Vector2(0f, y); y += live[i].p.rectTransform.sizeDelta.y + 6f; }
         }
 
         public void ClearToasts()

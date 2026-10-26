@@ -21,6 +21,8 @@ namespace Haengin
         public int Row { get; private set; }
         public int Col { get; private set; }
         public string MontageText => montage != null ? montage.text : "";
+        /// 맡긴 결과 몽타주가 떠 있나(QA 봇)
+        public bool InMontage => montage != null && montage.gameObject.activeSelf;
 
         GameObject root;
         TextMeshProUGUI head, foot, montage;

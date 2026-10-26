@@ -635,6 +635,17 @@ namespace Haengin
                         }
                         break;
                     }
+                case "place":
+                    {
+                        // QA Q11: place:배우:자리 — 그 자리(무대의 이름 붙은 점, 예: '땋기 자리')로 옮기고 그 방향으로. 시우면 몸(PlayerMotor)째 — 1-5 땋기에서 시우가 2m 밖에 서 있던 것
+                        var pp = arg.Split(':');
+                        if (pp.Length < 2) break;
+                        var spot = CutCtx.Actor(pp[1]);
+                        if (spot == null) { Debug.LogWarning($"[M3] place: 자리 '{pp[1]}' 없음"); break; }
+                        if (pp[0] == "시우" && Loader != null && Loader.Motor != null) { Loader.Motor.ClearMoveInput(); Loader.Motor.Teleport(spot.position, spot.eulerAngles.y); }
+                        else { var a = CutCtx.Actor(pp[0]); if (a != null) { a.position = spot.position; a.rotation = Quaternion.Euler(0f, spot.eulerAngles.y, 0f); } }
+                        break;
+                    }
                 case "pose":
                     {
                         // pose:배우:상태(Idle · Sit · TalkOpen · TalkHip · SitClap · SitFist)

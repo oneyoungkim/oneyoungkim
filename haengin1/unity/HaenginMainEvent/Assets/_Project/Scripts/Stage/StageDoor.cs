@@ -25,6 +25,36 @@ namespace Haengin
 
         void Awake() { GetComponent<Interactable>().Used += Use; }
 
+        void Start() { if (Target != SceneLoader.Zone1 && ReturnPos != Vector3.zero) ReturnYaw = ClearYaw(ReturnPos, ReturnYaw, transform.position); }
+
+        /// QA Q05: 나왔을 때 등 뒤(카메라 쪽)가 막혀 있으면 16 방향 중 등 뒤가 가장 트인 쪽으로. 문을 정면으로 보는 쪽은 뺌.
+        /// 혜성고 방면 표지처럼 충돌이 없는 표지가 문이면 레이에 안 걸리므로, 카메라(뒤 4.5m)–머리 선이 문 자리 0.8m 안을 지나면 그 거리에서 막힌 것으로 본다
+        public static float ClearYaw(Vector3 at, float yaw, Vector3 door)
+        {
+            float Clear(float a)
+            {
+                var f = Quaternion.Euler(0f, a, 0f) * Vector3.forward;
+                float c = SceneLoader.BackClear(at, f);
+                var head = new Vector2(at.x, at.z); var back = -new Vector2(f.x, f.z);
+                var dp = new Vector2(door.x, door.z) - head;
+                float along = Vector2.Dot(dp, back);
+                if (along > 0f && along < 4.5f && (dp - back * along).magnitude < 0.8f) c = Mathf.Min(c, along);
+                return c;
+            }
+            float best = yaw, bestC = Clear(yaw);
+            if (bestC >= 3.2f) return yaw;
+            var away = at - door; away.y = 0f;
+            for (int k = 0; k < 16; k++)
+            {
+                float a = k * 22.5f;
+                var f = Quaternion.Euler(0f, a, 0f) * Vector3.forward;
+                if (away.sqrMagnitude > 0.01f && Vector3.Dot(f, away.normalized) < -0.3f) continue;
+                float c = Clear(a) - Mathf.Abs(Mathf.DeltaAngle(a, yaw)) / 360f;
+                if (c > bestC + 0.3f) { bestC = c; best = a; }
+            }
+            return best;
+        }
+
         public void Use()
         {
             var loader = FindAnyObjectByType<SceneLoader>(FindObjectsInactive.Include);

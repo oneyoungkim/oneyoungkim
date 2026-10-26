@@ -67,6 +67,8 @@ namespace Haengin
         void OnAnyHit(HitEvent e)
         {
             if (e.Victim == null || e.Victim.IsPlayer || e.Outcome == HitOutcome.Read) return;
+            // QA Q17: 체육관 드릴(미트·샌드백 Fighter)을 칠 때도 Build() 가 전투 HUD 캔버스를 켜 둔 채 남겨 — 그 뒤로 자유 이동 내내 '반시우' 체력 바가 세계 HUD 와 겹쳐 떴음
+            if (Player == null || !Player.Active) return;
             Build();
             if (!bars.TryGetValue(e.Victim, out var b)) { b = MakeBar(); bars[e.Victim] = b; }
             b.Shown = 2.0f;
@@ -200,7 +202,7 @@ namespace Haengin
             bool on = pc != null && pc.Active && pc.Me != null;
             if (!on)
             {
-                if (Visible) Hide();
+                if (Visible || (canvas != null && canvas.gameObject.activeSelf)) Hide();
                 return;
             }
             Build();

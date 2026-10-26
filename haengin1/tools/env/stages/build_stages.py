@@ -672,6 +672,7 @@ def conv():
     B(st, cx0 + 0.15, cx0 + 0.55, 1.04, 1.16, -2.4, -2.0, "M_Black_Plastic")
     B(st, cx0 + 0.3, cx0 + 0.36, 1.16, 1.42, -2.35, -2.05, "M_Black_Plastic")
     B(st, cx0 + 0.24, cx0 + 0.3, 1.18, 1.42, -2.33, -2.07, "M_TV_Screen")
+    col(cx0 + 0.15, cx0 + 0.55, 1.04, 1.45, -2.4, -2.0, "CamBlock")   # QA Q20: 포스기 화면 — 카메라만 막음(계산대 알바 카메라가 화면 뒤에서 시우를 못 봄)
     B(st, cx0 + 0.1, cx0 + 0.3, 1.04, 1.1, -1.7, -1.55, "M_Black_Plastic")
     B(st, cx0 - 0.02, cx0 + 0.4, 1.04, 1.1, -3.4, -2.9, "M_Products")
     B(st, cx0 + 0.05, cx0 + 0.6, 1.04, 1.45, -1.3, -0.85, "M_Glass_Fridge", mats={"-y": "M_Steel_Frame"})

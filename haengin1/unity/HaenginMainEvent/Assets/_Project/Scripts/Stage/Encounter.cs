@@ -256,6 +256,31 @@ namespace Haengin
             Go(Phase.Armed);
         }
 
+        /// QA Q27 오픈월드 '시비 반복': 시우를 옮기지 않고 적·구경꾼만 처음 자리로 — 다시 걸어 들어오면 시비(이긴 뒤 Cleared 에 머물러 두 번째 시비가 영영 안 걸리던 것)
+        public void Rearm()
+        {
+            if (State == Phase.Taunt || State == Phase.Fight || State == Phase.Finish || State == Phase.Result) return;
+            foreach (var w in walls) w.enabled = false;
+            ring.enabled = false;
+            for (int i = 0; i < Brains.Count && i < Def.Foes.Length; i++)
+            {
+                var feet = Ground(Def.ToWorld(Def.Foes[i].Local));
+                Brains[i].ResetBrain(feet, FaceCenterYaw(feet));
+            }
+            for (int i = 0; i < Crowd.Count && i < Def.Crowd.Length; i++)
+            {
+                var c = Crowd[i];
+                c.gameObject.SetActive(true);
+                var p = Ground(Def.ToWorld(Def.Crowd[i]));
+                c.transform.SetPositionAndRotation(p, Quaternion.Euler(0f, FaceCenterYaw(p), 0f));
+                c.SetHome();
+            }
+            if (Player != null && Player.Me != null && !Player.Active) Player.Me.ResetFighter();
+            rearmOnLeave = false;
+            if (GameUi.RetryHook == (Action)RetryFromMenu) GameUi.RetryHook = null;
+            Go(Phase.Armed);
+        }
+
         /// 일시정지 메뉴 '전투 다시'(이긴 뒤): 처음 자리로 돌린 뒤 주차장 안쪽에서 바로 시비
         public void RetryFromMenu()
         {

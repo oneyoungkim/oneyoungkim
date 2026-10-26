@@ -59,6 +59,7 @@ namespace Haengin
 
         readonly Dictionary<string, Transform> sock = new Dictionary<string, Transform>();
         string camPreset; Transform camAt; CamRig camRig; float roomRadius = 3.0f;
+        Vector3 cageCam; bool cageCamOk;
         /// 사무실 안(14.2~19.5 × 10.2~13): 카메라 2.2(2장)
         public bool InOffice { get; private set; }
         bool simRunning, waitingClose;
@@ -175,7 +176,7 @@ namespace Haengin
             if (Busy || Book == null) return;
             var def = Book.Find(m.DrillId);
             if (def == null) return;
-            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Show(true); Hud.Say("이윤준", gw); StartCoroutine(HideHudLater(2.5f)); return; } }
+            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Notice("이윤준", gw); StartCoroutine(HideHudLater(2.5f)); return; } }
             if (def.Id == "D14") { Menu.ShowBoard(Book, GymState.Current, null); return; }
             Menu.Show(def, GymState.Current, () => StartDrill(def.Id), () => StartCoroutine(SimCo(def)), null);
         }
@@ -186,9 +187,9 @@ namespace Haengin
             if (Busy || Book == null) return false;
             var def = Book.Find(id);
             if (def == null || Actors == null) return false;
-            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Show(true); Hud.Say("이윤준", gw); StartCoroutine(HideHudLater(2.5f)); return false; } }
+            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Notice("이윤준", gw); StartCoroutine(HideHudLater(2.5f)); return false; } }
             string blocked = DrillSim.DirectBlocked(def, GymState.Current, GymSave.Today);
-            if (blocked.Length > 0) { Hud.Show(true); Hud.Say("이윤준", blocked); Debug.Log($"[Gym] 드릴 {id} 막힘: {blocked}"); StartCoroutine(HideHudLater(2.5f)); return false; }
+            if (blocked.Length > 0) { Hud.Notice("이윤준", blocked); Debug.Log($"[Gym] 드릴 {id} 막힘: {blocked}"); StartCoroutine(HideHudLater(2.5f)); return false; }
             var station = DrillStations.Create(def.Id);
             if (station == null) { Debug.Log($"[Gym] 드릴 {id} 자리만(2부)"); return false; }
             Current = def;
@@ -205,13 +206,47 @@ namespace Haengin
             if (def.Id == "D07" || def.Id == "D10") { if (Gojun != null && s != null) { Gojun.gameObject.SetActive(true); Gojun.Place(s.position + s.forward * (def.Id == "D07" ? 2.2f : 1.0f), -s.forward, GymNpc.Routine.Watch); } }
             if (def.Id == "D11") { var cd = Sock("Sock_NPC_Coach_CageDoor"); if (Yunjun != null && cd != null) { Yunjun.gameObject.SetActive(true); Yunjun.Place(cd.position, cd.forward, GymNpc.Routine.Watch); } }
             Runner.Bot = bot;
-            SetCam(def.CamPreset, Actors.Station);
+            // QA Q33: 스파링(D11 'combat')은 바깥 카메라가 케이지 밖 윗테 높이에 걸려 화면 아래 ⅓을 검은 패드 레일이 덮었음 → 케이지 안 높은 카메라
+            SetCam(def.CamPreset == "combat" && def.Id == "D11" ? "cage" : def.CamPreset, Actors.Station);
             if (Mirror != null) Mirror.Set(def.CamPreset == "mirror");
             Hud.Show(true);
             if (Actors.Input != null && Actors.Player != null) { }
             Runner.Begin(def, station, Actors);
+            StartCoroutine(ClearSight());
             return true;
         }
+
+        /// QA Q12: 드릴 카메라와 시우 사이에 선 관원(줄넘기 D01 — 수건 두른 관원이 화면 절반을 가림)은 그 드릴 동안 비켜 줌.
+        /// 카메라가 드릴 자리로 넘어오는(블렌드) 동안·관원이 움직여 끼어드는 것까지 드릴 내내 0.25초마다 봄(드릴 카메라 자리 기준)
+        IEnumerator ClearSight()
+        {
+            yield return null;
+            while (Runner != null && Runner.State != DrillRunner.Phase.Idle)
+            {
+                var cam = DrillCam != null && DrillCam.isActiveAndEnabled ? DrillCam.transform : (Camera.main != null ? Camera.main.transform : null);
+                if (cam != null && Actors != null && Actors.Motor != null)
+                {
+                    foreach (var ct in new[] { cam, Camera.main != null ? Camera.main.transform : cam })
+                    {
+                        Vector3 a = ct.position, b = Actors.Motor.Position + Vector3.up * 1.2f;
+                        var fwd = ct.forward; fwd.y = 0f; fwd.Normalize();
+                        foreach (var n in Members)
+                        {
+                            if (n == null || !n.gameObject.activeSelf) continue;
+                            var p = n.transform.position + Vector3.up * 1.0f;
+                            var ab = b - a; float t = Mathf.Clamp01(Vector3.Dot(p - a, ab) / Mathf.Max(1e-4f, ab.sqrMagnitude));
+                            var q = a + ab * t;
+                            bool between = Vector2.Distance(new Vector2(p.x, p.z), new Vector2(q.x, q.z)) < 0.9f && t > 0.02f && t < 0.98f;
+                            var ap = p - a; ap.y = 0f;
+                            bool nearCam = ap.magnitude < 1.4f || (ap.magnitude < 3.0f && Vector3.Angle(fwd, ap) < 70f);      // 카메라 옆·앞 관원 몸·뻗은 팔이 화면 가장자리를 덮던 것(D04 — 섀도복싱 관원 팔, 카메라에서 2.8m·63°)
+                            if (between || nearCam) { n.gameObject.SetActive(false); SightHidden++; }
+                        }
+                    }
+                }
+                for (int f = 0; f < 15; f++) yield return null;
+            }
+        }
+        public int SightHidden { get; private set; }
 
         IEnumerator HideHudLater(float s) { yield return new WaitForSecondsRealtime(s); if (Runner.State == DrillRunner.Phase.Idle) Hud.Show(false); }
 
@@ -224,6 +259,7 @@ namespace Haengin
             if (r.Concussion) line = "오늘은 끝. 내일까지 머리 쓰는 건 없다.";
             LastCoachLine = line;
             Card.Show(r, w, line, unlock);
+            Hud.ClearHint();      // QA Q35: 결과 카드가 뜬 그 프레임에도 드릴 안내가 '닫기' 안내와 겹치지 않게
             if (r.Grade == Grade.S && !string.IsNullOrEmpty(r.Def.CueGojun) && Gojun != null && Gojun.gameObject.activeSelf) Hud.Say("고준", r.Def.CueGojun);
             waitingClose = true;
             foreach (var m in Markers) if (m != null) m.Refresh();
@@ -275,7 +311,7 @@ namespace Haengin
         {
             if (Busy) yield break;
             string why = DrillSim.Blocked(def, GymState.Current, GymSave.Today);
-            if (why.Length > 0) { Hud.Show(true); Hud.Say("이윤준", why); yield return new WaitForSecondsRealtime(2f); Hud.Show(false); yield break; }
+            if (why.Length > 0) { Hud.Notice("이윤준", why); yield return new WaitForSecondsRealtime(2f); Hud.Show(false); yield break; }
             simRunning = true; Current = def;
             var s = Sock(def.Socket) ?? transform;
             if (Actors.Motor != null) { Actors.Motor.ClearMoveInput(); Actors.Motor.Teleport(s.position, HitResolver.Yaw(s.forward)); }
@@ -326,7 +362,7 @@ namespace Haengin
         {
             if (DrillCam == null) return;
             if (string.IsNullOrEmpty(preset) || at == null || preset == "combat") { DrillCam.Priority = 0; camPreset = null; camAt = null; return; }
-            camPreset = preset; camAt = at;
+            camPreset = preset; camAt = at; cageCamOk = false;
             Pose(preset, at, 0f);
             DrillCam.Lens.FieldOfView = preset == "mitt" ? 52f : 50f;
             DrillCam.Priority = 30;
@@ -344,6 +380,24 @@ namespace Haengin
                 case "side": pos = p + r * 3.0f + f * 0.8f + Vector3.up * 1.55f; look = p + f * 0.5f + Vector3.up * 1.05f; break;
                 case "shoulder": pos = p - f * 2.2f + r * 0.7f + Vector3.up * 1.75f; look = p + f * 1.1f + Vector3.up * 1.15f; break;
                 case "low": pos = p + r * 3.0f + f * 0.4f + Vector3.up * 0.9f; look = p + f * 0.4f + Vector3.up * 0.55f; break;
+                case "cage":
+                    {
+                        // 케이지(tools/env/gym/build_gym.py CAGE_C (14.5, 6.0) · 외접 반지름 3.1 · 바닥 0.25) 안, 두 사람 옆에서 2.4m 높이로 내려다봄
+                        var cc = transform.TransformPoint(new Vector3(14.5f, 0.25f, 6.0f));
+                        var me = Actors != null && Actors.Motor != null ? Actors.Motor.Position : p;
+                        var foe = Runner != null && Runner.Station is SparStation ss && ss.Foe != null ? ss.Foe.transform.position : me + f * 1.6f;
+                        var mid = (me + foe) * 0.5f;
+                        var axis = foe - me; axis.y = 0f; if (axis.sqrMagnitude < 0.04f) axis = f;
+                        var side = Vector3.Cross(Vector3.up, axis.normalized);
+                        var toC = cc - mid; toC.y = 0f;
+                        if (Vector3.Dot(side, toC) < 0f) side = -side;          // 케이지 가운데 쪽 옆(공간이 넓은 쪽)
+                        var want = mid + side * 2.6f; want.y = cc.y + 2.3f;
+                        var h = want - cc; h.y = 0f;
+                        if (h.magnitude > 2.45f) want = cc + h.normalized * 2.45f + Vector3.up * 2.3f;   // 철망 안(내접 반지름 2.86)
+                        cageCam = cageCamOk ? Vector3.Lerp(cageCam, want, 1f - Mathf.Exp(-2.5f * Time.unscaledDeltaTime)) : want; cageCamOk = true;
+                        pos = cageCam; look = mid + Vector3.up * 1.0f;
+                        break;
+                    }
                 default: pos = p + f * 2.8f + r * 1.2f + Vector3.up * 1.55f; look = p + Vector3.up * 1.0f; break;
             }
             // 벽 안으로 들어가지 않게(실내 20×13): 방 안쪽으로 당김

@@ -74,6 +74,9 @@ namespace Haengin
             questText = UiKit.Text("글", q.transform, Fonts != null ? Fonts.H : null, 30f, UiKit.Ink, TextAlignmentOptions.TopLeft, wrap: true);
             UiKit.Stretch(questText.rectTransform, 26f);
             questText.lineSpacing = 4f;
+            // QA Q13: 하늘 메모(생일 요구사항 9줄)가 종이(548×418)보다 커서 화면 오른쪽 밖까지 넘치던 것 → 종이에 맞춰 글자 크기를 줄임(최소 18)
+            questText.enableAutoSizing = true; questText.fontSizeMin = 18f; questText.fontSizeMax = 30f;
+            questText.overflowMode = TextOverflowModes.Truncate;
             quest.SetActive(false);
         }
 

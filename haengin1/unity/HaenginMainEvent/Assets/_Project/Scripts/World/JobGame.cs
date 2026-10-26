@@ -108,6 +108,10 @@ namespace Haengin
             Mode = mode; bot = skill; seed = seedKey;
             Prompts = 0; Hits = 0;
             float total = 0f; int count = 0;
+            // QA Q09: 판을 켜는 첫 프레임에 지난 판의 '끝 — 38점'·제목이 그대로 보이던 것 — 켜기 전에 비움
+            title.text = ""; help.text = ""; prompt.text = ""; scoreText.text = "";
+            foreach (var sl in slots) sl.text = "";
+            if (timer != null) Timer(1f);
             root.SetActive(true);
             lastDir = 0; pSub = submit != null && submit.IsPressed();
             barBack.gameObject.SetActive(false);
