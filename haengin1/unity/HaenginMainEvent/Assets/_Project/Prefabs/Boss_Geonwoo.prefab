@@ -1,0 +1,122 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8841847295461820838
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_Name
+      value: Boss_Geonwoo
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: d675e9b8dfcd45a47898c24af915035d, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8111781155169087978, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 2068bc0cb5f6cd948818036c8d8533e3, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6653386436591134537}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6197502678425664615}
+  m_SourcePrefab: {fileID: 100100000, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+--- !u!1 &8535979997356963063 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3f132ff8d4e0b5041a054c03624d9c83, type: 3}
+  m_PrefabInstance: {fileID: 8841847295461820838}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6653386436591134537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8535979997356963063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb9c8bb00d125a429a9412998e90e4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.FighterAnim
+  Me: {fileID: 0}
+  Player: {fileID: 0}
+  Brain: {fileID: 0}
+  Clips: {fileID: 11400000, guid: 8dfb5256fa0139d41811e22cad71030a, type: 2}
+  Fade: 0.05
+  ArmSpread: 12
+  MaxRate: 1.6
+--- !u!114 &6197502678425664615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8535979997356963063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba6828c194e8a2a41864b5eccffd2859, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HandShape
+  Me: {fileID: 0}
+  Player: {fileID: 0}
+  Brain: {fileID: 0}
+  Blend: 0.08
+  ForceFist: -1

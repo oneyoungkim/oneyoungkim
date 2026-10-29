@@ -529,7 +529,10 @@ namespace Haengin
         }
 
         /// 지금 자면 낮잠(2시간)인가 — 플레이어가 이불에서 잘 때만(밤 한계 강제 잠·주간 계획의 날 넘기기는 늘 밤잠)
-        public bool NapOnly => AwakeMinutes >= 0 && AwakeMinutes < NapAfterMinutes;
+        /// 2026-10-29 대표 결정: 06:00~18:00 에 잠들면 무조건 낮잠 2시간, 18:00 뒤에 잠들어야 다음 날 아침까지.
+        /// (밤 시간대라도 깬 지 6시간 안이면 낮잠 — 05:30 에 깨자마자 다시 누우면 24시간 자던 것 막이)
+        public const int NapFrom = 6 * 60, NapUntil = 18 * 60;
+        public bool NapOnly => (Now >= NapFrom && Now < NapUntil) || (AwakeMinutes >= 0 && AwakeMinutes < NapAfterMinutes);
 
         /// 낮잠 2시간: 시계 +2시간 · 피로 −(시간당 잠 회복 × 2) · 날짜·말일·봉투·기상 기록은 그대로
         public SleepResult Nap()

@@ -59,6 +59,7 @@ namespace Haengin
         public void Show(SceneDef s, EpisodeDef ep, bool move)
         {
             Build();
+            Layout(false);
             Mode = move ? "조작" : "자리";
             string epTxt = ep != null ? $"{ep.No}화 「{ep.Title}」" : $"{s.Ep}화";
             head.text = $"{epTxt}   ·   {s.DateLabel} {s.TimeLabel}";
@@ -75,10 +76,11 @@ namespace Haengin
         }
 
         /// 오픈월드 이벤트 카드(docs/13 5장 — 원고 없는 카드·사연·문자·요약): 머리 줄·제목·꼬리표·흐름·핵심 대사·발
-        public void ShowCard(string headLine, string titleLine, string tagLine, bool accent, string[] lines, string[] quoteLines, string footLine)
+        public void ShowCard(string headLine, string titleLine, string tagLine, bool accent, string[] lines, string[] quoteLines, string footLine, bool side = false)
         {
             Build();
             Mode = "카드";
+            Layout(side);
             if (tagLine != null && tagLine.Contains("스토리보드")) StoryboardShows++;
             head.text = headLine ?? "";
             title.text = titleLine ?? "";
@@ -95,6 +97,7 @@ namespace Haengin
         public void ShowIntro(string t, string[] lines, string note)
         {
             Build();
+            Layout(false);
             Mode = "소개";
             head.text = "행인1의 메인이벤트   ·   시우 루트 1부";
             title.text = t;
@@ -103,6 +106,34 @@ namespace Haengin
             quotes.text = string.IsNullOrEmpty(note) ? "" : $"<size=26><color=#8C8784>{note}</color></size>";
             foot.text = "× · Enter · 마우스 왼쪽   시작";
             Open();
+        }
+
+        /// 2026-10-29: 레슨 카드가 화면 가운데를 덮어 코치가 안 보이던 것 → 오른쪽 세로 판(어둡게 거의 없음). 그 밖 카드는 가운데 그대로
+        public bool Side { get; private set; }
+        public RectTransform CardRect => card != null ? card.rectTransform : null;
+        public const float SideW = 640f, SideH = 860f;
+        void Layout(bool side)
+        {
+            Side = side;
+            var c = card.rectTransform;
+            dim.color = new Color(0f, 0f, 0f, side ? 0.08f : 0.55f);
+            if (side) { c.anchorMin = c.anchorMax = new Vector2(1f, 0.5f); c.pivot = new Vector2(1f, 0.5f); c.anchoredPosition = new Vector2(-36f, 20f); c.sizeDelta = new Vector2(SideW, SideH); }
+            else { c.anchorMin = c.anchorMax = new Vector2(0.5f, 0.5f); c.pivot = new Vector2(0.5f, 0.5f); c.anchoredPosition = new Vector2(0f, 10f); c.sizeDelta = new Vector2(1480f, 800f); }
+            float w = side ? SideW - 90f : 1340f;
+            head.rectTransform.sizeDelta = new Vector2(side ? SideW - 120f : 1000f, 40f);
+            head.fontSize = side ? 22f : 26f;
+            title.rectTransform.sizeDelta = new Vector2(w, side ? 120f : 80f);
+            title.fontSize = side ? 42f : 58f;
+            body.rectTransform.anchoredPosition = new Vector2(side ? 45f : 70f, side ? -230f : -200f);
+            body.rectTransform.sizeDelta = new Vector2(w, side ? 330f : 330f);
+            body.fontSize = side ? 25f : 29f;
+            title.rectTransform.anchoredPosition = new Vector2(side ? 45f : 70f, -92f);
+            head.rectTransform.anchoredPosition = new Vector2(side ? 45f : 70f, -40f);
+            quotes.rectTransform.anchoredPosition = new Vector2(side ? 55f : 90f, side ? -580f : -540f);
+            quotes.rectTransform.sizeDelta = new Vector2(side ? w - 10f : 1320f, side ? 220f : 180f);
+            quotes.fontSize = side ? 30f : 36f;
+            foot.rectTransform.sizeDelta = new Vector2(side ? SideW - 80f : 900f, 36f);
+            tag.rectTransform.sizeDelta = new Vector2(side ? 200f : 330f, 50f);
         }
 
         static string Quotes(string[] q)

@@ -26,7 +26,8 @@ Shader "Haengin/LightPool"
             CBUFFER_START(UnityPerMaterial)
             float _Strength, _Bands, _Cover;
             CBUFFER_END
-            float _HaenginNight, _HaenginSignsOn, _HaenginLightOn, _HaenginPoolBoost;   // 룩데브 ⑤(docs/14 4-5): 밤 웅덩이 세기 × 프리셋 PoolBoost(밤 2)
+            float _HaenginNight, _HaenginSignsOn, _HaenginLightOn, _HaenginPoolBoost;
+            static const float PoolK = 0.35;   // 2026-10-29: 밤 근경 밝기 폭을 프레임(42.9) 근처로   // 룩데브 ⑤(docs/14 4-5): 밤 웅덩이 세기 × 프리셋 PoolBoost(밤 2)
             struct A { float4 pos : POSITION; float2 uv : TEXCOORD0; float2 uv1 : TEXCOORD1; half4 col : COLOR; };
             struct V { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; float2 k : TEXCOORD1; half4 col : TEXCOORD2; float fog : TEXCOORD3; float3 wp : TEXCOORD4; };
             float Hash(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
@@ -59,7 +60,8 @@ Shader "Haengin/LightPool"
                 float stepped = floor(f * 4.0 + 0.5) / 4.0;
                 f = lerp(f, stepped, _Bands * smoothstep(0.05, 0.25, f));
                 // 룩데브 ⑤: 가로등 원 웅덩이만 세게, 가게 앞 사각은 줄임(넓게 깔려 길 전체가 밝은 베이지 — 2026-10-26 진단: 웅덩이를 끄면 길이 어두워짐)
-                float boost = _HaenginLightOn > 0.5 ? (i.k.x < 0.5 ? (_HaenginPoolBoost > 0.01 ? _HaenginPoolBoost : 1.0) : 1.0) : 1.0;   // QA 2차 ②: 가게 앞 판이 좁아져 ×0.7 줄임 뺌
+                // QA 2차 ②: 판을 지름 3~4m 로 줄였더니 밤 근경 밝기 폭 70.6(프레임 42.9) → 2026-10-29 웅덩이 전체 ×PoolK
+                float boost = (_HaenginLightOn > 0.5 ? (i.k.x < 0.5 ? (_HaenginPoolBoost > 0.01 ? _HaenginPoolBoost : 1.0) : 1.0) : 1.0) * PoolK;
                 float k = saturate(i.col.a * f * gate * _Strength * boost);
                 half3 c = i.col.rgb * k;
                 half fogK = 1 - ComputeFogIntensity(i.fog);

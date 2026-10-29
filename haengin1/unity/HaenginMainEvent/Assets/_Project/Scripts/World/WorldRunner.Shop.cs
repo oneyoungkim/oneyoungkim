@@ -146,11 +146,12 @@ namespace Haengin
             gm.ApplyPart(gm.Part);
         }
 
+        /// 레슨 카드 = 오른쪽 세로 판(2026-10-29 — 가운데 큰 카드가 코치를 가림)
         IEnumerator Board(string head, string title, string tag, bool accent, string[] lines, string[] quotes)
         {
             var board = Story != null ? Story.Board : null;
             if (board == null) yield break;
-            board.ShowCard(head, title, tag, accent, lines, quotes, "× · Enter · 마우스 왼쪽   다음");
+            board.ShowCard(head, title, tag, accent, lines, quotes, "× · Enter · 마우스 왼쪽   다음", tag == "레슨");
             yield return WaitPress();
             board.Hide();
         }

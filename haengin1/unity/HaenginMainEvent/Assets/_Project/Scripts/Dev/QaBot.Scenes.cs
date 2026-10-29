@@ -158,6 +158,7 @@ namespace Haengin
             {
                 Unlocks(m); m.G.Fatigue = 0;
                 if (card == "C1-19") { int need = 40000 - m.L.Envelope; if (need > 0) m.L.Apply("envelope", $"+{need}"); }
+                if (card == "C1-20" || card == "C1-21") new EventDirector(m).Done(W.Def.Card(card == "C1-20" ? "C1-21" : "C1-20"), 1);     // 2026-10-29: C1-20 녹화 중 17:43 C1-21 이 따로 걸려 보스전이 겹치지 않게
                 foreach (var f in new[] { "cake_quest", "site_booked", "consent", "envelope_rule" }) m.F.Raise(f);
             }, true, pos, yaw);
             // 읽기 속도: 대사 = 글자 수 ÷ 8 + 0.8초 · 스토리보드·문자 카드 2.6초 · 선택지 첫 보기 · 시비는 싸움 봇
@@ -167,7 +168,7 @@ namespace Haengin
             var watch = StartCoroutine(SceneShots(card));
             float t0 = T; int f0 = 0;
             string name = "장면_" + card;
-            yield return RecWhile(name, 900f, W.RunCard(c, true));
+            yield return RecWhile(name, 900f, W.RunCardBusy(c, true));
             f0 = recFrame;
             StopCoroutine(watch);
             recW = recH = 0;

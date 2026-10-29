@@ -28,6 +28,10 @@ MonoBehaviour:
   - Def: {fileID: 11400000, guid: e4d36c6ed28e6154fa97e90eb7554355, type: 2}
     Model: {fileID: 265482475415469578, guid: 7acea3c567a9a2d4898d127200c3391b, type: 3}
     Local: {x: -5.9, y: -1.2}
+  StoryModels:
+  - {fileID: 0}
+  - {fileID: 6727133079204693659, guid: 19e940f19b4d6c2408ed4b0632299749, type: 3}
+  - {fileID: 8535979997356963063, guid: d8fcb0cb3d95efa4a98497bcd3ae340b, type: 3}
   Crowd:
   - {x: -2.3, y: 7}
   - {x: 2.4, y: 7.2}

@@ -378,6 +378,19 @@ namespace Haengin
                 var tl = Cuts != null ? Cuts.Get(s.Id) : null;
                 string dk = string.IsNullOrEmpty(s.Dlg) ? s.Id : s.Dlg;
                 bool hasTalk = Dialogue != null && Dialogue.Has(dk);
+                // 2026-10-29 대표 결정: 보스전(6-3·7-1) = 오픈월드에서 M2 주차장 인카운터로 실제 전투(전 대사 → 싸움 → 뒤 대사 '<장면>b'). 빠른 봇·예전 장면 보기는 대사만
+                if (s.Kind == SceneKind.Fight && WorldMode && Bot != BotMode.Fast && !skipScene && ParkingEncounter() != null)
+                {
+                    if (hasTalk && Talk != null) yield return Talk.Play(Dialogue.Get(dk));
+                    yield return BossFight(s);
+                    InputMaps.Use(Actions, InputMaps.Talk);
+                    GameUi.HintOverride = TalkHint;
+                    if (Dialogue != null && Dialogue.Has(dk + "b") && Talk != null) yield return Talk.Play(Dialogue.Get(dk + "b"));
+                    if (!chainNoEffects) ApplyAll(s.Effects);
+                    Debug.Log($"[M3] 장면 {s.Id} 끝(보스전 {(BossLast ? "승" : "—")} · 패 {BossLosses})");
+                    End(s);
+                    yield break;
+                }
                 // 대사 안에 "cut:<장면>" 이벤트가 있으면 컷신은 그 자리에서(1-6 학예회 회상 — 출석 대사 사이)
                 bool cutInTalk = hasTalk && Dialogue.Get(dk).Any(x => x.Mode == DlgMode.Event && x.Text.Trim() == "cut:" + s.Id);
                 if (tl != null && Cut != null && !cutInTalk) yield return Cut.Play(tl, WantSkip);
@@ -410,6 +423,81 @@ namespace Haengin
         }
 
         const string TalkHint = "다음 × · Enter · 마우스 왼쪽   건너뛰기 길게 누르기   일시정지 Esc·Options";
+
+        // ───────────────────────── 보스전(2026-10-29): 6-3 = 민재(석 달) 1:1(나머지 둘은 지켜봄) · 7-1 = 1:3. 지면 패배 화면(다시·그만) — 그만이면 주차장에 다시 들어가면 시작
+        public int BossFights, BossLosses;
+        public bool BossLast { get; private set; }
+        /// 후문 뒷골목 주차장 인카운터(장면에는 와룡공원 야차도 있음 — 아무거나 집으면 안 됨)
+        public static Encounter ParkingEncounter()
+        {
+            var all = FindObjectsByType<Encounter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            // 보스전 중엔 잠깐 세운 보스전 인카운터(켜진 것)가 먼저
+            return all.Where(e => e.Def != null && e.Def.Foes.Any(f => f.Def != null && f.Def.name == "Enemy_Seokdal")).OrderByDescending(e => e.isActiveAndEnabled).FirstOrDefault()
+                ?? all.FirstOrDefault(e => e.Def != null && e.Def.Title.Contains("주차장"));
+        }
+
+        IEnumerator BossFight(SceneDef s)
+        {
+            BossLast = false;
+            var enc = ParkingEncounter();
+            var pc = FindAnyObjectByType<PlayerCombat>();
+            if (enc == null || pc == null) yield break;
+            if (M2Stages != null) M2Stages.SetActive(true);
+            var src = enc;
+            bool srcOn = src.gameObject.activeSelf;
+            src.gameObject.SetActive(true);
+            yield return null;
+            var def0 = enc.Def;
+            var d = Instantiate(def0);
+            bool solo = s.Id == "6-3";
+            d.Title = s.Title;
+            d.Line1Who = solo ? "석 달" : ""; d.Line1 = solo ? "내가 한다." : "";
+            d.Line2Who = ""; d.Line2 = "";
+            // 상대 = 이야기 배역 모델(민재·건우·임찬): 같은 자리에 보스전용 인카운터를 잠깐 세움(주차장 M2 적은 그동안 숨김)
+            GameObject tmp = null;
+            if (def0.StoryModels != null && def0.StoryModels.Any(m => m != null))
+            {
+                for (int i = 0; i < d.Foes.Length && i < def0.StoryModels.Length; i++) if (def0.StoryModels[i] != null) d.Foes[i].Model = def0.StoryModels[i];
+                src.gameObject.SetActive(false);
+                tmp = new GameObject("보스전 인카운터 " + s.Id);
+                tmp.transform.SetParent(src.transform.parent, false);
+                enc = tmp.AddComponent<Encounter>();
+                enc.Def = d; enc.Player = pc; enc.Mode = src.Mode; enc.Tuning = src.Tuning;
+                yield return null; yield return null;
+            }
+            else enc.Def = d;
+            enc.ResetAll(true);
+            if (solo) enc.SetSolo(enc.Brains.FirstOrDefault(b => b != null && b.Def != null && b.Def.name == "Enemy_Seokdal"));
+            (pc.Me.Body as PlayerBody)?.Place(d.ToWorld(d.RetryLocal) + Vector3.up * 0.1f, d.Yaw + d.RetryYaw);
+            Loader?.Cam?.SnapBehind();
+            InputMaps.Use(Actions, InputMaps.Explore);
+            GameUi.HintOverride = null;
+            Encounter.Suppress = false;
+            BossFights++;
+            FightBot bot = null; PInput pin = null;
+            bool botOn = Bot != BotMode.None;
+            if (botOn) { pc.Me.DebugInvuln = true; pin = FindAnyObjectByType<PInput>(); if (pin != null) pin.enabled = false; }
+            float w = 0f; int losses0 = enc.Losses; bool first = true;
+            while (enc.State != Encounter.Phase.Cleared && w < 600f)
+            {
+                // 처음(과 봇)은 바로 시작, 사람이 '그만'을 고른 뒤엔 주차장 안으로 다시 들어오면(인카운터가 스스로) 시작
+                if (enc.State == Encounter.Phase.Armed && (first || botOn)) { first = false; enc.Trigger(); if (botOn && bot == null) bot = FightBot.On(pc, false); }
+                if (enc.State == Encounter.Phase.Lost && botOn) { StageHud.Instance?.DefeatChoose(true); }
+                w += Time.deltaTime;
+                yield return null;
+            }
+            BossLast = enc.State == Encounter.Phase.Cleared;
+            BossLosses += enc.Losses - losses0;
+            if (bot != null) Destroy(bot);
+            if (pin != null) pin.enabled = true;
+            pc.Me.DebugInvuln = false;
+            enc.ClearSolo();
+            Encounter.Suppress = true;
+            if (tmp != null) { Destroy(tmp); src.gameObject.SetActive(srcOn); }
+            else enc.Def = def0;
+            Destroy(d);
+            Debug.Log($"[M3] 보스전 {s.Id} {s.Title}: {(BossLast ? "승" : "시간 초과")} · {w:F1}초 · 패 {enc.Losses - losses0}{(solo ? " · 민재 1:1" : " · 1:3")}");
+        }
 
         void Mark(SceneDef s)
         {

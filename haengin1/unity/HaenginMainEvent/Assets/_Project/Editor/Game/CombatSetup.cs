@@ -255,6 +255,59 @@ namespace Haengin.EditorGame
             }
         }
 
+        /// 2026-10-29 보스전(6-3·7-1): 주차장 인카운터 자리에 이야기 배역 모델 — 민재(석 달 자리)·건우(냉장고 자리), 임찬(깐족이 자리)은 같은 모델.
+        ///   Prefabs/Boss_{Minjae,Geonwoo}.prefab(적 프리팹과 같은 짜임: 적 컨트롤러·FighterAnim·HandShape) → Encounter_Y4.StoryModels
+        public static void BossPrefabs() => Run(() =>
+        {
+            var ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ClipSetup.EnemyCtrl);
+            var table = AssetDatabase.LoadAssetAtPath<ClipTable>(ClipSetup.TablePath);
+            var made = new Dictionary<string, GameObject>();
+            foreach (var (key, bulky) in new[] { ("Minjae", false), ("Geonwoo", true) })
+            {
+                string fbx = CastSetup.Fbx(key);
+                var model = AssetDatabase.LoadAssetAtPath<GameObject>(fbx);
+                if (model == null) { Debug.LogWarning($"{Tag} 보스 모델 없음 {fbx}"); continue; }
+                var go = (PrefabUtility.InstantiatePrefab(model) as GameObject) ?? Object.Instantiate(model);
+                go.name = "Boss_" + key;
+                var mat = AssetDatabase.LoadAssetAtPath<Material>(CastSetup.Mat(key));
+                foreach (var r in go.GetComponentsInChildren<Renderer>(true))
+                {
+                    if (mat != null) { var ms = r.sharedMaterials; for (int i = 0; i < ms.Length; i++) ms[i] = mat; r.sharedMaterials = ms; }
+                    r.shadowCastingMode = ShadowCastingMode.On; r.receiveShadows = true;
+                    if (r is SkinnedMeshRenderer smr) smr.updateWhenOffscreen = false;
+                }
+                var anim = go.GetComponent<Animator>() ?? go.AddComponent<Animator>();
+                anim.avatar = CharSetup.AvatarOf(fbx);
+                anim.runtimeAnimatorController = ctrl;
+                anim.applyRootMotion = false;
+                anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                var fa = go.AddComponent<FighterAnim>();
+                fa.Clips = table;
+                if (bulky) fa.ArmSpread = ClipSetup.BulkyArmSpread;
+                go.AddComponent<HandShape>();
+                string path = $"{EnemyPrefabDir}/Boss_{key}.prefab";
+                string av = anim.avatar != null ? anim.avatar.name : "-";
+                var saved = PrefabUtility.SaveAsPrefabAsset(go, path, out bool ok);
+                Object.DestroyImmediate(go);
+                if (ok) made[key] = saved;
+                Debug.Log($"{Tag} 보스 프리팹 {path} {(ok ? "저장" : "실패")} · 아바타 {av}");
+            }
+            var enc = AssetDatabase.LoadAssetAtPath<EncounterDef>(StageSetup.EncounterPath);
+            if (enc != null)
+            {
+                var sm = new GameObject[enc.Foes.Length];
+                for (int i = 0; i < enc.Foes.Length; i++)
+                {
+                    string n = enc.Foes[i].Def != null ? enc.Foes[i].Def.name : "";
+                    sm[i] = n == "Enemy_Seokdal" && made.ContainsKey("Minjae") ? made["Minjae"] : n == "Enemy_Naengjanggo" && made.ContainsKey("Geonwoo") ? made["Geonwoo"] : null;
+                }
+                enc.StoryModels = sm;
+                EditorUtility.SetDirty(enc);
+                AssetDatabase.SaveAssets();
+                Debug.Log($"{Tag} Encounter_Y4.StoryModels: {string.Join(", ", sm.Select(x => x != null ? x.name : "-"))}");
+            }
+        });
+
         // ───────────────────────── 전투 연습장
         static Material LabMat(string name, Color c)
         {

@@ -141,14 +141,22 @@ namespace Haengin.Tests
                 int day = t >= 1440 ? 311 : 310; int min = t % 1440;
                 GameClock.SetDate(2026, day / 100, day % 100, min);
                 int hours;
+                // 2026-10-29 대표 결정: 06:00~18:00 에 잠들면 무조건 낮잠 2시간
+                if (min >= WorldModel.NapFrom && min < WorldModel.NapUntil && !mm.NapOnly) worst.Add($"{GameClock.Hm(min)} 낮인데 밤잠");
                 if (mm.NapOnly) { var nr = mm.Nap(); hours = nr.Hours; }
                 else { var sr = mm.Sleep(); hours = sr.Hours; }
                 longest = Mathf.Max(longest, hours);
                 if (hours >= 22) worst.Add($"{GameClock.Hm(min)} → {hours}시간");
             }
             Debug.Log($"[Q] Q38 낮잠·밤잠: 일어나자마자 낮잠 {n.Summary} · 하루 중 가장 긴 잠 {longest}시간 · 22시간 넘는 잠 {worst.Count}");
-            Assert.IsEmpty(worst, "22시간 넘는 잠: " + string.Join(", ", worst));
-            Assert.LessOrEqual(longest, 19);
+            Assert.IsEmpty(worst, "22시간 넘는 잠 · 낮인데 밤잠: " + string.Join(", ", worst));
+            Assert.LessOrEqual(longest, 12, "18:00 뒤에 자면 다음 날 05:30 까지 — 11시간 30분이 가장 김");
+            // 18:30 에 자면 밤잠(다음 날 05:30)
+            var m2 = M5WorldTests.Fresh(def);
+            GameClock.SetDate(2026, 3, 10, 18 * 60 + 30); m2.S.Set(WorldModel.WokeDayKey, 310); m2.S.Set(WorldModel.WokeMinKey, def.Balance.Wake);
+            Assert.IsFalse(m2.NapOnly, "18:30 = 밤잠");
+            var s2 = m2.Sleep();
+            Assert.AreEqual(311, s2.WakeDay); Assert.AreEqual(def.Balance.Wake, s2.WakeMin);
         }
 
         // ───────────────────────── Q39 시간대 이름 표 하나(HUD·이야기 날짜판·휴대폰·카드 조건)
@@ -423,6 +431,43 @@ namespace Haengin.Tests
             Assert.IsEmpty(bad, "알림판이 얼굴을 가림");
         }
 
+        // ───────────────────────── Q48 레슨 카드가 코치를 가리지 않음(2026-10-29 — 가운데 큰 카드 → 오른쪽 세로 판)
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q48_Lesson_Card_Leaves_Coach_Visible()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            GymManager gm = null;
+            yield return Gym(w, 312, 20 * 60 + 30, x => gm = x);
+            w.Model.L.SetWallet(300000);
+            Assert.AreEqual("", w.BookNext("yunjun"), "이윤준 예약");
+            var bk = w.Model.S.Lessons.Last();
+            Assert.AreEqual(21 * 60 + 15, bk.At, "목 21:15 밤 개인 지도");
+            w.BotRead = 3f;
+            var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+            var sp = mat.position + mat.forward * 2.2f;
+            var to = mat.position - sp; to.y = 0f;
+            M3Lab.Motor.Teleport(sp, Mathf.Atan2(to.x, to.z) * Mathf.Rad2Deg);      // 코치를 정면으로(가장 나쁜 자리 — 화면 가운데)
+            w.Loader.Cam?.SnapBehind();
+            yield return Lab.Frames(10);
+            GameClock.AdvanceTo(21 * 60 + 10);
+            var board = w.Story.Board;
+            float t0 = Time.realtimeSinceStartup;
+            while (!board.Shown && Time.realtimeSinceStartup - t0 < 60f) yield return null;
+            Assert.IsTrue(board.Shown, "레슨 카드가 안 뜸");
+            yield return Lab.Frames(3);
+            var c = new Vector3[4]; board.CardRect.GetWorldCorners(c);
+            var r = new Rect(c[0].x, c[0].y, c[2].x - c[0].x, c[2].y - c[0].y);
+            var head = gm.Yunjun.Anim.GetBoneTransform(HumanBodyBones.Head).position;
+            var hs = Camera.main.WorldToScreenPoint(head);
+            var face = new Rect(hs.x - Screen.height * 0.04f, hs.y - Screen.height * 0.06f, Screen.height * 0.08f, Screen.height * 0.12f);
+            Debug.Log($"[Q] Q48 레슨 카드: 옆 판 {board.Side} · 카드 {r} · 코치 얼굴 {hs:F0} · 화면 {Screen.width}×{Screen.height} · 겹침 {r.Overlaps(face)}");
+            Assert.IsTrue(board.Side, "레슨 카드가 옆 판이 아님");
+            Assert.Greater(hs.z, 0f, "코치가 카메라 뒤");
+            Assert.IsFalse(r.Overlaps(face), "레슨 카드가 코치 얼굴을 가림");
+            for (int i = 0; i < 60 * 120 && w.LessonsRun < 1; i++) yield return null;
+        }
+
         // ───────────────────────── Q46 룩데브 소결정 ①②③ — 벽돌·잎 카드 색 고정 · 밤 빛 웅덩이 지름 3~4m · 잎 카드 안쪽 먹선
         [UnityTest, Timeout(600000)]
         public IEnumerator Q46_Lookdev_Palette_Pools_LeafInk()
@@ -545,6 +590,50 @@ namespace Haengin.Tests
             Assert.IsEmpty(miss, string.Join(" | ", miss.Take(12)));
         }
 
+        // ───────────────────────── S03 보스전 6-3·7-1 = 실제 전투(2026-10-29 대표 결정): 스토리보드 없이 M2 주차장 인카운터 — 6-3 은 민재(석 달) 1:1, 7-1 은 1:3, 전후 대사
+        [UnityTest, Timeout(1800000)]
+        public IEnumerator S03_Boss_Fights_Are_Real_Combat()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var pk = w.Def.Balance.Point("parking").Pos;
+            var log = new List<string>();
+            foreach (var (card, min, pos) in new[] { ("C1-20", 17 * 60 + 25, new Vector3(-191.5f, 30.3f, 98.3f)), ("C1-21", 17 * 60 + 42, pk + new Vector3(0f, 0f, 6f)) })
+            {
+                var c = w.Def.Card(card);
+                // 다른 하나(C1-20 ↔ C1-21)는 끝난 것으로 — 세계가 같은 시각대에 그 카드를 따로 걸어 보스전이 겹치지 않게
+                yield return Start(w, Mid(w.Def, 501, min, SceneLoader.Zone1, m => { m.G.Fatigue = 0; new EventDirector(m).Done(w.Def.Card(card == "C1-20" ? "C1-21" : "C1-20"), 1); }, pos));
+                var story = w.Story;
+                story.Bot = StoryRunner.BotMode.Read;            // 사람처럼 읽고, 싸움은 FightBot(무적)
+                int f0 = story.BossFights, sb0 = story.Board.StoryboardShows, d0 = story.DlgPlayed;
+                string boss = card == "C1-20" ? "6-3" : "7-1";
+                bool done = false, won = false; int fights = 0, boards = 0, talks = 0;
+                // 카드가 끝난 그 순간 값을 잡음(세계가 바로 다음 카드 — C1-20 뒤 C1-21 — 를 걸 수 있어서)
+                IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; fights = story.BossFights - f0; won = story.BossLast; boards = story.Board.StoryboardShows - sb0; talks = story.DlgPlayed - d0; }
+                w.StartCoroutine(Wrap());
+                EnemyBrain solo = null; string soloName = "-"; int foes = 0; bool fought = false; bool castModel = false;
+                float t0 = Time.realtimeSinceStartup;
+                while (!done && Time.realtimeSinceStartup - t0 < 900f)
+                {
+                    var enc = StoryRunner.ParkingEncounter();
+                    if (enc != null && enc.State == Encounter.Phase.Fight && story.Scene != null && story.Scene.Id == boss) { fought = true; if (enc.Solo != null) { solo = enc.Solo; soloName = solo.Def.name; } foes = enc.Brains.Count(b => b != null && !b.NoAttack); castModel |= enc.Brains.Any(b => b != null && b.GetComponentsInChildren<Animator>().Any(an => an.avatar != null && an.avatar.name == "MinjaeAvatar")); }
+                    yield return null;
+                }
+                w.Stop();
+                log.Add($"{card}: 끝 {done} · 보스전 {fights} · 이김 {won} · 싸움 중 공격하는 적 {foes} · 1:1 상대 {soloName} · 민재 배역 모델 {castModel} · 스토리보드 {boards} · 대사 {talks}");
+                Assert.IsTrue(done, card + " 안 끝남");
+                Assert.IsTrue(fought, card + " 싸움(Fight 단계)이 없음");
+                Assert.AreEqual(1, fights, card + " 보스전이 실제 전투로 안 열림");
+                Assert.IsTrue(won, card + " 보스전을 못 이김");
+                Assert.IsTrue(castModel, card + " 상대가 이야기 배역 모델(민재)이 아님");
+                Assert.AreEqual(0, boards, card + " 스토리보드 카드가 뜸");
+                if (card == "C1-20") { Assert.NotNull(solo, "6-3 = 민재 1:1"); Assert.AreEqual("Enemy_Seokdal", soloName); Assert.AreEqual(1, foes, "6-3 공격하는 적 1"); }
+                else Assert.GreaterOrEqual(foes, 3, "7-1 = 1:3");
+                yield return Lab.Frames(5);
+            }
+            Debug.Log("[Q] S03 보스전 실제 전투\n" + string.Join("\n", log));
+        }
+
         // ───────────────────────── S02 핵심 카드가 스토리보드가 아니라 실제 장면으로(배우가 켜지고, 장소를 옮기면 원래대로)
         [UnityTest, Timeout(1800000)]
         public IEnumerator S02_Core_Cards_Play_As_Scenes()
@@ -555,14 +644,16 @@ namespace Haengin.Tests
             {
                 ("C1-03", 306, 19 * 60 + 25, "Gukbap", 0), ("C1-04", 306, 20 * 60 + 45, "Gukbap", 0), ("C1-07", 313, 21 * 60 + 25, "Home", 0),
                 ("C1-08", 314, 6 * 60 + 50, "Site", 0), ("C1-09", 314, 6 * 60 + 58, "Site", 0), ("C1-11", 316, 8 * 60 + 5, "School", 0), ("C1-12", 316, 8 * 60 + 12, "School", 0),
-                ("C1-18", 428, 19 * 60 + 10, "Home", 0), ("C1-19", 429, 9 * 60, "School", 0), ("C1-20", 501, 17 * 60 + 25, SceneLoader.Zone1, 2), ("C1-21", 501, 17 * 60 + 42, SceneLoader.Zone1, 1),
+                ("C1-18", 428, 19 * 60 + 10, "Home", 0), ("C1-19", 429, 9 * 60, "School", 0), ("C1-20", 501, 17 * 60 + 25, SceneLoader.Zone1, 0), ("C1-21", 501, 17 * 60 + 42, SceneLoader.Zone1, 0),
                 ("C1-22", 504, 8 * 60 + 15, "School", 0), ("C1-26", 508, 17 * 60 + 30, "Gukbap", 0), ("N01", 310, 20 * 60 + 25, "Gukbap", 0), ("C1-24", 505, 16 * 60 + 40, SceneLoader.Zone1, 0),
             };
             var log = new List<string>(); var bad = new List<string>();
+            CutCamDriver.StoryBad.Clear(); int fix0 = CutCamDriver.StoryFixes;
             foreach (var r in runs)
             {
                 var c = w.Def.Card(r.card);
                 Assert.NotNull(c, r.card);
+                int bad0 = CutCamDriver.StoryBad.Count;
                 yield return Start(w, Mid(w.Def, r.day, r.min, r.place, m => { m.G.Fatigue = 0; m.L.Apply("envelope", "+40000"); }));
                 var story = w.Story;
                 int sb0 = story.Board.StoryboardShows, scenes0 = w.CardScenes, dlg0 = story.DlgPlayed;
@@ -570,7 +661,7 @@ namespace Haengin.Tests
                 void OnScene(SceneDef sd) { if (story.Dialogue.Has(sd.Id)) talked++; }
                 story.SceneStarted += OnScene;
                 bool done = false;
-                IEnumerator Wrap() { yield return w.RunCard(c, true); done = true; }
+                IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; }
                 w.StartCoroutine(Wrap());
                 for (int i = 0; i < 60 * 600 && !done; i++)
                 {
@@ -584,9 +675,12 @@ namespace Haengin.Tests
                 if (!done) bad.Add($"{r.card} 안 끝남");
                 if (talked < 1) bad.Add($"{r.card} 대사 장면 없음");
                 if (boards > r.boards) bad.Add($"{r.card} 스토리보드 {boards}장(허용 {r.boards})");
+                // 2026-10-29 가림 검사: 돌려도 좋은 각이 없던 컷(다른 배우·소품 가림 · 벽에 60% 넘게 당김 · 지붕 밖)
+                for (int k = bad0; k < CutCamDriver.StoryBad.Count; k++) bad.Add($"{r.card} 컷 가림 {CutCamDriver.StoryBad[k]}");
                 w.Stop();
                 yield return Lab.Frames(5);
             }
+            log.Add($"이야기 컷 돌려 피함 {CutCamDriver.StoryFixes - fix0} · 못 피함 {CutCamDriver.StoryBad.Count}");
             Debug.Log("[Q] S02 핵심 카드 실제 장면\n" + string.Join("\n", log));
             Assert.IsEmpty(bad, string.Join(" | ", bad));
         }

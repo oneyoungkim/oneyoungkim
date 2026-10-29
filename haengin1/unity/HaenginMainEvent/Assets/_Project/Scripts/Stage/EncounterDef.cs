@@ -15,6 +15,8 @@ namespace Haengin
         public Vector2 Size = new Vector2(18f, 12f);
         [Tooltip("시작: 안쪽으로 이만큼 들어오고 + 적과 이 거리 안")] public float TriggerInset = 1f, TriggerEnemyDist = 9f;
         public Foe[] Foes = new Foe[0];
+        [Tooltip("2026-10-29 보스전(6-3·7-1): Foes 자리마다 이야기 배역 모델(민재·건우 — 비면 Foes 모델 그대로). CombatSetup.BossPrefabs 가 채움")]
+        public GameObject[] StoryModels = new GameObject[0];
         [Tooltip("구경꾼 자리(로컬)")] public Vector2[] Crowd = new Vector2[0];
         public GameObject[] CrowdModels = new GameObject[0];
         [Tooltip("CrowdRing 구간(로컬 선분 — 진입로 6m)")] public Vector2 CrowdLineA, CrowdLineB;

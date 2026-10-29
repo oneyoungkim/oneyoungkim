@@ -82,12 +82,14 @@ namespace Haengin
 
         /// QA Q20(2차): 소품(충돌 없는 포스기·모니터·진열 상자)이 카메라–대상 사이를 가리면 돌려 피함 — 알바 미니게임 카메라만 켬(이야기 컷 구도는 그대로)
         public bool AvoidProps;
+        /// 2026-10-29(장면 가림 4컷): 이야기 컷도 소품·사람·벽에 가리거나 벽 밖(지붕 없는 데)으로 나가면 돌려 피함 — 처음 각이 괜찮으면 그대로
+        public static bool StoryAvoid = true;
         readonly List<Bounds> props = new List<Bounds>();
 
         void GatherProps()
         {
             props.Clear();
-            if (!AvoidProps || Subject == null) return;
+            if (Subject == null || (!AvoidProps && !StoryAvoid)) return;
             var c = Subject.position;
             foreach (var r in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
             {
@@ -267,7 +269,7 @@ namespace Haengin
         /// 카메라 → 보는 점(85%까지) 선분이 다른 배우 머리(0.2m)·가슴·골반(0.28m)을 지나는가
         public bool Blocked(Vector3 pos, Vector3 look)
         {
-            if (props.Count > 0 && (PropBlocked(pos, look) || Vector3.Distance(pos, look) < 1.0f)) return true;
+            if (props.Count > 0 && (PropBlocked(pos, look) || (AvoidProps && Vector3.Distance(pos, look) < 1.0f))) return true;
             var end = Vector3.Lerp(pos, look, 0.85f);
             foreach (var a in others)
             {
@@ -284,6 +286,10 @@ namespace Haengin
         static Vector3 Spin(Vector3 p, Vector3 l, float deg) => deg == 0f ? p : l + Quaternion.Euler(0f, deg, 0f) * (p - l);
 
         public float SpinDeg => spin;
+        /// 진단(시험): 이야기 컷이 돌려 피한 수
+        public static int StoryFixes;
+        /// 진단(시험 S02): 돌려도 좋은 각을 못 찾은 이야기 컷
+        public static readonly List<string> StoryBad = new List<string>();
 
         public void Snap()
         {
@@ -293,12 +299,28 @@ namespace Haengin
             bool track = Preset == CamPreset.BackTrack || Preset == CamPreset.SideTrack;
             spin = 0f;
             var p = Clear(o, p0);
-            if (!track && !UseFixed && (others.Count > 0 || props.Count > 0))
-                foreach (var d in props.Count > 0 ? SpinsWide : Spins)
+            if (!track && !UseFixed && AvoidProps && (others.Count > 0 || props.Count > 0))
+                foreach (var d in SpinsWide)
                 {
                     var c = Clear(o, Spin(p0, l, d));
                     if (!Blocked(c, l)) { spin = d; p = c; break; }
                 }
+            else if (!track && !UseFixed)
+            {
+                // 이야기 컷: ① 다른 배우·소품이 안 가리고 ② 벽에 당겨져도 원래 거리의 60% 넘게 남고 ③ 대상이 지붕 아래면 카메라도 지붕 아래(창·문 구멍으로 벽 밖에 나가지 않게)
+                float want = Vector3.Distance(p0, o);
+                bool roof = Physics.Raycast(l + Vector3.up * 0.3f, Vector3.up, 6f, Block, QueryTriggerInteraction.Ignore);
+                bool Good(Vector3 c) => !Blocked(c, l) && Vector3.Distance(c, o) >= want * 0.6f && (!roof || Physics.Raycast(c, Vector3.up, 6f, Block, QueryTriggerInteraction.Ignore));
+                if (!Good(p))
+                    foreach (var d in SpinsWide)
+                    {
+                        if (d == 0f) continue;
+                        var c = Clear(o, Spin(p0, l, d));
+                        if (Good(c)) { spin = d; p = c; break; }
+                    }
+                StoryFixes += spin != 0f ? 1 : 0;
+                if (!Good(p)) StoryBad.Add($"{CutCams.Name(Preset)}:{(Subject != null ? Subject.name : "-")} {(Blocked(p, l) ? "가림" : Vector3.Distance(p, o) < want * 0.6f ? $"벽에 당김 {Vector3.Distance(p, o):F1}/{want:F1}m" : "지붕 밖")}");
+            }
             transform.SetPositionAndRotation(p, Quaternion.LookRotation((l - p).sqrMagnitude > 1e-6f ? l - p : Vector3.forward));
             if (Cam != null) Cam.PreviousStateIsValid = false;
         }

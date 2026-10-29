@@ -135,7 +135,7 @@ namespace Haengin
                     break;
                 case Phase.Fight:
                     if (me.State == Fighter.Phase.Out || me.KO) { if (lostAt < 0) lostAt = PhaseT; if (PhaseT - lostAt >= 1.2) Lose(); }
-                    else if (Eliminated >= Brains.Count && Brains.Count > 0) Finish();
+                    else if (Solo != null ? Solo.Eliminated : (Eliminated >= Brains.Count && Brains.Count > 0)) Finish();
                     break;
                 case Phase.Finish:
                     if (PhaseT >= 1.0) ShowResult();
@@ -225,6 +225,23 @@ namespace Haengin
         }
 
         /// 처음 자리로: 적·구경꾼·시우(북쪽 진입로 바깥 인도), HP·기세 처음. retry = 바로 다시 걸어 들어오면 시작 / 그만 = 15m 멀어졌다 와야 다시
+        /// 2026-10-29 보스전 1페이즈(6-3): 이 적만 쓰러뜨리면 끝 — 나머지는 공격 안 하고 둘레에서 지켜봄
+        public EnemyBrain Solo { get; private set; }
+        readonly List<EnemyBrain> held = new List<EnemyBrain>();
+        public void SetSolo(EnemyBrain only)
+        {
+            ClearSolo();
+            Solo = only;
+            if (only == null) return;
+            foreach (var b in Brains) if (b != null && b != only && !b.NoAttack) { b.NoAttack = true; held.Add(b); }
+        }
+        public void ClearSolo()
+        {
+            foreach (var b in held) if (b != null) b.NoAttack = false;
+            held.Clear();
+            Solo = null;
+        }
+
         public void ResetAll(bool retry)
         {
             Retries++;

@@ -287,6 +287,9 @@ namespace Haengin
         }
 
         // ───────────────────────── 카드
+        /// 시험·QA 봇: 카드를 '바쁨'으로 돌림(직접 RunCard 를 부르면 세계가 그 사이 같은 시각 카드를 또 걸 수 있음 — 2026-10-29 보스전 겹침)
+        public IEnumerator RunCardBusy(CardDef c, bool travel = false) => Run("카드 " + c.Id, RunCard(c, travel));
+
         public IEnumerator RunCard(CardDef c, bool travel = false)
         {
             if (c == null) yield break;
