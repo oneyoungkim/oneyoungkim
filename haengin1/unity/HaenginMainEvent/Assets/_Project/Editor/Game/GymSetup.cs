@@ -37,14 +37,14 @@ namespace Haengin.EditorGame
         public const string SparDefPath = Root + "/Settings/Enemy_Gojun.asset";
         public const string DrillJson = Root + "/Data/Drill/drills.json";
         public const string RingTex = GymDir + "/T_DrillRing.png";
-        public static readonly string[] Npcs = { "Yunjun_v2", "Gojun", "Seungyeon", "JinsooSon", "JinsooSeo", "SeungminBaek" };
+        public static readonly string[] Npcs = { "Yunjun_v2", "Gojun", "Seungyeon_v2", "JinsooSon_v2", "JinsooSeo_v2", "SeungminBaek" };
         /// NPC id · 보이는 이름(출장 레슨 코치 3 = 실존 인물, 본인 허락 2026-10-25 — docs/02 조연 표)
         // 2026-10-29 이윤준 = Yunjun_v2(닮음 고침 — 눈·눈썹 자리 텍스처 · 얼굴 그늘 지도 · 외곽선 굵기 지도, 형상·뼈·UV·동작은 v1 그대로)
         public static readonly Dictionary<string, (string id, string name)> NpcNames = new Dictionary<string, (string, string)>
         {
-            { "Yunjun_v2", ("yunjun", "이윤준") }, { "Gojun", ("gojun", "고준") }, { "Seungyeon", ("seungyeon", "김승연") }, { "JinsooSon", ("jinsoo_son", "손진수") }, { "JinsooSeo", ("jinsoo_seo", "서진수") }, { "SeungminBaek", ("seungmin_baek", "백승민") },
+            { "Yunjun_v2", ("yunjun", "이윤준") }, { "Gojun", ("gojun", "고준") }, { "Seungyeon_v2", ("seungyeon", "김승연") }, { "JinsooSon_v2", ("jinsoo_son", "손진수") }, { "JinsooSeo_v2", ("jinsoo_seo", "서진수") }, { "SeungminBaek", ("seungmin_baek", "백승민") },
         };
-        public static readonly string[] GuestNpcs = { "Seungyeon", "JinsooSon", "JinsooSeo", "SeungminBaek" };     // 2026-10-29 백승민(코너맨) 추가
+        public static readonly string[] GuestNpcs = { "Seungyeon_v2", "JinsooSon_v2", "JinsooSeo_v2", "SeungminBaek" };     // 2026-10-29 백승민(코너맨) 추가
         public static readonly List<string> Notes = new List<string>();
 
         public static void Build() => Run(() => { Assets(); Scene(); M1Setup.SetBuildScenes(); });
