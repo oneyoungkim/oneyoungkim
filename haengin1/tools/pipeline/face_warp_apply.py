@@ -11,6 +11,10 @@ su = np.clip(m['su'] - 0.5, 0, W - 1.001); sv = np.clip(m['sv'] - 0.5, 0, H - 1.
 x0 = np.floor(su).astype(int); y0 = np.floor(sv).astype(int); fx = (su - x0)[:, None]; fy = (sv - y0)[:, None]
 c = (im[y0, x0] * (1 - fx) * (1 - fy) + im[y0, x0 + 1] * fx * (1 - fy) + im[y0 + 1, x0] * (1 - fx) * fy + im[y0 + 1, x0 + 1] * fx * fy)
 out = im.copy()
-out[py, px] = c
+if len(sys.argv) > 4 and sys.argv[4] == 'blend':          # face_mirror_map.py: 가장자리는 가중치로 섞기
+    w = m['w'][:, None]
+    out[py, px] = im[py, px] * (1 - w) + c * w
+else:
+    out[py, px] = c
 Image.fromarray(np.clip(out, 0, 255).astype(np.uint8)).save(dst, quality=95)
 print('WARPED', len(px), 'texels ->', dst)

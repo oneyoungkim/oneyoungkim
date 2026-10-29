@@ -326,3 +326,19 @@ The reference images are black-and-white model sheets of this same character: ke
 - **백승민** 1.83 m(페더급, 사우스포) — 키: https://namu.wiki/w/%EB%B0%B1%EC%8A%B9%EB%AF%BC(%EC%A2%85%ED%95%A9%EA%B2%A9%ED%88%AC%EA%B8%B0) (183 cm / 65 kg, 1986년생, 코너맨 소속, 4전 2승 2패)
   - 위 나무위키 문서 대표 이미지(로드FC 계체 사진 — 참조로 씀)
   - https://www.sherdog.com/fighter/Seung-Min-Baek-182535 (Korean Zombie MMA 페더급 — 프로필 사진(케이지 안) 참조로 씀)
+
+## 김승연·손진수·서진수 v2(최근 모습) 설정화 참조 — 2026-10-29
+대표 지시("최근 사진 구글링해서 찾아보고 모델링해", 세 분 본인 허락)로 2025~2026 공개 영상 썸네일을 사람마다 3장 골라 `m3/{seungyeon,jinsoo_son,jinsoo_seo}_v2_{color,apose}.png` 를 다시 그렸다. 사진은 유튜브 공개 썸네일(i.ytimg.com)이고 저장소에는 두지 않는다(세션 scratchpad `coach_refs/<이름>_2026/`, 인물만 보이게 자름). 날짜 = 유튜브 게시일(한국 시각). 영상은 재생하지 않았다(썸네일과 페이지 HTML 의 게시일만 봄). 인스타그램은 로그인 없이 최근 글이 안 보여 쓰지 않았다.
+- **김승연**(채널 DEEP MAKAI = 본인 채널, 소개글 '극진가라데 최연소 챔피언 · 로드FC 4승4KO 2패2KO', 인스타 karate_thug) — 지금 모습: 숱 많은 곱슬 중간 길이 검은 머리 · 짙은 턱수염+콧수염 · **양팔 문신 소매**(2025-07 영상에서 팔짱 낀 두 팔 모두 확인 → 10/25 의 '왼팔만'을 바꿈, 좌우가 같아 Tripo 좌우 규약 문제 없음). 딥캐스트 진행자 넷 중 이윤준·손진수·서진수와 얼굴을 대조해 남는 한 사람이고, DEEP MAKAI 체육관 기술 쇼츠의 진행자라 본인으로 판단
+  - 2026-09-17 정면 얼굴: https://www.youtube.com/shorts/T7hwvtJ7ygY (유주상 선수의 도발 스킬 기대합니다!)
+  - 2025-07-04 상반신·양팔 문신: https://www.youtube.com/shorts/f8-X-C-7up4 (로우킥으로 죽통을 때릴 수 있다고?)
+  - 2026-09-19 3/4 얼굴·머리: https://www.youtube.com/shorts/IOzgdNFw0zA (가로 밴디지 금지 이후 판정왕이 되어버린 남자)
+- **손진수**(채널 격잘알손진수 = 본인 채널) — 지금 모습: 짧은 옆가르마·옆머리 페이드 · 짧은 콧수염+턱수염. 사진에서 쓴 모자·비니·흰 가운은 빼고 체육관 반팔 티
+  - 2026-10-04 정면 얼굴·상반신(가운 명찰 '약사 손진수'): https://www.youtube.com/watch?v=S8kWSOIAagY
+  - 2026-09-17 정면 얼굴: https://www.youtube.com/shorts/uyJhSEhldrU (손진수의 퀴즈)
+  - 2026-10-25 상반신: https://www.youtube.com/shorts/YRFLLjRWUQI (격잘알 손진수)
+- **서진수**(채널 FIVE ROUNDS = 본인 체육관) — 지금 모습: **탈색 애시 블론드** 중간 길이 머리(10/25 '어깨 길이 검은 생머리'를 바꿈) · 콧수염+짧은 염소수염 · 양팔 문신 소매(10/25 의 검은 팔토시를 뺌). 안경·모자는 빼서 그림
+  - 2026-06-05 정면 얼굴·상반신: https://www.youtube.com/watch?v=0wUNOGNmUKc (드디어 한남점에도 단체클래스를..!!)
+  - 2026-05-05 3/4·상반신·팔 문신: https://www.youtube.com/watch?v=5DT9NUpMBik (관장의하루&기술강의)
+  - 2026-10-02 정면 얼굴·상반신: https://www.youtube.com/shorts/lDQP-SP70A4 (예민고트의 성명준 스파링썰)
+- 얼굴 비율(눈 사이 ÷ 얼굴 폭 · 눈~입 ÷ 눈 사이)과 보정은 `tools/pipeline/README.md` '코치 3명 v2'. 비율을 잴 정면 사진은 김승연·손진수는 뼈대가 같은 예전 정면 사진(2017 계체·UFC 프로필)을, 서진수는 2026-06-05 사진을 썼다
