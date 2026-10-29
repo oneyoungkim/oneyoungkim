@@ -92,7 +92,7 @@ namespace Haengin
             yield return Load(310, 16 * 60 + 40, "Gukbap", m => { Unlocks(m); ResetJob(m, "job.gukbap"); });
             yield return UseMarker("job_serving");
             if (ChoiceShown) yield return Choose(0);
-            for (int i = 0; i < 300 && !W.Job.Shown; i++) yield return null;
+            yield return WaitFor(() => W.Job.Shown, 40f);       // 17:00 판 시작까지(16:40 에 들어가 기다림)
             yield return Frames(60);
             int p0 = W.Job.Prompts;
             yield return Tap(Key.Escape);

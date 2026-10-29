@@ -30,6 +30,8 @@ namespace Haengin.EditorGame
         {
             ("Mom", "엄마"), ("Haneul", "하늘"), ("Dokyungmin", "도경민"), ("Minjae", "민재"), ("Geonwoo", "건우"),
             ("StudentM", "남학생"), ("StudentF", "여학생"), ("Gwak", "곽반장"),
+            // 2026-10-29 조연 3명(자막만 나오던 곳 → 실제 인물): 국밥집 사장 할머니 1.50 · 로터리 빵집 직원 누나 1.62(앞치마 — 서 있는 장면만) · 아빠 반정호 1.74(4-2 회상)
+            ("Halmeoni", "사장 할머니"), ("BakeryStaff", "직원 누나"), ("Dad", "아빠"),
         };
         /// 동작(파일 · 상태 · 처음·끝 프레임(−1 = 전부)). 2026-10-25 바른 앉기: Sit = 364 Sit_on_Chair_Arms_Crossed 끝 자세(팔짱, 숙임 3.8°) ·
         /// SitTalk = 307 Sitting_Answering_Questions(손짓, 숙임 6.4°) · SitFloor = 363 Sit_Cross_Legged_on_Floor 끝 자세(좌식 밥상) — 예전 Sit = 33 Chair_Sit_Idle_M(숙임 34°, 책상에 엎드린 듯)
@@ -388,7 +390,10 @@ namespace Haengin.EditorGame
                     Spot(g, "엄마 홀 자리", new Vector3(-3.5f, 0f, -0.15f), 165f);
                     Spot(g, "카운터 자리", new Vector3(2.4f, 0f, -1.42f), 200f);
                     Spot(g, "시우 카운터 자리", new Vector3(1.25f, 0f, -0.85f), 118f);
-                    log.Add("장면 배역: 하늘(숨김)·케이크(숨김) · 자리 5");
+                    // 2026-10-29: 2-2 '카운터에서 째려봤다' · 7-3 '얼굴이 왜 그래!' — 사장 할머니(계산대 안쪽, 홀을 봄)
+                    Hidden(Put(g, "Halmeoni", "사장 할머니", new Vector3(2.95f, 0f, -1.95f), 245f, "TalkHip"));
+                    Spot(g, "할머니 카운터 자리", new Vector3(2.95f, 0f, -1.95f), 245f);
+                    log.Add("장면 배역: 하늘(숨김)·케이크(숨김)·사장 할머니(숨김) · 자리 6");
                     break;
                 case "Home":
                     // 3-4 동의서: 밥상(0.3, 1.15) 서쪽에 엄마(양반다리) · 시우는 동쪽에 서서 / C1-18·4-4 하늘은 늘 앉은 자리 그대로
@@ -407,7 +412,9 @@ namespace Haengin.EditorGame
                     Spot(g, "임찬 책상 옆 자리", new Vector3(-1.05f, 0f, 3.6f), 75f);
                     Spot(g, "건우 책상 옆 자리", new Vector3(0.7f, 0f, 4.6f), 232f);
                     Spot(g, "태오 책상 옆 자리", new Vector3(0.75f, 0f, 5.4f), 200f);
-                    log.Add("장면 자리 8(창가·신발장·우유팩)");
+                    // 2026-10-29 C1-19 전화: 로터리 빵집 직원 누나 — 무대 밑 '통화 자리'에 숨겨 두고 통화 화면(CallInset)이 따로 찍음
+                    Hidden(Put(g, "BakeryStaff", "직원 누나", new Vector3(0f, -40f, 0f), 180f));
+                    log.Add("장면 자리 8(창가·신발장·우유팩) · 직원 누나(통화 자리, 숨김)");
                     break;
                 case "Site":
                     {
@@ -424,6 +431,9 @@ namespace Haengin.EditorGame
                         Spot(g, "형 1 줄 자리", new Vector3(-0.6f, 0f, -0.6f), 0f);
                         Spot(g, "형 2 줄 자리", new Vector3(1.4f, 0f, -0.6f), 0f);
                         Spot(g, "백발 줄 자리", new Vector3(-1.6f, 0f, -0.6f), 0f);
+                        // 2026-10-29 4-2 회상('일곱 살. 우리 집 거실'): 아빠 반정호 — 시우 줄 자리 앞에서 시우를 봄(먹 회상 화면 동안만)
+                        Hidden(Put(g, "Dad", "아빠", new Vector3(0.4f, 0f, 0.75f), 180f));
+                        Spot(g, "아빠 회상 자리", new Vector3(0.4f, 0f, 0.75f), 180f);
                         var ply = M("M_St_Euroform", new Color(0.70f, 0.58f, 0.42f));
                         var steel = M("M_St_Steel", new Color(0.45f, 0.46f, 0.48f));
                         var bag = M("M_St_Bag", new Color(0.82f, 0.80f, 0.74f));

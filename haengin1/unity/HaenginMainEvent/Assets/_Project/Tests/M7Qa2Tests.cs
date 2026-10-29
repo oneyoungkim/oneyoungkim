@@ -468,6 +468,52 @@ namespace Haengin.Tests
             for (int i = 0; i < 60 * 120 && w.LessonsRun < 1; i++) yield return null;
         }
 
+        // ───────────────────────── Q49 백승민 관장(2026-10-29 — 실존 인물, 본인 허락): N12 「왼손잡이」 원정 스파링 → 레슨 열림 · N13 「다섯 사람」 딥마카이 크루 다섯이 한자리
+        [UnityTest, Timeout(1200000)]
+        public IEnumerator Q49_Seungmin_Baek_Cards_And_Lesson()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var log = new List<string>(); var bad = new List<string>();
+            foreach (var (card, day, min) in new[] { ("N12", 418, 13 * 60 + 30), ("N13", 502, 18 * 60 + 40) })
+            {
+                var c = w.Def.Card(card);
+                Assert.NotNull(c, card);
+                yield return Start(w, Mid(w.Def, day, min, SceneLoader.Gym, m => { m.G.Fatigue = 0; m.L.SetWallet(300000); if (card == "N13") new EventDirector(m).Done(w.Def.Card("N12"), 1); }));
+                var gm = GymManager.Instance;
+                Assert.NotNull(gm, "체육관");
+                Assert.NotNull(gm.Guest("seungmin_baek"), "출장 코치 NPC(백승민)");
+                var story = w.Story;
+                story.Bot = StoryRunner.BotMode.Read;
+                CutCamDriver.StoryBad.Clear(); int d0 = story.DlgPlayed;
+                var seen = new HashSet<string>();
+                bool done = false;
+                IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; }
+                w.StartCoroutine(Wrap());
+                float t0 = Time.realtimeSinceStartup;
+                while (!done && Time.realtimeSinceStartup - t0 < 300f)
+                {
+                    foreach (var n in new[] { "이윤준", "백승민", "김승연", "손진수", "서진수" }) { var a = CutCtx.Actor(n); if (a != null && a.gameObject.activeInHierarchy) seen.Add(n); }
+                    yield return null;
+                }
+                log.Add($"{card} 「{c.Title}」: 끝 {done} · 대사 장면 {story.DlgPlayed - d0} · 보인 사람 [{string.Join(",", seen)}] · 컷 못 피함 {CutCamDriver.StoryBad.Count}");
+                if (!done) bad.Add(card + " 안 끝남");
+                if (story.DlgPlayed - d0 < 1) bad.Add(card + " 대사 장면 없음");
+                var want = card == "N12" ? new[] { "이윤준", "백승민" } : new[] { "이윤준", "백승민", "김승연", "손진수", "서진수" };
+                foreach (var n in want) if (!seen.Contains(n)) bad.Add($"{card} {n} 안 보임");
+                foreach (var b in CutCamDriver.StoryBad) bad.Add($"{card} 컷 가림 {b}");
+                if (card == "N12")
+                {
+                    Assert.IsTrue(w.Model.Unlocked("lesson.seungmin"), "N12 뒤 백승민 레슨 열림");
+                    Assert.AreEqual("", w.BookNext("seungmin_baek"), "토 14:00 백승민 예약");
+                }
+                w.Stop();
+                yield return Lab.Frames(5);
+            }
+            Debug.Log("[Q] Q49 백승민\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
+        }
+
         // ───────────────────────── Q46 룩데브 소결정 ①②③ — 벽돌·잎 카드 색 고정 · 밤 빛 웅덩이 지름 3~4m · 잎 카드 안쪽 먹선
         [UnityTest, Timeout(600000)]
         public IEnumerator Q46_Lookdev_Palette_Pools_LeafInk()
@@ -632,6 +678,37 @@ namespace Haengin.Tests
                 yield return Lab.Frames(5);
             }
             Debug.Log("[Q] S03 보스전 실제 전투\n" + string.Join("\n", log));
+        }
+
+        // ───────────────────────── S04 장면 컷 가림(2026-10-29 — C1-07·C1-11·C1-19·N01 각 1컷): 사람처럼 읽기(Read)로 컷을 실제로 잡아 보며, 돌려도 좋은 각이 없는 컷 0
+        //   (S02 는 빠른 봇이라 대사·컷을 건너뜀 — 카메라는 여기서 봄) · 좋은 각 = 다른 배우·소품(가는 기둥 포함)에 안 가림 · 배우가 카메라 0.75m 안에 없음 · 벽에 60% 넘게 안 당김 · 지붕·바닥 안
+        [UnityTest, Timeout(1800000)]
+        public IEnumerator S04_Story_Cuts_Not_Occluded()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var runs = new (string card, int day, int min, string place)[] { ("C1-07", 313, 21 * 60 + 25, "Home"), ("C1-11", 316, 8 * 60 + 5, "School"), ("C1-19", 429, 9 * 60, "School"), ("N01", 310, 20 * 60 + 25, "Gukbap") };
+            var log = new List<string>(); var bad = new List<string>();
+            foreach (var r in runs)
+            {
+                var c = w.Def.Card(r.card);
+                yield return Start(w, Mid(w.Def, r.day, r.min, r.place, m => { m.G.Fatigue = 0; m.L.Apply("envelope", "+40000"); }));
+                var story = w.Story;
+                story.Bot = StoryRunner.BotMode.Read;
+                CutCamDriver.StoryBad.Clear(); int fix0 = CutCamDriver.StoryFixes, d0 = story.DlgPlayed;
+                bool done = false;
+                IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; }
+                w.StartCoroutine(Wrap());
+                float t0 = Time.realtimeSinceStartup;
+                // N01 은 대사 장면 뒤 체험 드릴(몇 분) — 대사가 끝나면 거기서 멈춤
+                while (!done && Time.realtimeSinceStartup - t0 < 600f && !(r.card == "N01" && story.DlgPlayed > d0 && !story.InScene)) yield return null;
+                log.Add($"{r.card}: 돌려 피함 {CutCamDriver.StoryFixes - fix0} · 못 피함 {CutCamDriver.StoryBad.Count}{(CutCamDriver.StoryBad.Count > 0 ? " — " + string.Join(" / ", CutCamDriver.StoryBad) : "")}");
+                foreach (var b in CutCamDriver.StoryBad) bad.Add($"{r.card} {b}");
+                w.Stop();
+                yield return Lab.Frames(5);
+            }
+            Debug.Log("[Q] S04 장면 컷 가림\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
         }
 
         // ───────────────────────── S02 핵심 카드가 스토리보드가 아니라 실제 장면으로(배우가 켜지고, 장소를 옮기면 원래대로)

@@ -48,6 +48,7 @@ namespace Haengin.Tests
             Assert.IsTrue(GameState.Paused);
             Assert.AreEqual(p0, job.Prompts, "일시정지 중에 판이 흘러감(문제 수)");
             Assert.IsTrue(job.Frozen);
+            Assert.IsFalse(job.GetComponent<Canvas>().enabled, "일시정지 중 알바 판이 일시정지 메뉴와 겹침(2026-10-29 — 판은 안 그려야)");
             GameState.SetPaused(false);
             yield return Lab.Frames(120);
             Assert.Greater(job.Prompts, p0, "풀었는데 판이 안 이어짐");

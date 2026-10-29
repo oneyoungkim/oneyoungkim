@@ -28,6 +28,7 @@ namespace Haengin
         public string PromptText => prompt != null ? prompt.text : "";
 
         GameObject root;
+        Canvas cv;
         TextMeshProUGUI title, help, prompt, scoreText;
         TextMeshProUGUI[] slots;
         Image timer, barBack, barMark, barZone;
@@ -96,6 +97,9 @@ namespace Haengin
             if (!p && !wasPaused && resumeGuard <= 0 && bot <= 0f && PausePressed()) { GameState.SetPaused(true); p = true; Pauses++; }
             if (wasPaused && !p) resumeGuard = 2;
             wasPaused = p;
+            // 2026-10-29: 일시정지 메뉴가 알바 판 위에 겹쳐 글자가 섞이던 것 — 멈춘 동안 판(이 캔버스)만 안 그림(판 상태 Shown 은 그대로)
+            if (cv == null) cv = GetComponent<Canvas>();
+            if (cv != null && cv.enabled == p) cv.enabled = !p;
             if (p) return 0f;
             if (resumeGuard > 0)
             {
@@ -243,7 +247,7 @@ namespace Haengin
             prompt.text = $"끝 — {Mathf.RoundToInt(LastScore * 100f)}점";
             float t = 0f;
             while (t < (bot > 0f ? 0.4f : 0.9f)) { t += Dt(); yield return null; }
-            root.SetActive(false);
+            root.SetActive(false); if (cv != null) cv.enabled = true;
             done?.Invoke(LastScore);
         }
 
@@ -349,6 +353,6 @@ namespace Haengin
             done(Mathf.Clamp01(r * 1.15f));
         }
 
-        public void Hide() { Build(); root.SetActive(false); }
+        public void Hide() { Build(); root.SetActive(false); if (cv != null) cv.enabled = true; }
     }
 }

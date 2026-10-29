@@ -108,7 +108,7 @@ namespace Haengin
             L($"불러옴 {day / 100}/{day % 100} {GameClock.Hm(min)} {place} — {M.Status}");
         }
 
-        void ResetJob(WorldModel m, string id) { m.AddCount(id, -m.Count(id)); m.AddCount("best." + id, -m.Count("best." + id)); m.S.DoneToday.Remove(id); }   // QA 2차: 바탕 저장 그날 이미 한 일이면 '오늘은 이미 했다'로 판이 안 열림(B17·C00 A4)
+        void ResetJob(WorldModel m, string id) { m.AddCount(id, -m.Count(id)); m.AddCount("best." + id, -m.Count("best." + id)); m.S.DoneToday.Remove(id); var a = W.Def.Activity(id); if (a != null) m.S.WorkToday.RemoveAll(c => c.Key == a.Work); }   // 그날 일터 7시간(청소년 노동 규칙)도 비움   // QA 2차: 바탕 저장 그날 이미 한 일이면 '오늘은 이미 했다'로 판이 안 열림(B17·C00 A4)
         void SetBest(WorldModel m, string id, Grade g) { m.AddCount("best." + id, (int)g - m.Count("best." + id)); }
 
         void Unlocks(WorldModel m)
@@ -687,7 +687,8 @@ namespace Haengin
             yield return UseMarker("job_serving");
             yield return WaitFor(() => ChoiceShown, 4f);
             if (ChoiceShown) { JobPolicy = "none"; yield return Choose(0); }
-            yield return WaitFor(() => W.Job.Shown, 10f);
+            yield return WaitFor(() => W.Job.Shown, 40f);
+            if (!W.Job.Shown) Issue("job.notshown", "QA", "알바 판이 안 열림 — Esc 확인 못 함");
             yield return Frames(60);
             yield return Tap(Key.Escape); yield return Frames(15);
             yield return Shot("알바중_Esc", $"일시정지 {GameState.Paused}");

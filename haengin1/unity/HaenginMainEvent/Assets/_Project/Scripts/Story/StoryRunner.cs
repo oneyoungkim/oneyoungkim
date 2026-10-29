@@ -599,6 +599,7 @@ namespace Haengin
 
         public void RestoreCast()
         {
+            CallInset.Hide();
             foreach (var kv in kept)
             {
                 var t = kv.Key; var k = kv.Value;
@@ -835,12 +836,26 @@ namespace Haengin
                         if (a == null || to == null) { Debug.LogWarning($"[M3] front: '{arg}' 배우·대상 없음"); break; }
                         float dist = fp.Length >= 3 && float.TryParse(fp[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float fd) ? fd : 1.6f;
                         var f = to.forward; f.y = 0f; if (f.sqrMagnitude < 1e-4f) f = Vector3.forward; f.Normalize();
+                        // 2026-10-29 front:배우:대상:거리:옆 — 옆(오른쪽 +m)으로 비켜 세우고 대상을 봄(여럿이 한 사람을 둘러섬 — N13)
+                        float side = fp.Length >= 4 && float.TryParse(fp[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float sd) ? sd : 0f;
                         Remember(a);
                         if (!a.gameObject.activeSelf) a.gameObject.SetActive(true);
-                        a.position = to.position + f * dist;
-                        a.rotation = Quaternion.LookRotation(-f, Vector3.up);
+                        a.position = to.position + f * dist + Vector3.Cross(Vector3.up, f) * side;
+                        var look = to.position - a.position; look.y = 0f;
+                        a.rotation = Quaternion.LookRotation(look.sqrMagnitude > 1e-4f ? look.normalized : -f, Vector3.up);
                         break;
                     }
+                case "call":
+                    {
+                        // 2026-10-29 call:배우 — 전화 너머 배우를 통화 화면(오른쪽 위 작은 창)으로. hangup = 닫기(장면 끝에도 닫힘)
+                        var a = CutCtx.Actor(arg);
+                        if (a == null) { Debug.LogWarning($"[M3] call: 배우 '{arg}' 없음"); break; }
+                        Remember(a);
+                        if (!a.gameObject.activeSelf) a.gameObject.SetActive(true);
+                        CallInset.Show(a, arg, Board != null && Board.Fonts != null ? Board.Fonts.B : null);
+                        break;
+                    }
+                case "hangup": CallInset.Hide(); break;
                 case "uncast":
                     {
                         var a = CutCtx.Actor(arg);

@@ -28,7 +28,7 @@ namespace Haengin.Tests
         {
             var def = Def();
             Assert.IsNotNull(def.Shop, "WorldDef.Shop");
-            Assert.AreEqual(5, def.Shop.Coaches.Length, "코치 5(이윤준·고준·출장 3)");
+            Assert.AreEqual(6, def.Shop.Coaches.Length, "코치 6(이윤준·고준·출장 4 — 2026-10-29 백승민 추가)");
             Assert.Greater(def.Shop.Lines.Length, 40, "대사 tsv");
             var m = Rich(def);
             var yj = def.Shop.Coach("yunjun"); var gj = def.Shop.Coach("gojun"); var sy = def.Shop.Coach("seungyeon");

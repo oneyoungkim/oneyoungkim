@@ -37,13 +37,14 @@ namespace Haengin.EditorGame
         public const string SparDefPath = Root + "/Settings/Enemy_Gojun.asset";
         public const string DrillJson = Root + "/Data/Drill/drills.json";
         public const string RingTex = GymDir + "/T_DrillRing.png";
-        public static readonly string[] Npcs = { "Yunjun", "Gojun", "Seungyeon", "JinsooSon", "JinsooSeo" };
+        public static readonly string[] Npcs = { "Yunjun_v2", "Gojun", "Seungyeon", "JinsooSon", "JinsooSeo", "SeungminBaek" };
         /// NPC id · 보이는 이름(출장 레슨 코치 3 = 실존 인물, 본인 허락 2026-10-25 — docs/02 조연 표)
+        // 2026-10-29 이윤준 = Yunjun_v2(닮음 고침 — 눈·눈썹 자리 텍스처 · 얼굴 그늘 지도 · 외곽선 굵기 지도, 형상·뼈·UV·동작은 v1 그대로)
         public static readonly Dictionary<string, (string id, string name)> NpcNames = new Dictionary<string, (string, string)>
         {
-            { "Yunjun", ("yunjun", "이윤준") }, { "Gojun", ("gojun", "고준") }, { "Seungyeon", ("seungyeon", "김승연") }, { "JinsooSon", ("jinsoo_son", "손진수") }, { "JinsooSeo", ("jinsoo_seo", "서진수") },
+            { "Yunjun_v2", ("yunjun", "이윤준") }, { "Gojun", ("gojun", "고준") }, { "Seungyeon", ("seungyeon", "김승연") }, { "JinsooSon", ("jinsoo_son", "손진수") }, { "JinsooSeo", ("jinsoo_seo", "서진수") }, { "SeungminBaek", ("seungmin_baek", "백승민") },
         };
-        public static readonly string[] GuestNpcs = { "Seungyeon", "JinsooSon", "JinsooSeo" };
+        public static readonly string[] GuestNpcs = { "Seungyeon", "JinsooSon", "JinsooSeo", "SeungminBaek" };     // 2026-10-29 백승민(코너맨) 추가
         public static readonly List<string> Notes = new List<string>();
 
         public static void Build() => Run(() => { Assets(); Scene(); M1Setup.SetBuildScenes(); });
@@ -299,6 +300,22 @@ namespace Haengin.EditorGame
         static readonly string[] GymStates = { "Stance", "Jab", "Cross", "Hook", "Upper", "Dodge", "Kneel", "Taunt", "Tackle", "Block", "Breath", "Charge", "FwdWalk" };
         static readonly string[] LoopStates = { "Stance", "Idle", "ChairSit", "Breath", "FwdWalk", "Kneel", "JumpRope", "Kettlebell", "Burpee" };
 
+        /// 색·그늘 텍스처: 원본이 2048 보다 크면 4096 · PC 는 BC7(얼굴 글자·눈매가 뭉개지지 않게)
+        static void HiTex(string path, bool srgb, int max)
+        {
+            var ti = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (ti == null) return;
+            ti.GetSourceTextureWidthAndHeight(out int w, out int h);
+            int want = Mathf.Max(w, h) > 2048 ? max : 2048;
+            CharSetup.Texture(path, srgb, want);
+            var ps = ti.GetPlatformTextureSettings("Standalone");
+            if (want > 2048 && (!ps.overridden || ps.format != TextureImporterFormat.BC7 || ps.maxTextureSize != want))
+            {
+                ps.overridden = true; ps.format = TextureImporterFormat.BC7; ps.maxTextureSize = want;
+                ti.SetPlatformTextureSettings(ps); ti.SaveAndReimport();
+            }
+        }
+
         static AnimationClip Clip(string fbx, string name) => AssetDatabase.LoadAllAssetsAtPath(fbx).OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview__") && (name == null || c.name == name));
 
         static void Characters()
@@ -306,10 +323,26 @@ namespace Haengin.EditorGame
             foreach (var n in Npcs)
             {
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(NpcFbx(n)) == null) { Notes.Add($"NPC 모델 없음: {NpcFbx(n)}"); continue; }
-                CharSetup.Texture(NpcTex(n));
+                // 2026-10-29: 코치 텍스처는 원본 4096 — 2048 로 줄여 얼굴이 약 240px 이던 것 → 4096(BC7)
+                HiTex(NpcTex(n), true, 4096);
                 CharSetup.Human(NpcFbx(n), "Idle", -1, -1, false, null);
                 CharSetup.Ground(NpcFbx(n), "Idle", NpcFbx(n));
                 CharSetup.Toon(CharSetup.Load<GameObject>(NpcFbx(n)), NpcMat(n), NpcTex(n));
+                // 그늘 지도·외곽선 굵기 지도가 있으면(이윤준 v2) 정식 모델 몸 재질과 같게(CharSetup.FormalToon)
+                string shadeP = $"{CharDir}/{n}Shade.jpg", outP = $"{CharDir}/{n}OutW.png";
+                if (AssetDatabase.LoadAssetAtPath<Texture2D>(shadeP) != null)
+                {
+                    HiTex(shadeP, true, 4096);
+                    if (AssetDatabase.LoadAssetAtPath<Texture2D>(outP) != null) CharSetup.Texture(outP, false, 1024);
+                    var mat = AssetDatabase.LoadAssetAtPath<Material>(NpcMat(n));
+                    var shade = AssetDatabase.LoadAssetAtPath<Texture2D>(shadeP);
+                    var outW = AssetDatabase.LoadAssetAtPath<Texture2D>(outP);
+                    mat.SetFloat("_Use_BaseAs1st", 0f); mat.SetTexture("_1st_ShadeMap", shade); mat.SetColor("_1st_ShadeColor", Color.white);
+                    mat.SetFloat("_Use_1stAs2nd", 0f); mat.SetTexture("_2nd_ShadeMap", shade); mat.SetColor("_2nd_ShadeColor", new Color(0.88f, 0.86f, 0.88f, 1f));
+                    if (outW != null) mat.SetTexture("_Outline_Sampler", outW);
+                    EditorUtility.SetDirty(mat);
+                    Notes.Add($"{n}: 그늘 지도·외곽선 굵기 지도 재질");
+                }
             }
             // 앉기 클립(Chair_Sit_Idle_M 33, 시우 리그 대리 메시) → Humanoid
             string sit = $"{ClipDir}/ChairSit.fbx";

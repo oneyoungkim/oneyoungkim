@@ -3894,6 +3894,125 @@ MonoBehaviour:
     Weight: 1
     Limit: 0
     Demo: 1
+  - Id: N12
+    Group: 
+    Title: "\uC67C\uC190\uC7A1\uC774"
+    Chapter: 1
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-9
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uD1A0\uC694\uC77C \uC624\uD6C4, \uCF54\uB108\uB9E8 \uAD00\uC6D0\uB4E4\uC774
+      \uC6D0\uC815 \uC2A4\uD30C\uB9C1\uC744 \uC654\uB2E4. \uB9E8 \uB4A4\uC5D0\uC11C
+      \uB4E4\uC5B4\uC628 \uC0AC\uB78C\uC774 \uC81C\uC77C \uCEF8\uB2E4."
+    - "\uBC31\uC2B9\uBBFC \uAD00\uC7A5. 183cm, \uC624\uB978\uBC1C\uC774 \uC55E\uC5D0
+      \uC788\uB294 \uC67C\uC190\uC7A1\uC774 \uC790\uC138. \uC2DC\uC6B0\uB294 \uCC98\uC74C\uC73C\uB85C
+      \uC0AC\uC6B0\uC2A4\uD3EC\uC640 \uAC00\uBCCD\uAC8C \uD55C \uB77C\uC6B4\uB4DC\uB97C
+      \uB3C8\uB2E4."
+    Quotes:
+    - "\uC774\uC724\uC900|\uC2B9\uBBFC\uC774\uD615, \uC654\uC5B4? \uC598\uAC00 \uADF8
+      \uC560\uC57C."
+    - "\uBC31\uC2B9\uBBFC|\uC55E\uBC1C \uBC14\uAE65 \uC790\uB9AC \uBE8F\uAE30\uC9C0
+      \uB9C8. \uAC70\uAE30 \uC11C\uBA74 \uC67C\uC190\uC774 \uB2E4 \uBCF4\uC5EC."
+    Dlg: N12
+    DlgPlace: Gym
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
+    Date: 0
+    WinFrom: 411
+    WinTo: 430
+    Monthly: 0
+    Days: "\uD1A0"
+    Bands: []
+    From: 780
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    Need:
+    - unlocked:lesson.guests
+    - gym.member>=1
+    Block: []
+    After:
+    - unlock:lesson.seungmin
+    - "phone:\uC774\uC724\uC900:\uC2B9\uBBFC\uC774\uD615\uB3C4 \uD1A0\uC694\uC77C
+      \uB450 \uC2DC\uC5D0 \uC640 \uC900\uB300. \uC608\uC57D\uC740 '\uB808\uC2A8'\uC5D0\uC11C."
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 1
+  - Id: N13
+    Group: 
+    Title: "\uB2E4\uC12F \uC0AC\uB78C"
+    Chapter: 1
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-9
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uD1A0\uC694\uC77C \uC800\uB141, \uB808\uC2A8\uC774 \uB05D\uB0AC\uB294\uB370
+      \uC544\uBB34\uB3C4 \uC548 \uAC14\uB2E4. \uC0AC\uBB34\uC2E4 \uC55E\uC5D0 \uAD00\uC7A5\uC774
+      \uB2E4\uC12F\uC774\uC5C8\uB2E4."
+    - "\uC774\uC724\uC900\xB7\uAE40\uC2B9\uC5F0\xB7\uC190\uC9C4\uC218\xB7\uC11C\uC9C4\uC218\xB7\uBC31\uC2B9\uBBFC.
+      \uB2E4\uC12F \uC0AC\uB78C\uC774 \uC2DC\uC6B0\uB97C \uB450\uACE0 \uD55C \uB9C8\uB514\uC529
+      \uD55C\uB2E4."
+    Quotes:
+    - "\uC774\uC724\uC900|\uB4E4\uC5C8\uC9C0? \uB2E4 \uB2E4\uB978 \uB9D0 \uAC19\uC544\uB3C4
+      \uAC19\uC740 \uB9D0\uC774\uC57C."
+    - "\uC774\uC724\uC900|\uCC9C\uCC9C\uD788 \uD574. MMA\uB294 \uC608\uC220\uC774\uB2E4."
+    Dlg: N13
+    DlgPlace: Gym
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
+    Date: 0
+    WinFrom: 502
+    WinTo: 508
+    Monthly: 0
+    Days: 
+    Bands: []
+    From: 1080
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    Need:
+    - card:N12
+    - unlocked:lesson.guests
+    Block: []
+    After: []
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 1
   - Id: N11
     Group: 
     Title: "\uC5C4\uB9C8 \uACF0\uD0D5"
@@ -7192,6 +7311,45 @@ MonoBehaviour:
         Grade: 2
         Drills: []
         Plus: 4
+    - Id: seungmin_baek
+      Name: "\uBC31\uC2B9\uBBFC"
+      Title: "\uCD9C\uC7A5 \uB808\uC2A8 \u2014 \uC0AC\uC6B0\uC2A4\uD3EC\xB7\uB2C8\uD0A5\xB7\uD074\uB9B0\uCE58"
+      Gym: "\uCF54\uB108\uB9E8"
+      Bio: "\uCF54\uB108\uB9E8 \uAD00\uC7A5 \xB7 \uBCC4\uBA85 '\uC2B9\uBBFC\uC774\uD615'
+        \xB7 183cm \uC0AC\uC6B0\uC2A4\uD3EC \uD398\uB354\uAE09 \uD0C0\uACA9\uAC00
+        \xB7 \uB85C\uB4DCFC \uC601\uAC74\uC988 2\uC2B9 2\uD328(\uC5D0\uB178\uBAA8\uD1A0
+        \uC544\uD0A4\uB77C 1\uB77C\uC6B4\uB4DC 42\uCD08 KO \xB7 \uAD8C\uB3C4\uD615
+        \uB2C8\uD0A5 KO) \xB7 \uC774\uB984\uB09C \uCCB4\uC721\uAD00 \uD2B8\uB808\uC774\uB108
+        \uCD9C\uC2E0"
+      Unlock: unlocked:lesson.seungmin
+      Visit: 1
+      Slots:
+      - Days: "\uD1A0"
+        Label: "\uD1A0\uC694\uC77C \uCD9C\uC7A5 \uB808\uC2A8"
+        At: 840
+      Week: 1
+      Price: 50000
+      List: 120000
+      Ticket10: 0
+      List10: 0
+      Mul: 1.7
+      Bonus: 6
+      Metric: 0.05
+      FatigueMul: 1.5
+      Fix: 0
+      Drills:
+      - D04
+      - D05
+      - D11
+      HasTech: 0
+      Tech:
+        Id: 
+        Name: 
+        Text: 
+        Lessons: 2
+        Grade: 2
+        Drills: []
+        Plus: 4
     FullCap: 12
     SuppDays: 3
     SuppMiss: 2
@@ -7679,3 +7837,43 @@ MonoBehaviour:
     - Coach: jinsoo_seo
       Kind: book
       Text: "\uC77C\uC694\uC77C \uC800\uB141\uC5D0 \uBCF4\uC790."
+    - Coach: seungmin_baek
+      Kind: intro
+      Text: "\uC724\uC900\uC774\uD55C\uD14C \uC598\uAE30 \uB4E4\uC5C8\uC5B4. \uC67C\uC190\uC7A1\uC774
+        \uC0C1\uB300\uBD80\uD130 \uD574 \uBCF4\uC790."
+    - Coach: seungmin_baek
+      Kind: start
+      Text: "\uC624\uB298\uC740 \uC55E\uBC1C \uC790\uB9AC\uBD80\uD130."
+    - Coach: seungmin_baek
+      Kind: cue
+      Text: "\uC55E\uBC1C \uBC14\uAE65."
+    - Coach: seungmin_baek
+      Kind: cue
+      Text: "\uC67C\uC190 \uBD10."
+    - Coach: seungmin_baek
+      Kind: cue
+      Text: "\uBD99\uC73C\uBA74 \uBB34\uB98E."
+    - Coach: seungmin_baek
+      Kind: cue
+      Text: "\uC88B\uC544, \uAC70\uAE30 \uC11C."
+    - Coach: seungmin_baek
+      Kind: good
+      Text: "\uC88B\uB2E4. \uADF8 \uC790\uB9AC \uC548 \uBE8F\uACBC\uC5B4."
+    - Coach: seungmin_baek
+      Kind: ok
+      Text: "\uAD1C\uCC2E\uC544. \uBC1C\uC774 \uB35C \uBD80\uB52A\uCCE4\uC5B4."
+    - Coach: seungmin_baek
+      Kind: bad
+      Text: "\uAE09\uD558\uAC8C \uB4E4\uC5B4\uAC00\uC9C0 \uB9C8. \uC790\uB9AC \uBA3C\uC800."
+    - Coach: seungmin_baek
+      Kind: tip
+      Text: "\uC0AC\uC6B0\uC2A4\uD3EC \uC55E\uC5D0\uC120 \uC55E\uBC1C \uBC14\uAE65\uC744
+        \uBA3C\uC800 \uC7A1\uC544. \uAC70\uAE30 \uC11C\uBA74 \uC67C\uC190\uC774 \uB2E4
+        \uBCF4\uC5EC."
+    - Coach: seungmin_baek
+      Kind: noshow
+      Text: "\uC624\uB298 \uBABB \uBD24\uB124. \uB2E4\uC74C \uD1A0\uC694\uC77C\uC5D0
+        \uBCF4\uC790."
+    - Coach: seungmin_baek
+      Kind: book
+      Text: "\uD1A0\uC694\uC77C \uB450 \uC2DC\uC5D0 \uBCF4\uC790."

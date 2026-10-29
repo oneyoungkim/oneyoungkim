@@ -60,6 +60,9 @@ namespace Haengin
             }
             var g = GameObject.Find(name);
             if (g != null) return g.transform;
+            // 2026-10-29 체육관 NPC(출장 코치는 레슨 때만 켜짐 — 꺼진 것도): 이름(김승연·손진수·서진수·백승민)으로
+            foreach (var n in UnityEngine.Object.FindObjectsByType<GymNpc>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (n != null && n.gameObject.name == name) return n.transform;
             // 시비 상대(M2 인카운터 적): 이름표(EnemyDef.Label — 깐족이·석 달·냉장고)로
             foreach (var b in UnityEngine.Object.FindObjectsByType<EnemyBrain>(FindObjectsSortMode.None))
                 if (b != null && b.Def != null && b.Def.Label == name) return b.transform;

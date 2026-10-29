@@ -95,7 +95,7 @@ namespace Haengin
             {
                 if (!r.enabled || r.transform.IsChildOf(Subject)) continue;
                 var b = r.bounds;
-                if (b.size.x > 3f || b.size.z > 3f || b.size.y > 2.6f) continue;      // 벽·바닥·큰 진열대 판은 빼고(벽은 Clear 가 맡음)
+                if (b.size.x > 3f || b.size.z > 3f || (b.size.y > 2.6f && (AvoidProps || Mathf.Max(b.size.x, b.size.z) > 1.2f))) continue;   // 이야기 컷은 가는 기둥(충돌 없는 교실 기둥 등)도 넣음      // 벽·바닥·큰 진열대 판은 빼고(벽은 Clear 가 맡음)
                 if ((b.center - c).sqrMagnitude > 16f || b.max.y < c.y + 0.9f) continue;   // 허리 아래 것(계산대 위 작은 물건)은 가슴 높이 시선을 안 가림
                 b.Expand(-0.04f);
                 props.Add(b);
@@ -277,7 +277,9 @@ namespace Haengin
                 foreach (var bb in BodyBones)
                 {
                     var t = a.GetBoneTransform(bb);
-                    if (t != null && SegDist(t.position, pos, end) < (bb == HumanBodyBones.Head ? 0.2f : 0.28f)) return true;
+                    if (t == null) continue;
+                    if (SegDist(t.position, pos, end) < (bb == HumanBodyBones.Head ? 0.2f : 0.28f)) return true;
+                    if (!AvoidProps && Vector3.Distance(t.position, pos) < 0.75f) return true;     // 2026-10-29: 다른 배우 몸이 카메라 바로 앞(화면 반을 덮음 — N01)
                 }
             }
             return false;
@@ -310,7 +312,9 @@ namespace Haengin
                 // 이야기 컷: ① 다른 배우·소품이 안 가리고 ② 벽에 당겨져도 원래 거리의 60% 넘게 남고 ③ 대상이 지붕 아래면 카메라도 지붕 아래(창·문 구멍으로 벽 밖에 나가지 않게)
                 float want = Vector3.Distance(p0, o);
                 bool roof = Physics.Raycast(l + Vector3.up * 0.3f, Vector3.up, 6f, Block, QueryTriggerInteraction.Ignore);
-                bool Good(Vector3 c) => !Blocked(c, l) && Vector3.Distance(c, o) >= want * 0.6f && (!roof || Physics.Raycast(c, Vector3.up, 6f, Block, QueryTriggerInteraction.Ignore));
+                // ④ 카메라 밑에 바닥(무대 밖 허공이면 벽 밖 — C1-07 와이드·C1-19 와이드가 집·복도 건물 바깥에서 찍던 것)
+                bool Good(Vector3 c) => !Blocked(c, l) && Vector3.Distance(c, o) >= want * 0.6f && (!roof || Physics.Raycast(c, Vector3.up, 6f, Block, QueryTriggerInteraction.Ignore))
+                    && Physics.Raycast(c + Vector3.up * 0.1f, Vector3.down, 6f, Block, QueryTriggerInteraction.Ignore);
                 if (!Good(p))
                     foreach (var d in SpinsWide)
                     {
@@ -319,7 +323,7 @@ namespace Haengin
                         if (Good(c)) { spin = d; p = c; break; }
                     }
                 StoryFixes += spin != 0f ? 1 : 0;
-                if (!Good(p)) StoryBad.Add($"{CutCams.Name(Preset)}:{(Subject != null ? Subject.name : "-")} {(Blocked(p, l) ? "가림" : Vector3.Distance(p, o) < want * 0.6f ? $"벽에 당김 {Vector3.Distance(p, o):F1}/{want:F1}m" : "지붕 밖")}");
+                if (!Good(p)) StoryBad.Add($"{CutCams.Name(Preset)}:{(Subject != null ? Subject.name : "-")} {(Blocked(p, l) ? "가림" : Vector3.Distance(p, o) < want * 0.6f ? $"벽에 당김 {Vector3.Distance(p, o):F1}/{want:F1}m" : !Physics.Raycast(p + Vector3.up * 0.1f, Vector3.down, 6f, Block, QueryTriggerInteraction.Ignore) ? "바닥 밖" : "지붕 밖")}");
             }
             transform.SetPositionAndRotation(p, Quaternion.LookRotation((l - p).sqrMagnitude > 1e-6f ? l - p : Vector3.forward));
             if (Cam != null) Cam.PreviousStateIsValid = false;
