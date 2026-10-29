@@ -1211,6 +1211,96 @@
    ],
    "miss": "never",
    "demo": false
+  },
+  {
+   "id": "C2-K1",
+   "dlg": "C2-K1",
+   "dlg_place": "Gym",
+   "title": "예측표",
+   "kind": "cond",
+   "motif": [
+    "원"
+   ],
+   "src": [
+    "docs/13 14-10"
+   ],
+   "chapter": "2",
+   "place": "Gym",
+   "zone": "hyehwa_mma",
+   "at": "enter:Gym|after:drill",
+   "need": [
+    "unlocked:lesson.guests"
+   ],
+   "board": [
+    "데뷔전 사흘 전, 김승연 코치의 예측표 — 판정. 거리만 지키면 바뀐다.",
+    "리치 192의 코치가 길게 쓰는 법을 말한다: 들어올 때 뒷손 하나, 가끔은 위에서 내려오는 발."
+   ],
+   "quotes": [
+    "김승연|내 예측은 판정. 근데 네가 거리만 지키면 바뀌어.",
+    "김승연|끝나면 리뷰는 내가 해. 냉정하게."
+   ],
+   "miss": "wait",
+   "demo": false
+  },
+  {
+   "id": "C2-S1",
+   "dlg": "C2-S1",
+   "dlg_place": "Gym",
+   "title": "입장곡",
+   "kind": "cond",
+   "motif": [
+    "원"
+   ],
+   "src": [
+    "docs/13 14-10"
+   ],
+   "chapter": "2",
+   "place": "Gym",
+   "zone": "hyehwa_mma",
+   "at": "enter:Gym|after:drill",
+   "need": [
+    "unlocked:lesson.guests"
+   ],
+   "board": [
+    "데뷔전 일주일 전, 서진수 코치가 만든 입장곡 — 낮은 북소리 위에 '행인1'.",
+    "걸어 나올 때 고개를 들고, 들어가서는 잊는다."
+   ],
+   "quotes": [
+    "서진수|걸어 나올 때 고개 들어. 카메라는 그때 찍어.",
+    "서진수|떨리니까 노래가 있는 거야."
+   ],
+   "miss": "wait",
+   "demo": false
+  },
+  {
+   "id": "C3-J1",
+   "dlg": "C3-J1",
+   "dlg_place": "Gym",
+   "title": "다음 날",
+   "kind": "cond",
+   "motif": [
+    "원"
+   ],
+   "src": [
+    "docs/13 14-10"
+   ],
+   "chapter": "3",
+   "place": "Gym",
+   "zone": "hyehwa_mma",
+   "at": "enter:Gym|after:drill",
+   "need": [
+    "unlocked:lesson.guests"
+   ],
+   "board": [
+    "첫 패배 다음 날, 손진수 코치가 체육관에 와 있다.",
+    "지는 날은 온다 — 중요한 건 다음 날 여기 오는 것. 레그킥부터 다시, 웃으면서."
+   ],
+   "quotes": [
+    "손진수|지는 날은 와. 중요한 건 다음 날 여기 오는 거야.",
+    "손진수|그럼 됐어. 레그킥부터 다시 하자. 웃으면서."
+   ],
+   "miss": "wait",
+   "demo": false
   }
  ]
 }

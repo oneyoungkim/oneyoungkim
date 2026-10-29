@@ -514,6 +514,45 @@ namespace Haengin.Tests
             Assert.IsEmpty(bad, string.Join(" | ", bad));
         }
 
+        // ───────────────────────── Q50 출장 코치 셋 고유 장면(2026-10-29 대표 "김승연 손진수 서진수도 넣어야지"): 1장 N14 김승연 「열에 셋」 · N15 손진수 「웃으면서」 · N16 서진수 「이름값」
+        //   (2·3장 C2-K1·C2-S1·C3-J1 은 데이터·대사만 — 데모 밖) · 그 코치가 화면에 서고 · 대사 장면 · 컷 가림 0 · 2·3장 카드와 대사가 있는지
+        [UnityTest, Timeout(1200000)]
+        public IEnumerator Q50_Guest_Coach_Own_Scenes()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var log = new List<string>(); var bad = new List<string>();
+            foreach (var (card, who, day, min) in new[] { ("N14", "김승연", 506, 16 * 60 + 30), ("N15", "손진수", 329, 10 * 60 + 40), ("N16", "서진수", 405, 18 * 60 + 40) })
+            {
+                var c = w.Def.Card(card);
+                Assert.NotNull(c, card);
+                yield return Start(w, Mid(w.Def, day, min, SceneLoader.Gym, m => m.G.Fatigue = 0));
+                var story = w.Story; story.Bot = StoryRunner.BotMode.Read;
+                CutCamDriver.StoryBad.Clear(); int d0 = story.DlgPlayed;
+                bool done = false, seen = false;
+                IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; }
+                w.StartCoroutine(Wrap());
+                float t0 = Time.realtimeSinceStartup;
+                while (!done && Time.realtimeSinceStartup - t0 < 300f) { var a = CutCtx.Actor(who); if (a != null && a.gameObject.activeInHierarchy) seen = true; yield return null; }
+                log.Add($"{card} 「{c.Title}」 {who}: 끝 {done} · 대사 장면 {story.DlgPlayed - d0} · 보임 {seen} · 컷 못 피함 {CutCamDriver.StoryBad.Count}");
+                if (!done) bad.Add(card + " 안 끝남");
+                if (story.DlgPlayed - d0 < 1) bad.Add(card + " 대사 장면 없음");
+                if (!seen) bad.Add($"{card} {who} 안 보임");
+                foreach (var b in CutCamDriver.StoryBad) bad.Add($"{card} 컷 가림 {b}");
+                w.Stop();
+                yield return Lab.Frames(5);
+            }
+            foreach (var (card, ch) in new[] { ("C2-K1", "2"), ("C2-S1", "2"), ("C3-J1", "3") })
+            {
+                var c = w.Def.Card(card);
+                if (c == null) { bad.Add(card + " 카드 없음"); continue; }
+                if (!w.Story.Dialogue.Has(card)) bad.Add(card + " 대사 없음");
+                log.Add($"{card} 「{c.Title}」 {ch}장 · 대사 {w.Story.Dialogue.Get(card).Count()}줄");
+            }
+            Debug.Log("[Q] Q50 출장 코치 고유 장면\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
+        }
+
         // ───────────────────────── Q46 룩데브 소결정 ①②③ — 벽돌·잎 카드 색 고정 · 밤 빛 웅덩이 지름 3~4m · 잎 카드 안쪽 먹선
         [UnityTest, Timeout(600000)]
         public IEnumerator Q46_Lookdev_Palette_Pools_LeafInk()

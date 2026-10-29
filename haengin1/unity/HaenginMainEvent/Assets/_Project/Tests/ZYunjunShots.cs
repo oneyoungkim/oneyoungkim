@@ -217,6 +217,123 @@ namespace Haengin.Tests
             got(gm);
         }
 
+        // ───────────────────────── 출장 코치 셋(김승연·손진수·서진수) 게임 화면 + N13 다섯 사람(2026-10-29 대표 "어디 들어가 있지? 캡처 보여줘") — -coachshots <폴더>
+        //   사람마다 ① 레슨 시작 카드 + 매트 옆 코치(실제 탐색 카메라) ② 레슨 드릴 중(실제 드릴 카메라 + 코치 쪽) ③ 얼굴 근접(HUD 끔) · N13 다섯이 다 보이는 컷 3
+        [UnityTest, Timeout(2400000)]
+        public IEnumerator Z_Coach_Shots()
+        {
+            string dir = Shots.Arg("-coachshots");
+            if (string.IsNullOrEmpty(dir)) { Assert.Ignore("-coachshots <폴더> 없음"); yield break; }
+            if (!Shots.Graphics) { Assert.Ignore("그래픽 장치 없음(-nographics)"); yield break; }
+            Directory.CreateDirectory(dir);
+            var log = new List<string>();
+            WorldRunner w = null;
+            yield return M7Qa2Tests.Open(x => w = x);
+            w.BotRead = 6f;
+            var cam = Camera.main; var brain = cam.GetComponent<CinemachineBrain>(); var me = M3Lab.Motor;
+            foreach (var (id, key, day, enter, at) in new[] { ("seungyeon", "kim", 328, 16 * 60 + 50, 17 * 60 + 25), ("jinsoo_son", "son", 329, 9 * 60 + 30, 10 * 60 + 55), ("jinsoo_seo", "seo", 329, 18 * 60, 19 * 60 + 25) })
+            {
+                GymManager gm = null;
+                yield return Enter(w, day, enter, x => gm = x);
+                w.BotRead = 6f;
+                var coach = w.Model.Sh.Coach(id);
+                Assert.AreEqual("", w.BookNext(id), id + " 예약");
+                w.BotLessonDrill = c => c.Drills.Contains("*") ? "D03" : (c.Drills.FirstOrDefault(x => x == "D03" || x == "D04" || x == "D05") ?? c.Drills[0]);
+                var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+                var sp = mat.position + mat.forward * 2.4f; var to = mat.position - sp; to.y = 0f;
+                me.Teleport(sp, Mathf.Atan2(to.x, to.z) * Mathf.Rad2Deg);
+                w.Loader.Cam?.SnapBehind();
+                yield return Lab.Frames(20);
+                GameClock.AdvanceTo(at);
+                var board = w.Story.Board;
+                yield return Until(() => board != null && board.Shown, 60f);
+                yield return Until(() => false, 0.6f);
+                var npc = gm.Guest(id);
+                Snap(gm, cam, Path.Combine(dir, $"{key}_1_lesson_card.png"), true);
+                if (npc != null)
+                {
+                    var head = Bone(npc, HumanBodyBones.Head).position;
+                    brain.enabled = false;
+                    Solve(cam, head - Vector3.up * 0.45f, FaceDir(npc), 3.0f, 0.1f, 42f, Front, me.transform);
+                    ShiftX(cam, head - Vector3.up * 0.45f, 0.3f);
+                    yield return null;
+                    Snap(gm, cam, Path.Combine(dir, $"{key}_1b_lesson_card_coach.png"), true);
+                    brain.enabled = true;
+                }
+                // ② 드릴 중
+                yield return Until(() => gm.Busy && gm.Runner.State == DrillRunner.Phase.Round, 90f);
+                yield return Until(() => false, 3f);
+                Snap(gm, cam, Path.Combine(dir, $"{key}_2_drill.png"), true);
+                if (npc != null)
+                {
+                    var head = Bone(npc, HumanBodyBones.Head).position;
+                    var toMe = me.transform.position - npc.transform.position; toMe.y = 0f;
+                    brain.enabled = false;
+                    Solve(cam, Vector3.Lerp(head, me.transform.position + Vector3.up * 1.4f, 0.35f), toMe.sqrMagnitude > 1e-3f ? toMe.normalized : FaceDir(npc), 3.4f, 0.2f, 44f, Front, null);
+                    yield return null;
+                    Snap(gm, cam, Path.Combine(dir, $"{key}_2b_drill_coach.png"), true);
+                    brain.enabled = true;
+                }
+                log.Add($"{coach.Name}: 드릴 {gm.Runner.Def?.Id} · NPC {(npc != null)}");
+                gm.Runner.Abort();
+                yield return Until(() => w.Free, 60f);
+                for (int i = 0; i < 300 && gm.Busy; i++) { gm.CloseCard(); yield return null; }
+                // ③ 얼굴 근접(HUD 끔)
+                if (npc != null)
+                {
+                    var feet = mat.position;
+                    var dirOpen = OpenDir(feet + Vector3.up * 1.2f, mat.forward);
+                    foreach (var r in me.GetComponentsInChildren<Renderer>(true)) r.enabled = false;
+                    yield return HoldAt(npc, feet, dirOpen);
+                    yield return Lab.Frames(20);
+                    yield return HoldAt(npc, feet, dirOpen);
+                    var head = Bone(npc, HumanBodyBones.Head).position + Vector3.up * 0.06f;
+                    brain.enabled = false;
+                    Pose(cam, head, head + dirOpen * 1.7f + Vector3.up * 0.04f, 30f);
+                    yield return null;
+                    Snap(gm, cam, Path.Combine(dir, $"{key}_3_face.png"), false);
+                    brain.enabled = true;
+                    foreach (var r in me.GetComponentsInChildren<Renderer>(true)) r.enabled = true;
+                }
+                w.BotLessonDrill = null;
+                w.Stop();
+                yield return Lab.Frames(5);
+            }
+            // N13 다섯 사람
+            {
+                yield return M7Qa2Tests.Start(w, M7Qa2Tests.Mid(w.Def, 502, 18 * 60 + 40, SceneLoader.Gym, m => { m.G.Fatigue = 0; new EventDirector(m).Done(w.Def.Card("N12"), 1); }));
+                var gm = GymManager.Instance;
+                var story = w.Story; story.Bot = StoryRunner.BotMode.Read;
+                var c = w.Def.Card("N13");
+                bool done = false;
+                IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; }
+                w.StartCoroutine(Wrap());
+                var names = new[] { "이윤준", "김승연", "손진수", "서진수", "백승민" };
+                bool All() => names.All(n => { var a = CutCtx.Actor(n); return a != null && a.gameObject.activeInHierarchy; });
+                yield return Until(() => All() || done, 120f);
+                yield return Until(() => false, 1.0f);
+                Snap(gm, cam, Path.Combine(dir, "n13_1_play.png"), true);
+                // 시우 뒤 높은 데서 다섯을 한 화면에
+                var ctr = names.Select(n => CutCtx.Actor(n)).Where(a => a != null).Aggregate(Vector3.zero, (acc, a) => acc + a.position) / names.Length;
+                var back = me.transform.position - ctr; back.y = 0f; back.Normalize();
+                brain.enabled = false;
+                Pose(cam, ctr + Vector3.up * 1.3f, ctr + back * 5.2f + Vector3.up * 2.3f, 48f);
+                yield return null;
+                Snap(gm, cam, Path.Combine(dir, "n13_2_wide.png"), true);
+                Pose(cam, ctr + Vector3.up * 1.4f, ctr + (Quaternion.Euler(0f, 35f, 0f) * back) * 4.6f + Vector3.up * 1.7f, 50f);
+                yield return null;
+                Snap(gm, cam, Path.Combine(dir, "n13_3_side.png"), true);
+                brain.enabled = true;
+                yield return Until(() => false, 5f);
+                Snap(gm, cam, Path.Combine(dir, "n13_4_play.png"), true);
+                log.Add($"N13: 다섯 다 보임 {All()}");
+                yield return Until(() => done, 120f);
+                w.Stop();
+            }
+            File.WriteAllText(Path.Combine(dir, "summary.txt"), string.Join("\n", log), new UTF8Encoding(true));
+            Debug.Log("[Coach] 코치 게임 화면 → " + dir + "\n" + string.Join("\n", log));
+        }
+
         [UnityTest, Timeout(2400000)]
         public IEnumerator Z_Yunjun_Shots()
         {

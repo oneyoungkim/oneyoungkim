@@ -4013,6 +4013,178 @@ MonoBehaviour:
     Weight: 1
     Limit: 0
     Demo: 1
+  - Id: N14
+    Group: 
+    Title: "\uC5F4\uC5D0 \uC14B"
+    Chapter: 1
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-10
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uBC18 \uB2E8\uD1A1\uBC29\uC5D0 \uB3C8 \uC8FC\uCC28\uC7A5 \uC2DC\uBE44 \uC601\uC0C1\uC744
+      \uAE40\uC2B9\uC5F0 \uCF54\uCE58\uAC00 \uBA48\uCDC4\uB2E4 \uB3CC\uB838\uB2E4
+      \uD558\uBA70 \uBCF8\uB2E4."
+    - "\uCCAB \uC8FC\uBA39\uC740 \uC88B\uACE0, \uB450 \uBC88\uC9F8\uBD80\uD130 \uD131\uC774
+      \uB4E4\uB9B0\uB2E4 \u2014 \uC22B\uC790\uB85C \uB9D0\uD558\uB294 \uB0C9\uC815\uD55C
+      \uC608\uCE21."
+    Quotes:
+    - "\uAE40\uC2B9\uC5F0|\uC9C0\uAE08\uC740 \uC5F4\uC5D0 \uC14B. \uD131 \uB0B4\uB9AC\uBA74
+      \uC5F4\uC5D0 \uC5EC\uC12F."
+    - "\uAE40\uC2B9\uC5F0|\uB4B7\uC190\uC740 \uB098\uC911\uC5D0 \uCCD0. \uBA3C\uC800
+      \uB4E4\uC5B4\uC624\uAC8C \uB450\uACE0."
+    Dlg: N14
+    DlgPlace: Gym
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
+    Date: 0
+    WinFrom: 506
+    WinTo: 508
+    Monthly: 0
+    Days: 
+    Bands: []
+    From: 960
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    Need:
+    - card:C1-24
+    - unlocked:lesson.guests
+    Block: []
+    After: []
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 1
+  - Id: N15
+    Group: 
+    Title: "\uC6C3\uC73C\uBA74\uC11C"
+    Chapter: 1
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-10
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uC77C\uC694\uC77C \uC624\uC804, \uB808\uADF8\uD0A5 \uC138 \uBC88\uC5D0 \uB2E4\uB9AC\uAC00
+      \uB9D0\uC744 \uC548 \uB4E3\uB294\uB2E4."
+    - "\uC190\uC9C4\uC218 \uCF54\uCE58\uAC00 \uC6C3\uC73C\uBA74\uC11C \uB4E4\uC5B4\uC640
+      \uCE74\uC6B4\uD130 \uD0DC\uD074\uB85C \uC2DC\uC6B0\uB97C \uB744\uC6B4\uB2E4
+      \u2014 \uB9DE\uC544\uB3C4 \uC6C3\uC73C\uBA70 \uD55C \uBC1C \uB354."
+    Quotes:
+    - "\uC190\uC9C4\uC218|\uC544\uD504\uC9C0? \uADF8\uB798\uB3C4 \uC5BC\uAD74\uC740
+      \uC6C3\uC5B4."
+    - "\uC190\uC9C4\uC218|\uB9DE\uC73C\uBA74 \uD55C \uBC1C \uB354 \uB4E4\uC5B4\uAC00.
+      \uC6C3\uC73C\uBA74\uC11C."
+    Dlg: N15
+    DlgPlace: Gym
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
+    Date: 0
+    WinFrom: 322
+    WinTo: 426
+    Monthly: 0
+    Days: "\uC77C"
+    Bands: []
+    From: 630
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    Need:
+    - unlocked:lesson.guests
+    - gym.member>=1
+    Block: []
+    After: []
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 1
+  - Id: N16
+    Group: 
+    Title: "\uC774\uB984\uAC12"
+    Chapter: 1
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-10
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uC11C\uC9C4\uC218 \uCF54\uCE58\uAC00 \uD734\uB300\uD3F0\uBD80\uD130 \uAEBC\uB0B8\uB2E4
+      \u2014 \uBCF4\uB294 \uC0AC\uB78C\uC774 \uC788\uC5B4\uC57C \uACBD\uAE30\uAC00
+      \uC7A1\uD78C\uB2E4."
+    - "\uB7A9 \uD558\uB294 \uCF54\uCE58(\uB204\uB4DC\uBCF4\uC774 \uC11C)\uAC00 '\uD589\uC7781'\uC744
+      \uAC04\uD310\uCC98\uB7FC \uBD80\uB974\uACE0, \uB4A4\uB3CC\uB824\uCC28\uAE30
+      \uC601\uC0C1\uC744 \uCC0D\uB294\uB2E4."
+    Quotes:
+    - "\uC11C\uC9C4\uC218|\uB108 SNS \uC788\uC5B4? \uC5C6\uC9C0. \uD558\uB098 \uB9CC\uB4E4\uC790."
+    - "\uC11C\uC9C4\uC218|\uB108\uB294 \uBB50\uB77C\uACE0 \uBD88\uB824? \u2026\uD589\uC7781?
+      \uADF8\uAC70 \uC88B\uC740\uB370."
+    Dlg: N16
+    DlgPlace: Gym
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
+    Date: 0
+    WinFrom: 405
+    WinTo: 430
+    Monthly: 0
+    Days: "\uC77C"
+    Bands: []
+    From: 1110
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    Need:
+    - unlocked:lesson.guests
+    - gym.member>=1
+    Block: []
+    After: []
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 1
   - Id: N11
     Group: 
     Title: "\uC5C4\uB9C8 \uACF0\uD0D5"
@@ -6860,6 +7032,175 @@ MonoBehaviour:
     Ifs: []
     Fight: 
     Miss: never
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 0
+  - Id: C2-K1
+    Group: 
+    Title: "\uC608\uCE21\uD45C"
+    Chapter: 2
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-10
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uB370\uBDD4\uC804 \uC0AC\uD758 \uC804, \uAE40\uC2B9\uC5F0 \uCF54\uCE58\uC758
+      \uC608\uCE21\uD45C \u2014 \uD310\uC815. \uAC70\uB9AC\uB9CC \uC9C0\uD0A4\uBA74
+      \uBC14\uB010\uB2E4."
+    - "\uB9AC\uCE58 192\uC758 \uCF54\uCE58\uAC00 \uAE38\uAC8C \uC4F0\uB294 \uBC95\uC744
+      \uB9D0\uD55C\uB2E4: \uB4E4\uC5B4\uC62C \uB54C \uB4B7\uC190 \uD558\uB098, \uAC00\uB054\uC740
+      \uC704\uC5D0\uC11C \uB0B4\uB824\uC624\uB294 \uBC1C."
+    Quotes:
+    - "\uAE40\uC2B9\uC5F0|\uB0B4 \uC608\uCE21\uC740 \uD310\uC815. \uADFC\uB370 \uB124\uAC00
+      \uAC70\uB9AC\uB9CC \uC9C0\uD0A4\uBA74 \uBC14\uB00C\uC5B4."
+    - "\uAE40\uC2B9\uC5F0|\uB05D\uB098\uBA74 \uB9AC\uBDF0\uB294 \uB0B4\uAC00 \uD574.
+      \uB0C9\uC815\uD558\uAC8C."
+    Dlg: C2-K1
+    DlgPlace: Gym
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
+    Date: 0
+    WinFrom: 0
+    WinTo: 0
+    Monthly: 0
+    Days: 
+    Bands: []
+    From: -1
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    Need:
+    - unlocked:lesson.guests
+    Block: []
+    After: []
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 0
+  - Id: C2-S1
+    Group: 
+    Title: "\uC785\uC7A5\uACE1"
+    Chapter: 2
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-10
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uB370\uBDD4\uC804 \uC77C\uC8FC\uC77C \uC804, \uC11C\uC9C4\uC218 \uCF54\uCE58\uAC00
+      \uB9CC\uB4E0 \uC785\uC7A5\uACE1 \u2014 \uB0AE\uC740 \uBD81\uC18C\uB9AC \uC704\uC5D0
+      '\uD589\uC7781'."
+    - "\uAC78\uC5B4 \uB098\uC62C \uB54C \uACE0\uAC1C\uB97C \uB4E4\uACE0, \uB4E4\uC5B4\uAC00\uC11C\uB294
+      \uC78A\uB294\uB2E4."
+    Quotes:
+    - "\uC11C\uC9C4\uC218|\uAC78\uC5B4 \uB098\uC62C \uB54C \uACE0\uAC1C \uB4E4\uC5B4.
+      \uCE74\uBA54\uB77C\uB294 \uADF8\uB54C \uCC0D\uC5B4."
+    - "\uC11C\uC9C4\uC218|\uB5A8\uB9AC\uB2C8\uAE4C \uB178\uB798\uAC00 \uC788\uB294
+      \uAC70\uC57C."
+    Dlg: C2-S1
+    DlgPlace: Gym
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
+    Date: 0
+    WinFrom: 0
+    WinTo: 0
+    Monthly: 0
+    Days: 
+    Bands: []
+    From: -1
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    Need:
+    - unlocked:lesson.guests
+    Block: []
+    After: []
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
+    NoticeAt: -1
+    NoticeFrom: 
+    NoticeText: 
+    Weight: 1
+    Limit: 0
+    Demo: 0
+  - Id: C3-J1
+    Group: 
+    Title: "\uB2E4\uC74C \uB0A0"
+    Chapter: 3
+    Kind: 2
+    Motif:
+    - "\uC6D0"
+    Src:
+    - docs/13 14-10
+    Scenes: []
+    NoSceneEffects: 0
+    Board:
+    - "\uCCAB \uD328\uBC30 \uB2E4\uC74C \uB0A0, \uC190\uC9C4\uC218 \uCF54\uCE58\uAC00
+      \uCCB4\uC721\uAD00\uC5D0 \uC640 \uC788\uB2E4."
+    - "\uC9C0\uB294 \uB0A0\uC740 \uC628\uB2E4 \u2014 \uC911\uC694\uD55C \uAC74 \uB2E4\uC74C
+      \uB0A0 \uC5EC\uAE30 \uC624\uB294 \uAC83. \uB808\uADF8\uD0A5\uBD80\uD130 \uB2E4\uC2DC,
+      \uC6C3\uC73C\uBA74\uC11C."
+    Quotes:
+    - "\uC190\uC9C4\uC218|\uC9C0\uB294 \uB0A0\uC740 \uC640. \uC911\uC694\uD55C \uAC74
+      \uB2E4\uC74C \uB0A0 \uC5EC\uAE30 \uC624\uB294 \uAC70\uC57C."
+    - "\uC190\uC9C4\uC218|\uADF8\uB7FC \uB410\uC5B4. \uB808\uADF8\uD0A5\uBD80\uD130
+      \uB2E4\uC2DC \uD558\uC790. \uC6C3\uC73C\uBA74\uC11C."
+    Dlg: C3-J1
+    DlgPlace: Gym
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
+    Date: 0
+    WinFrom: 0
+    WinTo: 0
+    Monthly: 0
+    Days: 
+    Bands: []
+    From: -1
+    To: -1
+    Place: Gym
+    Zone: hyehwa_mma
+    At:
+    - enter:Gym
+    - after:drill
+    Need:
+    - unlocked:lesson.guests
+    Block: []
+    After: []
+    Choice: []
+    Ifs: []
+    Fight: 
+    Miss: wait
     NoticeAt: -1
     NoticeFrom: 
     NoticeText: 
