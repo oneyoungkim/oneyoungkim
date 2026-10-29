@@ -1,0 +1,60 @@
+﻿[
+  {
+    "created_at": "2026-10-29T12:57:26.423314Z",
+    "display_name": "Tripo H3.1 Multiview to 3D",
+    "id": "1a3cee23-3755-4a5d-9973-45becdb30748",
+    "job_type": "tripo_h3_1_multiview_to_3d",
+    "min_result_url": null,
+    "params": {
+      "auto_size": false,
+      "face_limit": 80000,
+      "folder_id": null,
+      "geometry_quality": "detailed",
+      "medias": [
+        {
+          "data": {
+            "id": "6cc5ecba-4679-4d21-86e9-655e2ccb4d69",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/6cc5ecba-4679-4d21-86e9-655e2ccb4d69.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "6d47a1c5-8ac1-4f08-9784-beccbacd32cf",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/6d47a1c5-8ac1-4f08-9784-beccbacd32cf.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "ea18b79f-3035-4c14-a3a6-3abc19e70bb2",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/ea18b79f-3035-4c14-a3a6-3abc19e70bb2.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "64d495c5-8fd8-4f90-bc6e-87b4df1e3d15",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/64d495c5-8fd8-4f90-bc6e-87b4df1e3d15.png"
+          },
+          "role": "image"
+        }
+      ],
+      "orientation": "align_image",
+      "pbr": false,
+      "quad": false,
+      "seed": null,
+      "texture": true,
+      "texture_alignment": "original_image",
+      "texture_quality": "detailed",
+      "texture_seed": null
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261029_125726_1a3cee23-3755-4a5d-9973-45becdb30748.glb",
+    "status": "completed"
+  }
+]
+

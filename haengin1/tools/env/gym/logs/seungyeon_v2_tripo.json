@@ -1,0 +1,60 @@
+﻿[
+  {
+    "created_at": "2026-10-29T12:57:18.369622Z",
+    "display_name": "Tripo H3.1 Multiview to 3D",
+    "id": "8200f821-50d6-4d97-8a70-f1761d242e1b",
+    "job_type": "tripo_h3_1_multiview_to_3d",
+    "min_result_url": null,
+    "params": {
+      "auto_size": false,
+      "face_limit": 80000,
+      "folder_id": null,
+      "geometry_quality": "detailed",
+      "medias": [
+        {
+          "data": {
+            "id": "3f685e37-1664-4a7b-a818-5b72fbb303f7",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/3f685e37-1664-4a7b-a818-5b72fbb303f7.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "fcb21515-2931-4cf9-b313-b221bd221fea",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/fcb21515-2931-4cf9-b313-b221bd221fea.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "2698fa66-0efa-4cbe-8f46-89a661731e86",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/2698fa66-0efa-4cbe-8f46-89a661731e86.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "7d8ff4c5-a146-498b-bde7-945b4637ceca",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/7d8ff4c5-a146-498b-bde7-945b4637ceca.png"
+          },
+          "role": "image"
+        }
+      ],
+      "orientation": "align_image",
+      "pbr": false,
+      "quad": false,
+      "seed": null,
+      "texture": true,
+      "texture_alignment": "original_image",
+      "texture_quality": "detailed",
+      "texture_seed": null
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261029_125718_8200f821-50d6-4d97-8a70-f1761d242e1b.glb",
+    "status": "completed"
+  }
+]
+

@@ -1,0 +1,60 @@
+﻿[
+  {
+    "created_at": "2026-10-29T12:57:26.135325Z",
+    "display_name": "Tripo H3.1 Multiview to 3D",
+    "id": "27d076f0-0525-49ce-b586-5fad31d82f7c",
+    "job_type": "tripo_h3_1_multiview_to_3d",
+    "min_result_url": null,
+    "params": {
+      "auto_size": false,
+      "face_limit": 80000,
+      "folder_id": null,
+      "geometry_quality": "detailed",
+      "medias": [
+        {
+          "data": {
+            "id": "0cf14c5d-7bc6-44b7-96f1-d6a9ae38713e",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/0cf14c5d-7bc6-44b7-96f1-d6a9ae38713e.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "94ef0c87-7fd9-48bf-af83-51e11efb43af",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/94ef0c87-7fd9-48bf-af83-51e11efb43af.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "6483c773-7e26-46c7-8b4d-573e53e08a0f",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/6483c773-7e26-46c7-8b4d-573e53e08a0f.png"
+          },
+          "role": "image"
+        },
+        {
+          "data": {
+            "id": "2f3b76fc-2a7f-4f49-94bd-cb01abea5da0",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/2f3b76fc-2a7f-4f49-94bd-cb01abea5da0.png"
+          },
+          "role": "image"
+        }
+      ],
+      "orientation": "align_image",
+      "pbr": false,
+      "quad": false,
+      "seed": null,
+      "texture": true,
+      "texture_alignment": "original_image",
+      "texture_quality": "detailed",
+      "texture_seed": null
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261029_125726_27d076f0-0525-49ce-b586-5fad31d82f7c.glb",
+    "status": "completed"
+  }
+]
+

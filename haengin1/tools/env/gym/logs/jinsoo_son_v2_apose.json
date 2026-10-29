@@ -1,0 +1,33 @@
+﻿[
+  {
+    "created_at": "2026-10-29T12:55:29.38746Z",
+    "display_name": "GPT Image 2.5",
+    "id": "eeadef6a-fe84-455d-8f04-2be88dc6b392",
+    "job_type": "gpt_image_2_5",
+    "min_result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261029_125529_eeadef6a-fe84-455d-8f04-2be88dc6b392_min.webp",
+    "params": {
+      "aspect_ratio": "16:9",
+      "height": 2160,
+      "medias": [
+        {
+          "data": {
+            "id": "9c71dbbf-759e-43a4-93d6-bf1c884ddd13",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/9c71dbbf-759e-43a4-93d6-bf1c884ddd13.png"
+          },
+          "role": "image"
+        }
+      ],
+      "model": "flare",
+      "prompt": "Use the attached reference image of this character: keep his face, facial hair, hair, body shape, outfit and colors exactly consistent with it, and keep his facial proportions exactly: the same spacing between the eyes, the same eye size, the same nose length and the same distance from the eyes to the mouth; do not set the eyes wider apart and do not shorten the lower face. Create a clean 3D-modeling reference turnaround of the same character in color: four full-body views of him side by side in one row, evenly spaced, all at exactly the same scale, standing on one shared ground line, with wide empty white margins between the figures so nothing touches or overlaps: 1) front view, 2) left side view with the character facing the left edge of the image, 3) back view, 4) right side view with the character facing the right edge of the image. Orthographic camera at chest height, no perspective distortion. Strict A-pose for 3D rigging: standing perfectly straight, feet a little wider than shoulder-width apart and pointing forward, legs straight and a little apart, both arms raised away from the body at about 45 degrees from the torso, elbows straight, hands open and flat with fingers spread apart and palms facing down, so there is a large clear gap between each arm and the torso and hips; the hands are far away from the thighs; nothing in the hands. Neutral calm expression with a closed mouth, the face drawn clearly with the eyes, brows, nose and facial hair well defined. The character is a 33-year-old Korean man, a retired UFC bantamweight: 168 cm, about 7.2 heads tall with realistic proportions, a compact, solid bantamweight build, square shoulders, a thick neck, a narrow waist, defined but not bulky arms. Light warm skin. A square-oval face with a strong jaw and full cheeks, narrow almond-shaped single-lidded eyes, straight medium-thick black eyebrows, a straight broad nose, a small mouth; a short neat black moustache and short chin beard joined at the mouth corners, light stubble along the jaw. Short black hair, the sides and back cut short in a fade, the top a little longer and brushed to one side with a side part. Outfit: a plain muted navy short-sleeved gym t-shirt (#35405A), plain heather-grey jogger training pants (#707072) with cuffed ankles, white crew socks (#F0EBE2), dark grey rubber slides (#3A3A3C). Plain unbranded clothing. Modest, fully clothed everyday character design for a family-friendly game. Rendering: flat even studio lighting from the front with almost no cast shadows and no shadow on the ground, flat muted anime cel colors with only a very light single shadow tone, clean thin dark outlines, pure plain white background, no ground line. Avoid: perspective, dramatic lighting, hands touching the body, arms hanging down, crossed legs, props held in the hands, a cap, a beanie, glasses, extra characters, text, letters, labels, grid lines, numbers, logos, watermarks, cigarettes, alcohol.",
+      "quality": "high",
+      "reference_elements": [],
+      "remove_bg": false,
+      "resolution": "4k",
+      "width": 3840
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261029_125529_eeadef6a-fe84-455d-8f04-2be88dc6b392.png",
+    "status": "completed"
+  }
+]
+

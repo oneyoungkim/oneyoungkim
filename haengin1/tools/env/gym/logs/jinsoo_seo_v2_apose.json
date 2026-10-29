@@ -1,0 +1,33 @@
+﻿[
+  {
+    "created_at": "2026-10-29T12:55:32.970727Z",
+    "display_name": "GPT Image 2.5",
+    "id": "35345083-7ea5-48e5-890f-de285e38303a",
+    "job_type": "gpt_image_2_5",
+    "min_result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261029_125532_35345083-7ea5-48e5-890f-de285e38303a_min.webp",
+    "params": {
+      "aspect_ratio": "16:9",
+      "height": 2160,
+      "medias": [
+        {
+          "data": {
+            "id": "f3d3b286-122d-4674-9fe9-ff626dc0c4a1",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/f3d3b286-122d-4674-9fe9-ff626dc0c4a1.png"
+          },
+          "role": "image"
+        }
+      ],
+      "model": "flare",
+      "prompt": "Use the attached reference image of this character: keep his face, facial hair, bleached hair, body shape, tattoos, outfit and colors exactly consistent with it, and keep his facial proportions exactly: the same spacing between the eyes, the same eye size, the same nose length and the same distance from the eyes to the mouth; do not set the eyes wider apart and do not shorten the lower face. Create a clean 3D-modeling reference turnaround of the same character in color: four full-body views of him side by side in one row, evenly spaced, all at exactly the same scale, standing on one shared ground line, with wide empty white margins between the figures so nothing touches or overlaps: 1) front view, 2) left side view with the character facing the left edge of the image, 3) back view, 4) right side view with the character facing the right edge of the image. Orthographic camera at chest height, no perspective distortion. Strict A-pose for 3D rigging: standing perfectly straight, feet a little wider than shoulder-width apart and pointing forward, legs straight and a little apart, both arms raised away from the body at about 45 degrees from the torso, elbows straight, hands open and flat with fingers spread apart and palms facing down, so there is a large clear gap between each arm and the torso and hips; the hands are far away from the thighs; nothing in the hands. Neutral calm expression with a closed mouth, the face drawn clearly with the eyes, brows, nose and facial hair well defined. The character is a 36-year-old Korean man, a retired MMA bantamweight: 170 cm, about 7.3 heads tall with realistic proportions, a lean, wiry fighter build, solid rounded shoulders, a thick neck, a narrow waist, defined but not bulky arms. Light warm skin. A long oval face with defined cheekbones and a firm jaw, narrow single-lidded eyes, straight dark eyebrows, a straight nose; a thin black moustache and a short black goatee with light stubble along the jaw. Bleached ash-blonde hair (#CDB98E) with darker brown roots, medium length, slightly wavy, swept back loosely, the ends just over the ears. Dense dark blue-grey abstract tattoo sleeves on both arms from under the t-shirt sleeves to the wrists, the same on both arms, no readable letters. Outfit: a plain muted olive-khaki short-sleeved gym t-shirt (#67684F), plain black loose training pants (#2A2A2C) without stripes, bare feet. Plain unbranded clothing. Modest, fully clothed everyday character design for a family-friendly game. Rendering: flat even studio lighting from the front with almost no cast shadows and no shadow on the ground, flat muted anime cel colors with only a very light single shadow tone, clean thin dark outlines, pure plain white background, no ground line. Avoid: perspective, dramatic lighting, hands touching the body, arms hanging down, crossed legs, props held in the hands, a cap, glasses, black arm sleeves, extra characters, text, letters, labels, grid lines, numbers, logos, watermarks, cigarettes, alcohol.",
+      "quality": "high",
+      "reference_elements": [],
+      "remove_bg": false,
+      "resolution": "4k",
+      "width": 3840
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261029_125532_35345083-7ea5-48e5-890f-de285e38303a.png",
+    "status": "completed"
+  }
+]
+
