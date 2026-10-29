@@ -312,3 +312,11 @@ The reference images are black-and-white model sheets of this same character: ke
 - **서진수** 1.70 m(밴텀급) — 키: https://www.sherdog.com/fighter/Jin-Soo-Seo-174929 (5'7", 8전 5승 3패, Korean Zombie MMA)
   - https://blog.naver.com/five_rounds2022/222916799312 (파이브라운즈 대표 소개 — 여기 실린 AFC 기자회견 보도 사진(뉴스프리즌)과 AFC 공식 프로필 사진을 참조로 씀)
   - 머리는 최근 모습(어깨 길이 검은 생머리 — 파이브라운즈 유튜브 썸네일로 확인, 사진 참조는 안 함)으로 글로 지정. 양팔 문신은 있지만 모양을 정확히 옮길 수 없어 실제 체육관 사진에서 입은 검은 팔토시로 가렸다.
+
+## 조연 2명(로터리 빵집 직원 누나·아빠 반정호, 가상 인물) — 2026-10-29
+> **AI 생성 이미지·모델입니다.** `m3/{bakery_staff,dad}_{color,apose}.png` 는 GPT Image 2.5(색 high 2k 2:3 · A포즈 high 4k 16:9), 모델은 Tripo H3.1 Multiview detailed, 리깅은 Higgsfield 3D Rigging(Idle_3 = 243)으로 2026-10-29(KST)에 만들었다. 사진 참조 없음, 실존 인물·가게와 무관. 프롬프트 `tools/env/gym/char/<이름>_{color,apose}.txt`.
+
+| 이름 | 인물 | 나이·키 | 옷·머리 | Tripo | 리깅 키 | 크레딧 |
+|---|---|---|---|---|---:|---:|
+| `bakery_staff` | 로터리 빵집(가상) 직원 누나 | 20대 중반 · 162 | 초콜릿색 가슴 앞치마(#6B4A3A, 허벅지 중간까지, 글자·명찰 없음) + 크림 셔츠(소매 걷음) + 짙은 남회색 바지 + 검정 작업화, 짙은 갈색 낮은 쪽머리 | detailed | 1.62 | 33 |
+| `dad` | 아빠 반정호(故, 회상) | 40 · 174 | 바랜 파랑 작업 셔츠(#5C6F82, 소매 걷음) + 흰 티 + 카키 작업 바지·벨트 + 회색 양말(집 안), 짧은 검은 머리·옅은 수염, 기둥 같은 체형 | detailed | 1.74 | 33 |
