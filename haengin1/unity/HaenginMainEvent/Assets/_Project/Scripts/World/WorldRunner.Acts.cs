@@ -247,7 +247,7 @@ namespace Haengin
             if (board != null)
             {
                 board.ShowCard($"{GameClock.DateText}   ·   혜성고 2학년 3반", "학교", "하루", false,
-                    new[] { "1교시~7교시. 출석부는 '반시'에서 멈추고 '반시우'까지 가지 않는다.", $"{GameClock.Hm(Mathf.Max(Model.Now, a.Start))} ~ {GameClock.Hm(a.End)} · 피로 +{a.Fatigue} · 멘탈 조금" }, null, "");
+                    new[] { "1교시부터 7교시까지. 오늘도 출석부는 내 이름에서 한 번 멈칫했다.", $"{GameClock.Hm(Mathf.Max(Model.Now, a.Start))} ~ {GameClock.Hm(a.End)} · 피로 +{a.Fatigue} · 멘탈 조금" }, null, "");
                 GameState.Modal = true;
                 float t = 0f; while (t < (BotSkill > 0f ? BotRead : 1.2f)) { t += UiKit.RealDt; yield return null; }
                 GameState.Modal = false;
@@ -628,7 +628,7 @@ namespace Haengin
                 var pb = new System.Text.StringBuilder();
                 pb.Append(next.Goal).Append('\n');
                 foreach (var g in next.Goals) pb.Append("· ").Append(g.Label).Append('\n');
-                pb.Append($"\n해금 — {next.Unlocks}\n\n1장 「행인1」은 계속됩니다 — 5월 셀 C, 8월 대학로, 9월 와룡공원의 밤, 첫눈의 야차.");
+                pb.Append($"\n해금 — {next.Unlocks}\n\n1장 「행인1」은 계속됩니다. 5월엔 등굣길 시비, 8월엔 대학로, 9월엔 와룡공원의 밤, 그리고 첫눈의 야차.");
                 yield return ChapterView.Show("예고", "다음 장 예고", next.Label, $"{next.Period} · {next.Age} · {next.Ladder}", pb.ToString(), "× · Enter   계속 돌아다니기", BotSkill > 0f ? BotRead * 3f : 0f);
             }
             PlayerPrefs.SetInt("haengin.world.demo", met ? 1 : 2); PlayerPrefs.Save();

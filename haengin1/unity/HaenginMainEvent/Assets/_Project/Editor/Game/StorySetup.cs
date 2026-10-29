@@ -708,7 +708,7 @@ namespace Haengin.EditorGame
             Cam(15.2, 6.6, CamPreset.Close, "시우");
             Cam(21.8, 2.4, CamPreset.BackTrack, "시우");
             Sub(3.2, 6.4, "엄마", "시우야! 꼭대기 집 두 개, 경비실 하나, 소극장 하나!\\n국물 흘리면 너 죽어!", DlgMode.Sub);
-            Sub(9.8, 3.2, "시우", "엄마는 사랑을 협박으로 표현한다.", DlgMode.Inner);
+            Sub(9.8, 3.2, "시우", "흘린 적은 없다. 아직 살아 있다.", DlgMode.Inner);
             Sub(13.2, 1.9, "엄마", "추워. 바보.", DlgMode.Sub);
             Sub(15.3, 6.4, "시우", "엄마의 '바보'는 사전에 없는 뜻이다.\\n대충 '다녀와'랑 '사랑해' 사이 어디쯤.", DlgMode.Inner);
             Clip<FaceClip>(face, 3.0, 6.6, c => { c.Who = "엄마"; c.Face = "angry"; });
