@@ -119,7 +119,38 @@ namespace Haengin.EditorGame
             w.Def = def; w.Story = story; w.Loader = loader; w.Actions = actions; w.Fonts = fonts;
             w.Hud = hud; w.Phone = phone; w.PlannerView = plan; w.ChapterView = ch; w.Job = job; w.Picker = pick;
             int fronts = AddShopFronts(root.transform);
-            Debug.Log($"{Tag} Zone1 세계 루트: World(WorldRunner + 화면 6) · 가게 앞 {fronts} · 카드 {def.Cards.Length} · 이야기 {(story != null ? "연결" : "없음")}");
+            string cast = AddSceneCast(root.transform, story);
+            Debug.Log($"{Tag} Zone1 세계 루트: World(WorldRunner + 화면 6) · 가게 앞 {fronts} · 카드 {def.Cards.Length} · 이야기 {(story != null ? "연결" : "없음")} · {cast}");
+        }
+
+        /// 카드 실제 장면(QA 2차 B) — Zone1 후문 뒷골목 주차장 배역(6-1·6-2·6-4·7-2): 민재·건우·임찬·케이크 상자를 숨겨 둠(대사 이벤트 cast: 가 켬).
+        ///   자리 = 장면 6-1 의 시우 자리(−172.0, 27.2, 87.6 · 방향 200°) 앞. 높이는 땅(Ground)에 맞춤
+        public static readonly Vector3 ParkSiwoo = new Vector3(-172.0f, 27.2f, 87.6f);
+        public const float ParkYaw = 200f;
+
+        static string AddSceneCast(Transform worldRoot, StoryRunner story)
+        {
+            var g = new GameObject("장면 배역").transform; g.SetParent(worldRoot, false);
+            if (story != null) { story.SceneCast = g; EditorUtility.SetDirty(story); }
+            Physics.SyncTransforms();
+            var fwd = Quaternion.Euler(0f, ParkYaw, 0f) * Vector3.forward; var right = Vector3.Cross(Vector3.up, fwd);
+            Vector3 At(float ahead, float side)
+            {
+                var p = ParkSiwoo + fwd * ahead + right * side;
+                if (Physics.Raycast(p + Vector3.up * 4f, Vector3.down, out var h, 10f, 1 << Layers.Ground, QueryTriggerInteraction.Ignore)) p.y = h.point.y;
+                return p;
+            }
+            float Face(Vector3 from) { var d = ParkSiwoo - from; d.y = 0f; return Mathf.Atan2(d.x, d.z) * Mathf.Rad2Deg; }
+            int n = 0;
+            void Hide(GameObject go) { if (go != null) { go.SetActive(false); n++; } }
+            var pm = At(1.9f, 0.1f); Hide(CastSetup.Put(g, "Minjae", "민재", pm, Face(pm), null));
+            var pg = At(2.3f, 1.25f); Hide(CastSetup.Put(g, "Geonwoo", "건우", pg, Face(pg), null));
+            var pi = At(1.7f, -1.3f); Hide(CastSetup.PutKkanjok(g, "임찬", pi, Face(pi), "Idle"));
+            var pc = At(1.0f, 0.35f); Hide(CastSetup.Cake(g, "케이크 상자", pc, false));
+            // 7-2: 차단기 밑에 주저앉은 민재 · 정강이를 쥐고 앉은 건우 자리
+            var s1 = new GameObject("민재 주저앉은 자리").transform; s1.SetParent(g, false); s1.position = At(2.6f, -0.9f); s1.rotation = Quaternion.Euler(0f, Face(s1.position), 0f);
+            var s2 = new GameObject("시우 주차장 자리").transform; s2.SetParent(g, false); s2.position = At(0f, 0f); s2.rotation = Quaternion.Euler(0f, ParkYaw, 0f);
+            return $"장면 배역(주차장): 숨긴 배우·소품 {n} · 자리 2";
         }
 
         // ───────────────────────── 실내 2차(StorySetup.Stages 가 무대를 다시 만들 때)

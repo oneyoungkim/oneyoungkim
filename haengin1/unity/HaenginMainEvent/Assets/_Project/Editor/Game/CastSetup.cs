@@ -305,12 +305,146 @@ namespace Haengin.EditorGame
                 log.Add($"교실 키트: 도경민·태오·민재·건우·임찬·반 친구 {students}(책상 30, 시우 자리 비움)");
                 if (teacher == null) log.Add("도경민 없음");
             }
+            log.Add(SceneDress(key, root));
+            return string.Join(" · ", log);
+        }
+
+        // ───────────────────────── 카드 실제 장면 배역·자리(QA 2차 B, 2026-10-26): 숨겨 둔 배우(대사 이벤트 cast: 가 켬)와 이름 붙은 자리(place:·cast: 의 자리)
+        static Transform Spot(Transform root, string name, Vector3 local, float yaw)
+        {
+            var old = root.Find(name); if (old != null) Object.DestroyImmediate(old.gameObject);
+            var t = new GameObject(name).transform; t.SetParent(root, false);
+            t.localPosition = local; t.localRotation = Quaternion.Euler(0f, yaw, 0f);
+            return t;
+        }
+
+        static GameObject Hidden(GameObject go) { if (go != null) go.SetActive(false); return go; }
+
+        public static GameObject PutKkanjok(Transform root, string name, Vector3 local, float yaw, string state)
+        {
+            var kk = AssetDatabase.LoadAssetAtPath<GameObject>(ClipSetup.EnemyFbx("Kkanjok"));
+            if (kk == null) return null;
+            var g = (GameObject)PrefabUtility.InstantiatePrefab(kk, root.gameObject.scene);
+            g.name = name; g.transform.SetParent(root, false); g.transform.localPosition = local; g.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+            CharSetup.Paint(g, AssetDatabase.LoadAssetAtPath<Material>(ClipSetup.EnemyMat("Kkanjok")), null);
+            var an = g.GetComponent<Animator>() ?? g.AddComponent<Animator>();
+            an.avatar = CharSetup.AvatarOf(ClipSetup.EnemyFbx("Kkanjok"));
+            an.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(CastCtrl);
+            an.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+            g.AddComponent<CastPose>().State = state;
+            return g;
+        }
+
+        /// 생일 케이크(7-3): 한쪽이 무너진 초코 생크림 2호 + 긴 초 열한 개(납작 원기둥 몇 개)
+        public static GameObject Cake(Transform root, string name, Vector3 local, bool candles)
+        {
+            var old = root.Find(name); if (old != null) Object.DestroyImmediate(old.gameObject);
+            var g = new GameObject(name); g.transform.SetParent(root, false); g.transform.localPosition = local;
+            var cream = M("M_St_Cream", new Color(0.96f, 0.93f, 0.88f));
+            var choco = M("M_St_Choco", new Color(0.36f, 0.22f, 0.16f));
+            var box = M("M_St_CakeBox", new Color(0.93f, 0.91f, 0.86f));
+            void Cyl(string n, Vector3 p, Vector3 sc, Material m)
+            {
+                var c = GameObject.CreatePrimitive(PrimitiveType.Cylinder); c.name = n; Object.DestroyImmediate(c.GetComponent<Collider>());
+                c.transform.SetParent(g.transform, false); c.transform.localPosition = p; c.transform.localScale = sc;
+                var r = c.GetComponent<Renderer>(); r.sharedMaterial = m; r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            }
+            Cyl("받침", new Vector3(0f, 0.005f, 0f), new Vector3(0.30f, 0.005f, 0.30f), box);
+            Cyl("케이크", new Vector3(0f, 0.05f, 0f), new Vector3(0.21f, 0.045f, 0.21f), cream);
+            Cyl("초코", new Vector3(0.0f, 0.097f, 0.0f), new Vector3(0.17f, 0.004f, 0.17f), choco);
+            Cyl("무너진 쪽", new Vector3(0.07f, 0.03f, -0.05f), new Vector3(0.11f, 0.03f, 0.09f), cream);
+            if (candles)
+            {
+                var wax = M("M_St_Candle", new Color(0.98f, 0.95f, 0.80f));
+                for (int i = 0; i < 11; i++)
+                {
+                    float a = i * Mathf.PI * 2f / 11f;
+                    bool slant = i == 2 || i == 3;      // 무너진 쪽에 꽂은 초는 비스듬히(원고 7화)
+                    var c = GameObject.CreatePrimitive(PrimitiveType.Cylinder); c.name = $"초 {i + 1}"; Object.DestroyImmediate(c.GetComponent<Collider>());
+                    c.transform.SetParent(g.transform, false);
+                    c.transform.localPosition = new Vector3(Mathf.Cos(a) * 0.075f, 0.14f, Mathf.Sin(a) * 0.075f);
+                    c.transform.localRotation = slant ? Quaternion.Euler(18f, 0f, 12f) : Quaternion.identity;
+                    c.transform.localScale = new Vector3(0.008f, 0.045f, 0.008f);
+                    var r = c.GetComponent<Renderer>(); r.sharedMaterial = wax; r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                }
+            }
+            return g;
+        }
+
+        /// 무대별 장면 배역·자리(키트 무대 + 현장 자리 무대). 돌려준 값 = 로그용
+        public static string SceneDress(string key, Transform root)
+        {
+            var old = root.Find("장면 배역"); if (old != null) Object.DestroyImmediate(old.gameObject);
+            var g = new GameObject("장면 배역").transform; g.SetParent(root, false);
+            var log = new List<string>();
+            switch (key)
+            {
+                case "Gukbap":
+                    // 2-2·2-3·7-3: 구석 식탁(서쪽 줄 둘째 식탁 −3.56, −0.95)의 동쪽 의자에 하늘 · 시우는 통로에 서서 · 엄마는 식탁 북쪽에 서서 / 2-4: 엄마 계산대
+                    Hidden(Put(g, "Haneul", "하늘", new Vector3(-3.05f, 0f, -0.95f), 270f, "SitTalk"));
+                    Hidden(Cake(g, "케이크", new Vector3(-3.56f, 0.72f, -0.95f), true));
+                    Spot(g, "하늘 자리", new Vector3(-3.05f, 0f, -0.95f), 270f);
+                    Spot(g, "시우 홀 자리", new Vector3(-2.25f, 0f, -1.4f), 295f);
+                    Spot(g, "엄마 홀 자리", new Vector3(-3.5f, 0f, -0.15f), 165f);
+                    Spot(g, "카운터 자리", new Vector3(2.4f, 0f, -1.42f), 200f);
+                    Spot(g, "시우 카운터 자리", new Vector3(1.25f, 0f, -0.85f), 118f);
+                    log.Add("장면 배역: 하늘(숨김)·케이크(숨김) · 자리 5");
+                    break;
+                case "Home":
+                    // 3-4 동의서: 밥상(0.3, 1.15) 서쪽에 엄마(양반다리) · 시우는 동쪽에 서서 / C1-18·4-4 하늘은 늘 앉은 자리 그대로
+                    Hidden(Put(g, "Mom", "엄마", new Vector3(-0.38f, 0.06f, 1.15f), 90f, "SitFloor"));
+                    Spot(g, "시우 밥상 자리", new Vector3(1.15f, 0f, 1.0f), 285f);
+                    log.Add("장면 배역: 엄마(숨김) · 자리 1");
+                    break;
+                case "School":
+                    // 4-6 복도 끝 창가 · 신발장(민재) / C1-19 창가 전화
+                    Spot(g, "창가 자리", new Vector3(4.0f, 0f, -11.8f), 180f);
+                    Spot(g, "신발장 시우 자리", new Vector3(3.3f, 0f, -8.6f), 270f);
+                    Spot(g, "신발장 민재 자리", new Vector3(4.2f, 0f, -7.95f), 236f);
+                    // 4-5 우유팩: 시우 자리(뒷줄 −0.2, 4.48) 뒤에 선 시우 · 둘레에 선 민재·임찬·건우 · 창가에서 일곱 걸음 온 태오
+                    Spot(g, "시우 책상 자리", new Vector3(-0.2f, 0f, 3.85f), 0f);
+                    Spot(g, "민재 책상 옆 자리", new Vector3(-1.0f, 0f, 4.75f), 135f);
+                    Spot(g, "임찬 책상 옆 자리", new Vector3(-1.05f, 0f, 3.6f), 75f);
+                    Spot(g, "건우 책상 옆 자리", new Vector3(0.7f, 0f, 4.6f), 232f);
+                    Spot(g, "태오 책상 옆 자리", new Vector3(0.75f, 0f, 5.4f), 200f);
+                    log.Add("장면 자리 8(창가·신발장·우유팩)");
+                    break;
+                case "Site":
+                    {
+                        // 3-5·4-1·4-3: 현장 입구에 곽반장(늘) · 형들·백발 아저씨(장면 때만) · 유로폼 더미·비계·시멘트 포대(자리 무대 꾸밈)
+                        var gwak = Put(root, "Gwak", "곽반장", new Vector3(-4.2f, 0f, -5.4f), 228f, null, new Color(0.62f, 0.60f, 0.56f));
+                        if (gwak != null) { var oldG = root.Find("곽반장"); if (oldG != null && oldG != gwak.transform) Object.DestroyImmediate(oldG.gameObject); }
+                        Hidden(Put(g, "Gwak", "형 1", new Vector3(-7.6f, 0f, -5.6f), 140f, null, new Color(0.55f, 0.62f, 0.70f)));
+                        Hidden(Put(g, "Gwak", "형 2", new Vector3(-7.9f, 0f, -7.0f), 110f, null, new Color(0.72f, 0.64f, 0.52f)));
+                        Hidden(Put(g, "Gwak", "백발 아저씨", new Vector3(-2.6f, 0f, -2.8f), 210f, null, new Color(0.80f, 0.80f, 0.80f)));
+                        Spot(g, "곽반장 자리", new Vector3(-4.2f, 0f, -5.4f), 228f);
+                        Spot(g, "곽반장 앞 자리", new Vector3(0.6f, 0f, 1.2f), 180f);
+                        Spot(g, "곽반장 돌아선 자리", new Vector3(0.7f, 0f, 2.3f), 10f);     // 4-3 '등을 보인 채로'(시우는 남쪽 줄 자리)
+                        Spot(g, "시우 줄 자리", new Vector3(0.4f, 0f, -0.6f), 0f);
+                        Spot(g, "형 1 줄 자리", new Vector3(-0.6f, 0f, -0.6f), 0f);
+                        Spot(g, "형 2 줄 자리", new Vector3(1.4f, 0f, -0.6f), 0f);
+                        Spot(g, "백발 줄 자리", new Vector3(-1.6f, 0f, -0.6f), 0f);
+                        var ply = M("M_St_Euroform", new Color(0.70f, 0.58f, 0.42f));
+                        var steel = M("M_St_Steel", new Color(0.45f, 0.46f, 0.48f));
+                        var bag = M("M_St_Bag", new Color(0.82f, 0.80f, 0.74f));
+                        for (int i = 0; i < 6; i++) Prop(root, $"유로폼 {i + 1}", new Vector3(3.5f + 0.06f * (i % 2), 0.12f * i, 3.4f), new Vector3(1.2f, 0.11f, 0.6f), ply, 8f);
+                        for (int i = 0; i < 4; i++) Prop(root, $"비계 기둥 {i + 1}", new Vector3(-6f + (i % 2) * 1.8f, 0f, 6f + (i / 2) * 1.2f), new Vector3(0.06f, 3.6f, 0.06f), steel);
+                        Prop(root, "비계 발판", new Vector3(-5.1f, 1.8f, 6.6f), new Vector3(2.0f, 0.05f, 1.4f), ply);
+                        for (int i = 0; i < 5; i++) Prop(root, $"시멘트 포대 {i + 1}", new Vector3(5.6f + 0.55f * (i % 3), 0.2f * (i / 3), -2.2f), new Vector3(0.5f, 0.2f, 0.35f), bag);
+                        log.Add($"현장: 곽반장{(gwak != null ? "" : " 없음")} · 형 1·2·백발 아저씨(숨김) · 자리 7 · 유로폼·비계·포대");
+                        break;
+                    }
+                default:
+                    Object.DestroyImmediate(g.gameObject);
+                    return "";
+            }
             return string.Join(" · ", log);
         }
 
         static string DressPlaceholder(string key, Transform root, Vector2 size, List<Transform> spawns)
         {
             if (!Ready) return "배역 프리팹 없음(CastSetup.Build 먼저)";
+            if (key == "Site") return SceneDress(key, root);     // QA 2차 B: 현장 = 자리 무대 + 곽반장·형들·유로폼(키트는 아직)
             var wood = M("M_St_Wood", new Color(0.55f, 0.40f, 0.28f));
             var dark = M("M_St_Board", new Color(0.18f, 0.24f, 0.21f));
             var white = M("M_St_White", new Color(0.92f, 0.90f, 0.86f));

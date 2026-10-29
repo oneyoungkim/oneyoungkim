@@ -74,6 +74,12 @@ namespace Haengin
 
         public void SetLive(bool on) { if (Cam != null) Cam.Priority = on ? CutCams.LivePriority : 0; }
 
+        /// QA 2차 A8: 고정 자리(대상 발 기준 — x 앞 · y 오른쪽 · z 높이)에서 가슴을 봄. 돌려 피하기(spin) 없음.
+        ///   편의점 계산대 알바 — 앞(손님 쪽)이 포스기에 막혀 옆(60°)으로 돌던 카메라가 호빵 찜기 유리 너머로 시우를 보던 것 → 손님 쪽 왼편 위에서 계산대 너머로
+        public bool UseFixed;
+        public Vector3 FixedLocal;
+        public void SetFixed(Vector3 local) { UseFixed = true; FixedLocal = local; Snap(); }
+
         /// QA Q20(2차): 소품(충돌 없는 포스기·모니터·진열 상자)이 카메라–대상 사이를 가리면 돌려 피함 — 알바 미니게임 카메라만 켬(이야기 컷 구도는 그대로)
         public bool AvoidProps;
         readonly List<Bounds> props = new List<Bounds>();
@@ -138,6 +144,12 @@ namespace Haengin
             Measure(Subject, out var feet, out float h, out var fwd, out var head);
             origin = head;      // 벽 검사는 머리에서(교탁·책상 너머로 — 허리 높이에서 쏘면 교탁에 막혀 카메라가 배우 코앞으로 옴)
             var right = Vector3.Cross(Vector3.up, fwd);
+            if (UseFixed)
+            {
+                pos = feet + fwd * FixedLocal.x + right * FixedLocal.y + Vector3.up * FixedLocal.z;
+                look = Vector3.Lerp(feet, head, 0.8f);
+                return;
+            }
             switch (Preset)
             {
                 case CamPreset.LowAngle:
@@ -220,9 +232,16 @@ namespace Haengin
             float len = d.magnitude;
             if (len < 0.05f) return pos;
             if (Physics.SphereCast(look, 0.08f, d / len, out var hit, len, Block, QueryTriggerInteraction.Ignore))
+            {
+                LastBlock = $"{hit.collider.name}(층 {hit.collider.gameObject.layer}) {hit.distance:F2}m";
                 return look + d / len * Mathf.Max(0.3f, hit.distance - 0.05f);
+            }
+            LastBlock = "";
             return pos;
         }
+
+        /// 진단(시험): 마지막으로 카메라를 당긴 충돌체
+        public static string LastBlock = "";
 
         // ───────── 다른 배우 피하기(1화 교실: 근접·와이드가 앞줄 친구 머리·몸 속에 박히던 것): 대상 머리 둘레로 돌려 빈 각을 찾고 그 각을 고정
         readonly List<Animator> others = new List<Animator>();
@@ -274,7 +293,7 @@ namespace Haengin
             bool track = Preset == CamPreset.BackTrack || Preset == CamPreset.SideTrack;
             spin = 0f;
             var p = Clear(o, p0);
-            if (!track && (others.Count > 0 || props.Count > 0))
+            if (!track && !UseFixed && (others.Count > 0 || props.Count > 0))
                 foreach (var d in props.Count > 0 ? SpinsWide : Spins)
                 {
                     var c = Clear(o, Spin(p0, l, d));

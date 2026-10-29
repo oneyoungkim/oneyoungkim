@@ -91,7 +91,15 @@ namespace Haengin
                     if (W.LessonsRun == l0) { Log.Add($"{GameClock.DateText} {GameClock.TimeText} 레슨 못 받음 {nx.Coach}"); GameClock.Advance(30); }
                     yield break;
                 }
-                if (w == "토" && now >= 15 * 60 && now < 15 * 60 + 40 && M.Count("bot.meal." + M.Today) < 1 && M.G.Fatigue >= 45 && M.L.Wallet >= Reserve + 18000)
+                // QA 2차: 일요일 낮(10~18시) 국밥집 특국밥(직원가 9,000) 한 그릇 — 낮잠 규칙으로 일요일이 긴 잠 대신 낮잠 몇 번이 되어 낮이 비고,
+                //        등급 덤으로 는 지갑은 봇이 레슨에 먼저 써서 보양식 여유(예비 6만 + 1.8만)에 잘 안 닿음
+                if (w == "일" && now >= 10 * 60 && now < 18 * 60 && M.Count("bot.meal." + M.Today) < 1 && M.L.Wallet >= 9000 + 5000)
+                {
+                    M.AddCount("bot.meal." + M.Today, 1);
+                    yield return Shop("gukbap", "gukbap_special"); Meals++;
+                    yield break;
+                }
+                if (w == "토" && now >= 15 * 60 && now < 15 * 60 + 40 && M.G.Fatigue >= 45 && M.Count("bot.meal." + M.Today) < 1 && M.L.Wallet >= Reserve + 18000)
                 {
                     M.AddCount("bot.meal." + M.Today, 1);
                     yield return Shop("samgye", "samgyetang"); Meals++;
@@ -181,7 +189,7 @@ namespace Haengin
         {
             if (!Full || !Spend || !W.Active) yield break;
             if (place == "Conv" && M.G.Fatigue >= 40 && M.L.Wallet >= Reserve + 2000) { yield return W.BotShop("conv", M.G.Fatigue >= 60 ? "protein" : "bar"); Snacks++; }
-            if (place == "Gukbap" && M.G.Fatigue >= 60 && M.L.Wallet >= Reserve + 9000) { yield return W.BotShop("gukbap", "gukbap_special"); Meals++; }
+            if (place == "Gukbap" && M.G.Fatigue >= 45 && M.L.Wallet >= Reserve + 9000) { yield return W.BotShop("gukbap", "gukbap_special"); Meals++; }     // QA 2차: 60 → 45
             if (place == "Conv" && M.Weekday == "일" && M.Doses("vitamin") <= 2 && M.L.Wallet >= Reserve + 18000) { yield return Shop("pharmacy", "vitamin"); }
         }
 

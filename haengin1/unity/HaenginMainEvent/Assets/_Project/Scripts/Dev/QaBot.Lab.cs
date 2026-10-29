@@ -108,7 +108,7 @@ namespace Haengin
             L($"불러옴 {day / 100}/{day % 100} {GameClock.Hm(min)} {place} — {M.Status}");
         }
 
-        void ResetJob(WorldModel m, string id) { m.AddCount(id, -m.Count(id)); m.AddCount("best." + id, -m.Count("best." + id)); }
+        void ResetJob(WorldModel m, string id) { m.AddCount(id, -m.Count(id)); m.AddCount("best." + id, -m.Count("best." + id)); m.S.DoneToday.Remove(id); }   // QA 2차: 바탕 저장 그날 이미 한 일이면 '오늘은 이미 했다'로 판이 안 열림(B17·C00 A4)
         void SetBest(WorldModel m, string id, Grade g) { m.AddCount("best." + id, (int)g - m.Count("best." + id)); }
 
         void Unlocks(WorldModel m)
@@ -643,9 +643,8 @@ namespace Haengin
         // ───────────────────────── 저장·불러오기
         IEnumerator SaveTitleContinue(string what)
         {
-            yield return Tap(Key.Escape);
-            yield return Frames(15);
             var gu = GameUi.Instance;
+            if (gu == null || !gu.MenuVisible) { yield return Tap(Key.Escape); yield return Frames(15); }   // QA 2차: 알바 판 Esc 로 이미 열렸으면 또 누르지 않음(누르면 닫힘)
             if (gu == null || !gu.MenuVisible) { Issue("savetitle.nomenu." + what, "사소", $"{what}: Esc 로 일시정지가 안 열림"); yield return Shot(what + "_Esc_안열림"); yield break; }
             yield return Shot(what + "_일시정지", string.Join(" / ", Enumerable.Range(0, gu.ItemCount).Select(gu.Label)));
             int si = Enumerable.Range(0, gu.ItemCount).FirstOrDefault(i => gu.Label(i).Contains("타이틀"));

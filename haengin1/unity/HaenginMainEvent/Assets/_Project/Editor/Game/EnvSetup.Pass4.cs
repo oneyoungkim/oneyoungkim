@@ -43,6 +43,9 @@ namespace Haengin.EditorGame
             foreach (var k in new[] { "broad", "pine", "cherry", "weed", "flower", "ivy" })   // 6차: 잡초·흰 꽃 관목
             {
                 string src = Path.GetFullPath(Path.Combine(Application.dataPath, "../../../concept/art/env/veg", $"clump_{k}.png"));
+                // 룩데브 소결정 ③(QA 2차, 2026-10-26): 안쪽 먹선 판(clump_<종>_ink.png — 힉스필드 nano_banana_pro 편집에서 선만 뽑아 원본 색·알파 위에)이 있으면 그것
+                string ink = Path.GetFullPath(Path.Combine(Application.dataPath, "../../../concept/art/env/veg", $"clump_{k}_ink.png"));
+                if (File.Exists(ink)) src = ink;
                 string dst = $"{TexDir}/Clump_{k}.png";
                 if (!File.Exists(src) || File.Exists(dst)) continue;
                 File.Copy(src, dst); AssetDatabase.ImportAsset(dst, ImportAssetOptions.ForceSynchronousImport); n++;
@@ -280,7 +283,7 @@ namespace Haengin.EditorGame
             if (cm == null) { cm = new Material(sh) { name = "M_V_crown_" + tree }; AssetDatabase.CreateAsset(cm, mp); }
             if (cm.shader != sh) cm.shader = sh;
             cm.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>($"{TexDir}/Clump_{sp.Clump}.png"));
-            cm.SetColor("_BaseColor", sp.Tint); cm.SetColor("_ShadeColor", LookdevSetup.LeafShade);
+            cm.SetColor("_BaseColor", sp.Tint * LookdevSetup.LeafLift); cm.SetColor("_ShadeColor", LookdevSetup.LeafShade);     // QA 2차 ①: 잎 카드 색 고정(밝고 덜 초록)
             cm.SetFloat("_Step", 0.5f); cm.SetFloat("_Feather", 0.03f); cm.SetFloat("_WindAmp", sp.Wind); cm.SetFloat("_WindFreq", 1.2f); cm.SetFloat("_Height", Mathf.Max(1f, H));
             cm.SetFloat("_Cutoff", 0.38f); cm.SetFloat("_Sphere", 1f); cm.SetFloat("_Ink", 1f); cm.SetFloat("_InkWidth", 0.3f); cm.SetColor("_InkColor", LookdevSetup.LeafInk); cm.SetFloat("_StencilRef", 1f);
             cm.enableInstancing = true; EditorUtility.SetDirty(cm);

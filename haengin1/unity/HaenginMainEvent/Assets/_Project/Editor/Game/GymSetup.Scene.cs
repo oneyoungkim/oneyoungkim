@@ -207,12 +207,12 @@ namespace Haengin.EditorGame
                 var quad = GameObject.CreatePrimitive(PrimitiveType.Quad); quad.name = "먹 원"; Object.DestroyImmediate(quad.GetComponent<Collider>());
                 quad.transform.SetParent(mk.transform, false); quad.transform.localPosition = new Vector3(0f, pos.y + 0.012f, 0f); quad.transform.localRotation = Quaternion.Euler(90f, 0f, 0f); quad.transform.localScale = Vector3.one * 1.1f;
                 var qr = quad.GetComponent<Renderer>(); qr.sharedMaterial = ringMat; qr.shadowCastingMode = ShadowCastingMode.Off; qr.receiveShadows = false;
-                var labelGo = new GameObject("이름표"); labelGo.transform.SetParent(mk.transform, false); labelGo.transform.localPosition = new Vector3(0f, 1.35f, 0f);
-                var tmp = labelGo.AddComponent<TextMeshPro>(); tmp.font = fonts != null ? fonts.B : null; tmp.fontSize = 1.5f; tmp.alignment = TextAlignmentOptions.Center; tmp.color = UiKit.Ink; tmp.rectTransform.sizeDelta = new Vector2(3f, 1f);
+                var labelGo = new GameObject("이름표"); labelGo.transform.SetParent(mk.transform, false); labelGo.transform.localPosition = new Vector3(0f, DrillMarker.LabelHeight, 0f);     // QA 2차 A7: 머리 위·작게
+                var tmp = labelGo.AddComponent<TextMeshPro>(); tmp.font = fonts != null ? fonts.B : null; tmp.fontSize = DrillMarker.LabelSize; tmp.alignment = TextAlignmentOptions.Center; tmp.color = UiKit.Ink; tmp.rectTransform.sizeDelta = new Vector2(3f, 1f);
                 var ia = mk.AddComponent<Interactable>(); ia.Radius = 1.7f;
-                // 바닥 스티커(먹 원 옆, 늘 보임)
+                // 바닥 스티커(먹 원 옆 — QA 2차 A7: 가까이 갈 때만, 작게)
                 var stGo = new GameObject("스티커"); stGo.transform.SetParent(mk.transform, false); stGo.transform.localPosition = new Vector3(0f, pos.y + 0.014f, -0.78f); stGo.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-                var st = stGo.AddComponent<TextMeshPro>(); st.font = fonts != null ? fonts.B : null; st.fontSize = 1.1f; st.alignment = TextAlignmentOptions.Center; st.color = new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.85f); st.rectTransform.sizeDelta = new Vector2(2.2f, 0.3f);
+                var st = stGo.AddComponent<TextMeshPro>(); st.font = fonts != null ? fonts.B : null; st.fontSize = DrillMarker.StickerSize; st.alignment = TextAlignmentOptions.Center; st.color = new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.85f); st.rectTransform.sizeDelta = new Vector2(2.2f, 0.3f);
                 var dm = mk.AddComponent<DrillMarker>(); dm.DrillId = id; dm.Interact = ia; dm.Label = tmp; dm.Sticker = st; dm.Ring = qr; dm.Gym = gym;
                 markerList.Add(dm);
                 seen.Add(id);

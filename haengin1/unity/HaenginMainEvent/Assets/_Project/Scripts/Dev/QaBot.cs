@@ -1,4 +1,4 @@
-// 행인1의 메인이벤트 — 플레이 QA 봇(docs/15_QA_챕터1.md): 빌드 실행 인자 -qa [-qaout <폴더>] [-qapart ab] [-qalap 0]  (그래픽 켜고 · -mute · -nocursorlock 같이)
+// 행인1의 메인이벤트 — 플레이 QA 봇(docs/15_QA_챕터1.md): 빌드 실행 인자 -qa [-qaout <폴더>] [-qapart abc] [-qalap 0] (c = QA 2차: A 고친 뒤 사진 · 핵심 카드 장면 녹화 — QaBot.Scenes.cs)  (그래픽 켜고 · -mute · -nocursorlock 같이)
 // "자동 테스트가 통과해도 사람이 하면 이상한 것"을 찾는다 — 가상 키보드(Input System 장치)로 사람처럼 눌러 가며 새 게임부터 돈다.
 //   사진 = <폴더>/shots/NNN_구역_이름.jpg + shots.tsv(그때 날짜·시각·장소·바쁨·지갑·피로) · 녹화 = <폴더>/rec/<이름>/f_*.jpg(30fps) · 한 바퀴 = <폴더>/lap/f_*.jpg
 //   로그 = qa_log.txt(예외·경고·NaN·멈춤·같은 화면·카메라 벽 속·발밑 땅 없음·글꼴에 없는 글자·글자 넘침·화면 밖 글자·값 이상) · 발견 = findings.tsv
@@ -286,7 +286,7 @@ namespace Haengin
                 try
                 {
                     while (shotQ.Count > 0) File.WriteAllBytes(shotQ.Dequeue(), tex.EncodeToJPG(88));
-                    if (rec) { File.WriteAllBytes(Path.Combine(recDir, $"f_{recFrame:00000}.jpg"), tex.EncodeToJPG(78)); recFrame++; recLeft--; if (recLeft == 0 && recAsync) { recAsync = false; Time.captureDeltaTime = baseDelta; } }
+                    if (rec) { File.WriteAllBytes(Path.Combine(recDir, $"f_{recFrame:00000}.jpg"), RecBytes(tex)); recFrame++; recLeft--; if (recLeft == 0 && recAsync) { recAsync = false; Time.captureDeltaTime = baseDelta; } }
                     if (lap || hash)
                     {
                         var bytes = Small(tex, 960, 540, lap ? 62 : -1);
@@ -541,6 +541,7 @@ namespace Haengin
             yield return Section("타이틀", TitleWait, 120f);
             if (parts.Contains("a")) yield return PartA();
             if (parts.Contains("b")) yield return PartB();
+            if (parts.Contains("c")) yield return PartC();      // QA 2차: A 항목 고친 뒤 사진 · 핵심 카드 실제 장면 녹화
             Summary();
             yield return Frames(30);
             Application.Quit();

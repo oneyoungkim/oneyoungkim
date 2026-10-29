@@ -37,6 +37,8 @@ namespace Haengin
         public DayLight Light;
         /// Zone1 의 M2 무대 루트('Stages')
         public GameObject M2Stages;
+        /// 장면 배역(QA 2차 B): 무대 밖(Zone1)에 숨겨 둔 배우들의 뿌리 — 대사 이벤트 cast: 가 켬(WorldSetup 이 World 아래에 만듦)
+        public Transform SceneCast;
 
         public static StoryRunner Instance { get; private set; }
         /// 시험(M1 경로 걷기 등): 타이틀 요청이 있어도 시작하지 않음
@@ -77,8 +79,8 @@ namespace Haengin
         bool chainNoEffects;
         DayPart pendingLight;
 
-        void OnEnable() { Instance = this; }
-        void OnDisable() { if (Instance == this) Instance = null; }
+        void OnEnable() { Instance = this; if (SceneCast != null && !CutCtx.CastRoots.Contains(SceneCast)) CutCtx.CastRoots.Add(SceneCast); }
+        void OnDisable() { if (Instance == this) Instance = null; if (SceneCast != null) CutCtx.CastRoots.Remove(SceneCast); }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() { Instance = null; Suppress = false; }
@@ -245,6 +247,7 @@ namespace Haengin
             GameUi.BookHook = GameUi.TitleHook = null;
             GameUi.SubOpen = null; GameUi.SubClose = null;
             SetM2(true);
+            RestoreCast();
             running = false; InScene = false; WorldMode = false; chainNoEffects = false;
         }
 
@@ -491,7 +494,72 @@ namespace Haengin
             SceneEnded?.Invoke(s);
         }
 
-        void OnCovered() { Card?.Hide(); }
+        void OnCovered() { Card?.Hide(); RestoreCast(); }
+
+        // ───────────────────────── 장면 배역(QA 2차 B, 2026-10-26): cast: 로 켠 배우 · place:/pose: 로 옮긴 배우는 다음 먹 닦기(장소 이동)·멈춤 때 원래대로
+        sealed class Kept { public Vector3 Pos; public Quaternion Rot; public bool Active; public bool HadPose; public string Pose = ""; }
+        readonly Dictionary<Transform, Kept> kept = new Dictionary<Transform, Kept>();
+        /// 지금 켜 두었거나 옮겨 둔 배우 수(시험)
+        public int CastHeld => kept.Count;
+
+        void Remember(Transform t)
+        {
+            if (t == null || kept.ContainsKey(t) || (Loader != null && Loader.Motor != null && t == Loader.Motor.transform)) return;
+            var cp = t.GetComponent<CastPose>();
+            kept[t] = new Kept { Pos = t.localPosition, Rot = t.localRotation, Active = t.gameObject.activeSelf, HadPose = cp != null, Pose = cp != null ? cp.State : "" };
+        }
+
+        public void RestoreCast()
+        {
+            foreach (var kv in kept)
+            {
+                var t = kv.Key; var k = kv.Value;
+                if (t == null) continue;
+                foreach (var cl in t.GetComponentsInChildren<CastLook>(true)) { cl.Look(null); cl.Raise(null); cl.Face(null); }
+                t.localPosition = k.Pos; t.localRotation = k.Rot;
+                var cp = t.GetComponent<CastPose>();
+                if (cp != null) { if (k.HadPose) { if (cp.State != k.Pose) cp.Set(k.Pose); } else Destroy(cp); }
+                if (t.gameObject.activeSelf != k.Active) t.gameObject.SetActive(k.Active);
+            }
+            kept.Clear();
+        }
+
+        /// 이름 붙은 자리(무대의 빈 오브젝트)로 배우를 옮김 — cast:/place: 공용
+        static void PutAt(Transform a, Transform spot)
+        {
+            a.position = spot.position;
+            a.rotation = Quaternion.Euler(0f, spot.eulerAngles.y, 0f);
+        }
+
+        /// 카드 실제 장면(QA 2차 B): 대사 TSV 장면 하나를 지금 자리에서(배우·카메라·자막·이벤트). 오픈월드 카드가 스토리보드 대신 부름
+        public IEnumerator PlayDlg(string key)
+        {
+            if (Dialogue == null || Talk == null || string.IsNullOrEmpty(key) || !Dialogue.Has(key)) yield break;
+            bool wasRunning = running;
+            running = true; InScene = true; skipScene = false;
+            Talk.ClearSkip();
+            Talk.Bot = Bot != BotMode.None ? (l => BotAnswer != null ? BotAnswer(l) : 0) : null;
+            InputMaps.Use(Actions, InputMaps.Talk);
+            GameUi.HintOverride = TalkHint;
+            Hud?.ShowDate();
+            DlgPlayed++;
+            Debug.Log($"[M3] 카드 장면 {key} 시작: {GameClock.Label} · {(Loader != null ? Loader.Place : "-")}");
+            if (Bot == BotMode.Fast) Talk.RequestSkip();
+            yield return Talk.Play(Dialogue.Get(key));
+            bool skipped = Talk.Skipped;
+            EndLines();
+            Hud?.Screen(null, 0f);
+            if (Endure != null && Endure.On) Endure.End();
+            InkMode.Set(0f);
+            Talk.ClearSkip();
+            InScene = false; running = wasRunning;
+            InputMaps.Use(Actions, InputMaps.Explore);
+            GameUi.HintOverride = null;
+            Debug.Log($"[M3] 카드 장면 {key} 끝{(skipped ? "(건너뜀)" : "")}");
+        }
+
+        /// 카드 실제 장면을 튼 횟수(시험)
+        public int DlgPlayed { get; private set; }
 
         void OnPlaced() { if (Light != null) Light.Apply(pendingLight, true); }
 
@@ -579,6 +647,13 @@ namespace Haengin
                 if (tl != null && Cut != null) yield return Cut.Play(tl, WantSkip);
                 yield break;
             }
+            if (cmd.StartsWith("wait:"))
+            {
+                // wait:초 — 대사 사이 침묵(무음 2초 같은 것). 건너뛰기·봇은 짧게
+                float secs = float.TryParse(cmd.Substring(5), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float ws) ? ws : 1f;
+                yield return Wait(secs, true);
+                yield break;
+            }
             if (cmd == "reveal" && LedgerUi != null && Def != null)
             {
                 if (Bot == BotMode.Fast) { LedgerUi.RevealNow(Def.LedgerRows); yield break; }
@@ -642,16 +717,55 @@ namespace Haengin
                         if (pp.Length < 2) break;
                         var spot = CutCtx.Actor(pp[1]);
                         if (spot == null) { Debug.LogWarning($"[M3] place: 자리 '{pp[1]}' 없음"); break; }
-                        if (pp[0] == "시우" && Loader != null && Loader.Motor != null) { Loader.Motor.ClearMoveInput(); Loader.Motor.Teleport(spot.position, spot.eulerAngles.y); }
-                        else { var a = CutCtx.Actor(pp[0]); if (a != null) { a.position = spot.position; a.rotation = Quaternion.Euler(0f, spot.eulerAngles.y, 0f); } }
+                        if (pp[0] == "시우" && Loader != null && Loader.Motor != null)
+                        {
+                            // 바닥에 붙여(자리 높이 0 그대로 두면 한두 프레임 공중 — D02 접지)
+                            var p = spot.position;
+                            if (Physics.Raycast(p + Vector3.up * 0.5f, Vector3.down, out var gh, 1.5f, Layers.Mask(Layers.Ground, Layers.Default, Layers.Wall), QueryTriggerInteraction.Ignore)) p.y = gh.point.y;
+                            Loader.Motor.ClearMoveInput(); Loader.Motor.Teleport(p + Vector3.up * 0.02f, spot.eulerAngles.y); Loader.Cam?.SnapBehind();
+                        }
+                        else { var a = CutCtx.Actor(pp[0]); if (a != null) { Remember(a); PutAt(a, spot); } }
                         break;
                     }
+                case "cast":
+                    {
+                        // QA 2차 B: cast:배우[:자리] — 숨겨 둔 배우를 켜고(자리가 있으면 그리로). 다음 장소 이동 때 원래대로(숨김)
+                        var cp3 = arg.Split(':');
+                        var a = CutCtx.Actor(cp3[0]);
+                        if (a == null) { Debug.LogWarning($"[M3] cast: 배우 '{cp3[0]}' 없음"); break; }
+                        Remember(a);
+                        if (cp3.Length >= 2) { var spot = CutCtx.Actor(cp3[1]); if (spot != null) PutAt(a, spot); else Debug.LogWarning($"[M3] cast: 자리 '{cp3[1]}' 없음"); }
+                        if (!a.gameObject.activeSelf) a.gameObject.SetActive(true);
+                        break;
+                    }
+                case "front":
+                    {
+                        // QA 2차 B: front:배우:대상:거리 — 배우를 대상 앞(대상 방향으로 거리 m)에 세우고 대상을 보게(무대에 이름 붙은 자리가 없을 때 — 체육관 N01)
+                        var fp = arg.Split(':');
+                        if (fp.Length < 2) break;
+                        var a = CutCtx.Actor(fp[0]); var to = CutCtx.Actor(fp[1]);
+                        if (a == null || to == null) { Debug.LogWarning($"[M3] front: '{arg}' 배우·대상 없음"); break; }
+                        float dist = fp.Length >= 3 && float.TryParse(fp[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float fd) ? fd : 1.6f;
+                        var f = to.forward; f.y = 0f; if (f.sqrMagnitude < 1e-4f) f = Vector3.forward; f.Normalize();
+                        Remember(a);
+                        if (!a.gameObject.activeSelf) a.gameObject.SetActive(true);
+                        a.position = to.position + f * dist;
+                        a.rotation = Quaternion.LookRotation(-f, Vector3.up);
+                        break;
+                    }
+                case "uncast":
+                    {
+                        var a = CutCtx.Actor(arg);
+                        if (a != null) { Remember(a); a.gameObject.SetActive(false); }
+                        break;
+                    }
+                case "wait": break;                                       // 건너뛰면 침묵 없음
                 case "pose":
                     {
                         // pose:배우:상태(Idle · Sit · TalkOpen · TalkHip · SitClap · SitFist)
                         var pp = arg.Split(':');
                         var a = pp.Length >= 2 ? CutCtx.Actor(pp[0]) : null;
-                        if (a != null) { var cp = a.GetComponent<CastPose>() ?? a.gameObject.AddComponent<CastPose>(); cp.Set(pp[1]); }
+                        if (a != null && pp[0] != "시우") { Remember(a); var cp = a.GetComponent<CastPose>() ?? a.gameObject.AddComponent<CastPose>(); cp.Set(pp[1]); }
                         break;
                     }
                 case "endure": Flags.Endured++; break;

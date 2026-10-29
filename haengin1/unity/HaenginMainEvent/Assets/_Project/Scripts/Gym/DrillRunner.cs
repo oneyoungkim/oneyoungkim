@@ -119,6 +119,14 @@ namespace Haengin
         /// 드릴 중 카메라 좌우 밀기(−1~1 → ±15°, 2장 '좌우 ±15° 만')
         public float Nudge { get; private set; }
         bool pL, pH, pG, pD, pK, pPause, mapOn;
+        float pauseGuard;
+        static bool DevicePause()
+        {
+            var kb = UnityEngine.InputSystem.Keyboard.current;
+            if (kb != null && kb.escapeKey.wasPressedThisFrame) return true;
+            var gp = UnityEngine.InputSystem.Gamepad.current;
+            return gp != null && gp.startButton.wasPressedThisFrame;
+        }
         DrillInput inp;
         struct Pending { public DrillBtn B; public double T; public double Age; public bool StickDown; }
         readonly List<Pending> pending = new List<Pending>();
@@ -207,7 +215,10 @@ namespace Haengin
             if (State == Phase.Idle || State == Phase.Result) return;
             // 일시정지(Esc·Options) — PInput 이 꺼져 있을 때 여기서
             Bind();
-            if (mapOn && aPause != null && GameUi.Edge(aPause, ref pPause)) GameState.TogglePause();
+            // QA 2차 A4(2026-10-28): 행동 맵이 늦게 묶여도(장치 교체 직후 등) Esc·Options 를 장치에서 한 번 더 본다 — 한 번 누름 = 한 번 전환(0.2초 막음)
+            bool hit = mapOn && aPause != null && GameUi.Edge(aPause, ref pPause);
+            if (mapOn && !hit) hit = DevicePause();
+            if (hit && Time.unscaledTime >= pauseGuard) { GameState.TogglePause(); pauseGuard = Time.unscaledTime + 0.2f; }
             if (GameState.Paused || GameState.Modal) return;
             Step(TimeFx.Dt);
         }

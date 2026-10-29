@@ -39,6 +39,9 @@ namespace Haengin
             Clock = 0f;
         }
 
+        /// 장면 배역 뿌리(꺼진 배우도 찾음 — QA 2차 B: Zone1 '장면 배역' 처럼 무대가 아닌 곳의 숨은 배우). StoryRunner 가 넣음
+        public static readonly List<Transform> CastRoots = new List<Transform>();
+
         public static Transform Actor(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
@@ -49,8 +52,18 @@ namespace Haengin
                 var t = FindDeep(p.transform, name);
                 if (t != null) return t;
             }
+            foreach (var r in CastRoots)
+            {
+                if (r == null) continue;
+                var t = FindDeep(r, name);
+                if (t != null) return t;
+            }
             var g = GameObject.Find(name);
-            return g != null ? g.transform : null;
+            if (g != null) return g.transform;
+            // 시비 상대(M2 인카운터 적): 이름표(EnemyDef.Label — 깐족이·석 달·냉장고)로
+            foreach (var b in UnityEngine.Object.FindObjectsByType<EnemyBrain>(FindObjectsSortMode.None))
+                if (b != null && b.Def != null && b.Def.Label == name) return b.transform;
+            return null;
         }
 
         static Transform FindDeep(Transform t, string name)
@@ -173,7 +186,7 @@ namespace Haengin
         static void ResetStatics()
         {
             Sub = null; Inner = null; Hud = null; ApplyNow = null; Player = null;
-            Log.Clear(); Faces.Clear(); Props.Clear(); SubTimes.Clear(); applied.Clear(); subStart.Clear(); Sfx = 0; Clock = 0f;
+            Log.Clear(); Faces.Clear(); Props.Clear(); SubTimes.Clear(); applied.Clear(); subStart.Clear(); Sfx = 0; Clock = 0f; CastRoots.Clear();
         }
     }
 }

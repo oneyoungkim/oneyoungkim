@@ -676,6 +676,7 @@ def conv():
     B(st, cx0 + 0.1, cx0 + 0.3, 1.04, 1.1, -1.7, -1.55, "M_Black_Plastic")
     B(st, cx0 - 0.02, cx0 + 0.4, 1.04, 1.1, -3.4, -2.9, "M_Products")
     B(st, cx0 + 0.05, cx0 + 0.6, 1.04, 1.45, -1.3, -0.85, "M_Glass_Fridge", mats={"-y": "M_Steel_Frame"})
+    col(cx0 + 0.05, cx0 + 0.6, 1.04, 1.45, -1.3, -0.85, "CamBlock")   # QA 2차 A8: 호빵 찜기 유리 — 카메라만 막음(계산대 알바 카메라가 유리 너머로 시우를 보던 것)
     bowl_stack(st, cx0 + 0.33, 1.06, -1.08, 0.05, 3, "M_AC_White")
     # 계산대 뒤 선반(동벽): 작은 물건 면
     B(st, x1 - 0.35, x1, 0.0, 2.1, -3.8, -0.8, "M_Shelf_White", collide="Default")

@@ -41,6 +41,7 @@ namespace Haengin
             if (!Anim.HasState(0, h)) { if (state != "Stance" && Anim.HasState(0, Animator.StringToHash("Stance"))) state = "Stance"; else return; h = Animator.StringToHash(state); }
             Anim.CrossFadeInFixedTime(h, fade, 0);
             Current = state;
+            if (state == RopeArms.State && Anim.GetComponent<RopeArms>() == null) Anim.gameObject.AddComponent<RopeArms>();   // QA 2차 A8: 줄넘기 손목을 허리 옆으로(IK 패스가 꺼진 컨트롤러면 아무 일 없음)
         }
 
         void Update()

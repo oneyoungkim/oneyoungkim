@@ -27,7 +27,10 @@ namespace Haengin.EditorGame
         /// 잎 덩어리 먹선 색(#1A1417 → 따뜻한 짙은 갈색 #3A322A — 프레임 선 색 쪽)
         public static readonly Color LeafInk = new Color(0.227f, 0.196f, 0.165f);
         /// 잎 카드 그늘 곱셈(.80, .80, .84 푸른 → 따뜻하게 — 낮 그늘이 a* −4~−6 초록으로 재던 것)
-        public static readonly Color LeafShade = new Color(0.86f, 0.81f, 0.77f);
+        /// QA 2차 룩데브 소결정 ①(2026-10-26, 14 문서 4-9 '재질별 팔레트 고정'): 0.86·0.81·0.77 → 조금 밝고 따뜻하게(프레임 수관 그늘 L* 41~47 · a* +3~6 — Unity 는 L* 33~40 · a* −1~−5)
+        public static readonly Color LeafShade = new Color(0.93f, 0.86f, 0.80f);
+        /// 잎 카드 밝힘(바탕색 곱 — 초록을 조금 덜고 밝게). 수관·관목·잡초 카드 모두
+        public static readonly Color LeafLift = new Color(1.14f, 1.08f, 1.0f);
         public static readonly string[] Groups = { "Z1_Dawn", "Z1_Day", "Z1_Dusk", "Z1_Night", "Gukbap", "Home", "Conv", "School", "Gym" };
         static readonly List<string> Notes = new List<string>();
         static string SrcLut => Path.GetFullPath(Path.Combine(Application.dataPath, "../../../concept/art/env/lut"));

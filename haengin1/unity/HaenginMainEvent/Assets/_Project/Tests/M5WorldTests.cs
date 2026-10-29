@@ -187,7 +187,7 @@ namespace Haengin.Tests
             Assert.AreNotEqual(t1.ToString(), t3.ToString(), "다른 시드 = 다른 날씨");
             Assert.IsTrue(m.Rain(313), "3/13 비(원고 교차점)"); Assert.IsFalse(m.Rain(314), "3/14 노가다 첫날 맑음"); Assert.IsTrue(m.Rain(328), "3/28 비(N07)");
             // 시간대
-            Assert.AreEqual("새벽", m.Band(6 * 60)); Assert.AreEqual("아침", m.Band(12 * 60)); Assert.AreEqual("오후", m.Band(17 * 60)); Assert.AreEqual("저녁", m.Band(19 * 60)); Assert.AreEqual("밤", m.Band(23 * 60)); Assert.AreEqual("밤", m.Band(3 * 60));
+            Assert.AreEqual("새벽", m.Band(6 * 60)); Assert.AreEqual("아침", m.Band(9 * 60)); Assert.AreEqual("낮", m.Band(12 * 60)); Assert.AreEqual("오후", m.Band(17 * 60)); Assert.AreEqual("저녁", m.Band(19 * 60)); Assert.AreEqual("밤", m.Band(23 * 60)); Assert.AreEqual("밤", m.Band(3 * 60));     // QA 2차 A3: 시간대 표 하나(아침 08~12 · 낮 12~16)
             // 조명 연속 보간
             var (a, b2, kk) = DayLight.PartsAt(7 * 60);
             Assert.AreEqual(DayPart.Dawn, a); Assert.AreEqual(DayPart.Day, b2); Assert.That(kk, Is.InRange(0.1f, 0.9f));
@@ -233,7 +233,10 @@ namespace Haengin.Tests
             Assert.AreEqual(0, sr.Shortfall, "3월 결손 없음");
             Assert.AreEqual(25 * 9000 - 1000, earnedDel, "배달 25일(4·5건 번갈아)");
             Assert.AreEqual(21 * 20000, earnedGb, "국밥집 21일");
-            Assert.That(m.L.Wallet - 2600, Is.InRange(10000, 60000), "남는 돈 ≈ 2만(원고 '지갑 2,600원' 근처)");
+            // QA 2차 A1: 등급 덤(B = 기본급의 5%)은 지갑으로 따로 — 원고 숫자 맞춤은 덤을 뺀 돈으로
+            int tips = Mathf.RoundToInt(m.Count("tips"));
+            Assert.AreEqual(Mathf.RoundToInt((earnedDel + earnedGb) * 0.05f / 100f) * 100, tips, 300, "B 등급 덤 = 기본급 5%");
+            Assert.That(m.L.Wallet - 2600 - tips, Is.InRange(10000, 60000), "덤을 뺀 남는 돈 ≈ 2만(원고 '지갑 2,600원' 근처)");
         }
 
         // ───────────────────────── W04 7시간·피로

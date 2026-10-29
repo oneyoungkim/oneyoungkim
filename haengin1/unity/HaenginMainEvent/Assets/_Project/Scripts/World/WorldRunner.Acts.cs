@@ -36,7 +36,11 @@ namespace Haengin
             if (a == null) return "";
             switch (a.Kind)
             {
-                case "sleep": { var (d, m) = Model.NextWake(); return $"잠 — {d / 100}/{d % 100} {GameClock.Hm(m)} 기상"; }
+                case "sleep":
+                    {
+                        if (Model.NapOnly) return $"낮잠 — 2시간({GameClock.Hm(((int)GameClock.Minutes + WorldModel.NapMinutes) % 1440)}까지)";
+                        var (d, m) = Model.NextWake(); return $"잠 — {d / 100}/{d % 100} {GameClock.Hm(m)} 기상";
+                    }
                 case "save": return "공책 — 저장";
                 case "ledger": return $"가계부 · 봉투 {Ledger.Won(Model.L.Envelope)}원";
                 case "family": return "하늘이";
@@ -151,7 +155,12 @@ namespace Haengin
             InputMaps.Use(Actions, null);
             GameState.Modal = true;
             CutCamDriver cam = null;
-            if (motor != null) { cam = CutCams.Make(CamPreset.Mid, motor.transform, null); cam.AvoidProps = true; cam.Snap(); cam.SetLive(true); }     // QA Q20: 포스기·모니터가 시우를 가리면 돌려 피함
+            if (motor != null)
+            {
+                cam = CutCams.Make(CamPreset.Mid, motor.transform, null); cam.AvoidProps = true; cam.Snap();     // QA Q20: 포스기·모니터가 시우를 가리면 돌려 피함
+                if (mode == "counter") cam.SetFixed(CounterCam);     // QA 2차 A8: 계산대 = 손님 쪽 왼편 위에서(호빵 찜기 유리가 화면에 걸리지 않게)
+                cam.SetLive(true);
+            }
             float score = 0.6f;
             if (Job != null && !string.IsNullOrEmpty(mode)) yield return Job.Play(mode, BotSkill, Model.S.Seed ^ (Model.Today * 31 + a.Id.Length), v => score = v);
             if (cam != null) CutCams.Release(cam);
@@ -160,6 +169,9 @@ namespace Haengin
             InputMaps.Use(Actions, InputMaps.Explore);
             done(Model.GradeOf(score));
         }
+
+        /// 계산대 알바 카메라 자리(시우 발 기준: 앞 2.2m · 왼쪽 1.25m · 높이 1.8m — 손님 쪽 왼편 위에서 계산대 너머로, 포스기 화면(카메라 막이)·호빵 찜기를 비켜)
+        public static readonly Vector3 CounterCam = new Vector3(2.2f, -1.25f, 1.8f);
 
         /// QA Q20(2차): 좁은 일자리(편의점 계산대 안쪽 — 앞 계산대·뒤 담배 진열대)에서 끝나면 바깥 카메라가 머리 속으로 당겨져 손만 보였음
         /// → 실내면 카메라 뒤 공간(1.6m)이 나는 자리·방향(지금 방향 · 옆 · 뒤 중)으로 몇 걸음 옮김
@@ -260,6 +272,8 @@ namespace Haengin
         // ───────────────────────── 잠
         public IEnumerator Sleep(bool forced)
         {
+            // QA 2차 A2: 일어난 지 6시간 안이면 낮잠 2시간만(카드·주간 계획·말일 없이)
+            if (!forced && Model.NapOnly) { yield return Nap(); yield break; }
             if (!forced && BotSkill <= 0f)
             {
                 var (d, m) = Model.NextWake();
@@ -310,6 +324,29 @@ namespace Haengin
             yield return DemoCheck(false);
             if (Hud != null) Hud.Shown = true;
         }
+
+        /// 낮잠 2시간(일어난 지 6시간 안) — 먹 닦기로 덮고 시계 +2시간, 피로만 조금
+        public IEnumerator Nap()
+        {
+            if (BotSkill <= 0f)
+            {
+                int pick = 0;
+                yield return Ask(new[] { $"낮잠 — 2시간({GameClock.Hm(((int)GameClock.Minutes + WorldModel.NapMinutes) % 1440)}까지)", "아직" }, v => pick = v);
+                if (pick != 0) yield break;
+            }
+            if (Hud != null) Hud.Shown = false;
+            if (Loader != null && Loader.Wipe != null) yield return Loader.Wipe.Cover();
+            var r = Model.Nap();
+            Naps++;
+            Trace.Add($"낮잠 → {GameClock.TimeText}");
+            Debug.Log($"[World] 낮잠: {r.Summary} · {Model.Status}");
+            Hud?.Toast(r.Summary + " — 일어난 지 얼마 안 돼서 낮잠만");
+            if (Loader != null && Loader.Wipe != null) yield return Loader.Wipe.Uncover();
+            AutoSave("");
+            if (Hud != null) Hud.Shown = true;
+        }
+
+        public int Naps { get; private set; }
 
         // ───────────────────────── 집: 가계부·하늘이
         IEnumerator LedgerView()
@@ -423,7 +460,7 @@ namespace Haengin
         {
             var enc = FindAnyObjectByType<Encounter>(FindObjectsInactive.Include);
             var pc = FindAnyObjectByType<PlayerCombat>();
-            if (enc == null || pc == null || Loader == null) { Model.S.StreetWins++; yield break; }
+            if (enc == null || pc == null || Loader == null) { if (HasDlg(Director.DlgOf(c))) yield return ShowBoard(c); Model.S.StreetWins++; yield break; }
             if (Loader.Place != SceneLoader.Zone1) yield return Loader.Go(SceneLoader.Zone1, null, false, Vector3.zero, 0f);
             if (Story.M2Stages != null) Story.M2Stages.SetActive(true);
             enc.gameObject.SetActive(true);
@@ -435,6 +472,16 @@ namespace Haengin
             if (Model.HpBonus > 0f) { pc.Me.MaxHp = Mathf.RoundToInt(hpBase * (1f + Model.HpBonus)); pc.Me.Hp = pc.Me.MaxHp; Hud?.Toast($"체력 효과 — 최대 체력 {hpBase} → {pc.Me.MaxHp}"); }
             (pc.Me.Body as PlayerBody)?.Place(d.ToWorld(d.RetryLocal) + Vector3.up * 0.1f, d.Yaw + 180f);
             Loader.Cam?.SnapBehind();
+            // QA 2차 B: 시비 카드의 실제 장면 — 상대 셋이 선 뒤, 싸움 전에(대사 동안 인카운터는 잠금)
+            string sdlg = Director.DlgOf(c);
+            if (HasDlg(sdlg))
+            {
+                Encounter.Suppress = true;
+                for (int i = 0; i < 3; i++) yield return null;
+                CardScenes++; LastCardScene = sdlg; Trace.Add($"장면 {sdlg}");
+                yield return Story.PlayDlg(sdlg);
+                Loader.Cam?.SnapBehind();
+            }
             Encounter.Suppress = false;
             FightBot bot = null;
             PInput pin = null;

@@ -49,7 +49,7 @@ Shader "Haengin/LightPool"
                 else
                 {
                     float sx = 1 - smoothstep(0.55, 1.0, abs(i.uv.x));      // 가게 앞: 폭 방향은 유리 폭만큼, 바깥으로 갈수록 옅게
-                    float vy = _HaenginLightOn > 0.5 ? i.uv.y * 1.8 : i.uv.y;   // 룩데브 ⑤: 6m → 3.3m(인도까지만 — 차도가 통째로 밝던 것)
+                    float vy = i.uv.y;   // QA 2차 ②: 판 자체가 3.5m(예전 6m 판을 셰이더에서 ×1.8 로 줄이던 것)
                     float sy = pow(saturate(1 - vy), 1.6) * smoothstep(0.0, 0.06, i.uv.y);
                     f = sx * sy;
                 }
@@ -59,7 +59,7 @@ Shader "Haengin/LightPool"
                 float stepped = floor(f * 4.0 + 0.5) / 4.0;
                 f = lerp(f, stepped, _Bands * smoothstep(0.05, 0.25, f));
                 // 룩데브 ⑤: 가로등 원 웅덩이만 세게, 가게 앞 사각은 줄임(넓게 깔려 길 전체가 밝은 베이지 — 2026-10-26 진단: 웅덩이를 끄면 길이 어두워짐)
-                float boost = _HaenginLightOn > 0.5 ? (i.k.x < 0.5 ? (_HaenginPoolBoost > 0.01 ? _HaenginPoolBoost : 1.0) : 0.7) : 1.0;
+                float boost = _HaenginLightOn > 0.5 ? (i.k.x < 0.5 ? (_HaenginPoolBoost > 0.01 ? _HaenginPoolBoost : 1.0) : 1.0) : 1.0;   // QA 2차 ②: 가게 앞 판이 좁아져 ×0.7 줄임 뺌
                 float k = saturate(i.col.a * f * gate * _Strength * boost);
                 half3 c = i.col.rgb * k;
                 half fogK = 1 - ComputeFogIntensity(i.fog);

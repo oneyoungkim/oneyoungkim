@@ -56,6 +56,8 @@ namespace Haengin
         /// 이 열쇠가 풀려야 할 수 있음(빈칸 = 늘)
         public string Unlock = "";
         public bool RainOff;
+        /// 등급 덤의 이름(QA 2차 A1): 국밥집·편의점 = 손님 팁 · 배달 = 별점 수당 · 노가다 = 반장 칭찬 일당. 빈칸 = 덤 없음
+        public string Tip = "";
 
         public int Minutes => WorkMinutes > 0 ? WorkMinutes : Mathf.Max(0, End - Start);
         public bool IsJob => Kind == "job";
@@ -77,6 +79,8 @@ namespace Haengin
         public string[] Board = new string[0];
         public string[] Quotes = new string[0];
         public string[] After = new string[0];
+        /// 이 변형의 대사 장면(QA 2차 B — 빈칸 = 카드의 Dlg)
+        public string Dlg = "";
     }
 
     [Serializable]
@@ -92,6 +96,12 @@ namespace Haengin
         public bool NoSceneEffects;
         public string[] Board = new string[0];
         public string[] Quotes = new string[0];
+        /// 실제 장면(QA 2차 B, 2026-10-26): 대사 TSV 장면 열쇠(ep*.tsv 의 "열쇠.번호" 줄) — 있으면 스토리보드 카드 대신 그 장소에서 배우·카메라·자막으로.
+        /// DlgPlace = 장면 장소(빈칸 = Place) · DlgTravel = 다른 데 있으면 데려감(아니면 그 장소일 때만, 아니면 스토리보드) · DlgSpawn · DlgPos/Yaw(Zone1 자리)
+        public string Dlg = "", DlgPlace = "", DlgSpawn = "";
+        public bool DlgTravel, DlgHasPos;
+        public Vector3 DlgPos;
+        public float DlgYaw;
         /// 날짜: Date(박힌 날, DayKey) 또는 From~To 창, Monthly = 매달 그 날(0 = 아님)
         public int Date, WinFrom, WinTo, Monthly;
         public string Days = "";
@@ -175,6 +185,10 @@ namespace Haengin
         public int DelegateShifts = 10;
         public float DelegateStat = 0.75f;
         public float[] GradeCuts = { 0.35f, 0.55f, 0.75f, 0.9f };
+        /// 미니게임 등급 → 기본급에 얹는 덤 비율(D·C·B·A·S — QA 2차 A1: 0 · 0 · 5% · 15% · 30%). 기본급은 그대로, 덤은 지갑으로
+        public float[] TipRates = { 0f, 0f, 0.05f, 0.15f, 0.30f };
+        /// 맡기기(미니게임 없이)도 덤을 받나 — 받으면 맡긴 등급(B)의 비율
+        public bool TipDelegated = true;
         public float[] RainByMonth = new float[13];
         public int[] RainOn = new int[0], ClearOn = new int[0];
         public string[] GameZones = new string[0];

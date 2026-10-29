@@ -89,7 +89,11 @@ namespace Haengin.Tests
                 log.AppendLine(line);
                 if (s.Kind != SceneKind.Card)
                 {
-                    if (!grounded) fails.Add(s.Id + " 접지 아님");
+                    if (!grounded)
+                    {
+                        string under = Physics.Raycast(m.Position + Vector3.up * 0.5f, Vector3.down, out var uh, 3f, Layers.Solid, QueryTriggerInteraction.Ignore) ? $"{uh.collider.name}(층 {uh.collider.gameObject.layer}) {uh.point.y:F2}" : "없음";
+                        fails.Add($"{s.Id} 접지 아님(시우 {m.Position:F2} · 아래 {under} · cc {m.GetComponent<CharacterController>().enabled})");
+                    }
                     // 2026-10-24 탐색 B(5.5m): 야외는 골목·담장에서 벽 당김(CamClearance)·가림 당김(Deoccluder)이 정상 → 실내 값(2.8~3.0)과 갈리는지만 본다
                     // 9단계 키트 무대(실제 방 — 벽·칸막이가 가까움)는 벽 당김이 정상: 목표보다 길지만 않으면(0.6m 이상)
                     bool kit = ld.Stage != null && !ld.Stage.Placeholder;

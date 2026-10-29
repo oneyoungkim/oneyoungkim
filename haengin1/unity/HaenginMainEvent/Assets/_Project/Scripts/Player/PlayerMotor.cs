@@ -165,7 +165,8 @@ namespace Haengin
             ext = Vector3.zero;
             Velocity = PlanarAccel = Vector3.zero;
             PlanarSpeed = OwnSpeed = YawRate = StepDeltaY = 0f;
-            grounded = false;
+            // 2026-10-28 QA 2차: 땅 바로 위로 옮겼으면 그 자리에서 접지(다음 Update 전에 읽는 장면 코루틴이 '공중'으로 보지 않게)
+            grounded = CastDown(0.04f, out _);
             if (CamTarget != null) CinemachineCore.OnTargetObjectWarped(CamTarget, delta);
             Teleported?.Invoke(delta);
         }

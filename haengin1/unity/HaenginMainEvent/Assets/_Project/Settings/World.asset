@@ -288,6 +288,7 @@ MonoBehaviour:
     Rep: 0.3
     Unlock: job.delivery
     RainOff: 0
+    Tip: "\uBCC4\uC810 \uC218\uB2F9"
   - Id: job.gukbap
     Name: "\uAD6D\uBC25\uC9D1 \uC800\uB141(\uC11C\uBE59\xB7\uC124\uAC70\uC9C0)"
     Kind: job
@@ -314,6 +315,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: job.gukbap
     RainOff: 0
+    Tip: "\uC190\uB2D8 \uD301"
   - Id: job.stock
     Name: "\uD3B8\uC758\uC810 \uC57C\uAC04 \uC785\uACE0(\uBE44\uACF5\uC2DD)"
     Kind: job
@@ -341,6 +343,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: job.stock
     RainOff: 0
+    Tip: 
   - Id: job.counter
     Name: "\uD3B8\uC758\uC810 \uACC4\uC0B0\uB300(\uC815\uC2DD)"
     Kind: job
@@ -366,6 +369,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: job.counter
     RainOff: 0
+    Tip: "\uC190\uB2D8 \uD301"
   - Id: job.site
     Name: "\uB178\uAC00\uB2E4(\uACFD\uBC18\uC7A5 \uD604\uC7A5)"
     Kind: job
@@ -392,6 +396,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: job.site
     RainOff: 1
+    Tip: "\uBC18\uC7A5 \uCE6D\uCC2C \uC77C\uB2F9"
   - Id: school
     Name: "\uD559\uAD50"
     Kind: school
@@ -418,6 +423,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: school
     RainOff: 0
+    Tip: 
   - Id: gym.clean
     Name: "\uCCB4\uC721\uAD00 \uB9C8\uAC10 \uCCAD\uC18C(\uCCAD\uC18C \uAD00\uC6D0)"
     Kind: gym
@@ -443,6 +449,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: gym.cleaner
     RainOff: 0
+    Tip: 
   - Id: sleep
     Name: "\uC7A0"
     Kind: sleep
@@ -467,6 +474,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: 
     RainOff: 0
+    Tip: 
   - Id: save
     Name: "\uACF5\uCC45(\uC800\uC7A5)"
     Kind: save
@@ -491,6 +499,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: 
     RainOff: 0
+    Tip: 
   - Id: ledger
     Name: "\uAC00\uACC4\uBD80\xB7\uBD09\uD22C"
     Kind: ledger
@@ -515,6 +524,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: 
     RainOff: 0
+    Tip: 
   - Id: haneul
     Name: "\uD558\uB298\uC774"
     Kind: family
@@ -539,6 +549,7 @@ MonoBehaviour:
     Rep: 0
     Unlock: 
     RainOff: 0
+    Tip: 
   Cards:
   - Id: C1-01
     Group: 
@@ -561,6 +572,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 303
     WinFrom: 0
     WinTo: 0
@@ -611,6 +629,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 304
     WinTo: 305
@@ -654,6 +679,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 306
     WinFrom: 0
     WinTo: 0
@@ -696,6 +728,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 306
     WinFrom: 0
     WinTo: 0
@@ -753,6 +792,13 @@ MonoBehaviour:
     - "\uD558\uB298|\uC624\uBE60. 2\uD638\uBD80\uD130\uC57C. 1\uD638\uB294 \uCF00\uC774\uD06C
       \uC544\uB2C8\uC57C."
     - "\uC5C4\uB9C8|\uD1A0\uC694\uC77C. \uC77C\uACF1 \uC2DC. \uBC14\uBCF4."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 306
     WinFrom: 0
     WinTo: 0
@@ -806,6 +852,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 309
     WinTo: 430
@@ -858,6 +911,13 @@ MonoBehaviour:
     Quotes:
     - "\uB098\uB9AC|\uC6B0\uC0B0 \uC5C6\uC5B4? \u20263\uBC18\uC740 \uC6D0\uB798 \uC816\uACE0
       \uB2E4\uB2C8\uB294 \uBC18\uC774\uC57C?"
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 309
     WinTo: 430
@@ -902,6 +962,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 313
     WinFrom: 0
     WinTo: 0
@@ -946,6 +1013,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 314
     WinFrom: 0
     WinTo: 0
@@ -992,6 +1066,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 314
     WinFrom: 0
     WinTo: 0
@@ -1041,6 +1122,13 @@ MonoBehaviour:
       \uB0B4\uB824\uC624\uB294 \uD0DC\uC624\uAC00 \uC190\uC744 \uB4E4\uB2E4 \uB9CC\uB2E4.
       \uC2DC\uC6B0\uB294 \uD398\uB2EC\uB9CC \uBC1F\uB294\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 304
     WinTo: 1231
@@ -1082,6 +1170,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 316
     WinTo: 320
@@ -1123,6 +1218,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 316
     WinTo: 320
@@ -1165,6 +1267,13 @@ MonoBehaviour:
     NoSceneEffects: 1
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 317
     WinTo: 430
@@ -1214,6 +1323,13 @@ MonoBehaviour:
       \"\uD558\uB298\uC774 \uC798 \uC788\uB0D0?\" \u2014 \uC2DC\uC6B0\uB294 \uCC38\uB294\uB2E4.
       \uBD09\uD22C\uB294 \uC7AC\uD0B7 \uC548\uC8FC\uBA38\uB2C8\uC5D0."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 317
     WinTo: 430
@@ -1265,6 +1381,13 @@ MonoBehaviour:
     - "\uC2DC\uC6B0|\uADF8\uB0E5\uC740 \uC548 \uBC1B\uC544\uC694."
     - "\uC810\uC7A5|\uADF8\uB7EC\uB2C8\uAE4C \uC4F0\uB77C\uB294 \uAC70\uC57C. \uADF8\uB0E5
       \uB9D0\uACE0."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 320
     WinTo: 430
@@ -1315,6 +1438,13 @@ MonoBehaviour:
     Quotes:
     - "\uAF2D\uB300\uAE30 \uC9D1 \uD560\uC544\uBC84\uC9C0|\uC11C\uBE44\uC2A4\uB0D0."
     - "\uC2DC\uC6B0|\u2026\uACC4\uC808 \uD55C\uC815\uC774\uC694."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 401
     WinTo: 407
@@ -1361,6 +1491,13 @@ MonoBehaviour:
       \uC2DC\uC6B0\uB294 \uC9DC\uC11C \uB110\uACE0, \uC816\uC740 \uCC44\uB85C \uC785\uB294\uB2E4.
       \uCC38\uB294\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 413
     WinTo: 417
@@ -1410,6 +1547,13 @@ MonoBehaviour:
     Quotes:
     - "\uD558\uB298|1\uBC88\uC740 \uC624\uBE60\uAC00 \uC54C\uC544\uC11C \uD574. \uB098\uBA38\uC9C0\uB294
       \uB0B4\uAC00 \uC54C\uC544\uC11C \uD560\uAC8C."
+    Dlg: C1-18
+    DlgPlace: Home
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 428
     WinFrom: 0
     WinTo: 0
@@ -1459,6 +1603,13 @@ MonoBehaviour:
     Quotes:
     - "\uC9C1\uC6D0 \uB204\uB098|\uBC18\uD558\uB298 \uB2D8, 2\uD638 \uCD08\uCF54
       \uC0DD\uD06C\uB9BC \uB9DE\uC73C\uC2DC\uC8E0?"
+    Dlg: C1-19
+    DlgPlace: School
+    DlgSpawn: Hall
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 429
     WinFrom: 0
     WinTo: 0
@@ -1491,6 +1642,7 @@ MonoBehaviour:
       After:
       - flag:cake2
       - "spend:38000:2\uD638 \uCD08\uCF54 \uC0DD\uD06C\uB9BC"
+      Dlg: 
     - Need: envelope<40000
       Title: 
       Board:
@@ -1503,6 +1655,7 @@ MonoBehaviour:
       After:
       - flag:cake1
       - "spend:28000:1\uD638 \uCD08\uCF54 \uC0DD\uD06C\uB9BC"
+      Dlg: C1-19b
     Fight: 
     Miss: summary
     NoticeAt: -1
@@ -1533,6 +1686,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 501
     WinFrom: 0
     WinTo: 0
@@ -1579,6 +1739,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 501
     WinFrom: 0
     WinTo: 0
@@ -1624,6 +1791,13 @@ MonoBehaviour:
     NoSceneEffects: 0
     Board: []
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 504
     WinTo: 508
@@ -1673,6 +1847,13 @@ MonoBehaviour:
       \uB215\uD614\uB2E4\uBA70?"
     - "\uC5C4\uB9C8|\uC6B0\uB9AC \uC544\uB4E4 \uBC30\uB2EC\uD574. \uC2F8\uC6C0 \uC548
       \uD574. \uBC14\uBCF4."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 502
     WinTo: 531
@@ -1723,6 +1904,13 @@ MonoBehaviour:
     - "\uAE50\uC871\uC774|\uB2C8\uAC00 \uD589\uC7781\uC774\uB0D0? \uC0DD\uAC01\uBCF4\uB2E4
       \uC791\uB124."
     - "\uC2DC\uC6B0|\u2026\uBC30\uB2EC \uB2A6\uC5B4."
+    Dlg: C1-24
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 504
     WinTo: 515
@@ -1770,6 +1958,13 @@ MonoBehaviour:
     Quotes:
     - "\uACE0\uC900|\uB108 \uCCB4\uC721\uAD00 \uB2E4\uB140 \uBCFC \uC0DD\uAC01 \uC5C6\uB0D0?
       \uBAB8\uC774 \uC544\uAE4C\uC6CC\uC11C."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 504
     WinTo: 630
@@ -1804,6 +1999,7 @@ MonoBehaviour:
       - "\uACE0\uC900|\uCCB4\uC721\uAD00\uC740 \uC798 \uB098\uC624\uACE0?"
       - "\uC2DC\uC6B0|\u2026\uB2E4\uB140\uC694. \uCCAD\uC18C\uD558\uBA74\uC11C."
       After: []
+      Dlg: 
     Fight: 
     Miss: wait
     NoticeAt: -1
@@ -1831,6 +2027,13 @@ MonoBehaviour:
       \uD560 \uC218 \uC788\uB294 \uAC83 \u2014 \uCE74\uB124\uC774\uC158 \uD55C \uC1A1\uC774,
       \uC544\uB2C8\uBA74 \uC624\uB298 \uC8FC\uBC29 \uB300\uD0C0."
     Quotes: []
+    Dlg: C1-26
+    DlgPlace: Gukbap
+    DlgSpawn: Hall
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 508
     WinFrom: 0
     WinTo: 0
@@ -1886,6 +2089,13 @@ MonoBehaviour:
     - "\uCCB4\uC721\uB300\uD68C \uACC4\uC8FC \u2014 \uC575\uCEE4 \uC55E \uC8FC\uC790
       \uC2DC\uC6B0, \uBC14\uD1B5\uC744 \uBC1B\uB294 \uD0DC\uC624. \uC190\uC774 \uB2FF\uB294\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 525
     WinTo: 529
@@ -1928,6 +2138,13 @@ MonoBehaviour:
       \uB4B7\uACE8\uBAA9\uC5D0\uC11C '\uBC18\uCD0C \uB188'\uC774\uB77C\uB294 \uC774\uB984\uC774
       \uB530\uB77C\uBD99\uB294\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 601
     WinTo: 630
@@ -1971,6 +2188,13 @@ MonoBehaviour:
       \uC528\uB984'\uC744 \uC774\uC57C\uAE30\uD55C\uB2E4. \uB3C8 \uAC78\uACE0 \uD558\uB358
       \uC61B\uB0A0 \uC774\uC57C\uAE30."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 601
     WinTo: 831
@@ -1978,6 +2202,7 @@ MonoBehaviour:
     Days: 
     Bands:
     - "\uC544\uCE68"
+    - "\uB0AE"
     - "\uC624\uD6C4"
     From: -1
     To: -1
@@ -2015,6 +2240,13 @@ MonoBehaviour:
     - "\uC5EC\uB984\uBC29\uD559 \uD480\uD0C0\uC784 \uD604\uC7A5. \uD3ED\uC5FC \uC18D
       \uAC70\uD478\uC9D1 \uC704."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 720
     WinTo: 828
@@ -2058,6 +2290,13 @@ MonoBehaviour:
       \uB0B4\uBBFC\uB2E4. \"\uB2C8 \uC544\uBC84\uC9C0\uB294 \uB118\uC5B4\uC9C4 \uAC8C
       \uC544\uB2C8\uB2E4.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 720
     WinTo: 831
@@ -2102,6 +2341,13 @@ MonoBehaviour:
       \uB204\uAD70\uAC00 \uBD80\uB978\uB2E4. \"\uB108, \uAC70\uAE30 \uC7A0\uAE50
       \uC11C \uBD10.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 824
     WinTo: 831
@@ -2142,6 +2388,13 @@ MonoBehaviour:
     Board:
     - "\uADF9\uB2E8 \uD589\uC778\uC758 \uC724\uBBF8\uB77C \u2014 \uB2E8\uC5ED \uC81C\uC548."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -2184,6 +2437,13 @@ MonoBehaviour:
     - "\uD558\uB298\uC774 \uD559\uC6D0 \u2014 \uC6D4 35\uB9CC \uC6D0\uC774 \uB9E4\uB2EC
       \uB098\uAC00\uB294 \uB3C8 \uC904\uC5D0 \uBD99\uB294\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 901
     WinTo: 907
@@ -2224,6 +2484,13 @@ MonoBehaviour:
     Board:
     - "\uB9AC\uD5C8\uC124 \u2014 \"\uD558\uCCB4\uB85C \uAC78\uC5B4.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 901
     WinTo: 1130
@@ -2267,6 +2534,13 @@ MonoBehaviour:
       \uD0DC\uC624 \uC544\uBE60\uAC00 \uB9D0\uD55C\uB2E4. \"\u2026\uC800 \uC560,
       \uD558\uCCB4\uAC00 \uC88B\uAD6C\uB098.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 923
     WinTo: 927
@@ -2310,6 +2584,13 @@ MonoBehaviour:
       \uC6D0\uC774 \uCCD0\uC838 \uC788\uB2E4. \"\uB2E4\uC74C, \uB4E4\uC5B4\uC62C
       \uB188?\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 905
     WinTo: 1130
@@ -2351,6 +2632,13 @@ MonoBehaviour:
     Board:
     - "\uCCAB \uC57C\uCC28. \uD310\uB3C8\uC740 \uD559\uC6D0\uBE44 \uC808\uBC18."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -2392,6 +2680,13 @@ MonoBehaviour:
     Board:
     - "\uAE30\uC138 \uC561\uC158 \u300C\uD589\uC778 \uB7EC\uC2DC\u300D."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1001
     WinTo: 1031
@@ -2433,6 +2728,13 @@ MonoBehaviour:
     Board:
     - "\uB864\uB9C1\uD398\uC774\uD37C \u2014 \uC190\uAE00\uC528 \uD55C \uC904."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1005
     WinTo: 1009
@@ -2473,6 +2775,13 @@ MonoBehaviour:
     Board:
     - "\uB85C\uD130\uB9AC\uC5D0 \uD604\uC218\uB9C9\uC774 \uAC78\uB9B0\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1024
     WinTo: 1031
@@ -2514,6 +2823,13 @@ MonoBehaviour:
     - "\uC131\uACFD\uCE74\uC13C\uD130(\uAC00\uCE6D) \u2014 \u300C\uD61C\uD654\uB3D9
       \uC131\uACFD \uD638\uB791\uC774\u300D \uCC44\uAC15\uD601. \uCCAB\uB208 \uC608\uACE0."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1024
     WinTo: 1130
@@ -2555,6 +2871,13 @@ MonoBehaviour:
     Board:
     - "\uB9AC\uD5C8\uC124 \u2014 \uD589\uC7782 \uB300\uD0C0."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1112
     WinTo: 1118
@@ -2596,6 +2919,13 @@ MonoBehaviour:
     Board:
     - "\uCEE4\uD2BC\uCF5C \u2014 \uC774\uB984\uC774 \uBC15\uC218\uC5D0 \uBB3B\uD78C\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1119
     WinTo: 1122
@@ -2638,6 +2968,13 @@ MonoBehaviour:
     - "\uACE0\uC900\uC758 \uACC4\uB2E8 \uC778\uD130\uBC8C \u2014 \uBC84\uD2F0\uB294
       \uC5F0\uC2B5."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1120
     WinTo: 1130
@@ -2681,6 +3018,13 @@ MonoBehaviour:
     - "\uD558\uB298\uC774\uAC00 \uBD09\uD22C\uB97C \uCC3E\uC558\uB2E4. \"\uC624\uBE60.
       \uC774\uAC70 \uBB50\uC57C.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1120
     WinTo: 1130
@@ -2723,6 +3067,13 @@ MonoBehaviour:
     - "\uD558\uB298\uC774\uAC00 '\uB9E4\uB2C8\uC800'\uAC00 \uB41C\uB2E4 \u2014 \uC77C\uC815\xB7\uCEE8\uB514\uC158
       \uC870\uC5B8."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1130
     WinTo: 1204
@@ -2765,6 +3116,13 @@ MonoBehaviour:
     - "\uCCAB\uB208 \uC624\uB294 \uD1A0\uC694\uC77C \uBC24. \uCC44\uAC15\uD601. \uC9C8
       \uC218\uBC16\uC5D0 \uC5C6\uB294 \uC2F8\uC6C0 \u2014 \uC138 \uBC88 \uC77C\uC5B4\uB09C\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 1205
     WinTo: 1226
@@ -2808,6 +3166,13 @@ MonoBehaviour:
       \uB0B4\uB824\uAC04\uB2E4. 12\uC6D4 7\uC77C \uCD9C\uC11D \u2014 \"\uBC18\uC2DC\uC6B0.\"
       \"\uB124.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -2861,6 +3226,13 @@ MonoBehaviour:
       \uBCFC\uB798?"
     - "\uC2DC\uC6B0|\uB3C8 \uC5C6\uC5B4\uC694."
     - "\uC774\uC724\uC900|\uCCB4\uD5D8\uC740 \uACF5\uC9DC\uC57C. \uC904\uB118\uAE30\uBD80\uD130."
+    Dlg: N01
+    DlgPlace: Gym
+    DlgSpawn: 
+    DlgTravel: 1
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 309
     WinTo: 320
@@ -2908,6 +3280,13 @@ MonoBehaviour:
     Quotes:
     - "\uC774\uC724\uC900|\uB3C8\uC774 \uC5C6\uC73C\uBA74 \uBAB8\uC73C\uB85C \uB0B4.
       \uB300\uC2E0 \uB2A6\uC73C\uBA74 \uB05D\uC774\uB2E4."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 309
     WinTo: 1231
@@ -2966,6 +3345,13 @@ MonoBehaviour:
     Board:
     - "\uB9E4\uB2EC 1\uC77C \u2014 \uCCB4\uC721\uAD00 \uD68C\uBE44 \uB0A0."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3015,6 +3401,13 @@ MonoBehaviour:
     Quotes:
     - "\uD558\uB298|\uC774\uC790\uB294 \uBCF5\uB9AC\uC57C. \uB098\uC911\uC5D0 \uC54C\uB824
       \uC904\uAC8C."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3062,6 +3455,13 @@ MonoBehaviour:
       \uC9C0\uAE08 \uD3AD\uADC4\uC774\uC57C. \uB0A8\uADF9 \uD3AD\uADC4.\" \uC624\uB298
       \uD558\uB8E8 \uC2A4\uD53C\uB4DC \u221210%."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3106,6 +3506,13 @@ MonoBehaviour:
       \uBB38\uC790 \u2014 \"\uB0B4\uC77C \uC5C6\uC74C.\" \uBE44 \uC608\uBCF4. \uD1A0\uC694\uC77C\uC774
       \uD1B5\uC9F8\uB85C \uBE44\uC5C8\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3154,6 +3561,13 @@ MonoBehaviour:
     - "\uC774\uC724\uC900|\u2026\uB2E4\uC2DC. \uC774\uBC88\uC5D4 \uC548 \uBCF4\uACE0."
     - "\uACE0\uC900|\uBD24\uC5B4\uC694? \uBD24\uC8E0? \uAD00\uC7A5\uB2D8 \uBC29\uAE08
       \uC6C3\uC5C8\uC5B4\uC694."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3202,6 +3616,13 @@ MonoBehaviour:
       \uACE0\uC591\uC774\uD55C\uD14C \uC774\uB984 \uC9C0\uC5B4 \uC8FC\uAE30.' \uD6C4\uBB38
       \uACE8\uBAA9 \uACE0\uC591\uC774 \uC790\uB9AC\uBD80\uD130 \uAC00 \uBCF8\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 307
     WinTo: 430
@@ -3252,6 +3673,13 @@ MonoBehaviour:
     Quotes:
     - "\uC2DC\uC6B0|\u2026\uD558\uB298\uC774\uAC00 \uC774\uB984 \uC9C0\uC5B4 \uC900\uB300.
       \uAE30\uB2E4\uB824."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 307
     WinTo: 531
@@ -3303,6 +3731,13 @@ MonoBehaviour:
     Quotes:
     - "\uAF2D\uB300\uAE30 \uC9D1 \uD560\uC544\uBC84\uC9C0|\uC5B4\uC774. \uC624\uB298\uC740
       \uC548 \uB2A6\uC5C8\uB124."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 309
     WinTo: 430
@@ -3353,6 +3788,13 @@ MonoBehaviour:
       \uB300\uC2E0 \uD55C \uC2DC\uAC04 \uB3D9\uC548\uC740 \uB0B4 \uB9D0\uB9CC \uB4E4\uC5B4."
     - "\uACE0\uC900|\uB09C \uBC25\uAC12\uB9CC \uBC1B\uC744\uAC8C. \uADF8\uB77C\uC6B4\uB4DC\uB791
       \uC2A4\uD30C\uB9C1\uC740 \uB098\uD55C\uD14C \uC640."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 309
     WinTo: 1231
@@ -3408,6 +3850,13 @@ MonoBehaviour:
       \uC608\uC57D\uD574 \uB193\uACE0 \uC548 \uC624\uBA74 \uB098 \uB9DD\uC2E0\uC774\uB2E4."
     - "\uACE0\uC900|\uC640, \uC9C4\uC9DC\uC694? \uC800\uB3C4 \uC606\uC5D0\uC11C \uBD10\uB3C4
       \uB3FC\uC694?"
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 321
     WinTo: 1231
@@ -3459,6 +3908,13 @@ MonoBehaviour:
     Quotes:
     - "\uC5C4\uB9C8|\uB2E4 \uBA39\uACE0 \uB098\uAC00. \uB0A8\uAE30\uBA74 \uC800\uB141\uC5D0
       \uB610 \uB098\uC628\uB2E4."
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 308
     WinTo: 1231
@@ -3501,6 +3957,13 @@ MonoBehaviour:
     - "\uC57C\uCC28\uB97C \uADF8\uB9CC\uB450\uB294 \uC870\uAC74\uC73C\uB85C \uB4E4\uC5B4\uAC00\uB294
       \uC120\uC218\uBC18 \u2014 \uC800\uB141 \uD53C\uD06C \uC815\uC2DD \uAD00\uC6D0."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3541,6 +4004,13 @@ MonoBehaviour:
     - "\uCCAB \uC2A4\uD30C\uB9C1. \uB9DE\uACE0\uB3C4 \uC55E\uC73C\uB85C \uAC00\uB294
       \uC2DC\uC6B0\uB97C \uACE0\uC900\uC774 \uBCF8\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3581,6 +4051,13 @@ MonoBehaviour:
     Board:
     - "\uD61C\uD654 \uC131\uACFD\uCEF5 \u2014 \uC544\uB9C8 \uB370\uBDD4\uC804 \uC2B9."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3621,6 +4098,13 @@ MonoBehaviour:
     - "\uACE0\uC900\uC758 \uBB34\uB98E \uBD80\uC0C1. \uC120\uC218 \uB300\uC2E0 \uCF54\uCE58\uAC00
       \uB41C\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3661,6 +4145,13 @@ MonoBehaviour:
     - "\uC774\uC724\uC900\uC774 \uC790\uAE30 \uBCF5\uC81C\uB97C \uACBD\uACC4\uD55C\uB2E4
       \u2014 \uC2DC\uC6B0\uB9CC\uC758 \uBB34\uAE30\uB97C \uCC3E\uC544\uB77C."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3701,6 +4192,13 @@ MonoBehaviour:
     - "\uB8E8\uD0A4 \uCF00\uC774\uC9C0 \uAD8C\uC5ED \uC608\uC120 \u2014 \uD3EC\uC778\uD2B8
       \uB808\uC774\uC2A4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3741,6 +4239,13 @@ MonoBehaviour:
     - "\uD0DC\uC624\uAC00 \uB300\uD604TV\uB85C \uC2DC\uC6B0\uC758 \uC544\uB9C8 \uB370\uBDD4\uC804\uC744
       \uC138 \uBC88 \uB3CC\uB824 \uBCF8\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3781,6 +4286,13 @@ MonoBehaviour:
     - "\uB8E8\uD0A4 \uCF00\uC774\uC9C0 \uC804\uAD6D \uACB0\uC120 \u2014 \uBE60\uB978
       \uC131\uC7A5."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3821,6 +4333,13 @@ MonoBehaviour:
     - "\uAC15\uD601 \uB9AC\uB9E4\uCE58 \u2014 \uC774\uC724\uC900\uC758 '\uB9C8\uC9C0\uB9C9
       \uD55C \uBC88' \uD5C8\uB77D."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3861,6 +4380,13 @@ MonoBehaviour:
     - "\uC640\uB8E1\uACF5\uC6D0 \uC57C\uCC28 \uB9AC\uB9E4\uCE58. \"\uC774\uB984 \uAE30\uC5B5\uD588\uB2E4.
       \uBC18\uC2DC\uC6B0.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3900,6 +4426,13 @@ MonoBehaviour:
     Board:
     - "\uC878\uC5C5\uC2DD + \uB514\uB524 FC \uACC4\uC57D \uC81C\uC548."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3941,6 +4474,13 @@ MonoBehaviour:
     - "\uC774\uC724\uC900\uC740 1\uB144 \uB354 \uAE30\uB2E4\uB9AC\uB77C \uB9D0\uB9AC\uACE0,
       \uC0DD\uACC4\uB294 \uAE30\uB2E4\uB824 \uC8FC\uC9C0 \uC54A\uB294\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -3980,6 +4520,13 @@ MonoBehaviour:
     Board:
     - "\uB514\uB524 FC \uB370\uBDD4\uC804 \u2014 \uD310\uC815\uD328."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4020,6 +4567,13 @@ MonoBehaviour:
     - "\uACFD\uBC18\uC7A5 \uBC11 \uD615\uD2C0\uBAA9\uC218 \uACAC\uC2B5. \uD558\uB8E8
       12\uC2DC\uAC04 \uD604\uC7A5."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4059,6 +4613,13 @@ MonoBehaviour:
     Board:
     - "\uD0DC\uC624 \uC785\uAD00."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4099,6 +4660,13 @@ MonoBehaviour:
     - "1\uB77C\uC6B4\uB4DC \uB2E4\uC6B4 \uB4A4 \uC5ED\uC804 TKO. \uAC1D\uC11D\uC5D0
       \uD0DC\uC624."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4139,6 +4707,13 @@ MonoBehaviour:
     - "\uC804\uC5C5 \uC120\uC218\uB97C \uACE0\uB978 \uB0A0 \u2014 \uACFD\uBC18\uC7A5\xB7\uC5C4\uB9C8\uC640
       \uBD80\uB52A\uD78C\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4180,6 +4755,13 @@ MonoBehaviour:
     - "\uD558\uB298\uC774 \uC54C\uBC14\uBE44 \uBD09\uD22C \"\uB9E4\uB2C8\uC800 \uD22C\uC790\uAE08.
       \uC774\uC790\uB294 \uBCF5\uB9AC\uC57C.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4220,6 +4802,13 @@ MonoBehaviour:
     - "\uD0DC\uC624\uC5D0\uAC8C \uB2E4\uC12F \uBC88 \uB358\uC838\uC9C4 \uB0A0, \uCC98\uC74C\uC73C\uB85C
       \"\uBC18\uC2DC\uC6B0\"\uB77C\uACE0 \uBD88\uB9B0\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4259,6 +4848,13 @@ MonoBehaviour:
     Board:
     - "\uC785\uC601 \uD1B5\uC9C0\uC11C."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4298,6 +4894,13 @@ MonoBehaviour:
     Board:
     - "\uD0DC\uC624\uC640 \uAC19\uC740 \uB0A0, \uAC19\uC740 \uBD80\uB300."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4338,6 +4941,13 @@ MonoBehaviour:
     - "\uC2F8\uC9C0\uBC29 \u2014 \uCC98\uC74C\uC73C\uB85C \uC138\uACC4 \uBB34\uB300
       \uC601\uC0C1\uC744 \uB05D\uAE4C\uC9C0 \uBCF8\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4377,6 +4987,13 @@ MonoBehaviour:
     Board:
     - "\uD734\uAC00 \uC138 \uBC88 \u2014 \uD61C\uD654\uB3D9\uC758 \uD558\uB8E8."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4416,6 +5033,13 @@ MonoBehaviour:
     Board:
     - "\uC804\uC5ED."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4455,6 +5079,13 @@ MonoBehaviour:
     Board:
     - "\uD558\uAC00\uB124 \uC6D0\uC815 1\uB77C\uC6B4\uB4DC KO\uC2B9."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4494,6 +5125,13 @@ MonoBehaviour:
     Board:
     - "\uC6A9\uB9C8\uB8E8 FC \uCD08\uB300 \uBC34\uD140\uAE09 \uCC54\uD53C\uC5B8."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4534,6 +5172,13 @@ MonoBehaviour:
     - "\uB370\uC800\uD2B8 \uD06C\uB77C\uC6B4 \uD310\uC815\uD328 \u2014 \uBCA8\uD2B8\uB97C
       \uB530\uB3C4 \uC138\uACC4\uB294 \uBA40\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4575,6 +5220,13 @@ MonoBehaviour:
       \uC774\uC724\uC900\uC740 \uC815\uD1B5\uC744 \uAD8C\uD558\uACE0 \uC2DC\uC6B0\uB294
       '\uBB34\uB300'\uB97C \uACE0\uB978\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4614,6 +5266,13 @@ MonoBehaviour:
     Board:
     - "\uD5E4\uB4DC\uB77C\uC774\uB108 \uCC3D\uC124 \uB300\uD68C \u2014 \uAC1C\uAD6D\uACF5\uC2E0."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4653,6 +5312,13 @@ MonoBehaviour:
     Board:
     - "\uB9C1\uB124\uC784 EXTRA\uB97C \uC2A4\uC2A4\uB85C \uACE0\uB978\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4693,6 +5359,13 @@ MonoBehaviour:
     - "\uBBF8\uB514\uC5B4 \uB370\uC774\uC5D0\uC11C \uD55C \uB9C8\uB514\uB3C4 \uBABB
       \uD55C\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4734,6 +5407,13 @@ MonoBehaviour:
     - "\uC724\uBBF8\uB77C \u2014 \uAC00\uB9CC\uD788 \uC788\uC5B4\uB3C4 \uB2E4 \uBCF4\uAC8C
       \uB9CC\uB4DC\uB294 \uC0AC\uB78C\uC774 \uC774\uAE34\uB2E4."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4775,6 +5455,13 @@ MonoBehaviour:
     - "\uCD08\uB300 \uD398\uB354\uAE09 \uD0C0\uC774\uD2C0\uC804 1\uB77C\uC6B4\uB4DC
       \uCD08\uBC18 KO. \"\uB9D0 \uB9CE\uC740 \uB188\uC740 \uC9E7\uAC8C.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4814,6 +5501,13 @@ MonoBehaviour:
     Board:
     - "\uB9D0\uC218 \uC801\uC740 \uC560\uC758 \uCCAB \uACF5\uC5B8."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4856,6 +5550,13 @@ MonoBehaviour:
     - "\uCD08\uB300 \uB77C\uC774\uD2B8\uAE09 \u2014 \uC608\uACE0\uD55C 2\uB77C\uC6B4\uB4DC
       TKO."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4896,6 +5597,13 @@ MonoBehaviour:
     - "\uD188\uC0B0 \uCEF4\uBC43 \uCC54\uD53C\uC5B8 \u2192 \uCCAB \uBC29\uC5B4\uC804
       TKO\uD328."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4936,6 +5644,13 @@ MonoBehaviour:
     - "\uACC4\uCCB4 \uC2E4\uD328 \u2014 \uC774\uACA8\uB3C4 \uBCA8\uD2B8 \uC5C6\uC74C,
       \uD310\uC815 \uB17C\uB780 \uB05D NC."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -4976,6 +5691,13 @@ MonoBehaviour:
     - "\uC624\uB974\uBE44\uC2A4 \uC5B4\uC13C\uD2B8 \uC2E0\uCCAD \uAC70\uC808 \xD7
       2."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5015,6 +5737,13 @@ MonoBehaviour:
     Board:
     - "\uC720\uB098\uB9AC\uC758 \uC6F9\uD230 \u300C\uD589\uC7781\u300D."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5054,6 +5783,13 @@ MonoBehaviour:
     Board:
     - "\uB85C\uBE14\uB85C NC."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5093,6 +5829,13 @@ MonoBehaviour:
     Board:
     - "2\uB300 \uBC34\uD140\uAE09 \uC7AC\uB300\uACB0 \u2014 3\uCCB4\uAE09."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5132,6 +5875,13 @@ MonoBehaviour:
     Board:
     - "\uC5F0\uB9D0 \uC2DC\uC0C1\uC2DD MVP."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5171,6 +5921,13 @@ MonoBehaviour:
     Board:
     - "\uD0DC\uC624, \uD5E4\uB4DC\uB77C\uC774\uB108\uB85C."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5210,6 +5967,13 @@ MonoBehaviour:
     Board:
     - "\uC624\uB974\uBE44\uC2A4 \uC5B4\uC13C\uD2B8 \uC120\uBC1C."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5250,6 +6014,13 @@ MonoBehaviour:
     - "\uCC44\uAC15\uD601\uC774 \uCF54\uB108\uC5D0 \uC120\uB2E4 \u2014 \uC774 \uAD00\uC7A5\uACFC
       \uD22C\uB2E5."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5289,6 +6060,13 @@ MonoBehaviour:
     Board:
     - "8\uAC15 \uD310\uC815\uC2B9."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5328,6 +6106,13 @@ MonoBehaviour:
     Board:
     - "\uC900\uACB0\uC2B9 \uC2A4\uD50C\uB9BF \uD310\uC815\uC2B9."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5367,6 +6152,13 @@ MonoBehaviour:
     Board:
     - "\uACB0\uC2B9 \uD310\uC815\uC2B9 \u2014 \uC6B0\uC2B9."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5408,6 +6200,13 @@ MonoBehaviour:
     - "\uB450 \uBCA8\uD2B8 \uBC18\uB0A9 \u2014 '\uD5E4\uB4DC\uB77C\uC774\uB108 \uCD9C\uC2E0
       \uCCAB \uC624\uB974\uBE44\uC2A4'."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5447,6 +6246,13 @@ MonoBehaviour:
     Board:
     - "\uD0DC\uC624, 2\uC8FC \uC804 \uB300\uCCB4 \uCD9C\uC804\uC73C\uB85C \uACC4\uC57D."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5486,6 +6292,13 @@ MonoBehaviour:
     Board:
     - "\uC138\uACC4 \uB2E8\uCCB4 \uCCAB \uB300\uAE30\uC2E4 \u2014 \uB2E4\uC2DC \uD589\uC7781."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5527,6 +6340,13 @@ MonoBehaviour:
     - "\uB370\uBDD4 \uD310\uC815\uC2B9, \uCC98\uC74C \uC954 \uB9C8\uC774\uD06C. \"\uBCF4\uB108\uC2A4
       \uC8FC\uC138\uC694. \uB3D9\uC0DD\uD55C\uD14C \uBE5A\uC774 \uC788\uC5B4\uC11C\uC694.\""
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5568,6 +6388,13 @@ MonoBehaviour:
     - "2\uC8FC \uC804 \uB300\uCCB4 \uC120\uC218\uC5D0\uAC8C 2\uB77C\uC6B4\uB4DC \uB9AC\uC5B4
       \uB124\uC774\uD0A4\uB4DC \uCD08\uD06C."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5607,6 +6434,13 @@ MonoBehaviour:
     Board:
     - "\uD0DC\uC624\uC640 \uADF8\uB798\uD50C\uB9C1 \uCEA0\uD504."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5646,6 +6480,13 @@ MonoBehaviour:
     Board:
     - "3\uB77C\uC6B4\uB4DC \uC11C\uBE0C\uBBF8\uC158\uC2B9."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5685,6 +6526,13 @@ MonoBehaviour:
     Board:
     - "\uB9AC\uB9E4\uCE58 5\uB77C\uC6B4\uB4DC \uB2E4\uC218 \uD310\uC815\uC2B9."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5724,6 +6572,13 @@ MonoBehaviour:
     Board:
     - "\uC0C1\uB300 \uBD80\uC0C1 \uAE30\uAD8C \u2014 \uCC54\uD53C\uC5B8."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5764,6 +6619,13 @@ MonoBehaviour:
     - "\uC624\uB974\uBE44\uC2A4 \uC11C\uC6B8 \uBA54\uC778\uC774\uBCA4\uD2B8 \uB9AC\uB9E4\uCE58
       5\uB77C\uC6B4\uB4DC."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5803,6 +6665,13 @@ MonoBehaviour:
     Board:
     - '"Na ka lungdam."'
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5842,6 +6711,13 @@ MonoBehaviour:
     Board:
     - "\uC9C4\uC5D4\uB529 \u2014 \uB450 \uB8E8\uD2B8\uC758 \uBA54\uC778\uC774\uBCA4\uD2B8."
     Quotes: []
+    Dlg: 
+    DlgPlace: 
+    DlgSpawn: 
+    DlgTravel: 0
+    DlgHasPos: 0
+    DlgPos: {x: 0, y: 0, z: 0}
+    DlgYaw: 0
     Date: 0
     WinFrom: 0
     WinTo: 0
@@ -5880,10 +6756,11 @@ MonoBehaviour:
     BandNames:
     - "\uC0C8\uBCBD"
     - "\uC544\uCE68"
+    - "\uB0AE"
     - "\uC624\uD6C4"
     - "\uC800\uB141"
     - "\uBC24"
-    BandFrom: 2c010000e0010000c00300003804000028050000
+    BandFrom: 2c010000e0010000d0020000c00300003804000028050000
     Holidays: 2d0100002e010000f90100000d0200005b0200005e0200002f030000310300009c0300009d0300009e030000eb030000ed030000f1030000c9040000
     MinorNightFrom: 1320
     MinorNightTo: 360
@@ -5964,6 +6841,13 @@ MonoBehaviour:
     - 0.55
     - 0.75
     - 0.9
+    TipRates:
+    - 0
+    - 0
+    - 0.05
+    - 0.15
+    - 0.3
+    TipDelegated: 1
     RainByMonth:
     - 0
     - 0

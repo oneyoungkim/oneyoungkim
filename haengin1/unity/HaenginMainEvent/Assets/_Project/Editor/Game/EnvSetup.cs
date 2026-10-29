@@ -145,6 +145,38 @@ namespace Haengin.EditorGame
             ["M_Fabric"] = "#A9B7C2", ["M_Plant_Green"] = "#7E9A5E", ["M_Tank_Blue"] = "#7FB2C9",
         };
 
+        /// QA 2차 룩데브 소결정 ①(2026-10-26, 14 문서 4-9): 재질별 팔레트 고정 — 벽돌 텍스처 L* 33(갈색)·39(빨강) → 프레임 벽돌 면 L* 41~47 쪽으로(색상은 그대로, 밝기만).
+        ///   텍스처 재질은 바탕색이 흰색이라 바탕색·그늘색에 곱한다(그늘 = ShadeMul × 이 값).
+        public static readonly Dictionary<string, Color> PaletteTint = new Dictionary<string, Color>
+        {
+            ["M_Brick_Brown"] = new Color(1.26f, 1.22f, 1.18f),
+            ["M_Brick_Red"] = new Color(1.12f, 1.10f, 1.08f),
+        };
+
+        static void ApplyPalette(Material m, string name)
+        {
+            if (m == null || !PaletteTint.TryGetValue(name, out var t)) return;
+            m.SetColor("_BaseColor", t); m.SetColor("_Color", t);
+            m.SetColor("_1st_ShadeColor", ShadeMul * t); m.SetColor("_2nd_ShadeColor", ShadeMul * t);
+            EditorUtility.SetDirty(m);
+        }
+
+        /// 배치: 다시 짓지 않고 팔레트 고정만(벽돌 재질 · 수관 카드 재질 M_V_crown_* · 6차 풀 카드 M_G6_*)
+        public static void PaletteOnly() => Run(() =>
+        {
+            int n = 0;
+            foreach (var name in PaletteTint.Keys) { var m = AssetDatabase.LoadAssetAtPath<Material>($"{MatDir}/{name}.mat"); if (m != null) { ApplyPalette(m, name); n++; } }
+            int leaves = 0;
+            foreach (var kv in CardTrees)
+            {
+                var m = AssetDatabase.LoadAssetAtPath<Material>($"{PropMatDir}/M_V_crown_{kv.Key}.mat");
+                if (m == null) continue;
+                m.SetColor("_BaseColor", kv.Value.Tint * LookdevSetup.LeafLift); m.SetColor("_ShadeColor", LookdevSetup.LeafShade); EditorUtility.SetDirty(m); leaves++;
+            }
+            Notes.Add($"팔레트 고정: 벽돌 {n} · 수관 카드 {leaves}(6차 풀 카드 M_G6_* 는 Zone1 다시 짓기에서)");
+            AssetDatabase.SaveAssets();
+        });
+
         static void Materials()
         {
             var mats = D(Manifest()["materials"]);
@@ -159,6 +191,7 @@ namespace Haengin.EditorGame
                 Color col = tex != null ? Color.white : Hex(FlatColors.TryGetValue(name, out var fc) ? fc : S(info, "color"), Color.gray);
                 bool uv01 = S(info, "uv") == "01" || name == "M_Sign_Atlas" || name == "M_Glass_Lit" || name == "M_Decal_Atlas";
                 var m = Toon($"{MatDir}/{name}.mat", tex, uv01 ? Vector2.one : Vector2.one * tiling, Vector2.zero, col);
+                ApplyPalette(m, name);     // QA 2차 ①
                 if (name == "M_Glass_Lit")
                 {
                     m.EnableKeyword("_EMISSIVE_SIMPLE"); m.SetTexture("_Emissive_Tex", tex); m.SetColor("_Emissive_Color", new Color(1.15f, 0.86f, 0.55f, 1f));   // 저녁·밤 창문 불 = 따뜻한 주황
@@ -700,6 +733,7 @@ namespace Haengin.EditorGame
             Physics.SyncTransforms();
             Notes.Add(Pass8(d, zoneRoot, env, objs, Prefab));
             Notes.Add(LodDedup(zoneRoot, out _));      // QA Q25: 구역 FBX 뿌리 LOD 묶음 ↔ 건물별 LOD 묶음 겹침
+            Notes.Add(EdgeGuard(d, zoneRoot));          // QA 2차 A6: 맵 끝 담 위에 못 올라서게(보이지 않는 막)
             // 원경 카드
             SkyRig(zoneRoot);
             Physics.SyncTransforms();

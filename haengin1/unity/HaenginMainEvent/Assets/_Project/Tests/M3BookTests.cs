@@ -51,7 +51,7 @@ namespace Haengin.Tests
             r.SceneStarted += OnStart;
             r.SceneStarted += OnAny;
             r.Begin(false, null, null);
-            yield return M3Lab.WaitDone(60 * 60 * 20);
+            yield return M3Lab.WaitDone(60 * 60 * 40);     // QA 2차 B: 2~7화 장면이 실제 대사가 되며 읽기 속도로 20분 넘게
             r.SceneStarted -= OnStart;
             r.SceneStarted -= OnAny;
             Assert.IsTrue(r.Finished, "끝까지(지금 " + r.Scene?.Id + ")");

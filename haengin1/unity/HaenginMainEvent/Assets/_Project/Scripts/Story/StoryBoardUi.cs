@@ -20,6 +20,8 @@ namespace Haengin
         public string Title => title != null ? title.text : "";
         public string Body => body != null ? body.text : "";
         public int Shows { get; private set; }
+        /// '제작 중 장면 · 스토리보드' 로 뜬 횟수(QA 2차 B 시험 — 실제 장면으로 바꾼 카드는 늘지 않아야)
+        public int StoryboardShows { get; private set; }
 
         Image dim, card, tag;
         TextMeshProUGUI head, title, body, quotes, foot, tagText;
@@ -63,6 +65,7 @@ namespace Haengin
             title.text = s.Title;
             tag.gameObject.SetActive(true);
             tagText.text = move ? "이번 장면" : "제작 중 장면 · 스토리보드";
+            if (!move) StoryboardShows++;
             tag.color = move ? UiKit.Ink : UiKit.Accent;
             var lines = s.Board != null && s.Board.Length > 0 ? s.Board : new[] { s.Summary };
             body.text = "· " + string.Join("\n· ", lines);
@@ -76,6 +79,7 @@ namespace Haengin
         {
             Build();
             Mode = "카드";
+            if (tagLine != null && tagLine.Contains("스토리보드")) StoryboardShows++;
             head.text = headLine ?? "";
             title.text = titleLine ?? "";
             tag.gameObject.SetActive(!string.IsNullOrEmpty(tagLine));

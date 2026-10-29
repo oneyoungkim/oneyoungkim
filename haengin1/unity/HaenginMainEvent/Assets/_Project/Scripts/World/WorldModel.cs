@@ -17,6 +17,8 @@ namespace Haengin
         public Grade Grade;
         public bool Delegated;
         public int Pay, Fatigue, Minutes, Units;
+        /// 등급 덤(팁·별점 수당·칭찬 일당 — QA 2차 A1), 지갑으로
+        public int Tip;
         public string Summary;
         public override string ToString() => $"{Id} {DrillGrader.Letter(Grade)}{(Delegated ? "(맡김)" : "")} · {Summary}";
     }
@@ -61,7 +63,9 @@ namespace Haengin
         public static WorldSave NewSave(WorldDef def)
         {
             var b = def.Balance;
-            return new WorldSave { Active = true, Year = b.StartYear, Chapter = "1", Seed = b.Seed, Place = "Gukbap", Spawn = "Spawn" };
+            var s = new WorldSave { Active = true, Year = b.StartYear, Chapter = "1", Seed = b.Seed, Place = "Gukbap", Spawn = "Spawn" };
+            s.Set(WokeDayKey, b.StartDate); s.Set(WokeMinKey, b.Wake);      // QA 2차 A2: 첫날도 05:30 에 일어난 것으로(낮잠 규칙)
+            return s;
         }
 
         public void Say(string line) { if (string.IsNullOrEmpty(line)) return; Log.Add(line); Toast?.Invoke(line); }
@@ -87,10 +91,12 @@ namespace Haengin
         public bool RainToday => Rain(Today);
         public bool RainTomorrow => Rain(GameClock.KeyPlus(Today, 1));
 
-        /// 시간대(docs/13 3-1): 새벽 05~08 · 아침 08~16 · 오후 16~18 · 저녁 18~22 · 밤 22~05
+        /// 시간대(docs/13 3-1 · QA 2차 A3): 새벽 05~08 · 아침 08~12 · 낮 12~16 · 오후 16~18 · 저녁 18~22 · 밤 22~05.
+        /// 데이터 표(balance.json)가 비었으면 GameClock 표 — 둘은 같아야 함(W00b)
         public string Band(int minutes)
         {
-            string n = B.BandNames.Length > 0 ? B.BandNames[B.BandNames.Length - 1] : "";
+            if (B.BandNames.Length == 0) return GameClock.BandOf(minutes);
+            string n = B.BandNames[B.BandNames.Length - 1];
             int best = -1;
             for (int i = 0; i < B.BandFrom.Length; i++)
                 if (minutes >= B.BandFrom[i] && B.BandFrom[i] > best) { best = B.BandFrom[i]; n = B.BandNames[i]; }
@@ -419,6 +425,16 @@ namespace Haengin
             return score >= g[3] ? Grade.S : score >= g[2] ? Grade.A : score >= g[1] ? Grade.B : score >= g[0] ? Grade.C : Grade.D;
         }
 
+        /// 등급 덤(QA 2차 A1): 기본급 × 등급 비율(S 30% · A 15% · B 5% · C·D 0), 100원 단위. 맡기면 B(데이터 tips.delegated 가 false 면 0)
+        public int TipFor(ActivityDef a, int pay, Grade grade, bool delegated)
+        {
+            if (a == null || !a.IsJob || pay <= 0 || string.IsNullOrEmpty(a.Tip)) return 0;
+            if (delegated && !B.TipDelegated) return 0;
+            int gi = Mathf.Clamp((int)grade, 0, B.TipRates.Length - 1);
+            float rate = B.TipRates.Length > 0 ? B.TipRates[gi] : 0f;
+            return Mathf.Max(0, Mathf.RoundToInt(pay * rate / 100f) * 100);
+        }
+
         public int UnitsToday(ActivityDef a) => a.Units != null && a.Units.Length > 0 ? a.Units[Mathf.Abs(DayIndex) % a.Units.Length] : 1;
 
         /// 활동 끝 — 돈·피로·스탯·평판·셈·일터 시간. 시계는 부르는 쪽이 End 로(직접 놀이는 이미 흐른 만큼)
@@ -438,6 +454,14 @@ namespace Haengin
                 if (a.To == "household") AddHousehold(pay, a.Memo);
                 else if (a.To == "wallet") L.Apply("wallet", $"+{pay}:{a.Memo}");
                 parts.Add($"+{Ledger.Won(pay)}원{(a.To == "household" ? " → 엄마 통장" : " → 지갑")}");
+                int tip = TipFor(a, pay, grade, delegated);
+                if (tip > 0)
+                {
+                    r.Tip = tip;
+                    L.Apply("wallet", $"+{tip}:{a.Tip}");
+                    AddCount("tips", tip);
+                    parts.Add($"{a.Tip} +{Ledger.Won(tip)}원({DrillGrader.Letter(grade)}) → 지갑");
+                }
             }
             foreach (var it in a.Items) { L.Apply("item", it); parts.Add("얻음 " + it.Replace(":", " ×")); }
             bool over = S.WeekMinutes > B.WeekSoft;
@@ -489,7 +513,40 @@ namespace Haengin
             return (day, wake);
         }
 
-        /// 잠(집): 시간당 피로 −9, 70 이상에서 잤으면 +10('덜 풀림'), 말일을 넘기면 이체, 일요일 밤이면 봉투 적립 5,000(원고)
+        // ───────────────────────── 낮잠(QA 2차 A2, 2026-10-26 메인 세션 결정): 일어난 지 6시간이 안 됐으면 '낮잠 2시간'만 — 일어나자마자 다시 자면 다음 기상까지 22~24시간 자던 것
+        public const string WokeDayKey = "woke.day", WokeMinKey = "woke.min";
+        public const int NapAfterMinutes = 6 * 60, NapMinutes = 120;
+
+        /// 마지막 밤잠에서 일어난 뒤 지난 분(기록이 없으면 — 옛 저장 — 하루)
+        public int AwakeMinutes
+        {
+            get
+            {
+                int d = Mathf.RoundToInt(S.Get(WokeDayKey));
+                if (d <= 0) return 24 * 60;
+                return GameClock.DaysBetween(d, Today) * 1440 + Now - Mathf.RoundToInt(S.Get(WokeMinKey));
+            }
+        }
+
+        /// 지금 자면 낮잠(2시간)인가 — 플레이어가 이불에서 잘 때만(밤 한계 강제 잠·주간 계획의 날 넘기기는 늘 밤잠)
+        public bool NapOnly => AwakeMinutes >= 0 && AwakeMinutes < NapAfterMinutes;
+
+        /// 낮잠 2시간: 시계 +2시간 · 피로 −(시간당 잠 회복 × 2) · 날짜·말일·봉투·기상 기록은 그대로
+        public SleepResult Nap()
+        {
+            var r = new SleepResult { FromDay = Today, FatigueBefore = G.Fatigue, Hours = NapMinutes / 60 };
+            float rec = B.SleepPerHour * NapMinutes / 60f * (SuppOn("vitamin") ? VitaminSleep : 1f);
+            G.Fatigue = Mathf.Clamp(Mathf.RoundToInt(G.Fatigue - rec), 0, 100);
+            r.FatigueAfter = G.Fatigue;
+            GameClock.Advance(NapMinutes);
+            r.WakeDay = Today; r.WakeMin = Now;
+            r.Summary = $"낮잠 {r.Hours}시간 · 피로 {r.FatigueBefore} → {r.FatigueAfter}";
+            Log.Add($"{GameClock.DateText} {r.Summary}");
+            return r;
+        }
+
+        /// 잠(집): 시간당 피로 −9, 70 이상에서 잤으면 +10('덜 풀림'), 말일을 넘기면 이체, 일요일 밤이면 봉투 적립 5,000(원고).
+        /// 밤잠은 다음 기상 시각(월~토 05:30 · 일 08:00)까지 — NextWake 가 상한. 일어난 지 6시간 안이면 플레이어 잠은 낮잠(Nap)으로(WorldRunner.Sleep)
         public SleepResult Sleep(bool forced = false)
         {
             var r = new SleepResult { FromDay = Today, FatigueBefore = G.Fatigue };
@@ -518,6 +575,7 @@ namespace Haengin
             GameClock.SetDate(y, wd / 100, wd % 100, wm);
             BeginDayIfNeeded();
             S.Slept++;
+            S.Set(WokeDayKey, wd); S.Set(WokeMinKey, wm);
             r.Summary = $"{r.Hours}시간 잠 · 피로 {r.FatigueBefore} → {r.FatigueAfter}{(tiredSleep ? "(덜 풀림)" : "")}{(r.MonthSettled ? $" · {fromMonth}월 말일 이체" : "")}";
             S.Days.Add($"{r.FromDay / 100}/{r.FromDay % 100} — 지갑 {Ledger.Won(L.Wallet)} · 생활비 {Ledger.Won(S.Household)} · 피로 {r.FatigueBefore} · 평판 {S.TownRep:0.#}");
             if (S.Days.Count > 120) S.Days.RemoveAt(0);

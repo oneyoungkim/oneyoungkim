@@ -197,6 +197,8 @@ namespace Haengin
         public string[] BoardOf(CardDef c) { var v = Variant(c); return v != null && v.Board.Length > 0 ? v.Board : c.Board; }
         public string[] QuotesOf(CardDef c) { var v = Variant(c); return v != null && v.Quotes.Length > 0 ? v.Quotes : c.Quotes; }
         public string TitleOf(CardDef c) { var v = Variant(c); return v != null && !string.IsNullOrEmpty(v.Title) ? v.Title : c.Title; }
+        /// 실제 장면 대사 열쇠(QA 2차 B) — 변형에 있으면 그것
+        public string DlgOf(CardDef c) { var v = Variant(c); return v != null && !string.IsNullOrEmpty(v.Dlg) ? v.Dlg : c.Dlg; }
 
         /// 결과 적용(변형 after → 카드 after). 선택지는 부르는 쪽이 고른 뒤 그 after 를 넘긴다
         public void ApplyAfter(CardDef c, CardChoice choice = null)

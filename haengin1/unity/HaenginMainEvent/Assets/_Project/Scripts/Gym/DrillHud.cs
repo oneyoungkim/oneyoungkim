@@ -32,6 +32,9 @@ namespace Haengin
         AudioClip tick;
         public string Cue => cueText != null ? cueText.text : "";
         public string Toast => toast != null && toast.gameObject.activeSelf ? toast.text : "";
+        /// 알림판 자리(아래 가운데 기준) — 아이콘(아래 150) 위, 얼굴 높이 아래
+        public static readonly Vector2 ToastPos = new Vector2(0f, 250f);
+        public RectTransform ToastRect => toastPlate != null ? toastPlate.rectTransform : null;
         public bool Visible => root != null && root.activeSelf;
         const int MaxTicks = 16, MaxIcons = 6;
         public const float BeatSpan = 1.6f;
@@ -66,7 +69,8 @@ namespace Haengin
                 var ic = UiKit.Panel("아이콘 " + i, root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-250f + i * 100f, 150f), new Vector2(84f, 84f), UiKit.Paper); ic.gameObject.SetActive(false); icons.Add(ic);
                 var tx = UiKit.Text("글", ic.transform, br, 40f, UiKit.Ink, TextAlignmentOptions.Center); UiKit.Stretch(tx.rectTransform); iconTexts.Add(tx);
             }
-            toastPlate = UiKit.Panel("알림판", root.transform, c5, c5, new Vector2(0f, 120f), new Vector2(360f, 70f), UiKit.Ink);
+            // QA 2차(2026-10-28): 화면 가운데 위(+120)는 드릴 카메라에서 두 사람 얼굴 자리 — D04 미트 '팡!' 판이 이윤준·시우 얼굴을 가림 → 아래 버튼 아이콘 바로 위로
+            toastPlate = UiKit.Panel("알림판", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), ToastPos, new Vector2(360f, 70f), UiKit.Ink);
             toast = UiKit.Text("알림", toastPlate.transform, br, 40f, UiKit.Paper, TextAlignmentOptions.Center); UiKit.Stretch(toast.rectTransform);
             toastPlate.gameObject.SetActive(false);
             metrics = UiKit.Text("지표 미리", root.transform, f, 26f, UiKit.Ink, TextAlignmentOptions.Center, true); UiKit.Place(metrics.rectTransform, c5, c5, new Vector2(0f, 40f), new Vector2(900f, 300f)); metrics.gameObject.SetActive(false);

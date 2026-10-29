@@ -578,7 +578,7 @@ namespace Haengin.EditorGame
                 {
                     Notes.Add($"무대 {key} 꾸밈: {dressed}");
                     var lb = root.transform.Find("이름판");
-                    if (lb != null) UnityEngine.Object.DestroyImmediate(lb.gameObject);   // 꾸민 무대엔 '자리 무대' 이름판 없음
+                    if (lb != null && key != "Site") UnityEngine.Object.DestroyImmediate(lb.gameObject);   // 꾸민 무대엔 '자리 무대' 이름판 없음(현장은 '안전 제일' 안내판 — QA Q28 그대로)
                 }
                 string spawnNames = string.Join(",", spawns.Select(s => s.name));
                 EditorSceneManager.SaveScene(scene, path);

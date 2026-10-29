@@ -104,13 +104,27 @@ namespace Haengin
 
         public static string Weekday => WeekdayOf(Month, Day);
 
-        /// 시간대 말: 새벽 4~6 · 아침 7~10 · 낮 11~16 · 저녁 17~20 · 밤 21~3
-        public static string PartOf(int hour) => hour >= 4 && hour < 7 ? "새벽" : hour >= 7 && hour < 11 ? "아침" : hour >= 11 && hour < 17 ? "낮" : hour >= 17 && hour < 21 ? "저녁" : "밤";
+        /// 시간대 이름 표 하나(QA 2차 A3, 2026-10-26 — HUD·이야기 날짜판·휴대폰·카드 조건이 모두 이 표): 새벽 05:00 · 아침 08:00 · 낮 12:00 · 오후 16:00 · 저녁 18:00 · 밤 22:00
+        ///   (예전: 세계 HUD '아침 08~16·오후 16~18' 와 이야기 날짜판 '낮 11~17' 이 달라 14:00 이 '아침'/'낮' 둘로 읽혔음). Data/World/balance.json clock.bands 도 같은 값(W00b 가 봄)
+        public static readonly string[] BandNames = { "새벽", "아침", "낮", "오후", "저녁", "밤" };
+        public static readonly int[] BandFrom = { 5 * 60, 8 * 60, 12 * 60, 16 * 60, 18 * 60, 22 * 60 };
+
+        /// 분 → 시간대 이름(밤은 22:00 ~ 다음 날 05:00)
+        public static string BandOf(double minutes)
+        {
+            double m = ((minutes % 1440.0) + 1440.0) % 1440.0;
+            string n = BandNames[BandNames.Length - 1];
+            for (int i = 0; i < BandFrom.Length; i++) if (m >= BandFrom[i]) n = BandNames[i];
+            return n;
+        }
+
+        /// 시(時) → 시간대 이름(정시 기준)
+        public static string PartOf(int hour) => BandOf(hour * 60);
 
         public static string TimeText => $"{Hour:00}:{Minute:00}";
         public static string Hm(int minutes) => $"{(minutes / 60) % 24:00}:{minutes % 60:00}";
         /// 「3월 3일(화) 05:31 새벽」
-        public static string Label => $"{Month}월 {Day}일({Weekday}) {TimeText} {PartOf(Hour)}";
+        public static string Label => $"{Month}월 {Day}일({Weekday}) {TimeText} {BandOf(Minutes)}";
         public static string DateText => $"{Month}월 {Day}일({Weekday})";
 
         /// 저장·불러오기

@@ -20,6 +20,13 @@ namespace Haengin
         public float FluorIntensity = 2.8f, SpotIntensity = 2.0f;
         /// 실내 주변광(바탕 Zone1 의 시간대 주변광 대신 — 지하라 하늘빛 없음). 2차 패스: 스타일 프레임 L* 34/46/40/28 · 채도 0.11~0.19 에 맞춤
         public Color AmbientMorning = new Color(0.56f, 0.56f, 0.55f), AmbientDay = new Color(0.74f, 0.73f, 0.70f), AmbientEvening = new Color(0.66f, 0.63f, 0.58f), AmbientNight = new Color(0.40f, 0.40f, 0.43f);
+        [Header("QA 2차 A5(2026-10-26) — 밤 캐릭터 채움빛(가운데 열 형광등만 켜진 밤, 레슨 자리의 시우가 검은 실루엣이던 것)")]
+        [Tooltip("밤 주변광(예전 0.40·0.40·0.43 푸른 회색 → 따뜻한 회갈로 조금 올림 — 14 문서 '그늘 회갈')")] public Color AmbientNightWarm = new Color(0.47f, 0.45f, 0.43f);
+        [Tooltip("채움빛 색 = 따뜻한 회갈(그늘이 검정이 아니라 회갈로 읽히게)")] public Color NightFillColor = new Color(0.86f, 0.78f, 0.70f);
+        public float NightFillIntensity = 2.4f, NightFillRange = 2.6f;
+        Light fill; Transform fillPlayer;
+        /// 시험: 밤 채움빛(밤에만 켜짐)
+        public Light Fill => fill;
         [Tooltip("실내 볼륨 채도(Zone1 필름 볼륨 위에 덮음)")] public float Saturation = -38f, Contrast = -4f;
         [Header("룩데브(docs/14, 2026-10-26) — 그늘 회갈·LUT·먹선·옅은 안개")]
         public Texture2D Lut;
@@ -109,11 +116,37 @@ namespace Haengin
             if (Office != null) Office.enabled = p == GymPart.Day || p == GymPart.Morning || p == GymPart.Evening;
             if (spots) LitCount += CageSpots.Count;
             RenderSettings.ambientMode = AmbientMode.Flat;
-            RenderSettings.ambientLight = p == GymPart.Night || p == GymPart.Dawn ? AmbientNight : p == GymPart.Morning ? AmbientMorning : p == GymPart.Evening ? AmbientEvening : AmbientDay;
+            RenderSettings.ambientLight = p == GymPart.Night ? AmbientNightWarm : p == GymPart.Dawn ? AmbientNight : p == GymPart.Morning ? AmbientMorning : p == GymPart.Evening ? AmbientEvening : AmbientDay;
+            EnsureFill();
+            fill.enabled = p == GymPart.Night;
+            fill.color = NightFillColor; fill.intensity = NightFillIntensity; fill.range = NightFillRange;
             Debug.Log($"[Gym] 조명 {Name(p)}: 형광등 {LitCount - (spots ? CageSpots.Count : 0)}/{Fluors.Count} · 케이지 스포트 {(spots ? CageSpots.Count : 0)} · 사무실 {(Office != null && Office.enabled)}");
         }
 
-        void LateUpdate() { if (sun != null && sun.intensity > 0f) sun.intensity = 0f; if (RenderSettings.fog) RenderSettings.fog = false; if (counted) PushLook(); }
+        void EnsureFill()
+        {
+            if (fill != null) return;
+            var go = new GameObject("밤 캐릭터 채움빛");
+            go.transform.SetParent(transform, false);
+            fill = go.AddComponent<Light>();
+            fill.type = LightType.Point; fill.shadows = LightShadows.None; fill.renderMode = LightRenderMode.ForcePixel; fill.enabled = false;
+        }
+
+        /// 채움빛 자리: 시우 가슴에서 지금 카메라 쪽으로 0.9m · 위로 0.35m(카메라가 보는 앞면을 비춤 — 바닥은 반지름 2.6m 안에서만 옅게)
+        void PlaceFill()
+        {
+            if (fill == null || !fill.enabled) return;
+            if (fillPlayer == null) { var m = FindAnyObjectByType<PlayerMotor>(); if (m != null) fillPlayer = m.transform; }
+            if (fillPlayer == null) return;
+            var chest = fillPlayer.position + Vector3.up * 1.25f;
+            var cam = Camera.main;
+            var dir = cam != null ? cam.transform.position - chest : fillPlayer.forward;
+            dir.y = 0f;
+            if (dir.sqrMagnitude < 1e-4f) dir = fillPlayer.forward;
+            fill.transform.position = chest + dir.normalized * 0.9f + Vector3.up * 0.35f;
+        }
+
+        void LateUpdate() { if (sun != null && sun.intensity > 0f) sun.intensity = 0f; if (RenderSettings.fog) RenderSettings.fog = false; if (counted) PushLook(); PlaceFill(); }
 
         void OnDestroy()
         {

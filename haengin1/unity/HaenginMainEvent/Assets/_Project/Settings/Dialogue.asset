@@ -912,20 +912,1974 @@ MonoBehaviour:
     Wait: 0
     Cam: 
     Note: 
+  - Id: 2-2.01
+    Scene: 2-2
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2DC\uC6B0 \uD640 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: "\uC2DC\uC6B0 = \uD640 \uD1B5\uB85C"
+  - Id: 2-2.02
+    Scene: 2-2
+    No: 2
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "3\uC6D4 6\uC77C, \uAE08\uC694\uC77C. \uC800\uB141.\\n\uC131\uB300\uD6C4\uBB38
+      \uAD6D\uBC25\uC758 \uC800\uB141\uC740 \uC804\uC7C1\uC774\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-2.03
+    Scene: 2-2
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB098\uB294 \uC7C1\uBC18 \uB124 \uAC1C\uB97C \uD55C \uBC88\uC5D0 \uB4E0\uB2E4.\\n\uAD6D\uBB3C
+      \uC548 \uD758\uB9AC\uB294 \uAC74 \uB0B4 \uBA87 \uC548 \uB418\uB294 \uD2B9\uAE30\uB2E4."
+    Wait: 0
+    Cam: "\uCE21\uBA74 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: 2-2.04
+    Scene: 2-2
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC5C4\uB9C8:\uC5C4\uB9C8 \uD640 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: "\uC5C4\uB9C8\uAC00 \uD640\uB85C"
+  - Id: 2-2.05
+    Scene: 2-2
+    No: 5
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-2.06
+    Scene: 2-2
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB9C8\uAC10 \uC9C1\uC804, \uC5C4\uB9C8\uAC00 \uB0B4 \uC55E\uC5D0 \uAD6D\uBC25\uC744
+      \uD0C1 \uB0B4\uB824\uB1A8\uB2E4.\\n\uACE0\uAE30\uAC00 \uB450 \uBC30\uC600\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-2.07
+    Scene: 2-2
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "\uC5C4\uB9C8, \uACE0\uAE30 \uB108\uBB34 \uB9CE\uC544."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-2.08
+    Scene: 2-2
+    No: 8
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "\uB0A8\uC558\uC5B4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-2.09
+    Scene: 2-2
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uCE74\uC6B4\uD130\uC5D0\uC11C \uC0AC\uC7A5 \uD560\uBA38\uB2C8\uAC00 \uC5C4\uB9C8\uB97C
+      \uC9F8\uB824\uBD24\uB2E4.\\n\uC774 \uAC00\uAC8C\uC5D0\uC11C \uACE0\uAE30\uAC00
+      \uB0A8\uC740 \uC801\uC740 \uD55C \uBC88\uB3C4 \uC5C6\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-2.10
+    Scene: 2-2
+    No: 10
+    Who: "\uC0AC\uC7A5 \uD560\uBA38\uB2C8"
+    Face: 
+    Mode: 0
+    Text: "\uD30C\uC57C. \uB108 \uADF8\uB7EC\uB2E4 \uAC00\uAC8C \uB9DD\uD55C\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: "\uCE74\uC6B4\uD130 \u2014 \uBAA9\uC18C\uB9AC\uB9CC"
+  - Id: 2-2.11
+    Scene: 2-2
+    No: 11
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC0AC\uC7A5 \uD560\uBA38\uB2C8\uB294 \uADF8\uB807\uAC8C \uB9D0\uD558\uBA74\uC11C,\\n\uB0B4
+      \uAD6D\uBC25\uC5D0 \uACC4\uB780 \uD504\uB77C\uC774\uB97C \uD558\uB098 \uC5B9\uC5C8\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-2.12
+    Scene: 2-2
+    No: 12
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC5C4\uB9C8\uB294 \uBB3B\uC9C0 \uC54A\uB294\uB2E4. \uBB3B\uB294 \uB300\uC2E0
+      \uACE0\uAE30\uB97C \uB123\uB294\uB2E4.\\n\uB098\uB294 \uB300\uB2F5\uD558\uC9C0
+      \uC54A\uB294\uB2E4. \uB300\uB2F5 \uB300\uC2E0 \uB2E4 \uBA39\uB294\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-2.13
+    Scene: 2-2
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC6B0\uB9AC \uC9D1 \uB300\uD654\uB294 \uB300\uCCB4\uB85C \uAD6D\uBB3C\uB85C
+      \uD55C\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-2.14
+    Scene: 2-2
+    No: 14
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-3.01
+    Scene: 2-3
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: quest_hide
+    Wait: 0
+    Cam: 
+    Note: "\uD558\uB298 \uBA54\uBAA8\uB294 \uD558\uB298\uC774 \uAEBC\uB0BC \uB54C"
+  - Id: 2-3.02
+    Scene: 2-3
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uD558\uB298:\uD558\uB298 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: "\uD558\uB298 = \uAD6C\uC11D \uC2DD\uD0C1"
+  - Id: 2-3.03
+    Scene: 2-3
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2DC\uC6B0 \uD640 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-3.04
+    Scene: 2-3
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-3.05
+    Scene: 2-3
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "8\uC2DC \uBC18, \uBC29\uACFC\uD6C4\uB97C \uB9C8\uCE5C \uD558\uB298\uC774\uAC00
+      \uAC00\uAC8C \uAD6C\uC11D \uC790\uB9AC\uC5D0\\n\uC549\uC544 \uCF54\uD305\uB41C
+      \uC885\uC774 \uD55C \uC7A5\uC744 \uAEBC\uB0C8\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: 2-3.06
+    Scene: 2-3
+    No: 6
+    Who: 
+    Face: 
+    Mode: 5
+    Text: quest
+    Wait: 0
+    Cam: 
+    Note: "\uC0DD\uC77C \uC694\uAD6C\uC0AC\uD56D \uBA54\uBAA8(\uCCB4\uD06C\uB9AC\uC2A4\uD2B8)"
+  - Id: 2-3.07
+    Scene: 2-3
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "5\uBC88\uC740 \uC65C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-3.08
+    Scene: 2-3
+    No: 8
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC624\uBE60 \uC74C\uCE58\uC796\uC544. 2\uC808\uBD80\uD130\uB294 \uD558\uAC1D\uB4E4\uC774
+      \uD798\uB4E4\uC5B4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 2-3.09
+    Scene: 2-3
+    No: 9
+    Who: 
+    Face: 
+    Mode: 5
+    Text: quest_hide
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-3.10
+    Scene: 2-3
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD558\uAC1D\uC740 \uC5C4\uB9C8\uB791 \uC0AC\uC7A5 \uD560\uBA38\uB2C8\uB2E4.\\n\uC0AC\uC7A5
+      \uD560\uBA38\uB2C8\uB294 \uADC0\uAC00 \uC5B4\uB461\uB2E4. \uD558\uAC1D \uBC30\uB824\uAC00
+      \uC9C0\uB098\uCE58\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: 2-3.11
+    Scene: 2-3
+    No: 11
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\uC18C\uC6D0\uC740 \uC65C 11\uAC1C\uC57C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-3.12
+    Scene: 2-3
+    No: 12
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC5F4\uD55C \uC0B4\uC774\uB2C8\uAE4C. 1\uB144\uC5D0 \uD558\uB098\uC529,
+      \uBC00\uB9B0 \uAC70 \uB2E4 \uBE4C \uAC70\uC57C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 2-3.13
+    Scene: 2-3
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\uBB50 \uBE4C \uAC74\uB370."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-3.14
+    Scene: 2-3
+    No: 14
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "1\uBC88\uC740 \uBE44\uBC00. 2\uBC88\uC740 \uC624\uBE60 \uC0B4 \uC880 \uCC0C\uAC8C
+      \uD574 \uC8FC\uC138\uC694."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 2-3.15
+    Scene: 2-3
+    No: 15
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uADF8\uAC74 \uC65C \uB2C8 \uC18C\uC6D0\uC774\uC57C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-3.16
+    Scene: 2-3
+    No: 16
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uB9E4\uB2C8\uC800\uB294 \uC120\uC218 \uD53C\uC9C0\uCEEC\uB3C4 \uAD00\uB9AC\uD574."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 2-3.17
+    Scene: 2-3
+    No: 17
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC0DD\uC77C 5\uC6D4 1\uC77C, \uAE08\uC694\uC77C. 8\uC8FC \uB0A8\uC558\uC5B4.\\n\uC720\uB2A5\uD55C
+      \uB9E4\uB2C8\uC800\uB294 \uB450 \uB2EC \uC804\uC5D0 \uAE30\uD68D\uD574."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: 2-3.18
+    Scene: 2-3
+    No: 18
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uC5C4\uB9C8"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-3.19
+    Scene: 2-3
+    No: 19
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "2\uD638 \uBE44\uC2F8! 1\uD638!"
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC5C4\uB9C8"
+    Note: "\uC8FC\uBC29\uC5D0\uC11C"
+  - Id: 2-3.20
+    Scene: 2-3
+    No: 20
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC5C4\uB9C8\uB294 \uD558\uAC1D\uC774\uB77C \uBC1C\uC5B8\uAD8C \uC5C6\uC5B4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 2-3.21
+    Scene: 2-3
+    No: 21
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-3.22
+    Scene: 2-3
+    No: 22
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD734\uB300\uD3F0\uC73C\uB85C \uB85C\uD130\uB9AC \uADFC\uCC98 \uBE75\uC9D1
+      \uBA54\uB274\uB97C \uCC3E\uC544\uBD24\uB2E4.\\n2\uD638, \uCD08\uCF54 \uC0DD\uD06C\uB9BC.
+      3\uB9CC 8\uCC9C \uC6D0."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-3.23
+    Scene: 2-3
+    No: 23
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uC9C0\uAC11\uC744 \uC5F4\uC5C8\uB2E4. 2,600\uC6D0."
+    Wait: 2.9
+    Cam: 
+    Note: 
+  - Id: 2-3.24
+    Scene: 2-3
+    No: 24
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uBE44\uC2F8\uBA74 1\uD638\uB3C4 \uB3FC."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: "\uC870\uAE08 \uC791\uC740 \uBAA9\uC18C\uB9AC"
+  - Id: 2-3.25
+    Scene: 2-3
+    No: 25
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uC5F4\uD55C \uC0B4 \uB418\uAE30 56\uC77C \uC804\uC778 \uC560\uAC00 \uB0B4
+      \uD45C\uC815\uC744 \uC77D\uC5C8\uB2E4.\\n\uADF8\uAC8C \uC81C\uC77C \uC2EB\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-3.26
+    Scene: 2-3
+    No: 26
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "2\uD638 \uD574."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-3.27
+    Scene: 2-3
+    No: 27
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC9C4\uC9DC?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 2-3.28
+    Scene: 2-3
+    No: 28
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\uB9E4\uB2C8\uC800 \uC0DD\uC77C\uC778\uB370 1\uD638\uB294 \uC880 \uADF8\uB807\uC9C0."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: 2-3.29
+    Scene: 2-3
+    No: 29
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD558\uB298\uC774\uAC00 \uC6C3\uC5C8\uB2E4. \uAC00\uAC8C \uD615\uAD11\uB4F1\uBCF4\uB2E4
+      \uBC1D\uAC8C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 2-3.30
+    Scene: 2-3
+    No: 30
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD770 \uBD09\uD22C\uC5D0 \uBCFC\uD39C\uC73C\uB85C \uC37C\uB2E4. '\uD558\uB298
+      \uCF00\uC774\uD06C (5/1)'.\\n\uCCAB 5\uCC9C \uC6D0\uC744 \uB123\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-3.31
+    Scene: 2-3
+    No: 31
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-4.01
+    Scene: 2-4
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC5C4\uB9C8:\uCE74\uC6B4\uD130 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: "\uC5C4\uB9C8 = \uACC4\uC0B0\uB300 \uC606"
+  - Id: 2-4.02
+    Scene: 2-4
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2DC\uC6B0 \uCE74\uC6B4\uD130 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-4.03
+    Scene: 2-4
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB9C8\uAC10. \uC5C4\uB9C8\uAC00 \uCE74\uC6B4\uD130 \uC606\uC5D0\uC11C\\n\uC885\uC774
+      \uD55C \uC7A5\uC744 \uB4E4\uC5EC\uB2E4\uBCF4\uACE0 \uC788\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-4.04
+    Scene: 2-4
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uAD00\uB9AC\uBE44 \uACE0\uC9C0\uC11C. \uACA8\uC6B8 \uB09C\uBC29\uBE44\uAC00
+      \uBD99\uC5B4\uC11C,\\n\uD3C9\uC18C\uC758 \uB450 \uBC30 \uAC00\uAE4C\uC6B4 \uC22B\uC790\uAC00
+      \uCC0D\uD600 \uC788\uC5C8\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-4.05
+    Scene: 2-4
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC5C4\uB9C8\uB294 \uB0B4\uAC00 \uBCF4\uB294 \uAC78 \uC54C\uACE0 \uC885\uC774\uB97C
+      \uC811\uC5C8\uB2E4.\\n\uC811\uB294\uB2E4\uACE0 \uC22B\uC790\uAC00 \uC904\uC9C4
+      \uC54A\uB294\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-4.06
+    Scene: 2-4
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC138\uC0C1\uC740 \uC5F4\uC77C\uACF1 \uC0B4\uD55C\uD14C \uC0DD\uAC01\uBCF4\uB2E4
+      \uC5C4\uACA9\uD558\uB2E4.\\n\uB9DE\uC744 \uB54C\uB9CC \uBE7C\uACE0."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-4.07
+    Scene: 2-4
+    No: 7
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-4.08
+    Scene: 2-4
+    No: 8
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "\uC2DC\uC6B0\uC57C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-4.09
+    Scene: 2-4
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "\uC751."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-4.10
+    Scene: 2-4
+    No: 10
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "\uACFD \uBC18\uC7A5\uB2D8 \uC804\uD654 \uC654\uC5C8\uC5B4. \uC544\uBE60\uB791
+      \uAC19\uC774 \uC77C\uD55C.\\n\uD1A0\uC694\uC77C \uD604\uC7A5, \uC0AC\uB78C
+      \uD544\uC694\uD558\uB300. \uD558\uB8E8 12\uB9CC \uC6D0."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-4.11
+    Scene: 2-4
+    No: 11
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "12\uB9CC \uC6D0. \uB09C\uBC29\uBE44 \uAD6C\uBA4D\uC774 \uB531 \uB9C9\uD788\uB294
+      \uAC12\uC774\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-4.12
+    Scene: 2-4
+    No: 12
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "\uADFC\uB370 \uB108 \uACF5\uBD80\u2026. \uC704\uD5D8\uD574. \uC5C4\uB9C8\uB294
+      \uC2EB\uC5B4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-4.13
+    Scene: 2-4
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uBC18\uC7A5\uB2D8\uC774 \uB098 \uBCF4\uB0B4\uB77C\uACE0 \uD55C
+      \uAC70\uC57C?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-4.14
+    Scene: 2-4
+    No: 14
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "'\uC815\uD638 \uC544\uB4E4. \uADF8\uB188 \uBCF4\uB0B4.'"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC5C4\uB9C8"
+    Note: "\uBC18\uC7A5\uB2D8 \uB9D0\uD22C \uADF8\uB300\uB85C"
+  - Id: 2-4.15
+    Scene: 2-4
+    No: 15
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uC815\uD638 \uC544\uB4E4.\\n\uADF8 \uD638\uCE6D\uC744 \uB4E4\uC740 \uAC74
+      7\uB144 \uB9CC\uC774\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 2-4.16
+    Scene: 2-4
+    No: 16
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uACFD\uCD98\uC2DD. \uC544\uBE60 \uC7A5\uB840\uC2DD\uC7A5\uC5D0\uC11C
+      \uC81C\uC77C \uC624\uB798 \uC6B8\uB358 \uC544\uC800\uC528.\\n\uADF8 \uC544\uC800\uC528\uAC00
+      \uC544\uBE60 \uC774\uB984\uC73C\uB85C \uB098\uB97C \uBD80\uB974\uACE0 \uC788\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC5C4\uB9C8"
+    Note: 
+  - Id: 2-4.17
+    Scene: 2-4
+    No: 17
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 2-4.18
+    Scene: 2-4
+    No: 18
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uBC18\uC815\uD638"
+    Wait: 3
+    Cam: 
+    Note: "\uC554\uC804 \uC790\uB9C9"
+  - Id: 3-4.01
+    Scene: 3-4
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uC5C4\uB9C8"
+    Wait: 0
+    Cam: 
+    Note: "\uC5C4\uB9C8 = \uBC25\uC0C1 \uC11C\uCABD(\uC591\uBC18\uB2E4\uB9AC)"
+  - Id: 3-4.02
+    Scene: 3-4
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2DC\uC6B0 \uBC25\uC0C1 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-4.03
+    Scene: 3-4
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBAA9\uC694\uC77C. \uB124 \uC2DC\uAC04\uC9DC\uB9AC \uC548\uC804\uAD50\uC721\uC744
+      \uB4E4\uC5C8\uB2E4.\\n\uB9C8\uC9C0\uB9C9\uC5D0 \uC774\uC218\uC99D\uC774\uB77C\uB294
+      \uAC78 \uBC1B\uC558\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC5C4\uB9C8"
+    Note: 
+  - Id: 3-4.04
+    Scene: 3-4
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uBC18\uC2DC\uC6B0"
+    Wait: 2.2
+    Cam: 
+    Note: "\uC774\uC218\uC99D \uD55C\uAC00\uC6B4\uB370 \uC774\uB984"
+  - Id: 3-4.05
+    Scene: 3-4
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB0B4 \uC774\uB984\uC774 \uC774\uB807\uAC8C \uD06C\uAC8C \uC778\uC1C4\uB41C
+      \uC885\uC774\uB294 \uCC98\uC74C\uC774\uC5C8\uB2E4.\\n\uB0B4 \uC778\uC0DD \uCCAB
+      \uC790\uACA9\uC99D\uC774\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 3-4.06
+    Scene: 3-4
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uAE08\uC694\uC77C \uBC24. \uD558\uB098\uAC00 \uB354 \uD544\uC694\uD588\uB2E4.
+      \uCE5C\uAD8C\uC790 \uB3D9\uC758\uC11C.\\n\uB098\uB77C\uAC00 \uC5F4\uC77C\uACF1
+      \uC0B4\uC744 \uAC71\uC815\uD574 \uC8FC\uB294 \uBA87 \uC548 \uB418\uB294 \uC21C\uAC04\uC774\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uC5C4\uB9C8"
+    Note: 
+  - Id: 3-4.07
+    Scene: 3-4
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC5C4\uB9C8\uB294 \uC11C\uBA85\uD560 \uB54C\uB9CC \uCC9C\uCC9C\uD788
+      \uD55C\uB2E4.\\n\uC751. \uC6B4. \uD30C. \uD55C \uD68D \uD55C \uD68D, \uC2DC\uD5D8
+      \uBCF4\uB294 \uC0AC\uB78C\uCC98\uB7FC."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC5C4\uB9C8"
+    Note: 
+  - Id: 3-4.08
+    Scene: 3-4
+    No: 8
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uC5C4\uB9C8"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-4.09
+    Scene: 3-4
+    No: 9
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uADF8\uAC70 \uB0B4\uAC00 \uD574 \uC904 \uC218 \uC788\uB294\uB370."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 3-4.10
+    Scene: 3-4
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "\uADF8\uAC74 \uB2C8\uAC00 \uD558\uBA74 \uC704\uC870\uC57C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 3-4.11
+    Scene: 3-4
+    No: 11
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uCCC7."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 3-4.12
+    Scene: 3-4
+    No: 12
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-4.13
+    Scene: 3-4
+    No: 13
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "\uB2E4\uCE58\uC9C0 \uB9C8. \uC544\uBE60\uCC98\uB7FC\u2026."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC5C4\uB9C8"
+    Note: 
+  - Id: 3-4.14
+    Scene: 3-4
+    No: 14
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC5C4\uB9C8\uAC00 \uB9D0\uC744 \uBA48\uCDC4\uB2E4.\\n\uBCFC\uD39C\uC744
+      \uB2E4\uC2DC \uC9D1\uC5C8\uB2E4\uAC00, \uB0B4\uB824\uB1A8\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uC5C4\uB9C8"
+    Note: 
+  - Id: 3-4.15
+    Scene: 3-4
+    No: 15
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "\uACFD \uBC18\uC7A5\uB2D8. \uC88B\uC740 \uC0AC\uB78C. \uADFC\uB370 \uB9D0\uC774
+      \uBB34\uC11C\uC6CC.\\n\uBB34\uC11C\uC6CC\uB3C4, \uB4E4\uC5B4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC5C4\uB9C8"
+    Note: 
+  - Id: 3-4.16
+    Scene: 3-4
+    No: 16
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uACE0\uAE30 \uB9CE\uC774 \uBA39\uACE0 \uAC00."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC5C4\uB9C8"
+    Note: 
+  - Id: 3-4.17
+    Scene: 3-4
+    No: 17
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uADF8\uB0A0 \uBC24 \uC5C4\uB9C8\uB294 \uB2E4\uC74C \uB0A0 \uC544\uCE68
+      \uAD6D\uC5D0\\n\uACE0\uAE30\uB97C \uC138 \uBC30 \uB123\uC5C8\uB2E4. \uB450
+      \uBC30\uB294 \uC774\uC81C \uAE30\uBCF8\uC774\uB77C\uC11C."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC5C4\uB9C8"
+    Note: 
+  - Id: 3-4.18
+    Scene: 3-4
+    No: 18
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-4.19
+    Scene: 3-4
+    No: 19
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-5.01
+    Scene: 3-5
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uD615 1"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-5.02
+    Scene: 3-5
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uD615 2"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-5.03
+    Scene: 3-5
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "3\uC6D4 14\uC77C, \uD1A0\uC694\uC77C. \uD654\uC774\uD2B8\uB370\uC774.\\n\uC138\uC0C1
+      \uC0AC\uB78C\uB4E4\uC774 \uC0AC\uD0D5\uC744 \uC8FC\uACE0\uBC1B\uB294 \uB0A0."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 3-5.04
+    Scene: 3-5
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB098\uB294 \uC2DC\uBA58\uD2B8\uB97C \uBC1B\uC73C\uB7EC \uAC04\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-5.05
+    Scene: 3-5
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "6\uC2DC 55\uBD84. \uC778\uB825\uC0AC\uBB34\uC18C \uC2B9\uD569\uCC28\uAC00
+      \uB9C9 \uB3C4\uCC29\uD574\uC11C\\n\uD615\uB4E4\uC774 \uC6B0\uB974\uB974 \uB0B4\uB9AC\uACE0
+      \uC788\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD615 1"
+    Note: 
+  - Id: 3-5.06
+    Scene: 3-5
+    No: 6
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD615 1:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-5.07
+    Scene: 3-5
+    No: 7
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD615 2:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-5.08
+    Scene: 3-5
+    No: 8
+    Who: "\uD615 1"
+    Face: 
+    Mode: 0
+    Text: "\uBB50\uC57C, \uC560\uAE30\uB124?"
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uD615 1"
+    Note: 
+  - Id: 3-5.09
+    Scene: 3-5
+    No: 9
+    Who: "\uD615 2"
+    Face: 
+    Mode: 0
+    Text: "\uBA87 \uC0B4\uC774\uC57C?"
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uD615 2"
+    Note: 
+  - Id: 3-5.10
+    Scene: 3-5
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "\uC5F4\uC77C\uACF1\uC774\uC694."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 3-5.11
+    Scene: 3-5
+    No: 11
+    Who: "\uD615 1"
+    Face: 
+    Mode: 0
+    Text: "\uC640, \uC6B0\uB9AC \uC544\uB4E4\uBCF4\uB2E4 \uC5B4\uB9AC\uB124.\\n\uC6B0\uB9AC
+      \uC544\uB4E4\uC740 \uC9C0\uAE08 \uC790\uACE0 \uC788\uC744 \uD150\uB370."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uD615 1"
+    Note: 
+  - Id: 3-5.12
+    Scene: 3-5
+    No: 12
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD615\uB4E4\uC774 \uC6C3\uC5C8\uB2E4. \uB098\uC05C \uC6C3\uC74C\uC740
+      \uC544\uB2C8\uC5C8\uB2E4.\\n\uD559\uAD50 \uC6C3\uC74C\uC774\uB791\uC740 \uC628\uB3C4\uAC00
+      \uB2EC\uB790\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD615 1"
+    Note: 
+  - Id: 3-5.13
+    Scene: 3-5
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD604\uC7A5 \uC785\uAD6C\uC5D0 \uC544\uC800\uC528 \uD55C \uBA85\uC774
+      \uC11C \uC788\uC5C8\uB2E4.\\n\uC548\uC804\uBAA8\uC5D0 \uB9E4\uC9C1\uC73C\uB85C
+      \uD06C\uAC8C \uC4F4 '\uACFD'."
+    Wait: 0
+    Cam: "\uB85C\uC6B0\uC575\uAE00:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 3-5.14
+    Scene: 3-5
+    No: 14
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uD615\uD2C0 \uBC18\uC7A5\\n\uACFD\uCD98\uC2DD"
+    Wait: 2.6
+    Cam: 
+    Note: "\uC774\uB984 \uCE74\uB4DC(\uBCF4\uC2A4 \uB4F1\uC7A5\uC2DD \uD328\uB7EC\uB514)"
+  - Id: 3-5.15
+    Scene: 3-5
+    No: 15
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uACFD\uBC18\uC7A5:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-5.16
+    Scene: 3-5
+    No: 16
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uC815\uD638 \uC544\uB4E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 3-5.17
+    Scene: 3-5
+    No: 17
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "\uB124."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 3-5.18
+    Scene: 3-5
+    No: 18
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uB9D0\uB790\uB124."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 3-5.19
+    Scene: 3-5
+    No: 19
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 0
+    Text: "\u2026\uB124."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 3-5.20
+    Scene: 3-5
+    No: 20
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "7\uB144 \uB9CC\uC5D0 \uADF8 \uB4F1\uC774 \uB098\uD55C\uD14C \uD55C \uCCAB\uB9C8\uB514\uAC00,
+      \uB9D0\uB790\uB124.\\n\uC6B8 \uB54C\uB294 \uAE38\uB354\uB2C8 \uB9D0\uC740 \uC9E7\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 3-5.21
+    Scene: 3-5
+    No: 21
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uCCAB\uB0A0\uC740 \uB2E4 \uB118\uC5B4\uC9C4\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 3-5.22
+    Scene: 3-5
+    No: 22
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uB118\uC5B4\uC9C0\uBA74 \uC9D1\uC5D0 \uAC00\uB77C. \uC77C\uB2F9\uC740
+      \uC900\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 3-5.23
+    Scene: 3-5
+    No: 23
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uADF8 \uB9D0\uC774 \uB098\uD55C\uD14C \uC5BC\uB9C8\uB098 \uC6C3\uAE34
+      \uB9D0\uC778\uC9C0, \uC774 \uC544\uC800\uC528\uB294 \uBAA8\uB978\uB2E4.\\n\uB098\uB294
+      \uB118\uC5B4\uC838\uC11C \uC774\uB984\uC744 \uC783\uC740 \uB188\uC774\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 3-5.24
+    Scene: 3-5
+    No: 24
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uACFD\uBC18\uC7A5:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-5.25
+    Scene: 3-5
+    No: 25
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD615 1:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 3-5.26
+    Scene: 3-5
+    No: 26
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD615 2:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.01
+    Scene: 4-1
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uD615 1:\uD615 1 \uC904 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.02
+    Scene: 4-1
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uD615 2:\uD615 2 \uC904 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.03
+    Scene: 4-1
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uBC31\uBC1C \uC544\uC800\uC528:\uBC31\uBC1C \uC904 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.04
+    Scene: 4-1
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uACFD\uBC18\uC7A5:\uACFD\uBC18\uC7A5 \uC55E \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.05
+    Scene: 4-1
+    No: 5
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2DC\uC6B0 \uC904 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.06
+    Scene: 4-1
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD604\uC7A5\uC758 \uD558\uB8E8\uB294 \uCCB4\uC870\uB85C \uC2DC\uC791\uD55C\uB2E4.\\n\uC9C4\uC9C0\uD558\uAC8C.
+      \uC544\uBB34\uB3C4 \uC548 \uC6C3\uB294\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-1.07
+    Scene: 4-1
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC5EC\uAE30\uC120 \uBAB8\uC774 \uB35C \uD480\uB9AC\uBA74 \uB2E4\uCE5C\uB2E4.\\n\uD559\uAD50\uC5D0\uC120
+      \uBAB8\uC774 \uB35C \uD480\uB9AC\uBA74 \uB9E4\uC810\uC5D0 \uAC04\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.08
+    Scene: 4-1
+    No: 8
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uC624\uB298\uBD80\uD130 \uB098\uC624\uB294 \uC560\uB2E4. \uC815\uD638
+      \uC544\uB4E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-1.09
+    Scene: 4-1
+    No: 9
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBC31\uBC1C \uC544\uC800\uC528:\uACFD\uBC18\uC7A5"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.10
+    Scene: 4-1
+    No: 10
+    Who: "\uBC31\uBC1C \uC544\uC800\uC528"
+    Face: 
+    Mode: 0
+    Text: "\uC815\uD638? \uBC18\uC815\uD638?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBC31\uBC1C \uC544\uC800\uC528"
+    Note: 
+  - Id: 4-1.11
+    Scene: 4-1
+    No: 11
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uC5B4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-1.12
+    Scene: 4-1
+    No: 12
+    Who: "\uBC31\uBC1C \uC544\uC800\uC528"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uC544\uC774\uACE0."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBC31\uBC1C \uC544\uC800\uC528"
+    Note: 
+  - Id: 4-1.13
+    Scene: 4-1
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC544\uC774\uACE0 \uD55C\uB9C8\uB514\uC5D0 7\uB144\uC774 \uB2E4 \uB4E4\uC5B4
+      \uC788\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-1.14
+    Scene: 4-1
+    No: 14
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBC31\uBC1C \uC544\uC800\uC528:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.15
+    Scene: 4-1
+    No: 15
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uCCAB \uC77C\uC740 \uC720\uB85C\uD3FC \uB098\uB974\uAE30\uC600\uB2E4.\\n\uD55C
+      \uC7A5\uC5D0 20\uD0AC\uB85C\uCBE4. \uAD6D\uBC25\uC9D1 \uC300 \uD3EC\uB300 \uD558\uB098\uB2E4."
+    Wait: 0
+    Cam: "\uCE21\uBA74 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: 4-1.16
+    Scene: 4-1
+    No: 16
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "'\uB9D0\uB790\uB124'\uAC00 \uC544\uC9C1 \uADC0\uC5D0 \uAC78\uB824 \uC788\uC5C8\uB2E4.\\n\uB098\uB3C4
+      \uB450 \uC7A5\uC744 \uB4E4\uC5C8\uB2E4. \uD5C8\uB9AC\uB97C \uC219\uC5EC\uC11C,
+      \uB2E8\uC228\uC5D0, \uD655."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.17
+    Scene: 4-1
+    No: 17
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uACFD\uBC18\uC7A5:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-1.18
+    Scene: 4-1
+    No: 18
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uC57C. \uB0B4\uB824\uB194."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-1.19
+    Scene: 4-1
+    No: 19
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 0
+    Text: "\uD560 \uC218 \uC788\uC5B4\uC694."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-1.20
+    Scene: 4-1
+    No: 20
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uD560 \uC218 \uC788\uB294 \uAC70 \uC548\uB2E4. \uB0B4\uB824\uB194."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-1.21
+    Scene: 4-1
+    No: 21
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uD5C8\uB9AC\uB85C \uB4E4\uBA74 \uC624\uB298\uC740 \uB41C\uB2E4. \uB0B4\uC77C\uC740
+      \uC548 \uB41C\uB2E4.\\n\uBAA8\uB808\uB294 \uBCD1\uC6D0 \uAC04\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-1.22
+    Scene: 4-1
+    No: 22
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uB178\uAC00\uB2E4\uB294 \uD558\uCCB4\uB2E4."
+    Wait: 0
+    Cam: "\uB85C\uC6B0\uC575\uAE00:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-1.23
+    Scene: 4-1
+    No: 23
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC544\uB294 \uAC70\uB791 \uD558\uB294 \uAC74 \uB2E4\uB974\uB2E4.\\n\uD2B9\uD788
+      \uC544\uCE68\uC5D0 \uB204\uAC00 '\uB9D0\uB790\uB124'\uB77C\uACE0 \uD55C \uB0A0\uC5D4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-1.24
+    Scene: 4-1
+    No: 24
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uD55C \uC7A5\uC529. \uB300\uC2E0 \uC548 \uC26C\uACE0."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-1.25
+    Scene: 4-1
+    No: 25
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uACFD\uBC18\uC7A5:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-2.01
+    Scene: 4-2
+    No: 1
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC624\uD6C4\uC5D4 \uACF0\uBC29\uC774\uC5C8\uB2E4.\\n\uC790\uC7AC\uB97C
+      \uBAB8\uC73C\uB85C \uBA54\uACE0 \uACC4\uB2E8\uC73C\uB85C \uB098\uB974\uB294
+      \uC77C\uC774\uB2E4."
+    Wait: 0
+    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: 4-2.02
+    Scene: 4-2
+    No: 2
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC5F4\uB124 \uBC88\uC9F8. 3\uCE35 \uACC4\uB2E8\uCC38 \uBC14\uB85C \uC544\uB798.\\n\uACC4\uB2E8\uC5D0
+      \uAE30\uB984\uC774 \uBC88\uB4E4\uAC70\uB838\uB2E4. \uBC15\uB9AC\uC81C."
+    Wait: 0
+    Cam: "\uCE21\uBA74 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: 4-2.03
+    Scene: 4-2
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uC624\uB978\uBC1C\uC774 \uBBF8\uB044\uB7EC\uC84C\uB2E4."
+    Wait: 2.2
+    Cam: 
+    Note: 
+  - Id: 4-2.04
+    Scene: 4-2
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: ink:1
+    Wait: 0
+    Cam: 
+    Note: "\uC77C\uACF1 \uC0B4 \uD68C\uC0C1(A\u2032 \uD751\uBC31)"
+  - Id: 4-2.05
+    Scene: 4-2
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC77C\uACF1 \uC0B4. \uC6B0\uB9AC \uC9D1 \uAC70\uC2E4.\\n\uB098\uB294
+      \uC544\uBE60 \uBC30\uB97C \uBC00\uACE0 \uC788\uC5C8\uB2E4. \uC628\uBAB8\uC73C\uB85C."
+    Wait: 0
+    Cam: "\uB85C\uC6B0\uC575\uAE00"
+    Note: 
+  - Id: 4-2.06
+    Scene: 4-2
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\uC544\uBE60 \uBC18\uCE59\uC774\uC57C. \uC65C \uC548 \uB118\uC5B4\uAC00."
+    Wait: 0
+    Cam: 
+    Note: "\uC77C\uACF1 \uC0B4 \uC2DC\uC6B0"
+  - Id: 4-2.07
+    Scene: 4-2
+    No: 7
+    Who: "\uC544\uBE60"
+    Face: 
+    Mode: 0
+    Text: "\uC0AC\uB78C\uC740 \uD558\uCCB4\uB85C \uBC84\uD2F0\uB294 \uAC70\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: "\uBAA9\uC18C\uB9AC\uB9CC"
+  - Id: 4-2.08
+    Scene: 4-2
+    No: 8
+    Who: 
+    Face: 
+    Mode: 5
+    Text: ink:0
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-2.09
+    Scene: 4-2
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uBB34\uB98E\uC744 \uAD7D\uD614\uB2E4. \uC5C9\uB369\uC774\uB97C \uB5A8\uC5B4\uB728\uB838\uB2E4.\\n\uC67C\uBC1C\uC774
+      \uACC4\uB2E8 \uBAA8\uC11C\uB9AC\uB97C \uCC0D\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-2.10
+    Scene: 4-2
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uCFF5."
+    Wait: 1.6
+    Cam: 
+    Note: 
+  - Id: 4-2.11
+    Scene: 4-2
+    No: 11
+    Who: "\uD615 1"
+    Face: 
+    Mode: 0
+    Text: "\uC624, \uC815\uD638 \uC544\uB4E4! \uD558\uCCB4 \uC88B\uB124!"
+    Wait: 0
+    Cam: 
+    Note: "\uC544\uB798\uCE35\uC5D0\uC11C"
+  - Id: 4-2.12
+    Scene: 4-2
+    No: 12
+    Who: "\uC2DC\uC6B0"
+    Face: win
+    Mode: 1
+    Text: "\uD558\uCCB4\uAC00 \uC88B\uB2E8\uB2E4.\\n\uB0B4 \uBAB8\uC5D0 \uC88B\uC740
+      \uB370\uAC00 \uC788\uB2E4\uB294 \uB9D0\uC740 \uCC98\uC74C \uB4E4\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-3.01
+    Scene: 4-3
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uACFD\uBC18\uC7A5:\uACFD\uBC18\uC7A5 \uC55E \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-3.02
+    Scene: 4-3
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2DC\uC6B0 \uC904 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-3.03
+    Scene: 4-3
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uACFD\uBC18\uC7A5:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-3.04
+    Scene: 4-3
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC624\uD6C4 \uC138 \uC2DC.\\n\uBC18\uC7A5\uB2D8\uC774 \uC190\uBAA9\uC2DC\uACC4\uB97C
+      \uBCF4\uB354\uB2C8 \uB098\uB97C \uBD88\uB800\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-3.05
+    Scene: 4-3
+    No: 5
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uAC00\uB77C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-3.06
+    Scene: 4-3
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "\uC544\uC9C1 \uC815\uB9AC \uC548 \uB05D\uB0AC\uB294\uB370\uC694."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-3.07
+    Scene: 4-3
+    No: 7
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uBBF8\uC131\uB144\uC790\uB294 \uD558\uB8E8 \uC77C\uACF1 \uC2DC\uAC04\uC774\uB2E4.
+      \uBC95\uC774\uB2E4.\\n\uB0B4\uAC00 \uC7A1\uD600\uAC00\uB0D0."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-3.08
+    Scene: 4-3
+    No: 8
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBC18\uC7A5\uB2D8\uC774 \uC548\uC8FC\uBA38\uB2C8\uC5D0\uC11C \uB204\uB7F0
+      \uBD09\uD22C\uB97C \uAEBC\uB0C8\uB2E4.\\n12\uB9CC \uC6D0. \uB450 \uC2DC\uAC04
+      \uC77C\uCC0D \uBCF4\uB0B4\uBA74\uC11C \uC77C\uB2F9\uC740 \uB2E4 \uB123\uC5C8\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-3.09
+    Scene: 4-3
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uB450 \uC2DC\uAC04 \uB35C \uD588\uB294\uB370\uC694."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-3.10
+    Scene: 4-3
+    No: 10
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uB118\uC5B4\uC9C0\uBA74 \uBCF4\uB0B8\uB2E4 \uD588\uC9C0.\\n\uC548 \uB118\uC5B4\uC84C\uC73C\uB2C8\uAE4C
+      \uB2E4 \uBC1B\uC544."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uACFD\uBC18\uC7A5"
+    Note: 
+  - Id: 4-3.11
+    Scene: 4-3
+    No: 11
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uACC4\uC0B0\uC774 \uC774\uC0C1\uD55C\uB370 \uBC18\uBC15\uD560 \uB370\uAC00
+      \uC5C6\uC5C8\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-3.12
+    Scene: 4-3
+    No: 12
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uACFD\uBC18\uC7A5:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-3.13
+    Scene: 4-3
+    No: 13
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uACFD\uBC18\uC7A5:\uACFD\uBC18\uC7A5 \uB3CC\uC544\uC120 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: "\uB4F1\uC744 \uBCF4\uC778 \uCC44\uB85C"
+  - Id: 4-3.14
+    Scene: 4-3
+    No: 14
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uB2C8 \uC544\uBC84\uC9C0\uB294."
+    Wait: 0
+    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9:\uC2DC\uC6B0"
+    Note: "\uC5BC\uAD74\uC740 \uB05D\uAE4C\uC9C0 \uC548 \uBCF4\uC784"
+  - Id: 4-3.15
+    Scene: 4-3
+    No: 15
+    Who: "\uACFD\uBC18\uC7A5"
+    Face: 
+    Mode: 0
+    Text: "\uD55C \uBC88\uB3C4 \uC548 \uB118\uC5B4\uC84C\uB2E4.\\n\uC2ED\uC624 \uB144\uC744
+      \uAC19\uC774 \uC77C\uD588\uB294\uB370. \uD55C \uBC88\uB3C4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-3.16
+    Scene: 4-3
+    No: 16
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uD55C \uBC88\uB3C4 \uC548 \uB118\uC5B4\uC84C\uB2E4.\\n\uADF8\uB7FC, \uADF8\uB0A0\uC740."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-3.17
+    Scene: 4-3
+    No: 17
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC785\uAE4C\uC9C0 \uC62C\uB77C\uC628 \uB9D0\uC744 \uC0BC\uCF30\uB2E4.
+      \uBC18\uC7A5\uB2D8\uD55C\uD150 \uAD6D\uBB3C\uC774\\n\uC5C6\uC5C8\uB2E4. \uADF8\uB798\uC11C
+      \uBD09\uD22C\uB97C \uB118\uAE34 \uAC70\uB2E4."
+    Wait: 0
+    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-4.01
+    Scene: 4-4
+    No: 1
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uADF8\uB0A0 \uBC24, \uC77C\uB2F9 \uBD09\uD22C\uB294\\n\uC2DD\uD0C1 \uC704
+      \uAD00\uB9AC\uBE44 \uACE0\uC9C0\uC11C \uBC11\uC5D0 \uBC00\uC5B4 \uB123\uC5B4
+      \uB480\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uD558\uB298"
+    Note: 
+  - Id: 4-4.02
+    Scene: 4-4
+    No: 2
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC77C\uC694\uC77C \uC544\uCE68\uC5D4 \uACE0\uC9C0\uC11C\uB3C4 \uBD09\uD22C\uB3C4
+      \uC5C6\uC5C8\uB2E4.\\n\uB300\uC2E0 \uC544\uCE68 \uAD6D\uC5D0 \uACE0\uAE30\uAC00
+      \uAD6D\uBB3C\uBCF4\uB2E4 \uB9CE\uC558\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-4.03
+    Scene: 4-4
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: hurt
+    Mode: 1
+    Text: "\uC77C\uC694\uC77C\uC758 \uB098\uB294 \uD3AD\uADC4\uC774\uC5C8\uB2E4.
+      \uACC4\uB2E8\uC744 \uD55C \uCE78\\n\uB0B4\uB824\uAC08 \uB54C\uB9C8\uB2E4 \uD5C8\uBC85\uC9C0\uAC00
+      \uBE44\uBA85\uC744 \uC9C8\uB800\uB2E4."
+    Wait: 0
+    Cam: "\uCE21\uBA74 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: 4-4.04
+    Scene: 4-4
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-4.05
+    Scene: 4-4
+    No: 5
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uBC18\uC2DC\uC6B0 \uC120\uC218, \uD55C \uCE78. \uB610 \uD55C \uCE78.\\n\uC544,
+      \uB09C\uAC04\uC744 \uC7A1\uC2B5\uB2C8\uB2E4. \uB9E4\uB2C8\uC800\uB85C\uC11C
+      \uC2E4\uB9DD\uC785\uB2C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 4-4.06
+    Scene: 4-4
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: hurt
+    Mode: 0
+    Text: "\u2026\uC870\uC6A9\uD788 \uD574."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-4.07
+    Scene: 4-4
+    No: 7
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC624\uBE60 \uAC78\uC74C \uD3AD\uADC4 \uAC19\uC544.\\n\uADC0\uC5EC\uC6B4
+      \uD3AD\uADC4 \uB9D0\uACE0, \uB2E4\uCE5C \uD3AD\uADC4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: 4-4.08
+    Scene: 4-4
+    No: 8
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-4.09
+    Scene: 4-4
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC77C\uC694\uC77C \uBC24, \uD558\uB298\uC774\uAC00 \uC7A0\uB4E0 \uAC78
+      \uD655\uC778\uD558\uACE0\\n'\uD558\uB298 \uCF00\uC774\uD06C' \uBD09\uD22C\uB97C
+      \uAEBC\uB0C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-4.10
+    Scene: 4-4
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC774\uBC88 \uC8FC \uBC30\uB2EC\uBE44\uC5D0\uC11C 5\uCC9C \uC6D0. \uBD09\uD22C
+      \uC548\uC5D0 \uB9CC \uC6D0.\\n2\uC8FC \uCE58. \uC5EC\uC12F \uBC88 \uB0A8\uC558\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
   - Id: 4-5.01
     Scene: 4-5
     No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2DC\uC6B0 \uCC45\uC0C1 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.02
+    Scene: 4-5
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uBBFC\uC7AC:\uBBFC\uC7AC \uCC45\uC0C1 \uC606 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.03
+    Scene: 4-5
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "pose:\uBBFC\uC7AC:TalkHip"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.04
+    Scene: 4-5
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC784\uCC2C:\uC784\uCC2C \uCC45\uC0C1 \uC606 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.05
+    Scene: 4-5
+    No: 5
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "pose:\uC784\uCC2C:Idle"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.06
+    Scene: 4-5
+    No: 6
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uAC74\uC6B0:\uAC74\uC6B0 \uCC45\uC0C1 \uC606 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.07
+    Scene: 4-5
+    No: 7
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "pose:\uAC74\uC6B0:Idle"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.08
+    Scene: 4-5
+    No: 8
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "3\uC6D4 16\uC77C, \uC6D4\uC694\uC77C. 8\uC2DC 10\uBD84. 2\uD559\uB144
+      3\uBC18.\\n2\uC8FC\uC9F8 \uB0B4 \uC6B0\uC720\uB294 \uBBFC\uC7AC\uAC00 '\uB9E1\uC544'
+      \uB450\uACE0 \uC788\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uBBFC\uC7AC"
+    Note: 
+  - Id: 4-5.09
+    Scene: 4-5
+    No: 9
     Who: "\uBBFC\uC7AC"
     Face: smirk
     Mode: 0
     Text: "\uD589\uC7781\uC740 \uC6B0\uC720 \uBA39\uC5B4\uC11C \uBB50 \uD558\uB0D0?\\n\uC5B4\uCC28\uD53C
       \uBF08\uB85C\uB9CC \uAC08 \uAC74\uB370."
     Wait: 0
-    Cam: 
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
     Note: "\uD0DC\uC624 \uB8E8\uD2B8 \uC9C0\uC815 \uB300\uC0AC(\uBD80\uB85D A)"
-  - Id: 4-5.02
+  - Id: 4-5.10
     Scene: 4-5
-    No: 2
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC784\uCC2C\uC774 \uD734\uB300\uD3F0\uC744 \uB4E0 \uCC44 \uB2E4\uB978
+      \uC190\uC73C\uB85C\\n\uB0B4 \uAC00\uBC29 \uC9C0\uD37C\uB97C \uC5F4\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC784\uCC2C"
+    Note: 
+  - Id: 4-5.11
+    Scene: 4-5
+    No: 11
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uAD50\uACFC\uC11C \uC0AC\uC774\uC5D0 \uD770 \uBD09\uD22C\uAC00 \uBCF4\uC600\uB2E4.\\n\uBCFC\uD39C
+      \uAE00\uC528, '\uD558\uB298 \uCF00\uC774\uD06C (5/1)'."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-5.12
+    Scene: 4-5
+    No: 12
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBBFC\uC7AC\uAC00 \uADF8 \uC704\uB85C \uC6B0\uC720\uD329\uC744 \uC3D9
+      \uB123\uC5C8\uB2E4.\\n\uBC15\uAC74\uC6B0\uAC00 \uAECC\uC744 \uC539\uC73C\uBA70
+      \uC190\uBC14\uB2E5\uC744 \uB192\uC774 \uB4E4\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uAC74\uC6B0"
+    Note: 
+  - Id: 4-5.13
+    Scene: 4-5
+    No: 13
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "raise:\uAC74\uC6B0:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.14
+    Scene: 4-5
+    No: 14
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uC9C0\uAE08 \uC77C\uC5B4\uB098\uC11C \uAC74\uC6B0 \uC190\uBAA9\uC744
+      \uC7A1\uC73C\uBA74, \uADF8\uB2E4\uC74C\uC740 \uC2EC\uC758.\\n\uAD50\uBB34\uC2E4.
+      \uC5C4\uB9C8\uC758 \uC219\uC778 \uACE0\uAC1C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-5.15
+    Scene: 4-5
+    No: 15
     Who: "\uC2DC\uC6B0"
     Face: "\uCC38\uAE30"
     Mode: 4
@@ -934,45 +2888,2324 @@ MonoBehaviour:
     Wait: 0
     Cam: 
     Note: "\uCC38\uAE30"
-  - Id: 4-5.03
+  - Id: 4-5.16
     Scene: 4-5
-    No: 3
+    No: 16
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uB098\uB294 \uCC45\uC0C1 \uBAA8\uC11C\uB9AC\uB97C \uC7A1\uC558\uB2E4.
+      \uAF49."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-5.17
+    Scene: 4-5
+    No: 17
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uD0DC\uC624:\uD0DC\uC624 \uCC45\uC0C1 \uC606 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.18
+    Scene: 4-5
+    No: 18
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "pose:\uD0DC\uC624:Idle"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.19
+    Scene: 4-5
+    No: 19
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uCC3D\uAC00 \uCABD\uC5D0\uC11C \uAC00\uBC29\uC774 \uD138\uC369 \uB0B4\uB824\uC9C0\uB294
+      \uC18C\uB9AC\uAC00 \uB0AC\uB2E4.\\n\uD070 \uBC1C\uC18C\uB9AC. \uD558\uB098,
+      \uB458\u2026 \uC77C\uACF1."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uD0DC\uC624"
+    Note: 
+  - Id: 4-5.20
+    Scene: 4-5
+    No: 20
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "raise:\uD0DC\uC624:\uAC74\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.21
+    Scene: 4-5
+    No: 21
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uD0C1."
+    Wait: 1.2
+    Cam: 
+    Note: 
+  - Id: 4-5.22
+    Scene: 4-5
+    No: 22
     Who: "\uD0DC\uC624"
-    Face: normal
+    Face: win
+    Mode: 0
+    Text: "\uC57C. \uADF8\uB9CC."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD0DC\uC624"
+    Note: 
+  - Id: 4-5.23
+    Scene: 4-5
+    No: 23
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "raise:\uAC74\uC6B0:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.24
+    Scene: 4-5
+    No: 24
+    Who: "\uD0DC\uC624"
+    Face: 
+    Mode: 0
+    Text: "\uC544\uCE68\uBD80\uD130 \uC6B0\uC720 \uD130\uB728\uB9AC\uBA74 \uB0C4\uC0C8\uB098\uC796\uC544.\\n\uC6B0\uB9AC
+      \uBC18 \uC77C\uC8FC\uC77C \uB0B4\uB0B4 \uC369\uC740 \uC6B0\uC720 \uB0C4\uC0C8
+      \uB9E1\uAC8C?"
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uD0DC\uC624"
+    Note: 
+  - Id: 4-5.25
+    Scene: 4-5
+    No: 25
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBC18:\uD0DC\uC624"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.26
+    Scene: 4-5
+    No: 26
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBC18\uC774 \uC6C3\uC5C8\uB2E4. \uC774\uBC88\uC5D4 \uC544\uBB34\uB3C4
+      \uB098\uB97C \uBCF4\uACE0 \uC6C3\uC9C0 \uC54A\uC558\uB2E4.\\n\uB098\uB294 \uAC70\uAE30
+      \uC788\uB294\uB370, \uC7A5\uBA74\uC5D0\uC11C \uBE60\uC838 \uC788\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uD0DC\uC624"
+    Note: 
+  - Id: 4-5.27
+    Scene: 4-5
+    No: 27
+    Who: "\uBBFC\uC7AC"
+    Face: smirk
+    Mode: 0
+    Text: "\uC544 \uC7A5\uB09C\uC774\uC57C, \uC7A5\uB09C~ \uBC18\uC7A5\uB2D8 \uBB34\uC12D\uB124."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 4-5.28
+    Scene: 4-5
+    No: 28
+    Who: "\uD0DC\uC624"
+    Face: 
+    Mode: 0
+    Text: "\uC7A5\uB09C\uC774\uBA74 \uB354 \uC7AC\uBC0C\uB294 \uAC70 \uD558\uC790.
+      \uC774\uAC74 \uC7AC\uBBF8\uC5C6\uC5B4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD0DC\uC624"
+    Note: 
+  - Id: 4-5.29
+    Scene: 4-5
+    No: 29
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "raise:\uD0DC\uC624:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.30
+    Scene: 4-5
+    No: 30
+    Who: "\uD0DC\uC624"
+    Face: 
+    Mode: 0
+    Text: "\uC57C\uC57C, \uC6B0\uB9AC \uBC18 \uC774\uB7F0 \uAC70 \uD558\uC9C0 \uB9D0\uC790!\\n2\uD559\uB144
+      3\uBC18, 1\uB144 \uB3D9\uC548 \uBD84\uC704\uAE30 \uC88B\uAC8C \uAC00\uC790.
+      \uC624\uCF00\uC774?"
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uD0DC\uC624"
+    Note: 
+  - Id: 4-5.31
+    Scene: 4-5
+    No: 31
+    Who: "\uBC18 \uCE5C\uAD6C 1"
+    Face: 
+    Mode: 0
+    Text: "\uC624\uCF00\uC774!"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.32
+    Scene: 4-5
+    No: 32
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBC15\uC218\uAC00 \uB0B4 \uBA38\uB9AC \uC704\uB85C \uC3DF\uC544\uC84C\uB2E4.
+      \uC18C\uB098\uAE30\uCC98\uB7FC.\\n\uB098\uB294 \uC6B0\uC0B0\uC774 \uC5C6\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-5.33
+    Scene: 4-5
+    No: 33
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBC18:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.34
+    Scene: 4-5
+    No: 34
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD0DC\uC624:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-5.35
+    Scene: 4-5
+    No: 35
+    Who: "\uD0DC\uC624"
+    Face: 
     Mode: 0
     Text: "\uAD1C\uCC2E\uC544? \uC7E4\uB124 \uC6D0\uB798 \uC880 \uC800\uB798. \uC2E0\uACBD
       \uC4F0\uC9C0 \uB9C8.\\n\uB610 \uADF8\uB7EC\uBA74 \uB098\uD55C\uD14C \uB9D0\uD574.
       \uB0B4\uAC00 \uC598\uAE30\uD574 \uC904\uAC8C."
     Wait: 0
-    Cam: 
+    Cam: "\uADFC\uC811:\uD0DC\uC624"
     Note: 
-  - Id: 4-5.04
+  - Id: 4-5.36
     Scene: 4-5
-    No: 4
+    No: 36
     Who: "\uC2DC\uC6B0"
     Face: normal
     Mode: 0
     Text: "\u2026\uB3C4\uC640 \uB2EC\uB77C\uACE0 \uD55C \uC801 \uC5C6\uC5B4."
     Wait: 0
-    Cam: 
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
     Note: 
-  - Id: 4-5.05
+  - Id: 4-5.37
     Scene: 4-5
-    No: 5
+    No: 37
     Who: "\uD0DC\uC624"
-    Face: normal
+    Face: 
     Mode: 0
     Text: "\uC544\uB2C8, \uB3C4\uC640\uC900\uB2E4\uB294 \uAC8C \uC544\uB2C8\uB77C\u2014"
     Wait: 0
+    Cam: "\uADFC\uC811:\uD0DC\uC624"
+    Note: 
+  - Id: 4-5.38
+    Scene: 4-5
+    No: 38
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 0
+    Text: "\uADF8\uB7FC \uBB54\uB370. \uBD88\uC30D\uD574\uC11C?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: "\uD0DC\uC624 \uB8E8\uD2B8 \uC9C0\uC815 \uB300\uC0AC(\uBD80\uB85D A)"
+  - Id: 4-5.39
+    Scene: 4-5
+    No: 39
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB300\uB2F5\uC774 \uC5C6\uC5C8\uB2E4.\\n\uADF8\uAC8C \uB300\uB2F5\uC774\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uD0DC\uC624"
+    Note: 
+  - Id: 4-5.40
+    Scene: 4-5
+    No: 40
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB098\uB294 \uC6B0\uC720\uD329\uC744 \uC190\uAC00\uB77D\uC73C\uB85C \uBC00\uC5C8\uB2E4.\\n\uAC15\uD0DC\uC624
+      \uCABD\uC73C\uB85C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-5.41
+    Scene: 4-5
+    No: 41
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uD22D."
+    Wait: 1.2
     Cam: 
     Note: 
-  - Id: 4-5.06
+  - Id: 4-5.42
     Scene: 4-5
+    No: 42
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD0DC\uC624:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-6.01
+    Scene: 4-6
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uCC3D\uAC00 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-6.02
+    Scene: 4-6
+    No: 2
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBCF5\uB3C4 \uB9E8 \uB05D \uCC3D\uAC00.\\n\uC5EC\uAE30 \uC11C\uBA74 \uC131\uACFD\uC774
+      \uBCF4\uC778\uB2E4."
+    Wait: 0
+    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: 4-6.03
+    Scene: 4-6
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uACE0\uB9C8\uC6E0\uB2E4. \uC9C4\uC9DC\uB85C. \uBD09\uD22C\uB294 \uC548
+      \uC816\uC5C8\uB2E4.\\n\uADF8\uB7F0\uB370 \uD654\uAC00 \uB0AC\uB2E4. \uADF8\uAC83\uB3C4
+      \uC9C4\uC9DC\uB85C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-6.04
+    Scene: 4-6
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uAC1C\uD559\uB0A0\uC5D4 \uCC3E\uC544\uC84C\uACE0, \uC624\uB298\uC740
+      \uAD6C\uD574\uC84C\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-6.05
+    Scene: 4-6
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBC15\uC218\uB294 \uAC15\uD0DC\uC624\uAC00 \uBC1B\uC558\uACE0,\\n'\uBD88\uC30D\uD55C
+      \uC560' \uB531\uC9C0\uB294 \uB0B4\uAC00 \uBC1B\uC558\uB2E4. \uACF5\uD3C9\uD558\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-6.06
+    Scene: 4-6
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB3D9\uC815\uC740 \uACF5\uC9DC\uB77C\uC11C \uBE44\uC2F8\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-6.07
+    Scene: 4-6
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uD558\uAD50 \uC885"
+    Wait: 1.8
+    Cam: 
+    Note: 
+  - Id: 4-6.08
+    Scene: 4-6
+    No: 8
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2E0\uBC1C\uC7A5 \uC2DC\uC6B0 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-6.09
+    Scene: 4-6
+    No: 9
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uBBFC\uC7AC:\uC2E0\uBC1C\uC7A5 \uBBFC\uC7AC \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-6.10
+    Scene: 4-6
+    No: 10
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "pose:\uBBFC\uC7AC:TalkHip"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-6.11
+    Scene: 4-6
+    No: 11
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBBFC\uC7AC:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 4-6.12
+    Scene: 4-6
+    No: 12
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC2E0\uBC1C\uC7A5 \uC55E\uC5D0\uC11C \uC2E4\uB0B4\uD654\uB97C \uBC97\uB294\uB370
+      \uADF8\uB9BC\uC790\uAC00 \uC84C\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uBBFC\uC7AC"
+    Note: 
+  - Id: 4-6.13
+    Scene: 4-6
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBBFC\uC7AC\uC600\uB2E4. \uD63C\uC790. \uC6C3\uACE0 \uC788\uC5C8\uB2E4.\\n\uC544\uCE68\uACFC\uB294
+      \uC628\uB3C4\uAC00 \uB2E4\uB978 \uC6C3\uC74C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 4-6.14
+    Scene: 4-6
+    No: 14
+    Who: "\uBBFC\uC7AC"
+    Face: smirk
+    Mode: 0
+    Text: "\uC57C, \uD589\uC7781. \uC544\uAE4C \uB124 \uAC00\uBC29\uC5D0 \uBD09\uD22C
+      \uBD24\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 4-6.15
+    Scene: 4-6
+    No: 15
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uC190\uC774 \uBA48\uCDC4\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 4-6.16
+    Scene: 4-6
+    No: 16
+    Who: "\uBBFC\uC7AC"
+    Face: 
+    Mode: 0
+    Text: "'\uD558\uB298 \uCF00\uC774\uD06C'? \uBCFC\uD39C\uC73C\uB85C \uB610\uBC15\uB610\uBC15."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uBBFC\uC7AC"
+    Note: 
+  - Id: 4-6.17
+    Scene: 4-6
+    No: 17
+    Who: "\uBBFC\uC7AC"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uD558\uB298\uC774\uAC00 \uB204\uAD6C\uB0D0?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 4-6.18
+    Scene: 4-6
+    No: 18
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBBFC\uC7AC:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-18.01
+    Scene: C1-18
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2DC\uC6B0 \uBC25\uC0C1 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-18.02
+    Scene: C1-18
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-18.03
+    Scene: C1-18
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD558\uB298\uC774\uB294 \uBC24\uB9C8\uB2E4 \uC18C\uC6D0 \uBAA9\uB85D\uC744
+      \uACE0\uCCE4\uB2E4.\\n\uC790\uAE30 \uC804\uC5D0 \uC2DD\uD0C1\uC5D0\uC11C '\uB9E4\uB2C8\uC800
+      \uD68C\uC758'\uAC00 \uC5F4\uB9B0\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: C1-18.04
+    Scene: C1-18
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uBC18\uD558\uB298 11\uC138 \uC18C\uC6D0 (4\uC6D4 28\uC77C \uC218\uC815\uBCF8)"
+    Wait: 3.8
+    Cam: 
+    Note: 
+  - Id: C1-18.05
+    Scene: C1-18
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "2. \uC624\uBE60 \uC0B4 \uC880 \uCC0C\uAC8C \uD574 \uC8FC\uC138\uC694 (+3kg)\\n3.
+      \uC5C4\uB9C8 \uC190\uBAA9\uC5D0 \uD30C\uC2A4 \uC548 \uBD99\uC774\uAC8C \uD574
+      \uC8FC\uC138\uC694"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: C1-18.06
+    Scene: C1-18
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "4. \uC0AC\uC7A5 \uD560\uBA38\uB2C8 \uADC0 \uC798 \uB4E4\uB9AC\uAC8C \uD574
+      \uC8FC\uC138\uC694 (\uCDE8\uC18C)\\n8. \uB0B4\uB144\uC5D4 3\uD638"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-18.07
+    Scene: C1-18
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "11. 1\uBC88\uBD80\uD130 10\uBC88\uAE4C\uC9C0 \uB2E4 \uB418\uAC8C \uD574
+      \uC8FC\uC138\uC694 (\uBCF4\uD5D8)"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-18.08
+    Scene: C1-18
+    No: 8
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "4\uBC88\uC740 \uC65C \uCDE8\uC18C\uC57C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-18.09
+    Scene: C1-18
+    No: 9
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uD560\uBA38\uB2C8 \uADC0\uAC00 \uC798 \uB4E4\uB9AC\uBA74 \uC624\uBE60
+      \uC0DD\uC77C \uB178\uB798\uAC00\\n\uB2E4 \uB4E4\uB9AC\uC796\uC544. \uD560\uBA38\uB2C8
+      \uC5F0\uC138\uC5D0 \uADF8\uAC74 \uC704\uD5D8\uD574."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: C1-18.10
+    Scene: C1-18
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\u202611\uBC88\uC740 \uBC18\uCE59 \uC544\uB2C8\uB0D0."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-18.11
+    Scene: C1-18
+    No: 11
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uBCF4\uD5D8\uC774\uC57C. \uC720\uB2A5\uD55C \uB9E4\uB2C8\uC800\uB294
+      \uB9AC\uC2A4\uD06C\uB97C \uAD00\uB9AC\uD574."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: C1-18.12
+    Scene: C1-18
+    No: 12
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "3\uBC88\uC740 \uD55C \uBC88\uB3C4 \uC548 \uBC14\uB00C\uC5C8\uB2E4.\\n\uC5C4\uB9C8
+      \uC190\uBAA9\uC5D4 \uB9E4\uC77C \uD30C\uC2A4\uAC00 \uC788\uC73C\uB2C8\uAE4C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-18.13
+    Scene: C1-18
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "1\uBC88 \uC704\uC5D4 \uD558\uD2B8 \uC2A4\uD2F0\uCEE4\uAC00 \uBD99\uC5B4
+      \uC788\uC5C8\uB2E4.\\n\uBAA9\uB85D\uC740 \uB9E4\uC77C \uBC14\uB00C\uB294\uB370
+      1\uBC88\uC740 \uC548 \uBC14\uB00C\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: C1-18.14
+    Scene: C1-18
+    No: 14
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC2A4\uD2F0\uCEE4 \uBC11\uC774 \uC548 \uAD81\uAE08\uD558\uB2E4\uBA74
+      \uAC70\uC9D3\uB9D0\uC774\uB2E4.\\n\uADF8\uB798\uB3C4 \uC548 \uBD24\uB2E4. \uB0A8\uC758
+      1\uBC88\uC740 \uC548 \uBCF4\uB294 \uAC70\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uD558\uB298"
+    Note: 
+  - Id: C1-18.15
+    Scene: C1-18
+    No: 15
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19.01
+    Scene: C1-19
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uCC3D\uAC00 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19.02
+    Scene: C1-19
+    No: 2
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "4\uC6D4 26\uC77C, \uC77C\uC694\uC77C \uBC24.\\n\uC5EC\uB35F \uBC88\uC9F8
+      5\uCC9C \uC6D0\uC744 \uB123\uC5C8\uB2E4. 4\uB9CC \uC6D0."
+    Wait: 0
+    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: C1-19.03
+    Scene: C1-19
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "29\uC77C \uC26C\uB294 \uC2DC\uAC04, \uBCF5\uB3C4 \uB05D \uCC3D\uAC00\uC5D0\uC11C\\n\uB85C\uD130\uB9AC
+      \uBE75\uC9D1\uC5D0 \uC804\uD654\uB97C \uAC78\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-19.04
+    Scene: C1-19
+    No: 4
+    Who: "\uC9C1\uC6D0 \uB204\uB098"
+    Face: 
+    Mode: 0
+    Text: "\uB808\uD130\uB9C1 \uBB38\uAD6C\uB294\uC694?"
+    Wait: 0
+    Cam: 
+    Note: "\uC804\uD654"
+  - Id: C1-19.05
+    Scene: C1-19
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "'\uBC18\uD558\uB298 \uB2D8 \uC0DD\uC77C \uCD95\uD558\uB4DC\uB9BD\uB2C8\uB2E4'\uC694."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-19.06
+    Scene: C1-19
+    No: 6
+    Who: "\uC9C1\uC6D0 \uB204\uB098"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uB2D8\uC774\uC694? \uC544\uC774 \uC0DD\uC77C \uC544\uB2C8\uC5D0\uC694?"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19.07
+    Scene: C1-19
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\uC694\uAD6C\uC0AC\uD56D\uC774\uB77C\uC11C\uC694."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19.08
+    Scene: C1-19
+    No: 8
+    Who: "\uC9C1\uC6D0 \uB204\uB098"
+    Face: 
+    Mode: 0
+    Text: "\uCD08\uB294 \uC22B\uC790 \uCD08 \uBB34\uB8CC\uB85C \uB4DC\uB824\uC694."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19.09
+    Scene: C1-19
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\uAE34 \uCD08 \uC5F4\uD55C \uAC1C\uC694. \uC22B\uC790 \uCD08\uB294 \uAE08\uC9C0\uB77C."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19.10
+    Scene: C1-19
+    No: 10
+    Who: "\uC9C1\uC6D0 \uB204\uB098"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uB124\uC5D0. \uC608\uC57D\uC790\uBD84 \uC131\uD568\uC774\uC694."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19.11
+    Scene: C1-19
+    No: 11
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBC18, \uAE4C\uC9C0 \uB9D0\uD558\uACE0 \uBA48\uCDC4\uB2E4.\\n\uC804\uD654\uB85C
+      \uB0B4 \uC774\uB984\uC744 \uB300\uBA74 \uAF2D \uB450 \uBC88 \uB9D0\uD574\uC57C
+      \uD55C\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-19.12
+    Scene: C1-19
+    No: 12
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBC18\uC2DC\uD6C4\uC694? \uC544\uB2C8\uC694, \uC2DC\uC6B0\uC694."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19.13
+    Scene: C1-19
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uBC18\uD558\uB298\uC774\uC694."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-19.14
+    Scene: C1-19
+    No: 14
+    Who: "\uC9C1\uC6D0 \uB204\uB098"
+    Face: 
+    Mode: 0
+    Text: "\uBC18\uD558\uB298 \uB2D8. 5\uC6D4 1\uC77C \uAE08\uC694\uC77C \uB2E4\uC12F
+      \uC2DC \uD53D\uC5C5\uC774\uC694."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19.15
+    Scene: C1-19
+    No: 15
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD55C \uBC88\uC5D0 \uC54C\uC544\uB4E4\uC5C8\uB2E4.\\n\uD558\uB298\uC774
+      \uC774\uB984\uC740 \uD55C \uBC88\uC5D0 \uB4E4\uB9B0\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-19b.01
+    Scene: C1-19b
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uCC3D\uAC00 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19b.02
+    Scene: C1-19b
+    No: 2
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "29\uC77C \uC26C\uB294 \uC2DC\uAC04, \uBCF5\uB3C4 \uB05D \uCC3D\uAC00\uC5D0\uC11C\\n\uB85C\uD130\uB9AC
+      \uBE75\uC9D1\uC5D0 \uC804\uD654\uB97C \uAC78\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: C1-19b.03
+    Scene: C1-19b
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uBD09\uD22C\uAC00 \uBAA8\uC790\uB780\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-19b.04
+    Scene: C1-19b
+    No: 4
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uBE44\uC2F8\uBA74 1\uD638\uB3C4 \uB3FC."
+    Wait: 0
+    Cam: 
+    Note: "\uB450 \uB2EC \uC804 \uD558\uB298 \uBAA9\uC18C\uB9AC"
+  - Id: C1-19b.05
+    Scene: C1-19b
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "1\uD638 \uCD08\uCF54 \uC0DD\uD06C\uB9BC.\\n\uC18C\uC6D0 8\uBC88 '\uB0B4\uB144\uC5D4
+      3\uD638'\uAC00 \uB354 \uC544\uD504\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-19b.06
+    Scene: C1-19b
+    No: 6
+    Who: "\uC9C1\uC6D0 \uB204\uB098"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uB124\uC5D0. \uC608\uC57D\uC790\uBD84 \uC131\uD568\uC774\uC694."
+    Wait: 0
+    Cam: 
+    Note: "\uC804\uD654"
+  - Id: C1-19b.07
+    Scene: C1-19b
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uBC18\uD558\uB298\uC774\uC694."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-19b.08
+    Scene: C1-19b
+    No: 8
+    Who: "\uC9C1\uC6D0 \uB204\uB098"
+    Face: 
+    Mode: 0
+    Text: "\uBC18\uD558\uB298 \uB2D8. 5\uC6D4 1\uC77C \uAE08\uC694\uC77C \uB2E4\uC12F
+      \uC2DC \uD53D\uC5C5\uC774\uC694."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-19b.09
+    Scene: C1-19b
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD558\uB298\uC774 \uC774\uB984\uC740 \uD55C \uBC88\uC5D0 \uB4E4\uB9B0\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-1.01
+    Scene: 6-1
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uBBFC\uC7AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-1.02
+    Scene: 6-1
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uAC74\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-1.03
+    Scene: 6-1
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uC784\uCC2C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-1.04
+    Scene: 6-1
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBBFC\uC7AC:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-1.05
+    Scene: 6-1
+    No: 5
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC784\uCC2C:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-1.06
+    Scene: 6-1
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD574\uB294 \uC544\uC9C1 \uC788\uB294\uB370 \uC8FC\uCC28\uC7A5\uC740
+      \uBC8C\uC368 \uADF8\uB298\uC774\uC5C8\uB2E4.\\n\uC790\uD310\uAE30\uB9CC \uD63C\uC790
+      \uBC1D\uC558\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-1.07
+    Scene: 6-1
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uADF8 \uBD88\uBE5B \uC544\uB798, \uADF8\uB9BC\uC790\uAC00 \uC14B."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uBBFC\uC7AC"
+    Note: 
+  - Id: 6-1.08
+    Scene: 6-1
+    No: 8
+    Who: "\uC784\uCC2C"
+    Face: 
+    Mode: 0
+    Text: "\uC5B4, \uD589\uC7781."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC784\uCC2C"
+    Note: 
+  - Id: 6-1.09
+    Scene: 6-1
+    No: 9
+    Who: "\uBBFC\uC7AC"
+    Face: smirk
+    Mode: 0
+    Text: "\uADF8\uAC70 \uBB50\uB0D0?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 6-1.10
+    Scene: 6-1
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB300\uB2F5 \uB300\uC2E0 \uAC78\uC5C8\uB2E4. \uC5F4\uC5EC\uC12F. \uC5F4\uB2E4\uC12F."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-1.11
+    Scene: 6-1
+    No: 11
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uAC74\uC6B0\uAC00 \uC55E\uC744 \uB9C9\uC558\uB2E4. \uAECC\uC744 \uC539\uC73C\uBA74\uC11C.\\n\uCEE4\uB2E4\uB780
+      \uC190\uC774 \uC0C1\uC790\uB97C \uC950\uC5C8\uB2E4. \uB0C9\uC7A5\uACE0 \uBB38
+      \uC5F4\uB4EF\uC774."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uAC74\uC6B0"
+    Note: 
+  - Id: 6-1.12
+    Scene: 6-1
+    No: 12
+    Who: "\uBBFC\uC7AC"
+    Face: smirk
+    Mode: 0
+    Text: "\uC640, 2\uD638. '\uBC18\uD558\uB298 \uB2D8'? \uC5EC\uCE5C \uC774\uB984\uC774
+      \uBC18\uD558\uB298\uC774\uC57C?\\n\uC131\uAE4C\uC9C0 \uB2C8 \uC131\uC774\uB124?
+      \uBC8C\uC368 \uD63C\uC778 \uC2E0\uACE0 \uD588\uB0D0?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 6-1.13
+    Scene: 6-1
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 0
+    Text: "\u2026\uB0B4\uB194."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: "\uCC98\uC74C \uB4E3\uB294 \uD06C\uAE30"
+  - Id: 6-1.14
+    Scene: 6-1
+    No: 14
+    Who: "\uBBFC\uC7AC"
+    Face: smirk
+    Mode: 0
+    Text: "\uC624, \uD589\uC7781\uC774 \uB9D0\uC744 \uD558\uB124?"
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uBBFC\uC7AC"
+    Note: 
+  - Id: 6-1.15
+    Scene: 6-1
+    No: 15
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBBFC\uC7AC\uAC00 \uC0C1\uC790\uB97C \uB4E0 \uD314\uC744 \uC606\uC73C\uB85C
+      \uCB49 \uBED7\uC5C8\uB2E4.\\n\uADF8\uB9AC\uACE0 \uC190\uAC00\uB77D\uC744 \uD558\uB098\uC529,
+      \uCC9C\uCC9C\uD788 \uD3C8\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uBBFC\uC7AC"
+    Note: 
+  - Id: 6-1.16
+    Scene: 6-1
+    No: 16
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uCF00\uC774\uD06C \uC0C1\uC790"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-1.17
+    Scene: 6-1
+    No: 17
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uD22D."
+    Wait: 1.4
+    Cam: 
+    Note: 
+  - Id: 6-1.18
+    Scene: 6-1
+    No: 18
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC0C1\uC790\uAC00 \uBC14\uB2E5\uC5D0 \uB2FF\uB294 \uB370 0.5\uCD08\uAC00
+      \uAC78\uB838\uB2E4.\\n\uC0DD\uAC01\uBCF4\uB2E4 \uC791\uC740 \uC18C\uB9AC\uC600\uB2E4.
+      \uB450 \uB2EC\uC9DC\uB9AC \uC18C\uB9AC\uCE58\uACE0\uB294."
+    Wait: 0
+    Cam: "\uB85C\uC6B0\uC575\uAE00:\uCF00\uC774\uD06C \uC0C1\uC790"
+    Note: 
+  - Id: 6-1.19
+    Scene: 6-1
+    No: 19
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uAFB9."
+    Wait: 1.2
+    Cam: 
+    Note: 
+  - Id: 6-1.20
+    Scene: 6-1
+    No: 20
+    Who: "\uBBFC\uC7AC"
+    Face: smirk
+    Mode: 0
+    Text: "\uC544, \uC2E4\uC218\u314B"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 6-1.21
+    Scene: 6-1
+    No: 21
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC784\uCC2C\uC758 \uD734\uB300\uD3F0 \uB80C\uC988\uAC00 \uADF8 \uBC1C\uC744
+      \uB530\uB77C \uB0B4\uB824\uC654\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC784\uCC2C"
+    Note: 
+  - Id: 6-1.22
+    Scene: 6-1
+    No: 22
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "'\uBC18\uD558\uB298 \u25EF \uC0DD\uC77C \uCD95\uD558\uB4DC\uB9BD\uB2C8\uB2E4'\\n\uB2D8\uC774,
+      \uBB49\uAC1C\uC838 \uC788\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uCF00\uC774\uD06C \uC0C1\uC790"
+    Note: 
+  - Id: 6-2.01
+    Scene: 6-2
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uBBFC\uC7AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-2.02
+    Scene: 6-2
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uAC74\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-2.03
+    Scene: 6-2
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uC784\uCC2C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-2.04
+    Scene: 6-2
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uCF00\uC774\uD06C \uC0C1\uC790"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-2.05
+    Scene: 6-2
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBA38\uB9BF\uC18D\uC5D0\uC11C \uB298 \uD558\uB358 \uACC4\uC0B0\uC774
+      \uC2DC\uC791\uB410\uB2E4.\\n\uCF00\uC774\uD06C 3\uB9CC 8\uCC9C \uC6D0. \uB2E4\uC2DC
+      \uBAA8\uC73C\uB824\uBA74 8\uC8FC."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-2.06
+    Scene: 6-2
+    No: 6
+    Who: 
+    Face: 
+    Mode: 5
+    Text: endurefx:on
+    Wait: 0
+    Cam: 
+    Note: "\uBD89\uC740 \uBE44\uB124\uD305"
+  - Id: 6-2.07
+    Scene: 6-2
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uC9C0\uAE08 \uC8FC\uBA39\uC744 \uC950\uBA74 \uD559\uD3ED \uC2EC\uC758.
+      \uBCF4\uD638\uC790 \uCD9C\uC11D.\\n\uC11C\uD230 \uD55C\uAD6D\uC5B4\uB85C \uACE0\uAC1C\uB97C
+      \uC219\uC774\uB294 \uC5C4\uB9C8."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-2.08
+    Scene: 6-2
+    No: 8
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uACB0\uB860\uC744 \uAE30\uB2E4\uB838\uB2E4. \uB298 \uB098\uC624\uB358
+      \uACB0\uB860. \uCC38\uB294\uB2E4."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-2.09
+    Scene: 6-2
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "[5\uC6D4 1\uC77C \uC624\uD6C4 5\uC2DC 41\uBD84] \uC794\uC561:"
+    Wait: 3.5
+    Cam: 
+    Note: 
+  - Id: 6-2.10
+    Scene: 6-2
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC22B\uC790\uAC00 \uB728\uC9C0 \uC54A\uC558\uB2E4.\\n\uBA38\uB9BF\uC18D
+      \uAC00\uACC4\uBD80\uAC00 \uAEBC\uC84C\uB2E4."
+    Wait: 0
+    Cam: "\uB85C\uC6B0\uC575\uAE00"
+    Note: 
+  - Id: 6-2.11
+    Scene: 6-2
+    No: 11
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uCC98\uC74C\uC774\uC5C8\uB2E4. \uB098\uB294 \uACC4\uC0B0\uC744 \uC548
+      \uD588\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-2.12
+    Scene: 6-2
+    No: 12
+    Who: 
+    Face: 
+    Mode: 5
+    Text: endurefx:off
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-2.13
+    Scene: 6-2
+    No: 13
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uAC00\uBC29\uC744 \uBC97\uC5C8\uB2E4. \uB358\uC9C0\uB824\uB2E4, \uB0B4\uB824\uB1A8\uB2E4.\\n\uC548\uC5D0
+      \uAD50\uACFC\uC11C\uAC00 \uC788\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-2.14
+    Scene: 6-2
+    No: 14
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "hand:\uC2DC\uC6B0:\uC8FC\uBA39"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-2.15
+    Scene: 6-2
+    No: 15
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uADF8\uB9AC\uACE0 \uC8FC\uBA39\uC744 \uC950\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-2.16
+    Scene: 6-2
+    No: 16
+    Who: "\uC784\uCC2C"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uC5B4? \uC57C, \uC7E4 \uC8FC\uBA39 \uC950\uC5C8\uB2E4. \uCC0D\uC5B4,
+      \uCC0D\uC5B4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC784\uCC2C"
+    Note: 
+  - Id: 6-2.17
+    Scene: 6-2
+    No: 17
+    Who: "\uBBFC\uC7AC"
+    Face: smirk
+    Mode: 0
+    Text: "\uC640, \uD589\uC7781\uC774 \uC8FC\uBA39\uC744 \uB2E4 \uC950\uB124? \uBB50,
+      \uCE58\uAC8C? \uB2C8\uAC00?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 6-2.18
+    Scene: 6-2
+    No: 18
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC14B\uC774 \uBCF4\uC600\uB2E4. \uADF8\uB7EC\uB2E4 \uD558\uB098\uB9CC
+      \uBCF4\uC600\uB2E4.\\n\uC0C1\uC790\uB97C \uBC1F\uC740 \uC6B4\uB3D9\uD654. \uADF8
+      \uC6B4\uB3D9\uD654 \uC8FC\uC778."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uBBFC\uC7AC"
+    Note: 
+  - Id: 6-2.19
+    Scene: 6-2
+    No: 19
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC774\uBC88\uC5D4 \uC544\uBB34\uB3C4 \uC548 \uC628\uB2E4. \uCC3D\uAC00\uB3C4
+      \uC5C6\uACE0, \uC77C\uACF1 \uAC78\uC74C\uB3C4\\n\uC5C6\uB2E4. \uB2E4\uD589\uC774\uC5C8\uB2E4.
+      \uB3C4\uC640 \uB2EC\uB77C\uACE0 \uD55C \uC801 \uC5C6\uC73C\uB2C8\uAE4C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-2.20
+    Scene: 6-2
+    No: 20
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "hand:\uC2DC\uC6B0:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-4.01
+    Scene: 6-4
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uBBFC\uC7AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-4.02
+    Scene: 6-4
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uAC74\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-4.03
+    Scene: 6-4
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uC784\uCC2C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-4.04
+    Scene: 6-4
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uCF00\uC774\uD06C \uC0C1\uC790"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 6-4.05
+    Scene: 6-4
+    No: 5
+    Who: "\uBBFC\uC7AC"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uAC74\uC6B0\uC57C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 6-4.06
+    Scene: 6-4
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uAC74\uC6B0\uB294 \uC11C\uB450\uB974\uC9C0 \uC54A\uC558\uB2E4. \uAECC\uC744
+      \uC539\uC73C\uBA74\uC11C \uAC78\uC5B4\uC654\uB2E4.\\n\uB0C9\uC7A5\uACE0\uAC00
+      \uAC78\uC5B4\uC624\uBA74 \uC774\uB7F0 \uB290\uB08C\uC77C \uAC70\uB2E4."
+    Wait: 0
+    Cam: "\uB85C\uC6B0\uC575\uAE00:\uAC74\uC6B0"
+    Note: 
+  - Id: 6-4.07
+    Scene: 6-4
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB0C9\uC7A5\uACE0\uB294 \uC6D0\uB798 \uC774\uAE30\uB294 \uBB3C\uAC74\uC774
+      \uC544\uB2C8\uB2E4.\\n\uC62E\uAE30\uB294 \uBB3C\uAC74\uC774\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uAC74\uC6B0"
+    Note: 
+  - Id: 6-4.08
+    Scene: 6-4
+    No: 8
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uCFF5."
+    Wait: 1.4
+    Cam: 
+    Note: 
+  - Id: 6-4.09
+    Scene: 6-4
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: hurt
+    Mode: 1
+    Text: "\uCF58\uD06C\uB9AC\uD2B8 \uBC14\uB2E5\uC5D0 \uB4F1\uC774 \uCC0D\uD614\uB2E4.\\n\uC228\uC774
+      \uC548 \uC26C\uC5B4\uC84C\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-4.10
+    Scene: 6-4
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD558\uB298\uC774 \uBCF4\uC600\uB2E4. \uC0C1\uAC00 \uAC74\uBB3C \uC0AC\uC774\uB85C
+      \uC881\uAC8C \uC798\uB9B0\\n\uC800\uB141 \uD558\uB298. \uD558\uB298\uC774 \uC774\uB984\uC774
+      \uC0DD\uAC01\uB0AC\uB2E4."
+    Wait: 0
+    Cam: "\uB85C\uC6B0\uC575\uAE00"
+    Note: 
+  - Id: 6-4.11
+    Scene: 6-4
+    No: 11
+    Who: "\uC784\uCC2C"
+    Face: 
+    Mode: 0
+    Text: "\uC544, \uB05D\uB0AC\uB124\u314B\u314B"
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC784\uCC2C"
+    Note: 
+  - Id: 6-4.12
+    Scene: 6-4
+    No: 12
+    Who: "\uC2DC\uC6B0"
+    Face: hurt
+    Mode: 1
+    Text: "\uC14B\uC740 PC\uBC29\uC5D0 \uAC04\uB2E4. \uB098\uB294 \uAD6D\uBC25\uC9D1
+      \uB4B7\uBB38\uC73C\uB85C \uB4E4\uC5B4\uAC04\uB2E4.\\n\uC5EC\uB35F \uC2DC \uBC18\uC5D0
+      \uD558\uB298\uC774\uAC00 \uC628\uB2E4. \uCF00\uC774\uD06C \uC5C6\uC774."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 6-4.13
+    Scene: 6-4
+    No: 13
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC5EC\uB35F \uC2DC \uBC18. \uB2A6\uC9C0 \uB9C8."
+    Wait: 0
+    Cam: 
+    Note: "\uADF8\uB0A0 \uC544\uCE68 \uD558\uB298 \uBAA9\uC18C\uB9AC"
+  - Id: 6-4.14
+    Scene: 6-4
+    No: 14
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 0
+    Text: "\u2026\uC77C\uC5B4\uB098."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: "\uB0B4 \uBAA9\uC18C\uB9AC\uC600\uB2E4"
+  - Id: 7-2.01
+    Scene: 7-2
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uBBFC\uC7AC:\uBBFC\uC7AC \uC8FC\uC800\uC549\uC740 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-2.02
+    Scene: 7-2
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "pose:\uBBFC\uC7AC:SitFloor"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-2.03
+    Scene: 7-2
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uAC74\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-2.04
+    Scene: 7-2
+    No: 4
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uCF00\uC774\uD06C \uC0C1\uC790"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-2.05
+    Scene: 7-2
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC870\uC6A9\uD588\uB2E4. \uC790\uD310\uAE30 \uBAA8\uD130\uAC00 \uC6C5\uC6C5\uAC70\uB838\uB2E4.\\n\uC784\uCC2C\uC740
+      \uC5C6\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-2.06
+    Scene: 7-2
+    No: 6
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC11C \uC788\uB294 \uAC74 \uD558\uB098\uC600\uB2E4.\\n\uCF54\uD53C \uD758\uB9AC\uB294
+      \uD589\uC7781."
+    Wait: 0
+    Cam: "\uB85C\uC6B0\uC575\uAE00:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-2.07
+    Scene: 7-2
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC774\uACBC\uB2E4\uB294 \uC0DD\uAC01\uC740 \uC548 \uB4E4\uC5C8\uB2E4.\\n\uCF00\uC774\uD06C\uB294
+      \uC544\uC9C1 \uBB49\uAC1C\uC838 \uC788\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uCF00\uC774\uD06C \uC0C1\uC790"
+    Note: 
+  - Id: 7-2.08
+    Scene: 7-2
+    No: 8
+    Who: "\uC2DC\uC6B0"
+    Face: hurt
+    Mode: 1
+    Text: "\uC190\uC774 \uB5A8\uB838\uB2E4. \uB9DE\uC744 \uB54C\uB294 \uC548 \uB5A8\uB9AC\uB354\uB2C8,\\n\uB2E4
+      \uB05D\uB098\uB2C8\uAE4C \uB5A8\uB838\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-2.09
+    Scene: 7-2
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "[5\uC6D4 1\uC77C \uC624\uD6C4 5\uC2DC 46\uBD84]\\n\uAD50\uBCF5 \uC154\uCE20
+      \uB2E8\uCD94 \uB450 \uAC1C. \uC67C\uCABD \uBB34\uB98E(\uAC00\uACA9 \uBBF8\uC815)."
+    Wait: 6.4
+    Cam: 
+    Note: 
+  - Id: 7-2.10
+    Scene: 7-2
+    No: 10
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "5\uBD84\uC774\uC5C8\uB2E4. \uB450 \uB2EC \uBAA8\uC740 \uAC78 \uC9C0\uD0A4\uB294
+      \uB370 5\uBD84\uC774 \uAC78\uB838\uB2E4.\\n\uC9C0\uD0A4\uC9C0\uB3C4 \uBABB\uD588\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-2.11
+    Scene: 7-2
+    No: 11
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBBFC\uC7AC:\uCF00\uC774\uD06C \uC0C1\uC790"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-2.12
+    Scene: 7-2
+    No: 12
+    Who: "\uBBFC\uC7AC"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uBC18\uD558\uB298."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uBBFC\uC7AC"
+    Note: 
+  - Id: 7-2.13
+    Scene: 7-2
+    No: 13
+    Who: "\uBBFC\uC7AC"
+    Face: 
+    Mode: 0
+    Text: "\uC5EC\uCE5C\uC774 \uC544\uB2C8\uACE0\u2026 \uB3D9\uC0DD\uC774\uB0D0."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-2.14
+    Scene: 7-2
+    No: 14
+    Who: "\uBBFC\uC7AC"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uB9D0\uC744 \uD558\uC9C0, \uC528."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uBBFC\uC7AC"
+    Note: 
+  - Id: 7-2.15
+    Scene: 7-2
+    No: 15
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uB9D0\uD588\uC73C\uBA74 \uBB50\uAC00 \uB2EC\uB790\uC744\uAE4C.\\n\uBAA8\uB974\uACA0\uB2E4.
+      \uBAA8\uB974\uB2C8\uAE4C \uB9D0 \uC548 \uD55C \uAC70\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-2.16
+    Scene: 7-2
+    No: 16
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC548\uC8FC\uBA38\uB2C8\uB97C \uB9CC\uC838 \uBD24\uB2E4. \uBE48 \uBD09\uD22C\uAC00
+      \uADF8\uB300\uB85C \uC788\uC5C8\uB2E4.\\n\uBE48 \uBD09\uD22C\uB294 \uC9C0\uCF30\uB2E4.
+      \uC6C3\uACBC\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-2.17
+    Scene: 7-2
+    No: 17
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBBFC\uC7AC:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.01
+    Scene: 7-3
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:\uC2DC\uC6B0 \uD640 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.02
+    Scene: 7-3
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC5C4\uB9C8:\uC5C4\uB9C8 \uD640 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.03
+    Scene: 7-3
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.04
+    Scene: 7-3
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uAD6D\uBC25\uC9D1 \uB4B7\uBB38\uC744 \uC5F4\uC5C8\uB2E4. \uC5C4\uB9C8\uAC00
+      \uB3CC\uC544\uBD24\uB2E4.\\n\uB0B4 \uCF54, \uB0B4 \uC154\uCE20, \uB0B4 \uC190\uC5D0
+      \uB4E0 \uCC0C\uADF8\uB7EC\uC9C4 \uC0C1\uC790."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC5C4\uB9C8"
+    Note: 
+  - Id: 7-3.05
+    Scene: 7-3
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: hurt
+    Mode: 1
+    Text: "\uC5C4\uB9C8\uB294 \uBB3B\uC9C0 \uC54A\uC558\uB2E4. \uD589\uC8FC\uB97C
+      \uCC2C\uBB3C\uC5D0 \uC801\uC154\\n\uAF49 \uC9DC\uC11C \uB0B4 \uCF54\uC5D0 \uB314\uB2E4.
+      \uC138\uAC8C. \uC228 \uB9C9\uD790 \uB9CC\uD07C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-3.06
+    Scene: 7-3
+    No: 6
+    Who: "\uC5C4\uB9C8"
+    Face: 
+    Mode: 0
+    Text: "\uBC14\uBCF4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC5C4\uB9C8"
+    Note: 
+  - Id: 7-3.07
+    Scene: 7-3
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC774\uBC88 \uBC14\uBCF4\uB294 \uC0AC\uC804\uC5D0 \uC788\uB294 \uB73B\uC774\uC5C8\uB2E4.
+      \uBC18\uCBE4\uC740."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.08
+    Scene: 7-3
+    No: 8
+    Who: "\uC0AC\uC7A5 \uD560\uBA38\uB2C8"
+    Face: 
+    Mode: 0
+    Text: "\uC5BC\uAD74\uC774 \uC65C \uADF8\uB798!"
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC5C4\uB9C8"
+    Note: "\uCE74\uC6B4\uD130\uC5D0\uC11C"
+  - Id: 7-3.09
+    Scene: 7-3
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: hurt
+    Mode: 0
+    Text: "\uB118\uC5B4\uC84C\uC5B4\uC694."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-3.10
+    Scene: 7-3
+    No: 10
+    Who: "\uC0AC\uC7A5 \uD560\uBA38\uB2C8"
+    Face: 
+    Mode: 0
+    Text: "\uB118\uC5B4\uC9C4 \uC5BC\uAD74 \uC544\uB2C8\uB2E4, \uADF8\uAC70."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.11
+    Scene: 7-3
+    No: 11
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.12
+    Scene: 7-3
+    No: 12
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uD558\uB298:\uD558\uB298 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.13
+    Scene: 7-3
+    No: 13
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.14
+    Scene: 7-3
+    No: 14
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC5EC\uB35F \uC2DC \uBC18. \uD558\uB298\uC774\uAC00 \uAC00\uAC8C \uBB38\uC744
+      \uC5F4\uC5C8\uB2E4.\\n\uB2A6\uC9C0 \uC54A\uC558\uB2E4. \uB098\uB294 \uC5EC\uAE30
+      \uC788\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: 7-3.15
+    Scene: 7-3
+    No: 15
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD558\uB298\uC774\uB294 \uB0B4 \uC5BC\uAD74\uC744 \uBCF4\uACE0 \uC544\uBB34\uAC83\uB3C4
+      \uBB3B\uC9C0 \uC54A\uC558\uB2E4.\\n\uCF67\uB4F1\uC774 2\uCE35\uC774 \uB410\uB2E4.
+      \uBC34\uB4DC."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 7-3.16
+    Scene: 7-3
+    No: 16
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC774\uC790\uB294 5%\uC57C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 7-3.17
+    Scene: 7-3
+    No: 17
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "\u2026\uC6D0\uAE08\uC774 \uC5BC\uB9CC\uB370."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-3.18
+    Scene: 7-3
+    No: 18
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uACC4\uC0B0\uC740 \uB9E4\uB2C8\uC800\uAC00 \uD574."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 7-3.19
+    Scene: 7-3
+    No: 19
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "cast:\uCF00\uC774\uD06C"
+    Wait: 0
+    Cam: 
+    Note: "\uBB34\uB108\uC9C4 \uCF00\uC774\uD06C + \uAE34 \uCD08 \uC5F4\uD55C \uAC1C"
+  - Id: 7-3.20
+    Scene: 7-3
+    No: 20
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBC24 9\uC2DC 40\uBD84. \uB9C8\uAC10.\\n\uD560\uBA38\uB2C8\uAC00 \uC0C1\uC790\uB97C
+      \uAEBC\uB0B4 \uC2DD\uD0C1 \uAC00\uC6B4\uB370 \uB1A8\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uD558\uB298"
+    Note: 
+  - Id: 7-3.21
+    Scene: 7-3
+    No: 21
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD55C\uCABD\uC774 \uBB34\uB108\uC9C4 \uCF00\uC774\uD06C. \uC0DD\uD06C\uB9BC
+      \uC704\uC5D0 \uC6B4\uB3D9\uD654 \uBB34\uB2AC.\\n'\uBC18\uD558\uB298 \u25EF
+      \uC0DD\uC77C \uCD95\uD558\uB4DC\uB9BD\uB2C8\uB2E4'"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uCF00\uC774\uD06C"
+    Note: 
+  - Id: 7-3.22
+    Scene: 7-3
+    No: 22
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uAE00\uC528\uB294 \uC0B4\uC558\uB124."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 7-3.23
+    Scene: 7-3
+    No: 23
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uB2D8\uC740 \uC8FD\uC5C8\uB294\uB370."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-3.24
+    Scene: 7-3
+    No: 24
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uAD1C\uCC2E\uC544. \uB2D8\uC740 \uB0B4\uB144\uC5D0 \uBD99\uC774\uBA74
+      \uB3FC."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 7-3.25
+    Scene: 7-3
+    No: 25
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC774 \uB85C\uACE0, \uBE44\uC2FC \uC2E0\uBC1C\uC774\uB2E4. \uB0B4 \uCF00\uC774\uD06C
+      \uCD9C\uC138\uD588\uB124."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: 7-3.26
+    Scene: 7-3
+    No: 26
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uAE34 \uCD08 \uC5F4\uD55C \uAC1C\uB97C \uAF42\uC558\uB2E4.\\n\uC0DD\uC77C
+      \uB178\uB798\uB294 1\uC808\uB9CC \uD588\uB2E4. \uC694\uAD6C\uC0AC\uD56D 5\uBC88."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uD558\uB298"
+    Note: 
+  - Id: 7-3.27
+    Scene: 7-3
+    No: 27
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC624\uBE60. 1\uBC88 \uC54C\uB824 \uC904\uAE4C?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 7-3.28
+    Scene: 7-3
+    No: 28
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\uBE44\uBC00\uC774\uB77C\uBA70."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-3.29
+    Scene: 7-3
+    No: 29
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC6D0\uB798 \uBE44\uBC00\uC778\uB370. \uD06C\uAC8C \uB9D0\uD574\uC57C
+      \uB420 \uAC83 \uAC19\uC544\uC11C."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 7-3.30
+    Scene: 7-3
+    No: 30
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 0
+    Text: "\uC65C."
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-3.31
+    Scene: 7-3
+    No: 31
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "\uC624\uBE60 \uC774\uB984\uC740 \uB2E4\uB4E4 \uC798 \uBABB \uB4E3\uC796\uC544.\\n\uC18C\uC6D0
+      \uB4E4\uC5B4\uC8FC\uB294 \uC0AC\uB78C\uB3C4 \uBABB \uB4E4\uC744\uAE4C \uBD10."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uD558\uB298"
+    Note: 
+  - Id: 7-3.32
+    Scene: 7-3
+    No: 32
+    Who: "\uD558\uB298"
+    Face: 
+    Mode: 0
+    Text: "1\uBC88. \uC624\uBE60\uAC00 \uC774\uB984\uC73C\uB85C \uBD88\uB9AC\uAC8C
+      \uD574 \uC8FC\uC138\uC694."
+    Wait: 0
+    Cam: "\uB0AE\uC740 \uC815\uBA74:\uD558\uB298"
+    Note: 
+  - Id: 7-3.33
+    Scene: 7-3
+    No: 33
+    Who: "\uC2DC\uC6B0"
+    Face: endure
+    Mode: 1
+    Text: "\uC5F4\uD55C \uC0B4\uC774 \uB41C \uC9C0 \uC2A4\uBB3C\uD55C \uC2DC\uAC04
+      \uC0AC\uC2ED \uBD84 \uB41C \uC560\uAC00,\\n\uB610 \uAE09\uC18C\uB97C \uCC14\uB800\uB2E4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: 7-3.34
+    Scene: 7-3
+    No: 34
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC6B0\uB9AC \uC9D1 \uB300\uD654\uB294 \uB300\uCCB4\uB85C \uAD6D\uBB3C\uB85C
+      \uD55C\uB2E4.\\n\uC624\uB298\uC740 \uC0DD\uD06C\uB9BC\uC73C\uB85C \uD588\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uD558\uB298"
+    Note: 
+  - Id: 7-3.35
+    Scene: 7-3
+    No: 35
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uD558\uB298:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-4.01
+    Scene: 7-4
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC2DC\uC6B0:BackDoor"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-4.02
+    Scene: 7-4
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBC18:\uB3C4\uACBD\uBBFC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-4.03
+    Scene: 7-4
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD1A0\uC694\uC77C \uD604\uC7A5\uC740 '\uB0B4\uC77C \uC5C6\uC74C'\uC774\uC5C8\uB2E4.
+      \uBE44 \uC608\uBCF4.\\n\uCC98\uC74C\uC73C\uB85C \uBE44\uAC00 \uACE0\uB9C8\uC6E0\uB2E4."
+    Wait: 0
+    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: 7-4.04
+    Scene: 7-4
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uADF8\uB9AC\uACE0 \uC6D4\uC694\uC77C \uC544\uCE68.\\n\uC808\uB69D\uAC70\uB9AC\uBA70
+      \uAD50\uC2E4 \uB4B7\uBB38\uC744 \uC5F4\uC5C8\uB2E4."
+    Wait: 0
+    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: 7-4.05
+    Scene: 7-4
+    No: 5
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBC18:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-4.06
+    Scene: 7-4
+    No: 6
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "face:\uBC18:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-4.07
+    Scene: 7-4
+    No: 7
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC2A4\uBB3C\uC5EC\uB35F \uAC1C\uC758 \uC5BC\uAD74\uC774 \uD55C\uAEBC\uBC88\uC5D0
+      \uB3CC\uC544\uBD24\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uBC18 \uCE5C\uAD6C 1"
+    Note: 
+  - Id: 7-4.08
+    Scene: 7-4
+    No: 8
+    Who: 
+    Face: 
+    Mode: 5
+    Text: wait:2
+    Wait: 0
+    Cam: 
+    Note: "\uBB34\uC74C 2\uCD08"
+  - Id: 7-4.09
+    Scene: 7-4
+    No: 9
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 3
+    Text: "\uC544\uBB34\uB3C4 \uC6C3\uC9C0 \uC54A\uC558\uB2E4."
+    Wait: 3
+    Cam: 
+    Note: 
+  - Id: 7-4.10
+    Scene: 7-4
+    No: 10
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "face:\uBC18:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: 7-4.11
+    Scene: 7-4
+    No: 11
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uBC18:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: N01.01
+    Scene: N01
+    No: 1
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBC24 8\uC2DC \uBC18, \uC800\uB141 \uBC30\uB2EC \uCF5C \uD558\uB098.\\n\uC8FC\uC18C\uB294
+      \uB300\uD559\uB85C \uBD81\uCABD \uC9C0\uD558, \uD61C\uD654 MMA."
+    Wait: 0
+    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: N01.02
+    Scene: N01
+    No: 2
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uCEF5\uB77C\uBA74 \uB300\uC2E0 \uAD6D\uBC25\uC744 \uC2DC\uD0A8 \uC0AC\uB78C.
+      \uC9C0\uD558 \uACC4\uB2E8 \uC5F4\uC5EC\uB35F\\n\uB2E8\uC744 \uAD6D\uBB3C \uD55C
+      \uBC29\uC6B8 \uC548 \uD758\uB9AC\uACE0 \uB0B4\uB824\uAC04\uB2E4."
+    Wait: 0
+    Cam: "\uCE21\uBA74 \uD2B8\uB798\uD0B9"
+    Note: 
+  - Id: N01.03
+    Scene: N01
+    No: 3
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "front:\uC774\uC724\uC900:\uC2DC\uC6B0:1.8"
+    Wait: 0
+    Cam: 
+    Note: "\uBBF8\uD2B8\uB97C \uC815\uB9AC\uD558\uB358 \uAD00\uC7A5"
+  - Id: N01.04
+    Scene: N01
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBBF8\uD2B8\uB97C \uC815\uB9AC\uD558\uB358 \uAD00\uC7A5\uC774 \uB0B4
+      \uB2E4\uB9AC\uB97C \uBD24\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC774\uC724\uC900"
+    Note: 
+  - Id: N01.05
+    Scene: N01
+    No: 5
+    Who: "\uC774\uC724\uC900"
+    Face: 
+    Mode: 0
+    Text: "\u2026\uB108 \uD558\uCCB4 \uC88B\uB2E4. \uD55C \uBC88 \uD574 \uBCFC\uB798?"
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC774\uC724\uC900"
+    Note: 
+  - Id: N01.06
+    Scene: N01
     No: 6
     Who: "\uC2DC\uC6B0"
     Face: normal
     Mode: 0
-    Text: "\uADF8\uB7FC \uBB54\uB370. \uBD88\uC30D\uD574\uC11C?"
+    Text: "\uB3C8 \uC5C6\uC5B4\uC694."
     Wait: 0
-    Cam: "\uADFC\uC811"
-    Note: "\uD0DC\uC624 \uB8E8\uD2B8 \uC9C0\uC815 \uB300\uC0AC(\uBD80\uB85D A)"
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: N01.07
+    Scene: N01
+    No: 7
+    Who: "\uC774\uC724\uC900"
+    Face: 
+    Mode: 0
+    Text: "\uCCB4\uD5D8\uC740 \uACF5\uC9DC\uC57C. \uC904\uB118\uAE30\uBD80\uD130."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC774\uC724\uC900"
+    Note: 
+  - Id: C1-24.01
+    Scene: C1-24
+    No: 1
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uD558\uAD63\uAE38, \uCC98\uC74C \uBCF4\uB294 \uAD50\uBCF5 \uC14B\uC774
+      \uAE38\uC744 \uB9C9\uC558\uB2E4.\\n\uD6C4\uBB38 \uB4B7\uACE8\uBAA9 \uC8FC\uCC28\uC7A5\uAE4C\uC9C0
+      \uB530\uB77C\uBD99\uB294\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC11D \uB2EC"
+    Note: 
+  - Id: C1-24.02
+    Scene: C1-24
+    No: 2
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC18C\uBB38\uC744 \uD655\uC778\uD558\uB7EC \uC628 \uB188\uB4E4\uC774\uB2E4."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uAE50\uC871\uC774"
+    Note: 
+  - Id: C1-24.03
+    Scene: C1-24
+    No: 3
+    Who: "\uAE50\uC871\uC774"
+    Face: 
+    Mode: 0
+    Text: "\uB2C8\uAC00 \uD589\uC7781\uC774\uB0D0? \uC0DD\uAC01\uBCF4\uB2E4 \uC791\uB124."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uAE50\uC871\uC774"
+    Note: 
+  - Id: C1-24.04
+    Scene: C1-24
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: normal
+    Mode: 0
+    Text: "\u2026\uBC30\uB2EC \uB2A6\uC5B4."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-26.01
+    Scene: C1-26
+    No: 1
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "place:\uC5C4\uB9C8:\uC5C4\uB9C8 \uD640 \uC790\uB9AC"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-26.02
+    Scene: C1-26
+    No: 2
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uC2DC\uC6B0"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: C1-26.03
+    Scene: C1-26
+    No: 3
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uC5B4\uBC84\uC774\uB0A0. \uAD6D\uBC25\uC9D1 \uD640\uC740 \uB2E8\uCCB4
+      \uC190\uB2D8\uC73C\uB85C \uAF49 \uCC3C\uB2E4.\\n\uC5C4\uB9C8\uB294 \uCE74\uB124\uC774\uC158
+      \uB300\uC2E0 \uAD6D\uC790\uB97C \uB4E4\uACE0 \uC788\uB2E4."
+    Wait: 0
+    Cam: "\uC640\uC774\uB4DC:\uC5C4\uB9C8"
+    Note: 
+  - Id: C1-26.04
+    Scene: C1-26
+    No: 4
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uBD09\uD22C\uB294 \uBE44\uC5C8\uB2E4.\\n\uC9C0\uAC11\uC5D0 \uB0A8\uC740
+      \uB3C8\uC73C\uB85C \uD560 \uC218 \uC788\uB294 \uAC83."
+    Wait: 0
+    Cam: "\uADFC\uC811:\uC2DC\uC6B0"
+    Note: 
+  - Id: C1-26.05
+    Scene: C1-26
+    No: 5
+    Who: "\uC2DC\uC6B0"
+    Face: 
+    Mode: 1
+    Text: "\uCE74\uB124\uC774\uC158 \uD55C \uC1A1\uC774, \uC544\uB2C8\uBA74 \uC624\uB298
+      \uC8FC\uBC29 \uB300\uD0C0."
+    Wait: 0
+    Cam: "\uBBF8\uB514\uC5C4:\uC5C4\uB9C8"
+    Note: 
+  - Id: C1-26.06
+    Scene: C1-26
+    No: 6
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "look:\uC5C4\uB9C8:\uD574\uC81C"
+    Wait: 0
+    Cam: 
+    Note: 

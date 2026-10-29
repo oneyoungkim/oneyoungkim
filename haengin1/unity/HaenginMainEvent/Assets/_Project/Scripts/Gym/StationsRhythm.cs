@@ -40,6 +40,9 @@ namespace Haengin
         float tripFreeze; double freezeUntil = -1;
         LineRenderer rope;
         bool useClip;
+        /// QA 2차 A8: 손목을 허리 옆으로(클립의 벌어진 팔 보정) — 줄 끝은 두 손에
+        RopeArms arms;
+        public RopeArms Arms => arms;
         public JumpRopeStation(bool du) { doubleUnder = du; }
         /// 전용 클립: 점프 1회 = 박자 1개가 되게 재생 배율(ScriptRate = 클립 점프 속도 ÷ BPM 속도의 역)
         void SetJumpAnim(bool on)
@@ -59,6 +62,7 @@ namespace Haengin
             Beat.Reset(); beats = 0; tripFreeze = 0f; freezeUntil = -1;
             useClip = Actors.HasClip("JumpRope") && Actors.Me != null;
             if (Actors.Player != null && Actors.Me != null) SetJumpAnim(true);
+            if (arms == null) arms = RopeArms.On(Actors.Visual != null ? (Component)Actors.Visual : Actors.Me);
             EnsureRope();
         }
 
@@ -102,12 +106,21 @@ namespace Haengin
             if (rope != null)
             {
                 float ang = tripFreeze > 0f ? 2.6f : (float)((t - Beat.Lead) / Beat.Interval * Mathf.PI * 2f) + Mathf.PI;
+                if (arms != null) arms.Phase = ang;
+                // 줄 끝 = 두 손(IK 로 허리 옆에 둔 손목 — 손 뼈를 줄 좌표로). 손이 없으면 예전 자리(±0.42, 0.95)
+                Vector3 hl = new Vector3(-0.42f, 0.95f, 0f), hr = new Vector3(0.42f, 0.95f, 0f);
+                var an = arms != null ? arms.GetComponent<Animator>() : null;
+                if (an != null && an.isHuman)
+                {
+                    var bl = an.GetBoneTransform(HumanBodyBones.LeftHand); var br = an.GetBoneTransform(HumanBodyBones.RightHand);
+                    if (bl != null && br != null) { hl = rope.transform.InverseTransformPoint(bl.position); hr = rope.transform.InverseTransformPoint(br.position); }
+                }
                 for (int i = 0; i < rope.positionCount; i++)
                 {
                     float u = i / (float)(rope.positionCount - 1);
-                    float x = Mathf.Lerp(-0.42f, 0.42f, u);
-                    float r = 1.0f * Mathf.Sin(u * Mathf.PI) * 0.5f + 0.5f;    // 손에서 멀수록 큰 원
-                    rope.SetPosition(i, new Vector3(x, 0.95f + Mathf.Cos(ang) * 1.0f * r, Mathf.Sin(ang) * 0.9f * r));
+                    var b = Vector3.Lerp(hl, hr, u);
+                    float r = Mathf.Sin(u * Mathf.PI);                            // 손에서 멀수록 큰 원(발밑을 지남)
+                    rope.SetPosition(i, b + new Vector3(0f, Mathf.Cos(ang) * 0.95f * r, Mathf.Sin(ang) * 0.85f * r));
                 }
             }
         }

@@ -5,6 +5,7 @@
 //   counter(계산대)    : 값·받은 돈 → 거스름돈 셋 중 맞는 것(← ↑ →)
 //   site(노가다)       : 유로폼 나르기 — 흔들리는 무게 중심을 ← → 로 가운데에(8초) + 못질 박자 × 8번(원고 4화 '하체')
 // 점수 0~1 → 등급(WorldModel.GradeOf). 입력 = Menu 맵(Navigate·Submit — 십자키·왼스틱·방향키·WASD, × · Enter · Space). 봇 = skill(0~1, 결정적).
+// QA 2차 A4(2026-10-26): Esc · Options = 일시정지(판 시간·문제 시간 멈춤, 일시정지 메뉴 그대로) — 예전엔 판이 떠 있는 동안 Esc 가 아무것도 안 했음(Modal).
 using System;
 using System.Collections;
 using TMPro;
@@ -67,11 +68,47 @@ namespace Haengin
 
         void Bind()
         {
-            if (nav != null || Actions == null) return;
-            nav = Actions.FindAction("Menu/Navigate", false);
-            submit = Actions.FindAction("Menu/Submit", false);
-            Actions.FindActionMap("Menu", false)?.Enable();
+            if (Actions == null) return;
+            if (nav == null)
+            {
+                nav = Actions.FindAction("Menu/Navigate", false);
+                submit = Actions.FindAction("Menu/Submit", false);
+            }
+            Actions.FindActionMap("Menu", false)?.Enable();      // 일시정지 메뉴도 Menu 맵을 씀(두 번째 판부터 꺼져 있던 것)
         }
+
+        /// 일시정지 횟수(시험)
+        public int Pauses { get; private set; }
+        bool wasPaused; int resumeGuard;
+
+        static bool PausePressed()
+        {
+            var kb = Keyboard.current;
+            if (kb != null && kb.escapeKey.wasPressedThisFrame) return true;
+            var gp = Gamepad.current;
+            return gp != null && gp.startButton.wasPressedThisFrame;
+        }
+
+        /// 이번 프레임 판 시간(QA 2차 A4): Esc·Options → 일시정지(시간 0). 풀린 뒤 두 프레임도 0 — 메뉴를 닫은 Enter·방향이 판 입력으로 새지 않게
+        float Dt()
+        {
+            bool p = GameState.Paused;
+            if (!p && !wasPaused && resumeGuard <= 0 && bot <= 0f && PausePressed()) { GameState.SetPaused(true); p = true; Pauses++; }
+            if (wasPaused && !p) resumeGuard = 2;
+            wasPaused = p;
+            if (p) return 0f;
+            if (resumeGuard > 0)
+            {
+                resumeGuard--;
+                pSub = submit != null && submit.IsPressed();
+                lastDir = 99;
+                return 0f;
+            }
+            return UiKit.RealDt;
+        }
+
+        /// 시험: 지금 판이 일시정지로 멈춰 있나
+        public bool Frozen => Shown && GameState.Paused;
 
         /// 이번 프레임에 누른 방향(0 없음 · 1 ← · 2 ↑ · 3 → · 4 ↓)
         int DirPressed()
@@ -107,6 +144,7 @@ namespace Haengin
             Build(); Bind();
             Mode = mode; bot = skill; seed = seedKey;
             Prompts = 0; Hits = 0;
+            wasPaused = GameState.Paused; resumeGuard = 0;
             float total = 0f; int count = 0;
             // QA Q09: 판을 켜는 첫 프레임에 지난 판의 '끝 — 38점'·제목이 그대로 보이던 것 — 켜기 전에 비움
             title.text = ""; help.text = ""; prompt.text = ""; scoreText.text = "";
@@ -204,7 +242,7 @@ namespace Haengin
             LastScore = count > 0 ? total / count : 0f;
             prompt.text = $"끝 — {Mathf.RoundToInt(LastScore * 100f)}점";
             float t = 0f;
-            while (t < (bot > 0f ? 0.4f : 0.9f)) { t += UiKit.RealDt; yield return null; }
+            while (t < (bot > 0f ? 0.4f : 0.9f)) { t += Dt(); yield return null; }
             root.SetActive(false);
             done?.Invoke(LastScore);
         }
@@ -230,7 +268,9 @@ namespace Haengin
             yield return null;
             while (t < window)
             {
-                t += UiKit.RealDt;
+                float dt = Dt();
+                if (dt <= 0f) { yield return null; continue; }
+                t += dt;
                 Timer(1f - t / window);
                 if (bot > 0f) { if (t >= botAt) { got = botDir; break; } }
                 else { int d = DirPressed(); if (d != 0) { got = d; break; } }
@@ -239,7 +279,7 @@ namespace Haengin
             bool ok = got == want;
             if (ok) Hits++;
             prompt.text = ok ? "좋아." : got == 0 ? "늦었다." : "아니, 거기 아냐.";
-            float w = 0f; while (w < 0.25f) { w += UiKit.RealDt; yield return null; }
+            float w = 0f; while (w < 0.25f) { w += Dt(); yield return null; }
             done(ok ? 1f - 0.5f * Mathf.Clamp01(t / window) : 0f);
         }
 
@@ -255,7 +295,9 @@ namespace Haengin
                 yield return null;
                 while (t < period)
                 {
-                    t += UiKit.RealDt;
+                    float dt = Dt();
+                    if (dt <= 0f) { yield return null; continue; }
+                    t += dt;
                     float x = t / period;
                     barMark.rectTransform.anchoredPosition = new Vector2(900f * x, 0f);
                     Timer(1f - x);
@@ -280,7 +322,8 @@ namespace Haengin
             yield return null;
             while (t < secs)
             {
-                float dt = UiKit.RealDt;
+                float dt = Dt();
+                if (dt <= 0f) { yield return null; continue; }
                 t += dt;
                 float drift = Mathf.Sin(t * 1.7f + seed % 7) * 1.1f + Mathf.Sin(t * 3.1f) * 0.6f;
                 float push = 0f;

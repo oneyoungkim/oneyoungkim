@@ -185,7 +185,7 @@ namespace Haengin
         {
             string[][] cards =
             {
-                new[] { "하루가 흐른다", "걸어 다니는 동안 시간이 흐른다(실제 1초 = 3분). 알바·학교·잠은 정한 시간을 한 번에 쓴다.", "새벽 05:00 · 아침 08:00 · 오후 16:00 · 저녁 18:00 · 밤 22:00. 밤 10시부터 아침 6시까지는 일하지 않는다(17세).", "말일에 집에 61만 원(엄마 통장·하늘 방과후·휴대폰)이 나간다. 모자라면 지갑에서, 그래도 모자라면 결손." },
+                new[] { "하루가 흐른다", "걸어 다니는 동안 시간이 흐른다(실제 1초 = 3분). 알바·학교·잠은 정한 시간을 한 번에 쓴다.", "새벽 05:00 · 아침 08:00 · 낮 12:00 · 오후 16:00 · 저녁 18:00 · 밤 22:00. 밤 10시부터 아침 6시까지는 일하지 않는다(17세).", "말일에 집에 61만 원(엄마 통장·하늘 방과후·휴대폰)이 나간다. 모자라면 지갑에서, 그래도 모자라면 결손." },
                 new[] { "알바 = 돈, 체육관 = 실력, 싸움 = 이름", "국밥집·하루편의점·현장 안의 동그란 표시에서 × · E — 일을 시작한다. 열 번 하거나 S 를 받으면 '맡기기'가 열린다.", "피로가 70을 넘으면 얻는 게 줄고, 85면 체육관이 막고, 95면 쓰러진다. 집 이불에서 자면 풀린다.", "휴대폰(Tab · Select) — 문자·오늘 지도·일정·가계부·목표·몸·이름." },
                 new[] { "이벤트 카드는 그때그때", "장소·시간·조건이 맞으면 카드가 뜬다. 주황 기둥 = 놓칠 수 없는 이야기, 휴대폰 문자로 미리 온다.", "이벤트 없는 날은 일요일 밤 '주간 계획'으로 맡겨 넘길 수 있다(3월 17일부터).", "데모: 3월 3일 ~ 5월 8일. 하늘이 생일(5월 1일)까지 버티는 것이 목표." },
             };
@@ -312,7 +312,11 @@ namespace Haengin
                         yield return Loader.Go(c.Place, "Spawn", false, Vector3.zero, 0f);
                     if (c.HasScenes) yield return Story.RunChain(c.Scenes, c.NoSceneEffects);
                     var board = Director.BoardOf(c);
-                    if (!c.HasScenes && board.Length > 0) yield return ShowBoard(c);
+                    // QA 2차 B: 실제 장면(대사 TSV)이 있는 카드는 스토리보드 대신 그 장소에서. 시비 카드는 StreetFight 안에서(상대가 선 뒤)
+                    string dlg = Director.DlgOf(c);
+                    bool played = false;
+                    if (!c.HasScenes && c.Fight != "street" && HasDlg(dlg)) yield return CardScene(c, dlg, v => played = v);
+                    if (!c.HasScenes && board.Length > 0 && !played && !(c.Fight == "street" && HasDlg(dlg))) yield return ShowBoard(c);
                     CardChoice choice = null;
                     if (c.Choice.Length > 0)
                     {
@@ -332,6 +336,29 @@ namespace Haengin
                 yield return HostCommands();
             }
             finally { if (busy.Count > 0) busy.Pop(); if (Hud != null && busy.Count == 0) Hud.Shown = true; }
+        }
+
+        /// 이 카드의 실제 장면 대사가 있나(QA 2차 B)
+        public bool HasDlg(string key) => !string.IsNullOrEmpty(key) && Story != null && Story.Dialogue != null && Story.Dialogue.Has(key);
+
+        /// 카드 실제 장면 횟수·마지막 열쇠(시험)
+        public int CardScenes { get; private set; }
+        public string LastCardScene { get; private set; } = "";
+
+        /// 카드 실제 장면(QA 2차 B): 장면 장소(DlgPlace, 빈칸 = Place)에 있으면 그 자리(스폰·Zone1 자리)로 옮겨 대사 장면. 다른 데 있으면 DlgTravel 일 때만 데려감(아니면 스토리보드)
+        IEnumerator CardScene(CardDef c, string dlg, Action<bool> done)
+        {
+            string place = !string.IsNullOrEmpty(c.DlgPlace) ? c.DlgPlace : !string.IsNullOrEmpty(c.Place) ? c.Place : (Loader != null ? Loader.Place : SceneLoader.Zone1);
+            bool zone = place == SceneLoader.Zone1;
+            bool here = Loader == null || Loader.Place == place;
+            if (here && zone && c.DlgHasPos && Loader != null && Loader.Motor != null && HitResolver.Flat(Loader.Motor.Position - c.DlgPos).magnitude > 30f) here = false;
+            if (!here && !c.DlgTravel) { done(false); yield break; }
+            if (Loader != null && (!here || (zone && c.DlgHasPos) || !string.IsNullOrEmpty(c.DlgSpawn)))
+                yield return Loader.Go(place, zone ? null : (string.IsNullOrEmpty(c.DlgSpawn) ? "Spawn" : c.DlgSpawn), zone && c.DlgHasPos, c.DlgPos, c.DlgYaw);
+            CardScenes++; LastCardScene = dlg;
+            Trace.Add($"장면 {dlg}");
+            yield return Story.PlayDlg(dlg);
+            done(true);
         }
 
         IEnumerator ShowBoard(CardDef c)

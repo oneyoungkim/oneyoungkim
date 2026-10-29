@@ -395,7 +395,7 @@ namespace Haengin.EditorGame
             if (m == null) { m = new Material(sh) { name = "M_G6_" + key }; AssetDatabase.CreateAsset(m, path); }
             if (m.shader != sh) m.shader = sh;
             m.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>($"{TexDir}/Clump_{clump}.png"));
-            m.SetColor("_BaseColor", tint); m.SetColor("_ShadeColor", LookdevSetup.LeafShade);
+            m.SetColor("_BaseColor", tint * LookdevSetup.LeafLift); m.SetColor("_ShadeColor", LookdevSetup.LeafShade);     // QA 2차 ①
             m.SetFloat("_Step", 0.5f); m.SetFloat("_Feather", 0.03f); m.SetFloat("_WindAmp", wind); m.SetFloat("_WindFreq", 1.5f); m.SetFloat("_Height", 1f);
             m.SetFloat("_Cutoff", 0.4f); m.SetFloat("_Sphere", sphere ? 1f : 0f); m.SetFloat("_Ink", ink); m.SetFloat("_InkWidth", 0.25f);
             m.SetColor("_InkColor", LookdevSetup.LeafInk); m.SetFloat("_StencilRef", 1f); m.SetFloat("_SwayUV", 1f);
@@ -656,6 +656,9 @@ namespace Haengin.EditorGame
             return m;
         }
 
+        /// 빛 웅덩이 크기(QA 2차 ②): 가로등·전봇대 반지름 1.8(지름 3.6m) · 보안등 1.6(3.2m) · 가게 앞 길이 3.5m
+        public const float PoolLampR = 1.8f, PoolSecR = 1.6f, PoolShopLen = 3.5f;
+
         static string Pools6(Zone1Data d, Transform zoneRoot, Transform env, Dictionary<string, Dictionary<string, object>> objs)
         {
             var root = new GameObject("Pools6").transform; root.SetParent(env, false);
@@ -690,7 +693,8 @@ namespace Haengin.EditorGame
                 var lp = s.transform.position; var g = GroundAt(lp, 0.5f, 14f);
                 if (Mathf.Abs(g.y - lp.y) < 0.6f) continue;   // 땅을 못 찾음
                 bool street = s.Kind == LightKind.Street;
-                Pool(g, Vector3.forward, street ? 5.4f : 4.2f, 0f, false, new Color(1.0f, 0.72f, 0.42f), street ? 0.8f : 0.66f);   // 7차: 더 넓고 진하게(f01)
+                // QA 2차 룩데브 소결정 ②(2026-10-26): 지름 10.8·8.4m → 3.6·3.2m(프레임처럼 남색 길 위에 또렷한 원 — 넓은 판이 길 전체를 밝은 베이지로 덮던 것), 가운데는 더 진하게
+                Pool(g, Vector3.forward, street ? PoolLampR : PoolSecR, 0f, false, new Color(1.0f, 0.72f, 0.42f), street ? 1.0f : 0.85f);
                 lamps++;
             }
             foreach (var kv in objs.OrderBy(x => x.Key, StringComparer.Ordinal))
@@ -704,7 +708,7 @@ namespace Haengin.EditorGame
                 if (c.y - foot.y > 4.6f) continue;   // 1층 가게만
                 string tenant = S(inf, "tenant") ?? "";
                 var col = tenant.Contains("편의점") ? new Color(0.95f, 0.95f, 0.86f) : new Color(1.0f, 0.76f, 0.46f);
-                Pool(foot + n * 0.1f, n, w * 0.75f, 6.0f, true, col, 0.85f);   // 7차: 가게 앞 번짐 반경·세기 ↑
+                Pool(foot + n * 0.1f, n, Mathf.Min(w * 0.5f, PoolLampR), PoolShopLen, true, col, 0.95f);   // QA 2차 ②: 가게 문 앞 폭 ≤ 3.6m · 길이 3.5m(예전 폭 0.75w · 6m)
                 shops++;
             }
             // 7차: 성균관로 전봇대 아래 길 쪽(프레임 f01 처럼 큰길이 주황으로 읽히게 — 전봇대 등 자리)
@@ -716,7 +720,7 @@ namespace Haengin.EditorGame
                 for (int k = 0; k < main.Points.Length - 1; k++) { var a = main.Points[k]; var b = main.Points[k + 1]; var ab = Flat(b - a); float t = Mathf.Clamp01(Vector3.Dot(Flat(lm.Pos - a), ab) / Mathf.Max(ab.sqrMagnitude, 1e-4f)); var q = a + (b - a) * t; float dd = Flat(q - lm.Pos).magnitude; if (dd < best) { best = dd; near = q; } }
                 var toRoad = Flat(near - lm.Pos).normalized;
                 var gp = GroundAt(lm.Pos + toRoad * 1.6f, 2f, 6f);
-                Pool(gp, Vector3.forward, 5.0f, 0f, false, new Color(1.0f, 0.70f, 0.40f), 0.55f); poles++;
+                Pool(gp, Vector3.forward, PoolLampR, 0f, false, new Color(1.0f, 0.70f, 0.40f), 0.8f); poles++;     // QA 2차 ②: 지름 10 → 3.6m
             }
             var mat = PoolMat();
             foreach (var kv in acc.OrderBy(x => x.Key.Item1).ThenBy(x => x.Key.Item2))

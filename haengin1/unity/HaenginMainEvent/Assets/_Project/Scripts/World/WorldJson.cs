@@ -162,7 +162,7 @@ namespace Haengin
                     Open = Math.Max(0, Hm(S(G(e, "open")))), Start = Math.Max(0, Hm(S(G(e, "start")))), End = Math.Max(0, Hm(S(G(e, "end")))), Latest = Math.Max(0, Hm(S(G(e, "latest")))),
                     WorkMinutes = (int)N(G(e, "work_minutes")), Pay = (int)N(G(e, "pay")), Units = A(G(e, "units")).Select(x => (int)N(x)).ToArray(),
                     To = S(G(e, "to"), "none"), Memo = S(G(e, "memo")), Items = SA(G(e, "items")), Fatigue = (int)N(G(e, "fatigue")),
-                    Stats = SA(G(e, "stats")), Mini = S(G(e, "mini")), Rep = (float)N(G(e, "rep")), Unlock = S(G(e, "unlock")), RainOff = B(G(e, "rain_off")),
+                    Stats = SA(G(e, "stats")), Mini = S(G(e, "mini")), Rep = (float)N(G(e, "rep")), Unlock = S(G(e, "unlock")), RainOff = B(G(e, "rain_off")), Tip = S(G(e, "tip")),
                 };
             }).ToArray();
 
@@ -201,6 +201,8 @@ namespace Haengin
             var sk = O(G(bj, "skill"));
             b.DelegateShifts = (int)N(G(sk, "delegate_shifts"), 10); b.DelegateStat = (float)N(G(sk, "delegate_stat"), 0.75);
             var gc = FA(G(sk, "grades")); if (gc.Length == 4) b.GradeCuts = gc;
+            var tp = O(G(mo, "tips"));
+            if (tp.Count > 0) { b.TipRates = new[] { (float)N(G(tp, "D")), (float)N(G(tp, "C")), (float)N(G(tp, "B")), (float)N(G(tp, "A")), (float)N(G(tp, "S")) }; b.TipDelegated = !(G(tp, "delegated") is bool db) || db; }
             var we = O(G(bj, "weather"));
             b.RainByMonth = new float[13];
             foreach (var kv in O(G(we, "rain"))) if (int.TryParse(kv.Key, out int m) && m >= 0 && m < 13) b.RainByMonth[m] = (float)N(kv.Value);
@@ -237,12 +239,15 @@ namespace Haengin
                         Fight = S(G(e, "fight")), Miss = S(G(e, "miss"), "wait"),
                         Weight = (float)N(G(e, "weight"), 1), Limit = (int)N(G(e, "limit")), Demo = B(G(e, "demo")),
                     };
+                    c.Dlg = S(G(e, "dlg")); c.DlgPlace = S(G(e, "dlg_place")); c.DlgSpawn = S(G(e, "dlg_spawn")); c.DlgTravel = B(G(e, "dlg_travel"));
+                    var dp = A(G(e, "dlg_pos"));
+                    if (dp.Count == 3) { c.DlgHasPos = true; c.DlgPos = new Vector3((float)N(dp[0]), (float)N(dp[1]), (float)N(dp[2])); c.DlgYaw = (float)N(G(e, "dlg_yaw")); }
                     var win = SA(G(e, "window"));
                     if (win.Length == 2) { c.WinFrom = Md(win[0]); c.WinTo = Md(win[1]); }
                     var no = G(e, "notice") as Dictionary<string, object>;
                     if (no != null) { c.NoticeAt = Hm(S(G(no, "at"))); c.NoticeFrom = S(G(no, "from")); c.NoticeText = S(G(no, "text")); }
                     c.Choice = A(G(e, "choice")).Select(x => { var d = O(x); return new CardChoice { Label = S(G(d, "label")), After = SA(G(d, "after")) }; }).ToArray();
-                    c.Ifs = A(G(e, "ifs")).Select(x => { var d = O(x); return new CardVariant { Need = S(G(d, "need")), Title = S(G(d, "title")), Board = SA(G(d, "board")), Quotes = SA(G(d, "quotes")), After = SA(G(d, "after")) }; }).ToArray();
+                    c.Ifs = A(G(e, "ifs")).Select(x => { var d = O(x); return new CardVariant { Need = S(G(d, "need")), Title = S(G(d, "title")), Board = SA(G(d, "board")), Quotes = SA(G(d, "quotes")), After = SA(G(d, "after")), Dlg = S(G(d, "dlg")) }; }).ToArray();
                     cards.Add(c);
                 }
             }
