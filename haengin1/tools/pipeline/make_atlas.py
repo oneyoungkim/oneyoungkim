@@ -19,7 +19,18 @@ at.paste(body.resize((4096, 4096)) if body.size != (4096, 4096) else body, (0, 0
 hd = head.resize((2048, 2048), Image.LANCZOS)
 if len(sys.argv) > 6:                                              # 머리 피부색을 몸 피부색에 맞추는 채널 배율(r g b)
     import numpy as np
-    g = np.array([float(x) for x in sys.argv[4:7]]); hd = Image.fromarray(np.clip(np.asarray(hd, np.float32) * g, 0, 255).astype(np.uint8))
+    g = np.array([float(x) for x in sys.argv[4:7]]); a = np.asarray(hd, np.float32)
+    opts = dict(o.split('=', 1) for o in sys.argv[7:])              # skin=r,g,b(이 색 가까운 화소에만 배율) · hair=r,g,b:R,G,B(이 색 가까운 화소를 목표색으로)
+    w = np.ones(a.shape[:2], np.float32)
+    if 'skin' in opts:
+        sk = np.array([float(x) for x in opts['skin'].split(',')]); w = np.clip(1 - (np.linalg.norm(a - sk, axis=2) - 40) / 40, 0, 1)
+    out = a * (1 + (g - 1) * w[..., None])
+    if 'hair' in opts:
+        src, tgt = opts['hair'].split(':'); hs = np.array([float(x) for x in src.split(',')]); ht = np.array([float(x) for x in tgt.split(',')])
+        wh = np.clip(1 - (np.linalg.norm(a - hs, axis=2) - 35) / 35, 0, 1) * (a.mean(2) > 80) * (np.linalg.norm(a - (sk if 'skin' in opts else hs + 999), axis=2) > 45)
+        out = out * (1 - wh[..., None]) + (a * (ht / hs)) * wh[..., None]
+        print('hair texels', int((wh > 0.5).sum()))
+    hd = Image.fromarray(np.clip(out, 0, 255).astype(np.uint8))
 at.paste(hd, (4096, 0))
 at.save(sys.argv[3], quality=94)
 print('ATLAS', sys.argv[3])

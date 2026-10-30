@@ -28,6 +28,9 @@ dist = np.linalg.norm(tex - skin, axis=2)
 is_skin = np.clip((0.20 - dist) / 0.06, 0, 1)[..., None]
 base = np.array([0.78, 0.71, 0.74]) * (1 - is_skin) + np.array([0.80, 0.72, 0.72]) * is_skin
 mul = base * (1 - wf4[..., None]) + np.array([0.93, 0.88, 0.88]) * wf4[..., None]
+if len(sys.argv) > 4:                                              # 밝은 머리카락(금발)은 그늘에서도 덜 어둡게: 머리카락 곱셈값
+    hm = float(sys.argv[4]); wh4 = np.asarray(Image.fromarray((wh * 255).astype(np.uint8)).resize((W, H), Image.BILINEAR)).astype(np.float32)[..., None] / 255
+    mul = mul * (1 - wh4) + hm * wh4
 Image.fromarray((np.clip(tex * mul, 0, 1) * 255).astype(np.uint8)).save(pre + 'Shade.jpg', quality=92)
 ow = np.ones_like(wf)
 ow = ow * (1 - wh) + 0.45 * wh

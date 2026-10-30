@@ -106,7 +106,7 @@ print('BUST face widest %.4f → scale %.4f, new head top %.3f (old %.3f)' % (wn
 # ── 지울 곳 / 남길 곳(이음매 = 목 꼭대기, 턱 그늘·뒷머리 밑): 옛 목·옷깃·수건은 그대로 두고 머리만 지움
 r_tube = 0.8 * wneck
 z_seam = head_b.z - 0.005                                           # 옛 몸은 이 위를 지움(머리), 새 메시는 이 위 + 아래 2cm 겹침
-z_new_bot = z_seam - 0.03
+z_new_bot = float(opt.get('newBot', z_seam - 0.03))
 rb = np.hypot(PB[:, 0] - neck_b.x, PB[:, 1] - neck_b.y)
 gname = {g.index: g.name for g in body.vertex_groups}
 HEADS = {'Head', 'head_end', 'headfront'}
@@ -117,13 +117,14 @@ cidx = np.nonzero(chest)[0]; cidx = cidx[np.argsort(PB[cidx, 1])][:300]
 shirt_b = np.median(CB[cidx], 0) if len(cidx) else np.array([9.0, 9.0, 9.0])
 hairlike = (np.linalg.norm(CB - skin_b, axis=1) > 0.25) & (np.linalg.norm(CB - shirt_b, axis=1) > 0.25) & (CB.sum(1) < 2.2)
 hl = hairlike & (wh > 0.2) & (PB[:, 2] > neck_b.z) & (rb < 0.16)     # 목 아래로 늘어진 옛 머리카락만
+if opt.get('keepOldBelow'): hl &= PB[:, 2] > z_seam                 # 새 메시 바닥 아래의 옛 수염 목은 남겨 틈을 메움
 del_b |= hl
 print('BODY shirt', np.round(shirt_b * 255).astype(int).tolist(), 'old hair below seam', int(hl.sum()), flush=True)
 rn = np.hypot(PN[:, 0] - neck_b.x, PN[:, 1] - neck_b.y)
 lowb = PN[:, 2] < PN[:, 2].min() + 0.08 * (PN[:, 2].max() - PN[:, 2].min())
 shirt_n = np.median(CN[lowb], 0)
 notshirt = np.linalg.norm(CN - shirt_n, axis=1) > 0.12
-keep_n = ((PN[:, 2] > z_seam + 0.005) & (notshirt | (PN[:, 2] > head_b.z + 0.04))) | ((PN[:, 2] > z_new_bot) & (rn < r_tube * 1.25) & notshirt)
+keep_n = ((PN[:, 2] > z_seam + 0.005) & (notshirt | (PN[:, 2] > head_b.z + 0.04))) | ((PN[:, 2] > z_new_bot) & (rn < r_tube * float(opt.get('tubeK', 1.25))) & notshirt)
 print('delete body verts', int(del_b.sum()), 'keep new verts', int(keep_n.sum()), 'of', len(PN), flush=True)
 
 # 가중치 옮기기용 원본 몸 복사(지우기 전)
@@ -188,8 +189,15 @@ for i in cand:
     if loc is None: continue
     if dist < 0.008 or (Vector(PB[i]) - loc).dot(nrm) < 0: inside[i] = True
 cloth = (np.linalg.norm(CB - shirt_b, axis=1) < 0.2) | (CB.min(1) > 0.55)      # 셔츠·수건(밝은 무채색)은 새 머리 안이어도 남김
+if opt.get('keepOldBelow'):                                         # 새 메시 아래 끝(+1.2cm) 밑의 옛 목은 '안쪽' 판정이 나도 남김(열린 끝 근처 오판 → 목 구멍·가로선)
+    zmin_new = min(v.co.z for v in bust.data.vertices)
+    inside &= PB[:, 2] > zmin_new + 0.012
+    print('keepOldBelow: new bottom %.3f' % zmin_new, flush=True)
 del_b = (inside & ~cloth) | hl | ((wh > 0.6) & (PB[:, 2] > z_seam + 0.03))     # 머리 위쪽의 옛 머리는 새 머리보다 커도 지움
+if 'oldNeckCut' in opt:                                             # 옛 목 피부를 이 높이 위로 모두 지움(새 목이 깃 근처까지 덮을 때 — 겹침 가로선 없앰)
+    del_b |= (PB[:, 2] > opt['oldNeckCut']) & (rb < r_tube * 1.3) & ~cloth & (np.linalg.norm(CB - skin_b, axis=1) < 0.25)
 jaw = (wh > 0.35) & ~cloth & (PB[:, 1] < neck_b.y - 0.02) & (PB[:, 2] > neck_b.z + 0.02)   # 새 턱 밑으로 삐져나오던 옛 턱·수염
+if opt.get('keepOldBelow'): jaw &= PB[:, 2] > zmin_new + 0.012
 del_b |= jaw
 print('delete body verts (inside new head)', int(inside.sum()), 'old jaw', int(jaw.sum()), 'total', int(del_b.sum()), flush=True)
 delete_verts(body, del_b)

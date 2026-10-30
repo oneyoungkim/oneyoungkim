@@ -7,6 +7,7 @@ import numpy as np
 a = sys.argv[sys.argv.index('--') + 1:]
 src, texp, dst = a[0], a[1], a[2]
 cx, cz, rx, rz = (float(x) for x in a[3:7])
+HAIR = np.array([float(x) / 255 for x in a[7].split(',')]) if len(a) > 7 else None   # 밝은 머리카락 색 r,g,b(0~255)
 N = 1024
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=src)
@@ -36,6 +37,8 @@ for t in me.loop_triangles:
     # 정점 머리카락 = 그 정점 UV 의 텍스처가 짙음(피부보다 훨씬 어두움)
     tx = np.clip((uv[:, 0] * TW).astype(int), 0, TW - 1); ty = np.clip(((1 - uv[:, 1]) * TH).astype(int), 0, TH - 1)
     whv = (lum[ty, tx] < 0.22).astype(np.float32) * (P[vi, 2] > top - 0.17)
+    if HAIR is not None:                                            # 밝은 머리카락은 뒷머리 끝(머리 꼭대기 26cm 아래)까지
+        whv = np.maximum(whv, (np.linalg.norm(pix[ty, tx, :3] - HAIR, axis=1) < 0.24).astype(np.float32) * (P[vi, 2] > top - 0.26))
     wfv = wf_v[vi]
     x0, x1 = int(np.floor(px.min())), int(np.ceil(px.max())); y0, y1 = int(np.floor(py.min())), int(np.ceil(py.max()))
     gx, gy = np.meshgrid(np.arange(max(0, x0), min(N - 1, x1) + 1) + 0.5, np.arange(max(0, y0), min(N - 1, y1) + 1) + 0.5)
