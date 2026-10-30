@@ -310,6 +310,8 @@ namespace Haengin.EditorGame
             int src = Mathf.Max(w, h);
             int want = src > 4096 ? 8192 : src > 2048 ? Mathf.Min(max, 4096) : 2048;
             CharSetup.Texture(path, srgb, want);
+            // 2026-10-30: 6144×4096 v3 텍스처 여덟 장 — 밉맵 스트리밍(필요한 밉만 올림, 품질 설정 streamingMipmapsActive) — 프레임 시간 시험 W16
+            if (want > 4096 && !ti.streamingMipmaps) { ti.streamingMipmaps = true; ti.SaveAndReimport(); }
             var ps = ti.GetPlatformTextureSettings("Standalone");
             if (want > 2048 && (!ps.overridden || ps.format != TextureImporterFormat.BC7 || ps.maxTextureSize != want))
             {
