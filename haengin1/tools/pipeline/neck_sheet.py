@@ -8,6 +8,7 @@ pts = {}
 for l in open(os.path.join(src, "neck_points.txt"), encoding="utf-8"):
     k, v, w, x, y = l.strip().split("\t")
     pts[(k, v, w)] = (int(x), int(y))
+vers = [v for v in ("v2", "v3") if any(q[1] == v for q in pts)]
 views = (("front", "정면 1.5m"), ("q34", "3/4 1.5m"), ("side", "옆 1.5m"), ("waist", "정면 2.6m"))
 names = dict(yunjun="이윤준", kim="김승연", son="손진수", seo="서진수")
 CW, CH = 240, 180
@@ -17,9 +18,9 @@ def label(dr, x, y, t):
     dr.text((x + 6, y + 2), t, font=f, fill=(255, 255, 255))
 people = []
 for k, nm in names.items():
-    sheet = Image.new("RGB", (480 * 4, (270 + 360) * 2), (15, 15, 15))
+    sheet = Image.new("RGB", (480 * 4, (270 + 360) * len(vers)), (15, 15, 15))
     dr = ImageDraw.Draw(sheet)
-    for r, ver in enumerate(("v2", "v3")):
+    for r, ver in enumerate(vers):
         y0 = r * (270 + 360)
         for c, (w, wn) in enumerate(views):
             im = Image.open(os.path.join(src, f"{k}_{ver}_{w}.png")).convert("RGB")
@@ -43,12 +44,12 @@ print("neck_check.jpg", all_.size)
 # 고개 돌림(미트 자세, 좌우 40°): 사람마다 v2 왼·오른, v3 왼·오른 — 전체 칸 + 턱~옷깃 ×2
 rows = []
 for k, nm in names.items():
-    if (k, "v3", "turnL") not in pts:
+    if (k, vers[-1], "turnL") not in pts:
         continue
     sheet = Image.new("RGB", (480 * 4, 270 + 360), (15, 15, 15))
     dr = ImageDraw.Draw(sheet)
     c = 0
-    for ver in ("v2", "v3"):
+    for ver in vers:
         for w, wn in (("turnL", "왼쪽 봄"), ("turnR", "오른쪽 봄")):
             im = Image.open(os.path.join(src, f"{k}_{ver}_{w}.png")).convert("RGB")
             sheet.paste(im.resize((480, 270), Image.LANCZOS), (480 * c, 0))

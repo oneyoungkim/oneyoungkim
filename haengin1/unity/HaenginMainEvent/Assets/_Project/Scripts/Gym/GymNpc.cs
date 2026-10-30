@@ -32,24 +32,6 @@ namespace Haengin
         /// 다시 켜지면 애니메이터가 기본 상태(전투 Stance)로 돌아감 → 다음 Update 에 자기 자세로(대사 장면 front·cast 로 켜진 출장 코치가 미트 자세로 서던 것)
         void OnEnable() { pending = true; }
 
-        /// 머리 롤 보정(HeadLevel): 대기·대사·레슨 카드 때만 — 드릴·미트 중에는 끔
-        public bool WantsLevelHead
-        {
-            get
-            {
-                if (Current != "Idle" || Now == Routine.Mitts) return false;
-                var gm = GymManager.Instance;
-                return gm == null || gm.Runner == null || gm.Runner.State == DrillRunner.Phase.Idle;
-            }
-        }
-
-        public void EnableHeadLevel()
-        {
-            if (Anim == null) return;
-            var h = Anim.GetComponent<HeadLevel>() ?? Anim.gameObject.AddComponent<HeadLevel>();
-            h.Npc = this;
-        }
-
         /// 미트 잡기(드릴 중): up = 호출 순간 미트 들기
         public void Mitt(bool up)
         {

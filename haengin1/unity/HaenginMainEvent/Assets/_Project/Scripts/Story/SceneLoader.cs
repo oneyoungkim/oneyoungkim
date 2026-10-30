@@ -32,11 +32,6 @@ namespace Haengin
         /// 마지막 전환에 걸린 실제 시간(초)·무대 여는 데 걸린 시간(초)
         public float LastTotal { get; private set; }
         public float LastLoad { get; private set; }
-        /// 체육관을 나올 때 텍스처 내리기: 전체 시간 · 가장 긴 한 프레임(ms) — 먹 닦기가 덮은 동안이라 화면에 안 보임
-        public float LastUnloadMs { get; private set; }
-        public float LastUnloadWorstMs { get; private set; }
-        /// 시험: 끄면 안 내림(내릴 때와 다시 들어가는 시간 비교)
-        public static bool UnloadGymOnExit = true;
         public int Transitions { get; private set; }
         /// 먹 닦기가 화면을 다 덮었을 때(회차 카드를 거둠)
         public event Action Covered;
@@ -100,14 +95,11 @@ namespace Haengin
             if (place != Place)
             {
                 // 지금 무대를 내린다
-                bool leftGym = Place == Gym;
                 if (stageScene.IsValid() && stageScene.isLoaded)
                 {
                     var op = SceneManager.UnloadSceneAsync(stageScene);
                     while (op != null && !op.isDone) yield return null;
                 }
-                // 2026-10-30 체육관을 나오면 코치 텍스처(6144×4096 여러 장)를 메모리에서 내림 — 안 그러면 국밥집 등 다음 장소까지 상주(W16). 먹 닦기가 덮은 동안
-                if (leftGym) yield return UnloadGymAssets();
                 stageScene = default;
                 Stage = null;
                 if (place == Zone1)
@@ -213,33 +205,14 @@ namespace Haengin
             return Physics.SphereCast(o, 0.15f, dir, out var hit, 4f, Layers.CameraBlock, QueryTriggerInteraction.Ignore) ? hit.distance : 4f;
         }
 
-        IEnumerator UnloadGymAssets()
-        {
-            if (!UnloadGymOnExit) { LastUnloadMs = LastUnloadWorstMs = 0f; yield break; }
-            var sw = Stopwatch.StartNew();
-            var un = Resources.UnloadUnusedAssets();
-            double last = 0, worst = 0;
-            while (un != null && !un.isDone)
-            {
-                yield return null;
-                double now = sw.Elapsed.TotalMilliseconds;
-                worst = Math.Max(worst, now - last);
-                last = now;
-            }
-            LastUnloadMs = (float)sw.Elapsed.TotalMilliseconds;
-            LastUnloadWorstMs = (float)worst;
-        }
-
         /// 이야기를 끝내거나 테스트를 정리할 때: 무대를 내리고 Zone1 루트를 켠다(먹 닦기 없이)
         public IEnumerator Reset()
         {
-            bool leftGym = Place == Gym;
             if (stageScene.IsValid() && stageScene.isLoaded)
             {
                 var op = SceneManager.UnloadSceneAsync(stageScene);
                 while (op != null && !op.isDone) yield return null;
             }
-            if (leftGym) yield return UnloadGymAssets();
             stageScene = default;
             Stage = null;
             Place = Zone1;

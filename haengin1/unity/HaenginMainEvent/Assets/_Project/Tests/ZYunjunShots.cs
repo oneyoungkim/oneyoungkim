@@ -390,7 +390,7 @@ namespace Haengin.Tests
         }
 
         // ───────────────────────── 목 검수(2026-10-30 대표 "목이 찢어졌다 꿰맨 것 같다") — -neckcheck <폴더>
-        //   코치 넷 v2·v3 + 체육관 낮, 같은 대기 프레임·같은 카메라: 정면 1.5m · 3/4 1.5m · 옆 1.5m · 정면 2.6m → {key}_{ver}_{view}.png, neck_points.txt(턱~옷깃 가운데 화면 좌표)
+        //   코치 넷 + 체육관 낮, 같은 대기 프레임·같은 카메라: 정면 1.5m · 3/4 1.5m · 옆 1.5m · 정면 2.6m → {key}_v2_{view}.png, neck_points.txt(턱~옷깃 가운데 화면 좌표)
         //   얼굴 밝기: 캐릭터 채움(GymLights.CharFill) 끔/켬 정면 사진 + face_luma.txt(시우 포함, 얼굴 눈~코 띠 sRGB 휘도 평균)
         [UnityTest, Timeout(1800000)]
         public IEnumerator Z_Coach_NeckCheck()
@@ -415,8 +415,8 @@ namespace Haengin.Tests
             var dir0 = OpenDir(feet + Vector3.up * 1.2f, mat.forward);
             float fill0 = gm.Lights.CharFill;
             var points = new List<string>(); var luma = new List<string>(); var sym = new List<string>();
-            var who = new (string key, string v2, GymNpc v3)[] { ("yunjun", "Npc_Yunjun_v2", gm.Yunjun), ("kim", "Npc_Seungyeon_v2", gm.Guest("seungyeon")), ("son", "Npc_JinsooSon_v2", gm.Guest("jinsoo_son")), ("seo", "Npc_JinsooSeo_v2", gm.Guest("jinsoo_seo")) };
-            foreach (var (_, _, n) in who) if (n != null) n.gameObject.SetActive(false);
+            var who = new (string key, GymNpc npc)[] { ("yunjun", gm.Yunjun), ("kim", gm.Guest("seungyeon")), ("son", gm.Guest("jinsoo_son")), ("seo", gm.Guest("jinsoo_seo")) };
+            foreach (var (_, n) in who) if (n != null) n.gameObject.SetActive(false);
 
             IEnumerator Stand(GymNpc n)
             {
@@ -425,10 +425,10 @@ namespace Haengin.Tests
                 var fb = n.GetComponent<FighterBody>();
                 if (fb != null) fb.Place(feet, Mathf.Atan2(dir0.x, dir0.z) * Mathf.Rad2Deg);
                 Physics.SyncTransforms();
-                yield return Lab.Frames(30);
+                yield return Lab.Frames(5);
                 n.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 n.Anim.speed = 0f; n.Anim.Play("Idle", 0, 0.3f); n.Anim.Update(0f); n.Anim.Update(0f);
-                yield return null; yield return null;
+                yield return null;
             }
             float Luma(Texture2D t, Vector3 faceWorld, float halfW, float halfH)
             {
@@ -459,20 +459,10 @@ namespace Haengin.Tests
                 luma.Add($"{key}\t전 {vals[0]:F1}\t후 {vals[1]:F1}\t코 아래 전 {cheek[0]:F1}\t코 아래 후 {cheek[1]:F1}");
             }
 
-            foreach (var (key, v2Name, v3) in who)
+            foreach (var (key, coach) in who)
             {
-                Assert.NotNull(v3, key);
-                GymNpc v2 = null;
-#if UNITY_EDITOR
-                var pf = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/_Project/Prefabs/Gym/{v2Name}.prefab");
-                Assert.NotNull(pf, v2Name);
-                v2 = Object.Instantiate(pf, v3.transform.parent).GetComponent<GymNpc>();
-                gm.Lights.PushCharFill();
-                v2.EnableHeadLevel();
-                v2.Anim.GetComponent<HeadLevel>().Apply = false;      // v2 = 대기 클립 그대로(비교)
-#endif
-                v2.gameObject.SetActive(false);
-                foreach (var (ver, n) in new[] { ("v2", v2), ("v3", v3) })
+                Assert.NotNull(coach, key);
+                foreach (var (ver, n) in new[] { ("v2", coach) })
                 {
                     yield return Stand(n);
                     var neck = Bone(n, HumanBodyBones.Neck).position; var head = Bone(n, HumanBodyBones.Head).position;
@@ -503,10 +493,9 @@ namespace Haengin.Tests
                         var camRight = cam.transform.right;
                         float roll = Mathf.Atan2(Vector3.Dot(hb.up, camRight), Vector3.Dot(hb.up, Vector3.up)) * Mathf.Rad2Deg;
                         float yawH = Mathf.Atan2(Vector3.Dot(hb.forward, camRight), Vector3.Dot(hb.forward, dir0)) * Mathf.Rad2Deg;
-                        var hl = n.Anim.GetComponent<HeadLevel>();
-                        sym.Add($"{key}\t{ver}\t머리 뼈 기울기 {roll:F2}°\t좌우 {yawH:F2}°\t귀 축 롤 보정 전 {(hl != null ? hl.RollBefore : 0f):F2}°\t뒤 {(hl != null ? hl.RollAfter : 0f):F2}°");
+                        sym.Add($"{key}\t{ver}\t머리 뼈 기울기 {roll:F2}°\t좌우 {yawH:F2}°");
                     }
-                    if (ver == "v3") yield return FaceShots(key, Bone(n, HumanBodyBones.Head), dir0);
+                    yield return FaceShots(key, Bone(n, HumanBodyBones.Head), dir0);
                     // 고개 돌림: 미트 자세(대기 + MittArms)에서 좌우 40° 쪽을 봄 — 옷깃 근처 목 주름 보기
                     n.Anim.speed = 1f;
                     n.Place(feet, dir0, GymNpc.Routine.Mitts);
@@ -540,7 +529,6 @@ namespace Haengin.Tests
                     n.Anim.speed = 1f;
                     n.gameObject.SetActive(false);
                 }
-                Object.Destroy(v2.gameObject);
             }
             // 시우: 같은 자리·같은 조명
             foreach (var r in meR) r.enabled = true;
@@ -556,79 +544,6 @@ namespace Haengin.Tests
             File.WriteAllText(Path.Combine(dir, "face_luma.txt"), string.Join("\n", luma), new UTF8Encoding(false));
             File.WriteAllText(Path.Combine(dir, "face_sym.txt"), string.Join("\n", sym), new UTF8Encoding(false));
             Debug.Log("[Coach] 목 검수 → " + dir + "\n" + string.Join("\n", luma));
-        }
-
-        // ───────────────────────── 김승연 v2·v3 목(2026-10-30 대표 "목이 꺾여 있다") — -neckout <폴더>
-        //   같은 상태·같은 정규화 시각에서 두 아바타의 Neck·Head·가슴 뼈 회전(몸 기준)을 로그로 비교 + 새 미트 자세(대기 + MittArms) 나란히 사진(neck_v2_v3.png)
-        [UnityTest, Timeout(1200000)]
-        public IEnumerator Z_Coach_Neck()
-        {
-            string dir = Shots.Arg("-neckout");
-            if (string.IsNullOrEmpty(dir)) { Assert.Ignore("-neckout <폴더> 없음"); yield break; }
-            if (!Shots.Graphics) { Assert.Ignore("그래픽 장치 없음(-nographics)"); yield break; }
-            Directory.CreateDirectory(dir);
-            WorldRunner w = null;
-            yield return M7Qa2Tests.Open(x => w = x);
-            GymManager gm = null;
-            yield return Enter(w, 312, 14 * 60, x => gm = x);
-            gm.ApplyPart(GymPart.Day);
-            var cam = Camera.main; var brain = cam.GetComponent<CinemachineBrain>(); var me = M3Lab.Motor;
-            foreach (var r in me.GetComponentsInChildren<Renderer>(true)) r.enabled = false;
-            var v3 = gm.Guest("seungyeon"); Assert.NotNull(v3, "김승연 v3");
-            GymNpc v2 = null;
-#if UNITY_EDITOR
-            var pf = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Gym/Npc_Seungyeon_v2.prefab");
-            Assert.NotNull(pf, "Npc_Seungyeon_v2 프리팹");
-            v2 = Object.Instantiate(pf, v3.transform.parent).GetComponent<GymNpc>();
-#endif
-            Assert.NotNull(v2, "v2 GymNpc");
-            var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
-            var dirOpen = OpenDir(mat.position + Vector3.up * 1.2f, mat.forward);
-            var side = Vector3.Cross(Vector3.up, dirOpen);
-            var log = new List<string>();
-            var bones = new[] { HumanBodyBones.Hips, HumanBodyBones.Chest, HumanBodyBones.UpperChest, HumanBodyBones.Neck, HumanBodyBones.Head };
-            foreach (var (state, t) in new[] { ("Stance", 0.25f), ("Stance", 0.6f), ("Idle", 0.3f), ("Block", 0.5f) })
-            {
-                foreach (var n in new[] { v2, v3 })
-                {
-                    n.gameObject.SetActive(true);
-                    n.Place(mat.position + side * (n == v2 ? -0.7f : 0.7f), dirOpen, GymNpc.Routine.Watch);
-                }
-                yield return Lab.Frames(3);
-                foreach (var n in new[] { v2, v3 }) { n.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate; n.Anim.speed = 0f; n.Anim.Play(state, 0, t); n.Anim.Update(0f); n.Anim.Update(0f); }
-                yield return null;
-                var parts = new List<string>();
-                foreach (var b in bones)
-                {
-                    var a = Bone(v2, b); var c = Bone(v3, b);
-                    if (a == v2.transform || c == v3.transform) continue;
-                    var ra = Quaternion.Inverse(v2.transform.rotation) * a.rotation; var rc = Quaternion.Inverse(v3.transform.rotation) * c.rotation;
-                    var pa = v2.transform.InverseTransformPoint(a.position); var pc = v3.transform.InverseTransformPoint(c.position);
-                    parts.Add($"{b} 회전 차 {Quaternion.Angle(ra, rc):F2}° (v2 {ra.eulerAngles.x:F1},{ra.eulerAngles.y:F1},{ra.eulerAngles.z:F1} / v3 {rc.eulerAngles.x:F1},{rc.eulerAngles.y:F1},{rc.eulerAngles.z:F1}) 위치 차 {(pa - pc).magnitude * 100f:F2}cm");
-                }
-                log.Add($"[{state} t={t:0.00}] " + string.Join(" · ", parts));
-                foreach (var n in new[] { v2, v3 }) n.Anim.speed = 1f;
-            }
-            // 새 미트 자세(대기 + MittArms) 나란히 — 목 확인
-            foreach (var n in new[] { v2, v3 }) { n.Place(mat.position + side * (n == v2 ? -0.45f : 0.45f), dirOpen, GymNpc.Routine.Mitts); }
-            yield return Lab.Frames(60);
-            foreach (var n in new[] { v2, v3 }) n.Anim.speed = 0f;
-            yield return null;
-            var mid = (Bone(v2, HumanBodyBones.Neck).position + Bone(v3, HumanBodyBones.Neck).position) * 0.5f;
-            brain.enabled = false;
-            Pose(cam, mid - Vector3.up * 0.15f, mid - Vector3.up * 0.15f + (Quaternion.Euler(0f, -20f, 0f) * dirOpen) * 3.1f + Vector3.up * 0.05f, 34f);
-            yield return null;
-            Snap(gm, cam, Path.Combine(dir, "mitt_v2_v3.png"), false);
-            Pose(cam, mid + Vector3.up * 0.02f, mid + Vector3.up * 0.02f + (Quaternion.Euler(0f, -12f, 0f) * dirOpen) * 2.3f, 30f);
-            yield return null;
-            Snap(gm, cam, Path.Combine(dir, "neck_v2_v3.png"), false);
-            brain.enabled = true;
-            var ma = v3.Anim.GetComponent<MittArms>();
-            log.Add($"미트 팔 v3: 켜짐 {ma != null && ma.On} · 무게 {(ma != null ? ma.CurrentWeight : 0f):F2} · 상태 {v3.Current}");
-            Object.Destroy(v2.gameObject);
-            foreach (var r in me.GetComponentsInChildren<Renderer>(true)) r.enabled = true;
-            File.WriteAllText(Path.Combine(dir, "neck_log.txt"), string.Join("\n", log), new UTF8Encoding(true));
-            Debug.Log("[Coach] 김승연 v2·v3 목 비교 → " + dir + "\n" + string.Join("\n", log));
         }
 
         // ───────────────────────── 코치 넷 얼굴 근접 — 체육관 낮·밤 두 조명, 같은 자리·같은 카메라(모델 판끼리 비교용, 2026-10-30) — -facesout <폴더>

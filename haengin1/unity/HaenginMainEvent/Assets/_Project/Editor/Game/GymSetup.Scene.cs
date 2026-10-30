@@ -244,7 +244,7 @@ namespace Haengin.EditorGame
                 var go = (GameObject)PrefabUtility.InstantiatePrefab(pf, npcRoot); go.name = name; go.SetActive(false);
                 return go.GetComponent<GymNpc>();
             }
-            gym.Yunjun = Npc(NpcPrefab("Yunjun_v3"), "이윤준"); gym.Gojun = Npc(NpcPrefab("Gojun"), "고준");
+            gym.Yunjun = Npc(NpcPrefab("Yunjun_v2"), "이윤준"); gym.Gojun = Npc(NpcPrefab("Gojun"), "고준");
             gym.Guests = new List<GymNpc>();
             foreach (var gn in GuestNpcs) { var g = Npc(NpcPrefab(gn), NpcNames[gn].name); if (g != null) gym.Guests.Add(g); }
             gym.Members = new List<GymNpc>();

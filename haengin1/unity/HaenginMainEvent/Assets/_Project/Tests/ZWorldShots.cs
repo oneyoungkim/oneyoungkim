@@ -149,12 +149,6 @@ namespace Haengin.Tests
             w.Begin(Mid(def, Early.Concat(new[] { "C1-05", "N01", "N02" }), 312, 21 * 60 + 35, SceneLoader.Zone1, a0));
             yield return Lab.Frames(10);
             yield return Free(w);
-            // 2026-10-30: 체육관에 갔다 나온 뒤로 잼(실제 플레이 길 — 코치 텍스처가 내려갔는지). 상주 수를 함께 적음
-            yield return w.Loader.Go(SceneLoader.Gym, "Door", false, Vector3.zero, 0f);
-            yield return Lab.Frames(30);
-            yield return w.Loader.Go(SceneLoader.Zone1, "", true, a0, 90f);
-            yield return Lab.Frames(30);
-            int V3Resident() => Resources.FindObjectsOfTypeAll<Texture2D>().Count(t => t != null && t.name.Contains("_v3"));
             var cam = Camera.main;
             var rt = new RenderTexture(new RenderTextureDescriptor(1920, 1080, RenderTextureFormat.ARGB32, 24) { sRGB = true, msaaSamples = 1 }); rt.Create();
             var one = new Texture2D(1, 1, TextureFormat.RGBA32, false);
@@ -202,7 +196,6 @@ namespace Haengin.Tests
             GameClock.SetDate(2026, 3, 12, 19 * 60);
             yield return w.Loader.Go("Gukbap", "Door", false, Vector3.zero, 0f);
             yield return Lab.Frames(30);
-            summary.Add($"국밥집 들어갈 때 코치 v3 텍스처 상주 {V3Resident()}장 · 텍스처 메모리 {Texture.currentTextureMemory / (1024 * 1024)}MB");
             yield return Measure("국밥집 저녁 실내(손님·김)", i => true, 240);
             GameClock.SetDate(2026, 3, 12, 23 * 60);
             yield return w.Loader.Go("Home", "Spawn", false, Vector3.zero, 0f);

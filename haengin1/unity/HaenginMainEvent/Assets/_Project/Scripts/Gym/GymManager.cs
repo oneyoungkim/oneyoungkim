@@ -92,10 +92,6 @@ namespace Haengin
             yield return null;
             GymState.Visits++;
             BindPlayer();
-            // 2026-10-30: 코치 머리 롤 보정(대기 클립의 좌우 기울기로 얼굴이 삐뚤어 보이던 것)
-            if (Yunjun != null) Yunjun.EnableHeadLevel();
-            if (Gojun != null) Gojun.EnableHeadLevel();
-            foreach (var g in Guests) if (g != null) g.EnableHeadLevel();
             ApplyPart(ForcePart >= 0 ? (GymPart)ForcePart : GymLights.PartOfHour(GameClock.Hour));
             if (Probe != null) Probe.RenderProbe();
             Debug.Log($"[Gym] 체육관 입장: {GymLights.Name(Part)} · 드릴 {Book?.Drills.Length ?? 0}종(플레이 가능 {Book?.PlayableCount ?? 0}) · 소켓 {sock.Count} · 마커 {Markers.Count} · {GymState.Current.Summary}");
