@@ -425,10 +425,10 @@ namespace Haengin.Tests
                 var fb = n.GetComponent<FighterBody>();
                 if (fb != null) fb.Place(feet, Mathf.Atan2(dir0.x, dir0.z) * Mathf.Rad2Deg);
                 Physics.SyncTransforms();
-                yield return Lab.Frames(5);
+                yield return Lab.Frames(30);
                 n.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 n.Anim.speed = 0f; n.Anim.Play("Idle", 0, 0.3f); n.Anim.Update(0f); n.Anim.Update(0f);
-                yield return null;
+                yield return null; yield return null;
             }
             float Luma(Texture2D t, Vector3 faceWorld, float halfW, float halfH)
             {
@@ -468,6 +468,8 @@ namespace Haengin.Tests
                 Assert.NotNull(pf, v2Name);
                 v2 = Object.Instantiate(pf, v3.transform.parent).GetComponent<GymNpc>();
                 gm.Lights.PushCharFill();
+                v2.EnableHeadLevel();
+                v2.Anim.GetComponent<HeadLevel>().Apply = false;      // v2 = 대기 클립 그대로(비교)
 #endif
                 v2.gameObject.SetActive(false);
                 foreach (var (ver, n) in new[] { ("v2", v2), ("v3", v3) })
@@ -501,7 +503,8 @@ namespace Haengin.Tests
                         var camRight = cam.transform.right;
                         float roll = Mathf.Atan2(Vector3.Dot(hb.up, camRight), Vector3.Dot(hb.up, Vector3.up)) * Mathf.Rad2Deg;
                         float yawH = Mathf.Atan2(Vector3.Dot(hb.forward, camRight), Vector3.Dot(hb.forward, dir0)) * Mathf.Rad2Deg;
-                        sym.Add($"{key}\t{ver}\t머리 뼈 기울기 {roll:F2}°\t좌우 {yawH:F2}°");
+                        var hl = n.Anim.GetComponent<HeadLevel>();
+                        sym.Add($"{key}\t{ver}\t머리 뼈 기울기 {roll:F2}°\t좌우 {yawH:F2}°\t귀 축 롤 보정 전 {(hl != null ? hl.RollBefore : 0f):F2}°\t뒤 {(hl != null ? hl.RollAfter : 0f):F2}°");
                     }
                     if (ver == "v3") yield return FaceShots(key, Bone(n, HumanBodyBones.Head), dir0);
                     // 고개 돌림: 미트 자세(대기 + MittArms)에서 좌우 40° 쪽을 봄 — 옷깃 근처 목 주름 보기

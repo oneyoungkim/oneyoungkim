@@ -538,6 +538,87 @@ namespace Haengin.Tests
             Assert.IsEmpty(bad, string.Join(" | ", bad));
         }
 
+        // ───────────────────────── Q52 코치 머리 롤 보정(2026-10-30 대표 "얼굴이 삐뚤다"): 대기 중 롤 0, 미트 중에는 꺼짐
+        [UnityTest, Timeout(300000)]
+        public IEnumerator Q52_Coach_Head_Roll_Level_In_Idle()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            yield return Start(w, Mid(w.Def, 312, 14 * 60, SceneLoader.Gym, m => { m.G.Fatigue = 0; }));
+            GymManager gm = null;
+            for (int i = 0; i < 300 && gm == null; i++) { gm = GymManager.Instance; yield return null; }
+            Assert.NotNull(gm, "체육관");
+            yield return Lab.Frames(10);
+            var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+            var feet = mat.position + mat.forward * 2.4f;
+            var log = new List<string>();
+            foreach (var (name, n) in new[] { ("이윤준", gm.Yunjun), ("김승연", gm.Guest("seungyeon")), ("손진수", gm.Guest("jinsoo_son")), ("서진수", gm.Guest("jinsoo_seo")) })
+            {
+                Assert.NotNull(n, name);
+                n.gameObject.SetActive(true);
+                n.Place(feet, mat.forward, GymNpc.Routine.Watch);
+                var h = n.Anim.GetComponent<HeadLevel>();
+                Assert.NotNull(h, name + " HeadLevel");
+                Assert.IsTrue(h.Ready, name + " 바인드 포즈에서 귀 축 못 구함");
+                n.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;     // 화면 밖이면 뼈가 안 움직여 보정 전 값도 0 이 됨(시험이 헛돎)
+                yield return Lab.Frames(30);
+                float before = 0f, after = 0f;
+                for (int i = 0; i < 300; i++) { yield return null; before = Mathf.Max(before, Mathf.Abs(h.RollBefore)); after = Mathf.Max(after, Mathf.Abs(h.RollAfter)); }
+                log.Add($"{name}: 5초 대기 머리 롤 최대 보정 전 {before:F2}° · 뒤 {after:F2}°");
+                Assert.Greater(before, 0.3f, name + " 보정 전 롤이 0 이면 시험이 헛돎");
+                Assert.LessOrEqual(after, 0.3f, name + " 대기 중 머리 롤");
+                n.Place(feet, mat.forward, GymNpc.Routine.Mitts);
+                yield return Lab.Frames(45);
+                Assert.AreEqual(0f, h.CurrentWeight, 0.001f, name + " 미트 중에는 꺼짐");
+                n.Place(feet, mat.forward, GymNpc.Routine.Watch);
+                n.gameObject.SetActive(false);
+            }
+            Debug.Log("[Q] Q52 머리 롤\n" + string.Join("\n", log));
+            w.Stop();
+            yield return Lab.Frames(5);
+        }
+
+        // ───────────────────────── Q53 체육관을 나올 때 텍스처 내리기 끊김 · 다시 들어갈 때 로딩(재기만 함 — 먹 닦기가 덮은 동안)
+        [UnityTest, Timeout(600000)]
+        public IEnumerator Q53_Gym_Exit_Unload_Timing()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            yield return Start(w, Mid(w.Def, 312, 14 * 60, SceneLoader.Zone1, m => { m.G.Fatigue = 0; }));
+            yield return Lab.Frames(20);
+            var ld = w.Loader;
+            var pos = w.Def.Balance.Point("gukbap_door").Pos + new Vector3(1.5f, 0f, -1.5f);
+            var log = new List<string>();
+            IEnumerator Timed(IEnumerator go, System.Action<float, float> got)
+            {
+                bool done = false;
+                IEnumerator Wrap() { yield return go; done = true; }
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                w.StartCoroutine(Wrap());
+                double last = 0, worst = 0;
+                while (!done) { yield return null; double t = sw.Elapsed.TotalMilliseconds; worst = System.Math.Max(worst, t - last); last = t; }
+                // 들어간 뒤 첫 30프레임(텍스처 올림 끊김)
+                for (int i = 0; i < 30; i++) { yield return null; double t = sw.Elapsed.TotalMilliseconds; worst = System.Math.Max(worst, t - last); last = t; }
+                got((float)worst, ld.LastTotal);
+            }
+            bool was = SceneLoader.UnloadGymOnExit;
+            foreach (var on in new[] { true, true, true, false, false, false })
+            {
+                SceneLoader.UnloadGymOnExit = on;
+                float inWorst = 0f, inTotal = 0f, inLoad, outWorst = 0f, outTotal = 0f;
+                yield return Timed(ld.Go(SceneLoader.Gym, "Door", false, Vector3.zero, 0f), (a, b) => { inWorst = a; inTotal = b; });
+                inLoad = ld.LastLoad;
+                yield return Lab.Frames(30);
+                yield return Timed(ld.Go(SceneLoader.Zone1, "", true, pos, 90f), (a, b) => { outWorst = a; outTotal = b; });
+                log.Add($"내리기 {(on ? "켬" : "끔")}: 들어갈 때 장면 {inLoad * 1000f:F0}ms · 전체 {inTotal * 1000f:F0}ms · 가장 긴 프레임 {inWorst:F0}ms / 나올 때 내리기 {ld.LastUnloadMs:F0}ms · 내리기 중 가장 긴 프레임 {ld.LastUnloadWorstMs:F0}ms · 전체 {outTotal * 1000f:F0}ms · 가장 긴 프레임 {outWorst:F0}ms");
+                yield return Lab.Frames(30);
+            }
+            SceneLoader.UnloadGymOnExit = was;
+            Debug.Log("[Q] Q53 체육관 나오기·다시 들어가기\n" + string.Join("\n", log));
+            w.Stop();
+            yield return Lab.Frames(5);
+        }
+
         // ───────────────────────── Q51 체육관 캐릭터 채움(2026-10-30 대표 "얼굴이 어둡고 납작"): 체육관 안 시우·코치에만, 나가면 시우 원래대로
         [UnityTest, Timeout(300000)]
         public IEnumerator Q51_Gym_Char_Fill_Only_In_Gym()
