@@ -346,6 +346,35 @@ namespace Haengin.Tests
                 Pose(cam, ctr + Vector3.up * 1.3f, ctr + back * 5.2f + Vector3.up * 2.3f, 48f);
                 yield return null;
                 Snap(gm, cam, Path.Combine(dir, "n13_2_wide.png"), true);
+                // 2026-10-30: 고개 돌림(N13 — 김승연·손진수·서진수·백승민이 이윤준을 봄) 목 주름 보기
+                foreach (var n in new[] { "김승연", "손진수", "서진수", "백승민" }) story.ApplyNow($"look:{n}:이윤준");
+                yield return Until(() => false, 1.2f);
+                {
+                    var gc2 = CutCams.Make(CamPreset.Group, me.transform, null);
+                    gc2.Snap();
+                    yield return null;
+                    gc2.Snap();
+                    cam.transform.SetPositionAndRotation(gc2.transform.position, gc2.transform.rotation);
+                    float fov2 = cam.fieldOfView; cam.fieldOfView = CutCams.Fov(CamPreset.Group);
+                    yield return null;
+                    Snap(gm, cam, Path.Combine(dir, "n13_look_group.png"), false);
+                    CutCams.Release(gc2);
+                    foreach (var (n, tag) in new[] { ("김승연", "kim"), ("손진수", "son"), ("서진수", "seo") })
+                    {
+                        var a = CutCtx.Actor(n);
+                        var an = a != null ? a.GetComponentInChildren<Animator>() : null;
+                        if (an == null) continue;
+                        var nk = an.GetBoneTransform(HumanBodyBones.Neck).position; var hd = an.GetBoneTransform(HumanBodyBones.Head).position;
+                        var at = Vector3.Lerp(nk, hd, 0.7f);
+                        var to = me.transform.position - a.position; to.y = 0f; to.Normalize();
+                        var pos = at + to * 1.5f;
+                        cam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(at - pos, Vector3.up)); cam.fieldOfView = 30f;
+                        yield return null;
+                        Snap(gm, cam, Path.Combine(dir, $"n13_look_{tag}.png"), false);
+                    }
+                    cam.fieldOfView = fov2;
+                }
+                foreach (var n in new[] { "김승연", "손진수", "서진수", "백승민" }) story.ApplyNow($"look:{n}:해제");
                 Pose(cam, ctr + Vector3.up * 1.4f, ctr + (Quaternion.Euler(0f, 35f, 0f) * back) * 4.6f + Vector3.up * 1.7f, 50f);
                 yield return null;
                 Snap(gm, cam, Path.Combine(dir, "n13_3_side.png"), true);
@@ -385,7 +414,7 @@ namespace Haengin.Tests
             var feet = mat.position + mat.forward * 2.4f;
             var dir0 = OpenDir(feet + Vector3.up * 1.2f, mat.forward);
             float fill0 = gm.Lights.CharFill;
-            var points = new List<string>(); var luma = new List<string>();
+            var points = new List<string>(); var luma = new List<string>(); var sym = new List<string>();
             var who = new (string key, string v2, GymNpc v3)[] { ("yunjun", "Npc_Yunjun_v2", gm.Yunjun), ("kim", "Npc_Seungyeon_v2", gm.Guest("seungyeon")), ("son", "Npc_JinsooSon_v2", gm.Guest("jinsoo_son")), ("seo", "Npc_JinsooSeo_v2", gm.Guest("jinsoo_seo")) };
             foreach (var (_, _, n) in who) if (n != null) n.gameObject.SetActive(false);
 
@@ -462,7 +491,49 @@ namespace Haengin.Tests
                         var v = cam.WorldToViewportPoint(aim);
                         points.Add($"{key}\t{ver}\t{view}\t{Mathf.RoundToInt(v.x * 1920f)}\t{Mathf.RoundToInt((1f - v.y) * 1080f)}");
                     }
+                    // 얼굴 대칭: 정면 1.5m, 수평 카메라, 같은 대기 프레임. 머리 뼈 기울기(화면 평면)·좌우 돌림을 함께 적음(동작 때문인지 가리기)
+                    {
+                        var hb = Bone(n, HumanBodyBones.Head);
+                        var faceAt = hb.position + Vector3.up * 0.06f;
+                        cam.transform.SetPositionAndRotation(faceAt + dir0 * 1.5f, Quaternion.LookRotation(-dir0, Vector3.up)); cam.fieldOfView = 30f;
+                        yield return null;
+                        Shots.Shot(cam, Path.Combine(dir, $"{key}_{ver}_face.png"), 1920, 1080, 2, false);
+                        var camRight = cam.transform.right;
+                        float roll = Mathf.Atan2(Vector3.Dot(hb.up, camRight), Vector3.Dot(hb.up, Vector3.up)) * Mathf.Rad2Deg;
+                        float yawH = Mathf.Atan2(Vector3.Dot(hb.forward, camRight), Vector3.Dot(hb.forward, dir0)) * Mathf.Rad2Deg;
+                        sym.Add($"{key}\t{ver}\t머리 뼈 기울기 {roll:F2}°\t좌우 {yawH:F2}°");
+                    }
                     if (ver == "v3") yield return FaceShots(key, Bone(n, HumanBodyBones.Head), dir0);
+                    // 고개 돌림: 미트 자세(대기 + MittArms)에서 좌우 40° 쪽을 봄 — 옷깃 근처 목 주름 보기
+                    n.Anim.speed = 1f;
+                    n.Place(feet, dir0, GymNpc.Routine.Mitts);
+                    yield return Lab.Frames(45);
+                    {
+                        var cl = n.Anim.GetComponent<CastLook>() ?? n.Anim.gameObject.AddComponent<CastLook>();
+                        typeof(CastLook).GetField("an", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(cl, n.Anim);
+                        var tgt = new GameObject("고개 돌림 대상").transform;
+                        foreach (var (side, deg) in new[] { ("turnL", -40f), ("turnR", 40f) })
+                        {
+                            tgt.position = feet + (Quaternion.Euler(0f, deg, 0f) * dir0) * 2.5f;
+                            cl.Look(tgt);
+                            yield return Lab.Frames(90);
+                            n.Anim.speed = 0f;
+                            yield return null;
+                            var nk = Bone(n, HumanBodyBones.Neck).position; var hd = Bone(n, HumanBodyBones.Head).position;
+                            var at = Vector3.Lerp(nk, hd, 0.7f);
+                            var pos = at + dir0 * 1.5f;
+                            cam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(at - pos, Vector3.up)); cam.fieldOfView = 30f;
+                            yield return null;
+                            Shots.Shot(cam, Path.Combine(dir, $"{key}_{ver}_{side}.png"), 1920, 1080, 2, false);
+                            var v = cam.WorldToViewportPoint(at);
+                            points.Add($"{key}\t{ver}\t{side}\t{Mathf.RoundToInt(v.x * 1920f)}\t{Mathf.RoundToInt((1f - v.y) * 1080f)}");
+                            n.Anim.speed = 1f;
+                        }
+                        cl.Look(null);
+                        Object.Destroy(tgt.gameObject);
+                        yield return Lab.Frames(30);
+                    }
+                    n.Place(feet, dir0, GymNpc.Routine.Watch);
                     n.Anim.speed = 1f;
                     n.gameObject.SetActive(false);
                 }
@@ -480,6 +551,7 @@ namespace Haengin.Tests
             brain.enabled = true;
             File.WriteAllText(Path.Combine(dir, "neck_points.txt"), string.Join("\n", points), new UTF8Encoding(false));
             File.WriteAllText(Path.Combine(dir, "face_luma.txt"), string.Join("\n", luma), new UTF8Encoding(false));
+            File.WriteAllText(Path.Combine(dir, "face_sym.txt"), string.Join("\n", sym), new UTF8Encoding(false));
             Debug.Log("[Coach] 목 검수 → " + dir + "\n" + string.Join("\n", luma));
         }
 

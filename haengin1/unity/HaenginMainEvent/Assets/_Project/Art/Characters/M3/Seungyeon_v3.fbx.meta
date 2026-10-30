@@ -431,6 +431,11 @@ ModelImporter:
       position: {x: 0.00020913256, y: 25.016644, z: 0.00005122548}
       rotation: {x: 0.014364298, y: 0.04405508, z: 0.0075893947, w: 0.998897}
       scale: {x: 1, y: 0.9999998, z: 1.0000002}
+    - name: neutral_bone
+      parentName: 
+      position: {x: 0, y: -0, z: 0}
+      rotation: {x: 3.54383e-15, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
     - name: char1
       parentName: 
       position: {x: 0, y: 0, z: 0}

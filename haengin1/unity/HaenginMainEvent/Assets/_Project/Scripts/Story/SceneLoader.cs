@@ -95,11 +95,14 @@ namespace Haengin
             if (place != Place)
             {
                 // 지금 무대를 내린다
+                bool leftGym = Place == Gym;
                 if (stageScene.IsValid() && stageScene.isLoaded)
                 {
                     var op = SceneManager.UnloadSceneAsync(stageScene);
                     while (op != null && !op.isDone) yield return null;
                 }
+                // 2026-10-30 체육관을 나오면 코치 텍스처(6144×4096 여러 장)를 메모리에서 내림 — 안 그러면 국밥집 등 다음 장소까지 상주(W16). 먹 닦기가 덮은 동안
+                if (leftGym) { var un = Resources.UnloadUnusedAssets(); while (un != null && !un.isDone) yield return null; }
                 stageScene = default;
                 Stage = null;
                 if (place == Zone1)
@@ -208,11 +211,13 @@ namespace Haengin
         /// 이야기를 끝내거나 테스트를 정리할 때: 무대를 내리고 Zone1 루트를 켠다(먹 닦기 없이)
         public IEnumerator Reset()
         {
+            bool leftGym = Place == Gym;
             if (stageScene.IsValid() && stageScene.isLoaded)
             {
                 var op = SceneManager.UnloadSceneAsync(stageScene);
                 while (op != null && !op.isDone) yield return null;
             }
+            if (leftGym) { var un = Resources.UnloadUnusedAssets(); while (un != null && !un.isDone) yield return null; }
             stageScene = default;
             Stage = null;
             Place = Zone1;
