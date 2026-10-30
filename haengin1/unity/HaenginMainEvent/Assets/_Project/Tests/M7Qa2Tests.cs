@@ -538,6 +538,36 @@ namespace Haengin.Tests
             Assert.IsEmpty(bad, string.Join(" | ", bad));
         }
 
+        // ───────────────────────── Q51 체육관 캐릭터 채움(2026-10-30 대표 "얼굴이 어둡고 납작"): 체육관 안 시우·코치에만, 나가면 시우 원래대로
+        [UnityTest, Timeout(300000)]
+        public IEnumerator Q51_Gym_Char_Fill_Only_In_Gym()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            yield return Start(w, Mid(w.Def, 312, 14 * 60, SceneLoader.Gym, m => { m.G.Fatigue = 0; }));
+            GymManager gm = null;
+            for (int i = 0; i < 300 && gm == null; i++) { gm = GymManager.Instance; yield return null; }
+            Assert.NotNull(gm, "체육관");
+            yield return Lab.Frames(10);
+            var mpb = new MaterialPropertyBlock();
+            var id = Shader.PropertyToID("_Unlit_Intensity");
+            var me = M3Lab.Motor.GetComponentsInChildren<SkinnedMeshRenderer>(true).Where(r => r.sharedMaterial != null && r.sharedMaterial.HasProperty(id)).ToList();
+            Assert.IsNotEmpty(me, "시우 몸");
+            var coach = gm.Guest("seungyeon").GetComponentsInChildren<SkinnedMeshRenderer>(true).ToList();
+            Assert.IsNotEmpty(coach, "코치 몸");
+            foreach (var r in me.Concat(coach)) { r.GetPropertyBlock(mpb); Assert.AreEqual(gm.Lights.CharFill, mpb.GetFloat(id), 0.001f, r.name + " 채움"); }
+            yield return w.Loader.Go(SceneLoader.Zone1, "", true, w.Def.Balance.Point("gukbap_door").Pos + new Vector3(1.5f, 0f, -1.5f), 90f);
+            yield return Lab.Frames(10);
+            foreach (var r in me)
+            {
+                if (r == null) continue;
+                r.GetPropertyBlock(mpb);
+                if (!mpb.isEmpty) Assert.AreEqual(r.sharedMaterial.GetFloat(id), mpb.GetFloat(id), 0.001f, r.name + " 밖에서 원래대로");
+            }
+            w.Stop();
+            yield return Lab.Frames(5);
+        }
+
         // ───────────────────────── Q50 출장 코치 셋 고유 장면(2026-10-29 대표 "김승연 손진수 서진수도 넣어야지"): 1장 N14 김승연 「열에 셋」 · N15 손진수 「웃으면서」 · N16 서진수 「이름값」
         //   (2·3장 C2-K1·C2-S1·C3-J1 은 데이터·대사만 — 데모 밖) · 그 코치가 화면에 서고 · 대사 장면 · 컷 가림 0 · 2·3장 카드와 대사가 있는지
         [UnityTest, Timeout(1200000)]

@@ -360,6 +360,129 @@ namespace Haengin.Tests
             Debug.Log("[Coach] 코치 게임 화면 → " + dir + "\n" + string.Join("\n", log));
         }
 
+        // ───────────────────────── 목 검수(2026-10-30 대표 "목이 찢어졌다 꿰맨 것 같다") — -neckcheck <폴더>
+        //   코치 넷 v2·v3 + 체육관 낮, 같은 대기 프레임·같은 카메라: 정면 1.5m · 3/4 1.5m · 옆 1.5m · 정면 2.6m → {key}_{ver}_{view}.png, neck_points.txt(턱~옷깃 가운데 화면 좌표)
+        //   얼굴 밝기: 캐릭터 채움(GymLights.CharFill) 끔/켬 정면 사진 + face_luma.txt(시우 포함, 얼굴 눈~코 띠 sRGB 휘도 평균)
+        [UnityTest, Timeout(1800000)]
+        public IEnumerator Z_Coach_NeckCheck()
+        {
+            string dir = Shots.Arg("-neckcheck");
+            if (string.IsNullOrEmpty(dir)) { Assert.Ignore("-neckcheck <폴더> 없음"); yield break; }
+            if (!Shots.Graphics) { Assert.Ignore("그래픽 장치 없음(-nographics)"); yield break; }
+            Directory.CreateDirectory(dir);
+            WorldRunner w = null;
+            yield return M7Qa2Tests.Open(x => w = x);
+            GymManager gm = null;
+            yield return Enter(w, 312, 14 * 60, x => gm = x);
+            gm.ApplyPart(GymPart.Day);
+            foreach (var m in gm.Members) if (m != null) m.gameObject.SetActive(false);
+            if (gm.Gojun != null) gm.Gojun.gameObject.SetActive(false);
+            var cam = Camera.main; var brain = cam.GetComponent<CinemachineBrain>(); var me = M3Lab.Motor;
+            var meR = me.GetComponentsInChildren<Renderer>(true).Where(r => r.enabled).ToList();
+            foreach (var r in meR) r.enabled = false;
+            brain.enabled = false;
+            var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+            var feet = mat.position + mat.forward * 2.4f;
+            var dir0 = OpenDir(feet + Vector3.up * 1.2f, mat.forward);
+            float fill0 = gm.Lights.CharFill;
+            var points = new List<string>(); var luma = new List<string>();
+            var who = new (string key, string v2, GymNpc v3)[] { ("yunjun", "Npc_Yunjun_v2", gm.Yunjun), ("kim", "Npc_Seungyeon_v2", gm.Guest("seungyeon")), ("son", "Npc_JinsooSon_v2", gm.Guest("jinsoo_son")), ("seo", "Npc_JinsooSeo_v2", gm.Guest("jinsoo_seo")) };
+            foreach (var (_, _, n) in who) if (n != null) n.gameObject.SetActive(false);
+
+            IEnumerator Stand(GymNpc n)
+            {
+                n.gameObject.SetActive(true);
+                n.Place(feet, dir0, GymNpc.Routine.Watch);
+                var fb = n.GetComponent<FighterBody>();
+                if (fb != null) fb.Place(feet, Mathf.Atan2(dir0.x, dir0.z) * Mathf.Rad2Deg);
+                Physics.SyncTransforms();
+                yield return Lab.Frames(5);
+                n.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                n.Anim.speed = 0f; n.Anim.Play("Idle", 0, 0.3f); n.Anim.Update(0f); n.Anim.Update(0f);
+                yield return null;
+            }
+            float Luma(Texture2D t, Vector3 faceWorld, float halfW, float halfH)
+            {
+                var c = cam.WorldToViewportPoint(faceWorld);
+                var dx = cam.WorldToViewportPoint(faceWorld + cam.transform.right * halfW).x - c.x;
+                var dy = cam.WorldToViewportPoint(faceWorld + cam.transform.up * halfH).y - c.y;
+                int x0 = Mathf.RoundToInt((c.x - dx) * t.width), x1 = Mathf.RoundToInt((c.x + dx) * t.width), y0 = Mathf.RoundToInt((c.y - dy) * t.height), y1 = Mathf.RoundToInt((c.y + dy) * t.height);
+                double sum = 0; int cnt = 0;
+                for (int y = y0; y < y1; y++) for (int x = x0; x < x1; x++) { var p = t.GetPixel(x, y); sum += (0.299f * p.r + 0.587f * p.g + 0.114f * p.b) * 255f; cnt++; }
+                return cnt > 0 ? (float)(sum / cnt) : 0f;
+            }
+            IEnumerator FaceShots(string key, Transform head, Vector3 faceDir)
+            {
+                var face = head.position + Vector3.up * 0.085f + faceDir * 0.09f;
+                var at = head.position + Vector3.up * 0.06f;
+                cam.transform.SetPositionAndRotation(at + faceDir * 1.5f, Quaternion.LookRotation(-faceDir, Vector3.up)); cam.fieldOfView = 30f;
+                float[] vals = new float[2], cheek = new float[2];
+                for (int k = 0; k < 2; k++)
+                {
+                    gm.Lights.CharFill = k == 0 ? 0f : fill0; gm.Lights.PushCharFill();
+                    yield return null; yield return null;
+                    var t = Shots.Grab(cam, 1920, 1080, 2, false);
+                    vals[k] = Luma(t, face, 0.05f, 0.04f);
+                    cheek[k] = Luma(t, head.position + Vector3.up * 0.035f + faceDir * 0.09f, 0.035f, 0.015f);
+                    File.WriteAllBytes(Path.Combine(dir, $"{key}_fill{k}.png"), t.EncodeToPNG());
+                    Object.Destroy(t);
+                }
+                luma.Add($"{key}\t전 {vals[0]:F1}\t후 {vals[1]:F1}\t코 아래 전 {cheek[0]:F1}\t코 아래 후 {cheek[1]:F1}");
+            }
+
+            foreach (var (key, v2Name, v3) in who)
+            {
+                Assert.NotNull(v3, key);
+                GymNpc v2 = null;
+#if UNITY_EDITOR
+                var pf = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/_Project/Prefabs/Gym/{v2Name}.prefab");
+                Assert.NotNull(pf, v2Name);
+                v2 = Object.Instantiate(pf, v3.transform.parent).GetComponent<GymNpc>();
+                gm.Lights.PushCharFill();
+#endif
+                v2.gameObject.SetActive(false);
+                foreach (var (ver, n) in new[] { ("v2", v2), ("v3", v3) })
+                {
+                    yield return Stand(n);
+                    var neck = Bone(n, HumanBodyBones.Neck).position; var head = Bone(n, HumanBodyBones.Head).position;
+                    var aim = Vector3.Lerp(neck, head, 0.7f);
+                    var chest = neck - Vector3.up * 0.28f;
+                    var shots = new (string view, Vector3 target, Vector3 pos)[]
+                    {
+                        ("front", aim, aim + dir0 * 1.5f),
+                        ("q34", aim, aim + (Quaternion.Euler(0f, 45f, 0f) * dir0) * 1.5f),
+                        ("side", aim, aim + (Quaternion.Euler(0f, 90f, 0f) * dir0) * 1.5f),
+                        ("waist", chest, chest + dir0 * 2.6f),
+                    };
+                    foreach (var (view, target, pos) in shots)
+                    {
+                        cam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(target - pos, Vector3.up)); cam.fieldOfView = 30f;
+                        yield return null;
+                        Shots.Shot(cam, Path.Combine(dir, $"{key}_{ver}_{view}.png"), 1920, 1080, 2, false);
+                        var v = cam.WorldToViewportPoint(aim);
+                        points.Add($"{key}\t{ver}\t{view}\t{Mathf.RoundToInt(v.x * 1920f)}\t{Mathf.RoundToInt((1f - v.y) * 1080f)}");
+                    }
+                    if (ver == "v3") yield return FaceShots(key, Bone(n, HumanBodyBones.Head), dir0);
+                    n.Anim.speed = 1f;
+                    n.gameObject.SetActive(false);
+                }
+                Object.Destroy(v2.gameObject);
+            }
+            // 시우: 같은 자리·같은 조명
+            foreach (var r in meR) r.enabled = true;
+            me.Teleport(feet, Mathf.Atan2(dir0.x, dir0.z) * Mathf.Rad2Deg);
+            yield return Lab.Frames(30);
+            var an = me.GetComponentInChildren<Animator>();
+            var sh = an != null && an.isHuman ? an.GetBoneTransform(HumanBodyBones.Head) : null;
+            Assert.NotNull(sh, "시우 머리 뼈");
+            yield return FaceShots("siwoo", sh, dir0);
+            gm.Lights.CharFill = fill0; gm.Lights.PushCharFill();
+            brain.enabled = true;
+            File.WriteAllText(Path.Combine(dir, "neck_points.txt"), string.Join("\n", points), new UTF8Encoding(false));
+            File.WriteAllText(Path.Combine(dir, "face_luma.txt"), string.Join("\n", luma), new UTF8Encoding(false));
+            Debug.Log("[Coach] 목 검수 → " + dir + "\n" + string.Join("\n", luma));
+        }
+
         // ───────────────────────── 김승연 v2·v3 목(2026-10-30 대표 "목이 꺾여 있다") — -neckout <폴더>
         //   같은 상태·같은 정규화 시각에서 두 아바타의 Neck·Head·가슴 뼈 회전(몸 기준)을 로그로 비교 + 새 미트 자세(대기 + MittArms) 나란히 사진(neck_v2_v3.png)
         [UnityTest, Timeout(1200000)]

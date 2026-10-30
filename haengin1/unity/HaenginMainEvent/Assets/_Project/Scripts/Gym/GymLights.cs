@@ -25,6 +25,15 @@ namespace Haengin
         [Tooltip("채움빛 색 = 따뜻한 회갈(그늘이 검정이 아니라 회갈로 읽히게)")] public Color NightFillColor = new Color(0.86f, 0.78f, 0.70f);
         public float NightFillIntensity = 2.4f, NightFillRange = 2.6f;
         Light fill; Transform fillPlayer;
+        [Header("2026-10-30 캐릭터 채움(대표 — 얼굴이 어둡고 납작) · 체육관 색감은 그대로, 캐릭터만")]
+        [Tooltip("UTS _Unlit_Intensity: 해가 꺼진 체육관에서 캐릭터 = 텍스처 × (주변광 × 이 값 + 형광등). 재질 값 0 이면 머리 위 형광등만 받아 앞면이 어두움. 텍스처 색을 곱하므로 회색으로 뜨지 않음(_GI_Intensity 와 다름)")]
+        public float CharFill = 0.7f;
+        readonly HashSet<Renderer> charFilled = new HashSet<Renderer>();
+        MaterialPropertyBlock charMpb;
+        float charScan;
+        [Tooltip("캐릭터 그늘 방향(UTS 내장 빛 방향, 몸 기준): 앞 위 왼쪽 — 해 방향을 따르면 그늘 경계가 코 한가운데로 지나감(얼굴이 세로로 갈림)")]
+        public Vector2 CharLightXY = new Vector2(-0.05f, 0.09f);
+        static readonly int IdUnlit = Shader.PropertyToID("_Unlit_Intensity"), IdBld = Shader.PropertyToID("_Is_BLD"), IdBldX = Shader.PropertyToID("_Offset_X_Axis_BLD"), IdBldY = Shader.PropertyToID("_Offset_Y_Axis_BLD"), IdBldZ = Shader.PropertyToID("_Inverse_Z_Axis_BLD");
         /// 시험: 밤 채움빛(밤에만 켜짐)
         public Light Fill => fill;
         [Tooltip("실내 볼륨 채도(Zone1 필름 볼륨 위에 덮음)")] public float Saturation = -38f, Contrast = -4f;
@@ -120,6 +129,7 @@ namespace Haengin
             EnsureFill();
             fill.enabled = p == GymPart.Night;
             fill.color = NightFillColor; fill.intensity = NightFillIntensity; fill.range = NightFillRange;
+            PushCharFill();
             Debug.Log($"[Gym] 조명 {Name(p)}: 형광등 {LitCount - (spots ? CageSpots.Count : 0)}/{Fluors.Count} · 케이지 스포트 {(spots ? CageSpots.Count : 0)} · 사무실 {(Office != null && Office.enabled)}");
         }
 
@@ -146,13 +156,64 @@ namespace Haengin
             fill.transform.position = chest + dir.normalized * 0.9f + Vector3.up * 0.35f;
         }
 
-        void LateUpdate() { if (sun != null && sun.intensity > 0f) sun.intensity = 0f; if (RenderSettings.fog) RenderSettings.fog = false; if (counted) PushLook(); PlaceFill(); }
+        void LateUpdate()
+        {
+            if (sun != null && sun.intensity > 0f) sun.intensity = 0f;
+            if (RenderSettings.fog) RenderSettings.fog = false;
+            if (counted) PushLook();
+            PlaceFill();
+            if (counted && Time.unscaledTime >= charScan) { charScan = Time.unscaledTime + 1f; PushCharFill(); }   // 새로 생긴 몸(스파링 고준 등)·맞을 때 지워진 블록 다시
+        }
+
+        /// 캐릭터 채움: 체육관 장면의 몸 + 시우 + 전투 몸(꺼진 것 포함 — 켜질 때 번쩍이지 않게)
+        public void PushCharFill()
+        {
+            charMpb ??= new MaterialPropertyBlock();
+            if (fillPlayer == null) { var m = FindAnyObjectByType<PlayerMotor>(); if (m != null) fillPlayer = m.transform; }
+            foreach (var r in FindObjectsByType<SkinnedMeshRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                var mat = r.sharedMaterial;
+                if (mat == null || !mat.HasProperty(IdUnlit)) continue;
+                if (r.gameObject.scene != gameObject.scene && (fillPlayer == null || !r.transform.IsChildOf(fillPlayer)) && r.GetComponentInParent<Fighter>(true) == null) continue;
+                r.GetPropertyBlock(charMpb);
+                charMpb.SetFloat(IdUnlit, CharFill);
+                bool on = CharFill > 0f;
+                charMpb.SetFloat(IdBld, on ? 1f : mat.GetFloat(IdBld));
+                charMpb.SetFloat(IdBldX, on ? CharLightXY.x : mat.GetFloat(IdBldX));
+                charMpb.SetFloat(IdBldY, on ? CharLightXY.y : mat.GetFloat(IdBldY));
+                charMpb.SetFloat(IdBldZ, on ? 0f : mat.GetFloat(IdBldZ));
+                r.SetPropertyBlock(charMpb);
+                charFilled.Add(r);
+            }
+        }
+
+        /// 체육관을 나갈 때: 시우·전투 몸을 원래대로(표정 칸을 쓰는 얼굴은 블록을 지우면 안 됨)
+        void ClearCharFill()
+        {
+            if (charMpb == null) return;
+            foreach (var r in charFilled)
+            {
+                if (r == null) continue;
+                var mat = r.sharedMaterial;
+                var rig = r.GetComponentInParent<FaceRig>(true);
+                if (rig != null && mat != null)
+                {
+                    r.GetPropertyBlock(charMpb);
+                    charMpb.SetFloat(IdUnlit, mat.GetFloat(IdUnlit)); charMpb.SetFloat(IdBld, mat.GetFloat(IdBld));
+                    charMpb.SetFloat(IdBldX, mat.GetFloat(IdBldX)); charMpb.SetFloat(IdBldY, mat.GetFloat(IdBldY)); charMpb.SetFloat(IdBldZ, mat.GetFloat(IdBldZ));
+                    r.SetPropertyBlock(charMpb);
+                }
+                else r.SetPropertyBlock(null);
+            }
+            charFilled.Clear();
+        }
 
         void OnDestroy()
         {
             if (counted) { DayLight.IndoorDepth = Mathf.Max(0, DayLight.IndoorDepth - 1); counted = false; }
             if (sun != null && sunWas >= 0f) sun.intensity = sunWas;
             if (fogSaved) RenderSettings.fog = fogWas;
+            ClearCharFill();
         }
 
         void Update()
