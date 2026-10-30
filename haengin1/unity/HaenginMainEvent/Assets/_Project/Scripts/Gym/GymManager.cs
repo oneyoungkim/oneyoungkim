@@ -23,6 +23,9 @@ namespace Haengin
         public GymNpc Yunjun, Gojun;
         /// 출장 레슨 코치(김승연·손진수·서진수 — 오픈월드 레슨 때만 켬, docs/13 14-6)
         public List<GymNpc> Guests = new List<GymNpc>();
+        /// 미트 소품(한 짝씩 — GymSetup 이 P_focus_mitts_pair 메시를 나눔)
+        public Mesh MittMeshL, MittMeshR;
+        public Material MittMat;
         /// 레슨 중인 코치 이름(드릴 큐의 '이윤준' 자리를 그 코치로 — 빈칸 = 그대로)
         [NonSerialized] public string CoachName = "";
         public GymNpc Guest(string id) => Guests.Find(g => g != null && g.Id == id);
@@ -161,6 +164,34 @@ namespace Haengin
 
         GymNpc Member(int i) => i < Members.Count ? Members[i] : null;
 
+        /// 드릴 미트를 잡는 사람을 바꿈(레슨 코치): 이윤준 자리에 세우고 이윤준은 물러남
+        public void SetMittHolder(GymNpc holder)
+        {
+            if (holder == null || Yunjun == null || Actors == null) return;
+            if (holder != Yunjun)
+            {
+                var y = Yunjun.transform;
+                holder.gameObject.SetActive(true);
+                holder.Place(y.position, y.forward, GymNpc.Routine.Mitts);
+                Yunjun.gameObject.SetActive(false);
+            }
+            Actors.MittNpc = holder;
+        }
+
+        // 바닥에 놓인 미트 소품: 코치가 미트를 낀 동안은 치움(한 켤레가 둘로 보이지 않게)
+        readonly List<GameObject> floorMitts = new List<GameObject>(); bool floorMittsLooked;
+        void FloorMitts(bool on)
+        {
+            if (!floorMittsLooked)
+            {
+                floorMittsLooked = true;
+                foreach (var root in gameObject.scene.GetRootGameObjects())
+                    foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                        if (t.name == "Prop_focus_mitts_pair_01") floorMitts.Add(t.gameObject);      // 무대·콜라이더·표시 — 같은 이름 여럿
+            }
+            foreach (var g in floorMitts) if (g != null) g.SetActive(on);
+        }
+
         void Put(GymNpc n, string socket, GymNpc.Routine r)
         {
             if (n == null) return;
@@ -202,7 +233,7 @@ namespace Haengin
                 Actors.Motor.Teleport(s.position, HitResolver.Yaw(s.forward));
             }
             foreach (var n in Members) if (n != null && n.gameObject.activeSelf && s != null && (n.transform.position - s.position).sqrMagnitude < 1.5f) n.gameObject.SetActive(false);
-            if (def.Id == "D04") { var mt = Sock("Sock_NPC_Coach_MatEdge"); if (Yunjun != null && mt != null) { Yunjun.gameObject.SetActive(true); Yunjun.Place(s.position + s.forward * 1.05f, -s.forward, GymNpc.Routine.Mitts); } }
+            if (def.Id == "D04") { FloorMitts(false); var mt = Sock("Sock_NPC_Coach_MatEdge"); if (Yunjun != null && mt != null) { Yunjun.gameObject.SetActive(true); Yunjun.Place(s.position + s.forward * 1.05f, -s.forward, GymNpc.Routine.Mitts); } }
             if (def.Id == "D07" || def.Id == "D10") { if (Gojun != null && s != null) { Gojun.gameObject.SetActive(true); Gojun.Place(s.position + s.forward * (def.Id == "D07" ? 2.2f : 1.0f), -s.forward, GymNpc.Routine.Watch); } }
             if (def.Id == "D11") { var cd = Sock("Sock_NPC_Coach_CageDoor"); if (Yunjun != null && cd != null) { Yunjun.gameObject.SetActive(true); Yunjun.Place(cd.position, cd.forward, GymNpc.Routine.Watch); } }
             Runner.Bot = bot;
@@ -279,6 +310,7 @@ namespace Haengin
             if (Mirror != null) Mirror.Set(false);
             Current = null;
             if (!simRunning) ApplyPart(Part);        // NPC 자리 복구
+            FloorMitts(true);
         }
 
         void Update()

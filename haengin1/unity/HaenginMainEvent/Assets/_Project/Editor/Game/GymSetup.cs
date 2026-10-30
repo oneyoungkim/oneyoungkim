@@ -325,7 +325,7 @@ namespace Haengin.EditorGame
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(NpcFbx(n)) == null) { Notes.Add($"NPC 모델 없음: {NpcFbx(n)}"); continue; }
                 // 2026-10-29: 코치 텍스처는 원본 4096 — 2048 로 줄여 얼굴이 약 240px 이던 것 → 4096(BC7)
                 HiTex(NpcTex(n), true, 4096);
-                CharSetup.Human(NpcFbx(n), "Idle", -1, -1, false, null);
+                CharSetup.Human(NpcFbx(n), "Idle", -1, -1, true, null);     // 2026-10-31 손 셰이프 키(Grip_L/R — 살짝 쥔 손)
                 CharSetup.Ground(NpcFbx(n), "Idle", NpcFbx(n));
                 CharSetup.Toon(CharSetup.Load<GameObject>(NpcFbx(n)), NpcMat(n), NpcTex(n));
                 // 그늘 지도·외곽선 굵기 지도가 있으면(이윤준 v2) 정식 모델 몸 재질과 같게(CharSetup.FormalToon)
@@ -408,6 +408,7 @@ namespace Haengin.EditorGame
                 var go = NpcInstance(model, NpcMat(n), oc, CharSetup.AvatarOf(NpcFbx(n)));
                 go.name = "Npc_" + n;
                 var npc = go.AddComponent<GymNpc>(); npc.Id = NpcNames[n].id; npc.DisplayName = NpcNames[n].name; npc.Anim = go.GetComponentInChildren<Animator>();
+                var hsN = npc.Anim.gameObject.GetComponent<HandShape>() ?? npc.Anim.gameObject.AddComponent<HandShape>(); hsN.Relax = StandSetup.HandRelax;
                 PrefabUtility.SaveAsPrefabAsset(go, NpcPrefab(n)); Object.DestroyImmediate(go);
             }
             // 관원 8: 적 모델 4 × 옷 색 2(체육관 옷 = 티셔츠 색 tint)
@@ -426,6 +427,7 @@ namespace Haengin.EditorGame
                 foreach (var rr in go.GetComponentsInChildren<Renderer>(true)) rr.shadowCastingMode = ShadowCastingMode.Off;   // 관원 8 은 그림자 없음(실내 삼각형 예산)
                 go.name = $"Npc_Member_{i + 1:00}";
                 var npc = go.AddComponent<GymNpc>(); npc.Id = $"member{i + 1}"; npc.DisplayName = "관원"; npc.Anim = go.GetComponentInChildren<Animator>();
+                var hsM = npc.Anim.gameObject.GetComponent<HandShape>() ?? npc.Anim.gameObject.AddComponent<HandShape>(); hsM.Relax = StandSetup.HandRelax;
                 PrefabUtility.SaveAsPrefabAsset(go, MemberPrefab(i)); Object.DestroyImmediate(go);
             }
             // 고준 전투 몸(D11): 적 프리팹 규칙(FighterAnim + HandShape, Enemy.controller Override)

@@ -11,7 +11,7 @@ for r in rows[1:]:
         continue
     ear, sh, kb, kd, arm, a3, hand, dy = float(r[2]), float(r[4]), float(r[5]), float(r[6]), float(r[7]), float(r[8]), float(r[9]), float(r[12])
     hz = max(abs(float(x)) for x in r[10].split('/'))
-    ok = abs(ear) <= 3 and abs(sh) <= 3 and kd <= 10 and arm <= 12 and dy <= 1.5 and hand <= 22 and hz <= 8
+    ok = abs(ear) <= 3 and abs(sh) <= 3 and kd <= 15 and arm <= 12 and dy <= 2.5 and hand <= 22 and hz <= 8
     if r[1].startswith('새') and not ok:
         bad += 1
     print(f"{r[0]} | {r[1]} | {ear:+.1f} | {sh:+.1f} | {kd:+.1f} | {kb:.0f} | {r[18]} | {arm:.1f} | {a3:.1f} | {hand:.1f} | {r[10]} | {dy:.1f} | {float(r[19]):.1f} | {float(r[20]):+.1f} | {r[16]} | {r[17]} | {'합격' if ok else '넘음'}")

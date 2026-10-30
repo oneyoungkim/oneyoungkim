@@ -120,8 +120,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 92eb295961f62fd4db28c2b9eb2522fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8908510861319075555}
   m_SourcePrefab: {fileID: 100100000, guid: 92eb295961f62fd4db28c2b9eb2522fc, type: 3}
+--- !u!1 &2758511321806668158 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 92eb295961f62fd4db28c2b9eb2522fc, type: 3}
+  m_PrefabInstance: {fileID: 3065080799685721135}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8908510861319075555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2758511321806668158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba6828c194e8a2a41864b5eccffd2859, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HandShape
+  Me: {fileID: 0}
+  Player: {fileID: 0}
+  Brain: {fileID: 0}
+  Blend: 0.08
+  ForceFist: -1
+  Relax: 38
 --- !u!4 &3243686579262086084 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 92eb295961f62fd4db28c2b9eb2522fc, type: 3}

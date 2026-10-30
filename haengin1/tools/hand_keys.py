@@ -35,6 +35,7 @@ RAMP = 0.015                   # 밑 마디: 손가락 시작에서 이만큼 �
 #   thumb_side 'reach': 엄지 쪽 = 손 넓이 방향으로 가장 멀리 뻗은 쪽, palm 'anatomy': 손바닥 쪽 = 왼손·오른손과 엄지 쪽에서 정함
 #   thumb_cut 'line': 엄지 경계 = 비스듬한 선(edge_u: 검지 가장자리를 재는 높이 비율, web_du: 선이 지나는 높이 = u_k + web_du)
 #   thumb_across(°): 엄지 마디 굽힘을 손바닥 쪽에서 새끼 쪽으로 기울임, tip_mode 'finger': 손가락별 손끝, fan(1/m): 손가락 모으기 세기
+#   thumb_adduct(°): 벌어진 엄지를 손바닥 면 안에서 손끝 쪽으로 모음(코치 — 살짝 쥔 손에서 엄지가 옆으로 뻗지 않게)
 #   thumb_deg_min(°): 엄지 경계선 최소 각도, thumb_wmin(m): 검지 가장자리 + 이 값보다 안쪽은 엄지 아님, thumb_u0: 엄지 묶음 시작 높이(× L, 기본 0.22)
 _BIG_HAND = dict(thumb_side='reach', palm='anatomy', thumb_cut='line', tip_mode='finger', fan=3.0,
                  fist=(85.0, 100.0, 80.0), grip=(55.0, 60.0, 40.0),
@@ -46,11 +47,14 @@ _BIG_HAND = dict(thumb_side='reach', palm='anatomy', thumb_cut='line', tip_mode=
 _SLIM_HAND = dict(thumb_side='reach', palm='anatomy', thumb_cut='line', tip_mode='finger',
                   thumb_deg_min=40.0, thumb_wmin=0.0,
                   thumb_fist=(45.0, 10.0, 35.0, 30.0), thumb_grip=(30.0, 5.0, 25.0, 20.0), thumb_across=80.0)
+_COACH_HAND = dict(_BIG_HAND, fan=6.0, thumb_fist=(0.0, 10.0, 35.0, 30.0), thumb_grip=(0.0, 10.0, 30.0, 25.0), thumb_across=0.0, thumb_adduct=45.0)
 PROFILES = {
     'naengjanggo': dict(_BIG_HAND),      # 냉장고 1.84m — 큰 손, 엄지 38° 벌어짐, 새끼 짧고 바깥으로 기욺
     'scrum': dict(_BIG_HAND),            # 스크럼 1.88m — 손가락 사이가 1~2cm 벌어진 손
     'kkanjok': dict(_SLIM_HAND, thumb_u0=0.35),   # 깐족이 1.72m — 엄지가 손바닥 가운데에서 시작
     'seokdal': dict(_SLIM_HAND, thumb_u0=0.30),   # 석 달 1.77m — 손 테이프, 엄지가 길게 벌어짐
+    # 2026-10-31 코치 여섯(살짝 쥔 손 Grip 40~45% — 손가락이 벌어진 넓은 손): 큰 손과 같은 판정·손가락 모으기. 엄지 돌리기는 뺌(0 — 이 손들에서 엄지가 바깥으로 튀어나옴)
+    'yunjun': dict(_COACH_HAND), 'seungyeon': dict(_COACH_HAND), 'jinsoo_son': dict(_COACH_HAND), 'jinsoo_seo': dict(_COACH_HAND), 'seungmin': dict(_COACH_HAND), 'gojun': dict(_COACH_HAND),
 }
 
 
@@ -389,6 +393,11 @@ def bend(co, label, frame, angles, thumb_angles, palm_sign, prof=None):
         g0 = _smooth(s0 / ramp)
         Q1 = Q0 + (((Q0 - base) @ Ra.T + base) - Q0) * g0[:, None]
         d1 = d @ Ra.T
+        if P_.get('thumb_adduct'):
+            adx = np.cross(d1, a); adx /= np.linalg.norm(adx)
+            Rb = _rot(adx, math.radians(P_['thumb_adduct']))
+            Q1 = Q1 + (((Q1 - base) @ Rb.T + base) - Q1) * g0[:, None]
+            d1 = d1 @ Rb.T
         if 'thumb_across' in P_:
             # 엄지 마디 굽힘 방향: 손바닥 쪽(p)에서 새끼 쪽(−t)으로 thumb_across 만큼 기울임 — 손바닥 앞으로 돌린 엄지가 검지·중지를 가로질러 감김
             k_ = math.radians(P_['thumb_across'])

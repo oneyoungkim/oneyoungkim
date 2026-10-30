@@ -167,11 +167,7 @@ namespace Haengin
             var holder = c.Id == "gojun" ? gm.Gojun : c.Id == "yunjun" ? null : gm.Guest(c.Id);
             if (holder != null && gm.Current != null && gm.Current.Id == "D04" && gm.Yunjun != null && gm.Yunjun.gameObject.activeSelf)
             {
-                var y = gm.Yunjun.transform;
-                holder.gameObject.SetActive(true);
-                holder.Place(y.position, y.forward, GymNpc.Routine.Mitts);
-                gm.Yunjun.gameObject.SetActive(false);
-                if (gm.Actors != null) gm.Actors.MittNpc = holder;
+                gm.SetMittHolder(holder);
             }
             yield return new WaitForSeconds(2.5f);
             while (true)

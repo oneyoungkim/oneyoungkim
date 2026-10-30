@@ -39,15 +39,37 @@ namespace Haengin
             if (Current != "Idle") Play("Idle", 0.1f);
             var m = Anim.GetComponent<MittArms>() ?? Anim.gameObject.AddComponent<MittArms>();
             m.On = true; m.Up = up;
+            var hs = Anim.GetComponent<HandShape>();
+            if (hs != null) { if (restRelax < 0f) restRelax = hs.Relax; hs.Relax = 80f; }     // 미트 안의 손은 쥠
         }
 
-        void MittOff() { var m = Anim != null ? Anim.GetComponent<MittArms>() : null; if (m != null) { m.On = false; m.Up = false; } }
+        float restRelax = -1f;
+        int padNext;
+        /// 다음에 맞을 패드(양손 번갈아)
+        public Transform NextPad()
+        {
+            var m = Anim != null ? Anim.GetComponent<MittArms>() : null;
+            if (m == null) return null;
+            padNext++;
+            return padNext % 2 == 0 ? m.PadL : m.PadR;
+        }
+
+        void MittOff()
+        {
+            var m = Anim != null ? Anim.GetComponent<MittArms>() : null;
+            if (m != null) { m.On = false; m.Up = false; }
+            var hs = Anim != null ? Anim.GetComponent<HandShape>() : null;
+            if (hs != null && restRelax >= 0f) hs.Relax = restRelax;
+        }
 
         /// 자리로(발 위치·방향)
         public void Place(Vector3 feet, Vector3 forward, Routine r)
         {
-            transform.position = feet;
-            if (forward.sqrMagnitude > 1e-4f) transform.rotation = Quaternion.LookRotation(new Vector3(forward.x, 0f, forward.z).normalized, Vector3.up);
+            // 이윤준은 Fighter(FighterBody·CharacterController) — transform 만 옮기면 캐릭터 컨트롤러가 옛 자리로 되돌림(2026-10-31: 미트 코치가 가끔 케이지 문 앞에 서던 것)
+            var fb = GetComponent<FighterBody>();
+            var rot = forward.sqrMagnitude > 1e-4f ? Quaternion.LookRotation(new Vector3(forward.x, 0f, forward.z).normalized, Vector3.up) : transform.rotation;
+            if (fb != null) fb.Place(feet, rot.eulerAngles.y);
+            else { transform.position = feet; transform.rotation = rot; }
             basePos = feet;
             Now = r; clock = 0f; next = 0.2f; step = 0;
             Play(BaseState(r), 0.05f);

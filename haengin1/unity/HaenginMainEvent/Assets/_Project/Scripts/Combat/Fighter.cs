@@ -100,6 +100,8 @@ namespace Haengin
         public string Label = "?";
         public bool IsPlayer;
         public float Radius = 0.3f, Height = 1.74f, ChestHeight = 1.25f;
+        /// 맞은 점을 몸이 아니라 여기로(미트 — 타격 이펙트·의성어가 코치 얼굴을 덮던 것, 2026-10-31)
+        public Transform HitAnchor;
         [Header("체력")]
         public int MaxHp = 100;
         public int Hp = 100;
@@ -484,7 +486,7 @@ namespace Haengin
             var dir = atk != null ? HitResolver.Flat(Position - atk.Position) : -Forward;
             dir = dir.sqrMagnitude > 1e-6f ? dir.normalized : (atk != null ? atk.Forward : -Forward);
             ev.Dir = dir;
-            ev.Point = Chest - dir * Radius;
+            ev.Point = HitAnchor != null && HitAnchor.gameObject.activeInHierarchy ? HitAnchor.position : Chest - dir * Radius;
             var knockDir = m.KnockSide && atk != null ? Vector3.Cross(Vector3.up, atk.Forward) : dir;   // 왼손 훅: 공격자 오른쪽으로
 
             bool guarding = (Guarding || AlwaysGuard) && State == Phase.Free && !m.Unblockable && atk != null

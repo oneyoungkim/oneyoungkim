@@ -128,7 +128,7 @@ namespace Haengin.EditorGame
                 anim.runtimeAnimatorController = oc;
                 anim.applyRootMotion = false;
                 anim.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
-                if (inst.GetComponent<HandShape>() == null) inst.AddComponent<HandShape>();
+                var hsC = inst.GetComponent<HandShape>() ?? inst.AddComponent<HandShape>(); hsC.Relax = StandSetup.NoRelax.Contains(k) ? 0f : StandSetup.HandRelax;
                 foreach (var c in inst.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(c);
                 var b = CharSetup.MainSkin(inst);
                 float h = b != null ? b.sharedMesh.bounds.size.z * b.transform.lossyScale.x : -1f;

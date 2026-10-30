@@ -17,7 +17,7 @@ using UnityEngine.TestTools;
 
 namespace Haengin.Tests
 {
-    public sealed class ZYunjunShots
+    public sealed partial class ZYunjunShots
     {
         [UnityTearDown]
         public IEnumerator Down()
@@ -529,6 +529,15 @@ namespace Haengin.Tests
                 yield return null;
                 Shots.Shot(cam, Path.Combine(dir, $"{file}.png"), 1920, 1080, 2, true);
                 cam.nearClipPlane = near0;
+                if (file == "teacher")
+                {
+                    yield return null;
+                    Shots.Shot(cam, Path.Combine(dir, "teacher_near_default.png"), 1920, 1080, 1, true);      // 같은 자리, 자르기 없음 — 그 자리에 무엇이 있는지
+                    var cp2 = target + (Quaternion.Euler(0f, 25f, 0f) * d) * 1.75f + Vector3.up * 0.1f;
+                    cam.transform.SetPositionAndRotation(cp2, Quaternion.LookRotation(target - cp2, Vector3.up)); cam.fieldOfView = 44f;
+                    yield return null;
+                    Shots.Shot(cam, Path.Combine(dir, "teacher_close.png"), 1920, 1080, 1, true);             // 첫 줄 책상과 교탁 사이
+                }
                 brain.enabled = true;
                 w.Story.RestoreCast();
                 yield return null;

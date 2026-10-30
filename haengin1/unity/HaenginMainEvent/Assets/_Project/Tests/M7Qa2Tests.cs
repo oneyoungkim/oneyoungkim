@@ -387,6 +387,59 @@ namespace Haengin.Tests
             if (off.Count > 30) Assert.Less(mOn, mOff - 0.05f, "보정이 팔을 모으지 않음");
         }
 
+        // ───────────────────────── Q55 코치 손·미트(2026-10-31 대표): 코치 6명 D04 — 살짝 쥔 손 셰이프 키 · 미트가 손에(뜨지 않음) · 콤비 호출 때 미트 = 어깨~턱, 얼굴 안 가림
+        [UnityTest, Timeout(1500000)]
+        public IEnumerator Q55_Coach_Hands_And_Mitts()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var bad = new List<string>();
+            var log = new List<string>();
+            foreach (var id in new[] { "yunjun", "gojun", "seungyeon", "jinsoo_son", "jinsoo_seo", "seungmin_baek" })
+            {
+                GymManager gm = null;
+                yield return Gym(w, 312, 19 * 60, x => gm = x);
+                GymState.Current.Fatigue = 0;
+                Assert.IsTrue(gm.StartDrill("D04", 0.9f), id + " D04 시작");
+                for (int i = 0; i < 3000 && gm.Runner.State != DrillRunner.Phase.Round; i++) yield return null;
+                var npc = id == "yunjun" ? gm.Yunjun : id == "gojun" ? gm.Gojun : gm.Guest(id);
+                Assert.NotNull(npc, id);
+                if (npc != gm.Yunjun) gm.SetMittHolder(npc);
+                var hs = npc.Anim.GetComponent<HandShape>();
+                if (hs == null || !hs.Ready || hs.Relax <= 0f) bad.Add($"{id}: 살짝 쥔 손 없음");
+                var toMe = npc.transform.position - M3Lab.Motor.transform.position; toMe.y = 0f;
+                if (toMe.magnitude > 1.3f) bad.Add($"{id}: 코치가 드릴 자리에 없음(시우에서 {toMe.magnitude:F2}m)");
+                npc.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;       // 배치는 화면을 안 그려 컬링됨(IK·미트가 한 박자 늦게 잡힘)
+                var arms = npc.Anim.GetComponent<MittArms>() ?? npc.Anim.gameObject.AddComponent<MittArms>();
+                float t0 = Time.realtimeSinceStartup;
+                while (Time.realtimeSinceStartup - t0 < 60f && !(arms.LiftWeight >= 0.99f && arms.PadsShown)) yield return null;
+                yield return null; yield return null;
+                if (!arms.PadsShown) { bad.Add($"{id}: 미트가 안 보임"); gm.Runner.Abort(); w.Stop(); yield return Lab.Frames(5); continue; }
+                Vector3 B(HumanBodyBones b) => npc.Anim.GetBoneTransform(b).position;
+                float sh = (B(HumanBodyBones.LeftUpperArm).y + B(HumanBodyBones.RightUpperArm).y) * 0.5f, head = B(HumanBodyBones.Head).y;
+                float py = (arms.PadL.position.y + arms.PadR.position.y) * 0.5f;
+                float gl = (arms.PadL.position - B(HumanBodyBones.LeftHand)).magnitude, gr = (arms.PadR.position - B(HumanBodyBones.RightHand)).magnitude;
+                log.Add($"{id}: 어깨 {sh:F3} · 패드 {py:F3} · 머리 뼈 {head:F3} · 손~패드 {gl:F3}/{gr:F3}");
+                if (py < sh - 0.03f || py > head) bad.Add($"{id}: 미트 높이 {py:F3} (어깨 {sh:F3} ~ 머리 뼈 {head:F3} 밖)");
+                if (gl > 0.14f || gr > 0.14f) bad.Add($"{id}: 미트가 손에서 뜸 {gl:F3}/{gr:F3}");
+                // 게임 카메라: 미트(반지름 0.1)가 얼굴(머리 뼈 + 0.08, 반지름 0.1)을 가리지 않음
+                var cam = Camera.main;
+                var face = cam.WorldToViewportPoint(B(HumanBodyBones.Head) + Vector3.up * 0.08f);
+                float pxPerM = Mathf.Abs(cam.WorldToViewportPoint(B(HumanBodyBones.Head) + Vector3.up * 0.18f).y - face.y) / 0.1f;
+                foreach (var p in new[] { arms.PadL, arms.PadR })
+                {
+                    var v = cam.WorldToViewportPoint(p.position);
+                    if (v.z < face.z && Mathf.Abs(v.x - face.x) < 0.1f * pxPerM * 9f / 16f * 1.6f && Mathf.Abs(v.y - face.y) < 0.1f * pxPerM * 1.6f) bad.Add($"{id}: 게임 카메라에서 미트가 얼굴을 가림");
+                }
+                gm.Runner.Abort();
+                for (int i = 0; i < 300 && gm.Busy; i++) { gm.CloseCard(); yield return null; }
+                w.Stop();
+                yield return Lab.Frames(5);
+            }
+            Debug.Log("[Q] Q55 미트\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join("\n", bad));
+        }
+
         // ───────────────────────── Q47 드릴 '팡!' 알림판이 두 사람 얼굴을 가리지 않음(2026-10-28 이윤준 캡처 중 발견 — 화면 가운데 위 +120 이 D04 드릴 카메라의 얼굴 자리)
         [UnityTest, Timeout(900000)]
         public IEnumerator Q47_Drill_Toast_Not_Over_Faces()
@@ -552,7 +605,7 @@ namespace Haengin.Tests
             log.Add($"{name}: 어깨-엉덩이 {shHip:+0.0;-0.0} · 머리뼈-어깨 {head:+0.0;-0.0} · 위팔 {arm:F1}° · 어깨차 {dy:F1} · 발목 높이 {foot:F1}cm · 엉덩이 {hipY:F2}m");
             if (Mathf.Abs(shHip) > 3f) return $"{name} 어깨-엉덩이 {shHip:F1}";
             if (arm > armMax) return $"{name} 위팔 {arm:F1}°";
-            if (dy > 1.5f) return $"{name} 어깨차 {dy:F1}";
+            if (dy > 2.5f) return $"{name} 어깨차 {dy:F1}";     // 2026-10-31 인물별 자세: 시우·민재·깐족이·서진수는 일부러 기움(2° 안팎)
             if (foot > 25f || hipY < 0.45f) return $"{name} 다리 접힘(발목 {foot:F0}cm · 엉덩이 {hipY:F2}m)";
             return null;
         }

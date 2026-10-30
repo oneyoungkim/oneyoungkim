@@ -116,7 +116,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3790b14073ce7534a9d144b65b8cb631, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6276062237761276015}
   m_SourcePrefab: {fileID: 100100000, guid: 3790b14073ce7534a9d144b65b8cb631, type: 3}
 --- !u!95 &263287243577263930 stripped
 Animator:
@@ -128,3 +131,26 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3790b14073ce7534a9d144b65b8cb631, type: 3}
   m_PrefabInstance: {fileID: 5966697706944477867}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6776965410242496506 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3790b14073ce7534a9d144b65b8cb631, type: 3}
+  m_PrefabInstance: {fileID: 5966697706944477867}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6276062237761276015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6776965410242496506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba6828c194e8a2a41864b5eccffd2859, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Haengin.Game::Haengin.HandShape
+  Me: {fileID: 0}
+  Player: {fileID: 0}
+  Brain: {fileID: 0}
+  Blend: 0.08
+  ForceFist: -1
+  Relax: 38

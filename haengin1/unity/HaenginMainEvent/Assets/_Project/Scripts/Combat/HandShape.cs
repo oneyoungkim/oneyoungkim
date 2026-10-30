@@ -14,6 +14,7 @@ namespace Haengin
         public EnemyBrain Brain;
         [Tooltip("보간 시간(초)")] public float Blend = 0.08f;
         [Tooltip("승리·연출에서 강제(음수 = 상태대로)")] public float ForceFist = -1f;
+        [Tooltip("전투 밖 살짝 쥔 손(Grip 무게 %, 2026-10-31 — 벌어진 손가락) · 코치·조연. 시우는 0")] public float Relax = 0f;
 
         SkinnedMeshRenderer smr;
         HandPoser poser;
@@ -52,7 +53,7 @@ namespace Haengin
             tFL = tFR = tGL = tGR = 0f;
             bool combat = Player != null ? Player.Active : Brain != null && Brain.State != EnemyBrain.S.Idle;
             if (ForceFist >= 0f) { tFL = tFR = ForceFist; return; }
-            if (!combat || Me == null) return;
+            if (!combat || Me == null) { tGL = tGR = Relax; return; }
             var s = Me.State;
             if (s == Fighter.Phase.Stagger || s == Fighter.Phase.Fall || s == Fighter.Phase.Lie || s == Fighter.Phase.GetUp || s == Fighter.Phase.Grabbed || s == Fighter.Phase.Out)
             {

@@ -107,6 +107,7 @@ namespace Haengin
         /// side: 훅이 들어온 쪽(+1 = 맞는 사람의 왼쪽 얼굴 → 오른쪽으로 돌아감)
         public void Flinch(FlinchKind kind, float w, float side = 1f)
         {
+            if (Owner != null && Owner.HitAnchor != null) return;      // 미트를 맞은 것 — 코치 몸은 젖혀지지 않음(이윤준만 고개를 젖히던 것)
             switch (kind)
             {
                 case FlinchKind.Head:
@@ -136,6 +137,7 @@ namespace Haengin
 
         public void Flash()
         {
+            if (Owner != null && Owner.HitAnchor != null) return;      // 미트를 맞은 것 — 코치 몸이 희게 번쩍이지 않음(2026-10-31, 이윤준만 번쩍이던 것)
             var t = Owner != null ? Owner.T : CombatTuning.Default;
             flashLeft = t.FlashTime;
             ApplyFlash(t.FlashLevel);

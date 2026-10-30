@@ -155,9 +155,20 @@ namespace Haengin
                 return;
             }
             int p = e.Outcome == HitOutcome.Crushed ? 2 : Mathf.Clamp((int)(e.Move != null && e.Move.StopPower != Power.None ? e.Move.StopPower : e.Power), 1, 4);
-            InkHit(pos, Mathf.Min(p, 3), dir);
+            InkHit(pos, e.Victim.HitAnchor != null && e.Victim.HitAnchor.gameObject.activeInHierarchy ? 0 : Mathf.Min(p, 3), dir);      // 미트는 가장 작게(별이 코치 얼굴까지 덮지 않게)
             string w = e.Outcome == HitOutcome.Crushed ? "빡!" : e.Move != null ? e.Move.Word : "";
-            if (!string.IsNullOrEmpty(w)) Word(pos, w, Mathf.Min(p, 3));
+            // 미트(맞은 점 = 패드): 의성어는 패드 바깥 옆·아래로 — 위로 띄우면 코치 얼굴을 덮음
+            if (!string.IsNullOrEmpty(w))
+            {
+                var wp = pos;
+                if (e.Victim.HitAnchor != null && e.Victim.HitAnchor.gameObject.activeInHierarchy)
+                {
+                    var c = e.Victim.HitAnchor.parent != null ? e.Victim.HitAnchor.parent.position : pos;
+                    var o = pos - c; o.y = 0f; o = Vector3.ProjectOnPlane(o, dir);
+                    wp = pos + (o.sqrMagnitude > 1e-4f ? o.normalized : Vector3.right) * 0.32f - Vector3.up * 0.42f;
+                }
+                Word(wp, w, Mathf.Min(p, 3));
+            }
             bool bulky = e.Victim.Armor || e.Victim.Height >= 1.83f;
             Play(Kit.Hit != null && p < Kit.Hit.Length ? Kit.Hit[p] : null, bulky ? 1.3f : 1f, bulky ? 0.85f : 1f);
             if (e.Move != null && e.Move.Label == "벽꽝") { Play(Kit.Slam, 1f, 1f); Slams++; }

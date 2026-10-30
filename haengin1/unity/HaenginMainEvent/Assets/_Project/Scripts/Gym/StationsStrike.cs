@@ -99,6 +99,7 @@ namespace Haengin
                 {
                     me.ScriptAnim = null;
                     var aim = mitt ? Actors.Mitt : null;
+                    if (mitt && aim != null && Actors.MittHolder != null) aim.HitAnchor = Actors.MittHolder.NextPad();     // 타격 이펙트는 패드에서(코치 얼굴을 덮지 않게)
                     me.StartAttack(tok.Move, aim, 0, aim, 0);
                 }
                 // 타격 간격 안정 = 실제 시작 − 연결 창 열림(기대)의 ms(완벽하면 0) — 기술마다 다른 연결 길이를 빼고 잰다
@@ -129,7 +130,7 @@ namespace Haengin
         public override void End(bool aborted)
         {
             if (Actors.Me != null) { Actors.Me.CancelAttack(); Actors.Me.ScriptAnim = null; }
-            if (mitt) Actors.MittHolder?.Mitt(false);
+            if (mitt) { Actors.MittHolder?.Mitt(false); if (Actors.Mitt != null) Actors.Mitt.HitAnchor = null; }
         }
 
         // 봇: 호출 뒤 반응(skill 1 → 320ms) → 토큰마다 연결 창 열릴 때 + 오차, 끝나면 가드
