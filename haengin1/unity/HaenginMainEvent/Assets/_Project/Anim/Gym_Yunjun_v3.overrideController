@@ -1,0 +1,13 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Gym_Yunjun_v3
+  m_Controller: {fileID: 9100000, guid: bf79a919d4f2c6c4b84dc60efec9177d, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -623603649343465320, guid: 87915ec13c4b49c48828d4ea79bc835b, type: 3}
+    m_OverrideClip: {fileID: -623603649343465320, guid: a92ce16ea534fa644888d951ba646b0d, type: 3}

@@ -37,14 +37,14 @@ namespace Haengin.EditorGame
         public const string SparDefPath = Root + "/Settings/Enemy_Gojun.asset";
         public const string DrillJson = Root + "/Data/Drill/drills.json";
         public const string RingTex = GymDir + "/T_DrillRing.png";
-        public static readonly string[] Npcs = { "Yunjun_v2", "Gojun", "Seungyeon_v2", "JinsooSon_v2", "JinsooSeo_v2", "SeungminBaek" };
+        public static readonly string[] Npcs = { "Yunjun_v3", "Gojun", "Seungyeon_v3", "JinsooSon_v3", "JinsooSeo_v3", "SeungminBaek" };
         /// NPC id · 보이는 이름(출장 레슨 코치 3 = 실존 인물, 본인 허락 2026-10-25 — docs/02 조연 표)
-        // 2026-10-29 이윤준 = Yunjun_v2(닮음 고침 — 눈·눈썹 자리 텍스처 · 얼굴 그늘 지도 · 외곽선 굵기 지도, 형상·뼈·UV·동작은 v1 그대로)
+        // 2026-10-30 코치 넷 = *_v3(머리만 새것 — 몸·뼈·동작은 v2 그대로, 텍스처 6144×4096 한 장 → 8192 로 들임). v2 = 2026-10-29 닮음 고침
         public static readonly Dictionary<string, (string id, string name)> NpcNames = new Dictionary<string, (string, string)>
         {
-            { "Yunjun_v2", ("yunjun", "이윤준") }, { "Gojun", ("gojun", "고준") }, { "Seungyeon_v2", ("seungyeon", "김승연") }, { "JinsooSon_v2", ("jinsoo_son", "손진수") }, { "JinsooSeo_v2", ("jinsoo_seo", "서진수") }, { "SeungminBaek", ("seungmin_baek", "백승민") },
+            { "Yunjun_v3", ("yunjun", "이윤준") }, { "Gojun", ("gojun", "고준") }, { "Seungyeon_v3", ("seungyeon", "김승연") }, { "JinsooSon_v3", ("jinsoo_son", "손진수") }, { "JinsooSeo_v3", ("jinsoo_seo", "서진수") }, { "SeungminBaek", ("seungmin_baek", "백승민") },
         };
-        public static readonly string[] GuestNpcs = { "Seungyeon_v2", "JinsooSon_v2", "JinsooSeo_v2", "SeungminBaek" };     // 2026-10-29 백승민(코너맨) 추가
+        public static readonly string[] GuestNpcs = { "Seungyeon_v3", "JinsooSon_v3", "JinsooSeo_v3", "SeungminBaek" };     // 2026-10-29 백승민(코너맨) 추가
         public static readonly List<string> Notes = new List<string>();
 
         public static void Build() => Run(() => { Assets(); Scene(); M1Setup.SetBuildScenes(); });
@@ -306,7 +306,9 @@ namespace Haengin.EditorGame
             var ti = AssetImporter.GetAtPath(path) as TextureImporter;
             if (ti == null) return;
             ti.GetSourceTextureWidthAndHeight(out int w, out int h);
-            int want = Mathf.Max(w, h) > 2048 ? max : 2048;
+            // 2026-10-30 v3: 몸 4096 + 머리 2048 을 한 장(6144×4096)에 — 8192 로 들여야 안 줄어듦
+            int src = Mathf.Max(w, h);
+            int want = src > 4096 ? 8192 : src > 2048 ? Mathf.Min(max, 4096) : 2048;
             CharSetup.Texture(path, srgb, want);
             var ps = ti.GetPlatformTextureSettings("Standalone");
             if (want > 2048 && (!ps.overridden || ps.format != TextureImporterFormat.BC7 || ps.maxTextureSize != want))
@@ -333,7 +335,7 @@ namespace Haengin.EditorGame
                 if (AssetDatabase.LoadAssetAtPath<Texture2D>(shadeP) != null)
                 {
                     HiTex(shadeP, true, 4096);
-                    if (AssetDatabase.LoadAssetAtPath<Texture2D>(outP) != null) CharSetup.Texture(outP, false, 1024);
+                    if (AssetImporter.GetAtPath(outP) is TextureImporter oti) { oti.GetSourceTextureWidthAndHeight(out int ow, out int oh); CharSetup.Texture(outP, false, Mathf.Clamp(Mathf.Max(ow, oh), 1024, 2048)); }
                     var mat = AssetDatabase.LoadAssetAtPath<Material>(NpcMat(n));
                     var shade = AssetDatabase.LoadAssetAtPath<Texture2D>(shadeP);
                     var outW = AssetDatabase.LoadAssetAtPath<Texture2D>(outP);

@@ -203,7 +203,7 @@ namespace Haengin.Tests
         static IEnumerator HoldAt(GymNpc yj, Vector3 feet, Vector3 dir)
         {
             yj.gameObject.SetActive(true);
-            if ((yj.transform.position - feet).sqrMagnitude > 0.01f || yj.Current != "Idle") { yj.Place(feet, dir, GymNpc.Routine.Watch); yj.Play("Idle", 0f); }
+            yj.Place(feet, dir, GymNpc.Routine.Watch); yj.Play("Idle", 0f);     // 늘 다시 세움(다시 켜질 때 미트 자세로 돌아간 것을 Current 가 모름)
             yield return null; yield return null; yield return null;
         }
 
@@ -332,6 +332,57 @@ namespace Haengin.Tests
             }
             File.WriteAllText(Path.Combine(dir, "summary.txt"), string.Join("\n", log), new UTF8Encoding(true));
             Debug.Log("[Coach] 코치 게임 화면 → " + dir + "\n" + string.Join("\n", log));
+        }
+
+        // ───────────────────────── 코치 넷 얼굴 근접 — 체육관 낮·밤 두 조명, 같은 자리·같은 카메라(모델 판끼리 비교용, 2026-10-30) — -facesout <폴더>
+        //   {yunjun,kim,son,seo}_face_{day,night}.png(HUD 끔) + _bust_{day,night}.png(허리 위 — 목·옷깃 이음매·외곽선 굵기 보기)
+        [UnityTest, Timeout(1200000)]
+        public IEnumerator Z_Coach_Faces()
+        {
+            string dir = Shots.Arg("-facesout");
+            if (string.IsNullOrEmpty(dir)) { Assert.Ignore("-facesout <폴더> 없음"); yield break; }
+            if (!Shots.Graphics) { Assert.Ignore("그래픽 장치 없음(-nographics)"); yield break; }
+            Directory.CreateDirectory(dir);
+            WorldRunner w = null;
+            yield return M7Qa2Tests.Open(x => w = x);
+            GymManager gm = null;
+            yield return Enter(w, 312, 14 * 60, x => gm = x);
+            var cam = Camera.main; var brain = cam.GetComponent<CinemachineBrain>(); var me = M3Lab.Motor;
+            foreach (var r in me.GetComponentsInChildren<Renderer>(true)) r.enabled = false;
+            var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+            var feet = mat.position;
+            var dirOpen = OpenDir(feet + Vector3.up * 1.2f, mat.forward);
+            var who = new (string key, GymNpc npc)[] { ("yunjun", gm.Yunjun), ("kim", gm.Guest("seungyeon")), ("son", gm.Guest("jinsoo_son")), ("seo", gm.Guest("jinsoo_seo")) };
+            gm.ApplyPart(GymPart.Day);
+            foreach (var (part, tag) in new[] { (GymPart.Day, "day"), (GymPart.Night, "night") })
+            {
+                gm.Lights.Apply(part);      // 조명만(ApplyPart 는 밤에 코치들을 미트 자세로 다시 세움)
+                foreach (var (key, npc) in who)
+                {
+                    if (npc == null) continue;
+                    foreach (var (k2, n2) in who) if (n2 != null && n2 != npc) n2.gameObject.SetActive(false);
+                    yield return HoldAt(npc, feet, dirOpen);
+                    yield return Lab.Frames(20);
+                    yield return HoldAt(npc, feet, dirOpen);
+                    yield return Lab.Frames(10);
+                    // 밤 시간대엔 체육관이 코치를 미트 자세로 되돌림 → 대기 자세가 된 그 순간 동작을 멈춰 두고 찍음
+                    if (npc.Anim != null) npc.Anim.speed = 0f;
+                    yield return null;
+                    var head = Bone(npc, HumanBodyBones.Head).position + Vector3.up * 0.06f;
+                    brain.enabled = false;
+                    Pose(cam, head, head + dirOpen * 1.7f + Vector3.up * 0.04f, 30f);
+                    yield return null;
+                    Snap(gm, cam, Path.Combine(dir, $"{key}_face_{tag}.png"), false);
+                    var bust = feet + Vector3.up * 1.25f;
+                    Pose(cam, bust, bust + (Quaternion.Euler(0f, -25f, 0f) * dirOpen) * 2.6f + Vector3.up * 0.15f, 34f);
+                    yield return null;
+                    Snap(gm, cam, Path.Combine(dir, $"{key}_bust_{tag}.png"), false);
+                    brain.enabled = true;
+                    if (npc.Anim != null) npc.Anim.speed = 1f;
+                }
+            }
+            foreach (var r in me.GetComponentsInChildren<Renderer>(true)) r.enabled = true;
+            Debug.Log("[Coach] 코치 넷 얼굴 → " + dir);
         }
 
         [UnityTest, Timeout(2400000)]
