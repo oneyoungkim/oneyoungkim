@@ -342,3 +342,11 @@ The reference images are black-and-white model sheets of this same character: ke
   - 2026-05-05 3/4·상반신·팔 문신: https://www.youtube.com/watch?v=5DT9NUpMBik (관장의하루&기술강의)
   - 2026-10-02 정면 얼굴·상반신: https://www.youtube.com/shorts/lDQP-SP70A4 (예민고트의 성명준 스파링썰)
 - 얼굴 비율(눈 사이 ÷ 얼굴 폭 · 눈~입 ÷ 눈 사이)과 보정은 `tools/pipeline/README.md` '코치 3명 v2'. 비율을 잴 정면 사진은 김승연·손진수는 뼈대가 같은 예전 정면 사진(2017 계체·UFC 프로필)을, 서진수는 2026-06-05 사진을 썼다
+
+## 코치 4명 v3(이윤준·김승연·손진수·서진수) 얼굴 참조 — 2026-10-30
+대표 지시("더 비슷하게, 사진을 더 많이")로 사람마다 10~12장을 모았다(scratchpad `coach_refs/<이름>_v3/`, 저장소에 두지 않음). 유튜브는 공개 썸네일과 자동 공개 프레임(maxres1~3·hq1~3, 영상 재생 안 함)만 받았고, 얼굴 검출(OpenCV YuNet)로 얼굴이 하나만 크게 나온 것만 남긴 뒤 눈으로 한 번 더 확인했다. 신원이 애매한 2장(탈색 수염 남성 1·옷만 잡힌 1)은 뺐다. `id_<영상ID>` 는 https://www.youtube.com/watch?v=<영상ID>(쇼츠는 /shorts/).
+- **이윤준 12장**: 본인 채널 ART OF MMA 이윤준 관장(2026-03~07 게시) 054POTJ9R8U(AOM 둔촌점, 밝은 정면)·2pMmkq77x1A ×2(정면)·3uYYrwdYU8k(무표정 정면)·90dnIbzMtNE·9ekMCiWpQgk·Wc11-IixTqQ(3/4)·esrQGVb0F5g(옆)·tz1jlRwaqoQ ×2 + 10/24 기사 사진 2장(스포티비뉴스 2023 대담·벨트 사진, 이 문서 위 '이윤준' 절 주소)
+- **김승연 12장**: 이름 확인 = 이윤준 채널 「딥 마카이 김승연의 체육관 소개 - 심해(深海)」 TGf-Y4hmwgE(2026, 프레임 3장, 정면·밝은 조명) · 스포츠경향 2017 계체 기사 사진(https://sports.khan.co.kr/article/201706091645053, 뼈대 비교용) · 본인 채널 DEEP MAKAI 쇼츠 T7hwvtJ7ygY ×2(2026-09-17)·IOzgdNFw0zA ×2(2026-09-19, 옆)·f8-X-C-7up4(2025-07-04)·cl-Ol6zzsA0·mL0oP-vOj1U·ov_Qlk1tuoM(2025)
+- **손진수 12장**: 본인 채널 격잘알손진수(2025-11~2026-10) S8kWSOIAagY·UEXnGfoKrJU ×2(무표정·밝은 조명)·-_0SnM0_xV4·aDCv1bS4QR4 ×3·niYet1PmdHc·p7NVvKCLMqI·rl9FleKv8Pk + 딥마카이 쇼츠 uyJhSEhldrU(2026-09-17) + UFC 공식 선수 페이지 정면 사진(뼈대 비교용)
+- **서진수 10장**: 본인 체육관 채널 FIVE ROUNDS(2026-01~06) 0wUNOGNmUKc ×2(2026-06-05, 정면)·5DT9NUpMBik ×2(2026-05-05, 3/4·옆)·7NugDk7gANs·BiXIT1YFIUk·IjLC9l8zKYA(쇼츠)·WszSsuvp9tI + 딥마카이 쇼츠 lDQP-SP70A4(2026-10-02) + AFC 공식 프로필 사진(뼈대 비교용)
+- 정면 얼굴 설정화 `m3/<이름>_v3_face*.png`(GPT Image 2.5 medium 2k, 참조 6장), 머리+상반신 4방향 `m3/<이름>_v3_bust.png`(high 4k). 비율과 채택 기준은 `tools/pipeline/README.md` '코치 4명 v3'

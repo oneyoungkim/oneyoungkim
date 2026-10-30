@@ -1,0 +1,33 @@
+﻿[
+  {
+    "created_at": "2026-10-30T10:26:53.628117Z",
+    "display_name": "GPT Image 2.5",
+    "id": "677e61ab-4d1a-4e62-a1c0-15928273a158",
+    "job_type": "gpt_image_2_5",
+    "min_result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261030_102653_677e61ab-4d1a-4e62-a1c0-15928273a158_min.webp",
+    "params": {
+      "aspect_ratio": "16:9",
+      "height": 2160,
+      "medias": [
+        {
+          "data": {
+            "id": "ccb1795b-e983-4394-a991-f60fbc66e49f",
+            "type": "media_input",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/ccb1795b-e983-4394-a991-f60fbc66e49f.png"
+          },
+          "role": "image"
+        }
+      ],
+      "model": "flare",
+      "prompt": "Use the first attached image, a front view of this character's face, as the exact reference for his face, hair, facial hair, skin tone and facial proportions: keep the eye spacing, eye size, nose length, the position of the mouth, the jaw, the cheekbones and the hairline exactly as in it. Create a clean 3D-modeling reference turnaround of the same character's head and upper body only, cropped at the middle of the chest, with the arms cut off just below the shoulders: four views side by side in one row, evenly spaced, all at exactly the same scale and the same height, each view fitting inside one quarter of the image width with wide empty white margins between them so nothing touches or overlaps: 1) front view, 2) left side view with the character facing the left edge of the image, 3) back view, 4) right side view with the character facing the right edge of the image. Orthographic camera at eye level, no perspective distortion. Head level, neutral expression with the mouth closed, eyes looking straight ahead in the front view, the face drawn clearly and large enough to read every feature. Bleached ash-blonde medium-length hair with darker roots, swept back; a thin moustache and a short goatee. Wearing a plain muted olive-khaki (#67684F) short-sleeved t-shirt, only the neckline and shoulders visible, no towel, no necklace. Rendering: flat even studio lighting from the front with almost no cast shadows, flat muted anime cel colors with only a very light single shadow tone, clean thin dark outlines, pure plain white background, no ground line. Avoid: perspective, a tilted head, a three-quarter front view, hands, forearms, props, hats, caps, glasses, extra characters, text, letters, labels, grid lines, numbers, logos, watermarks.",
+      "quality": "high",
+      "reference_elements": [],
+      "remove_bg": false,
+      "resolution": "4k",
+      "width": 3840
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HOuadImLlxsePfOaXHVFhy9FlK/hf_20261030_102653_677e61ab-4d1a-4e62-a1c0-15928273a158.png",
+    "status": "completed"
+  }
+]
+
