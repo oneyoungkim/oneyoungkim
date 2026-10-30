@@ -132,6 +132,37 @@ src = body.copy(); src.data = body.data.copy(); bpy.context.scene.collection.obj
 src.modifiers.clear()
 
 import bmesh
+def drop_small_islands(obj, zmin, max_faces=300):
+    """목 둘레에 떠 있는 작은 조각(지우고 남은 몇 개 면) 지우기 — 게임에서 목 둘레 점 띠로 보이던 것.
+    glTF 는 UV 이음매마다 정점을 나눠 두므로 자리(0.01mm)가 같은 정점은 하나로 보고 이어진 덩어리를 셈"""
+    me = obj.data; mw = obj.matrix_world
+    P = np.array([tuple(mw @ v.co) for v in me.vertices])
+    key = {}; root = list(range(len(P)))
+    def find(i):
+        while root[i] != i: root[i] = root[root[i]]; i = root[i]
+        return i
+    def union(i, j):
+        a_, b_ = find(i), find(j)
+        if a_ != b_: root[a_] = b_
+    for i, q in enumerate(np.round(P / 1e-5).astype(np.int64)):
+        k = tuple(q)
+        if k in key: union(i, key[k])
+        else: key[k] = i
+    for f in me.polygons:
+        vs = f.vertices
+        for j in range(1, len(vs)): union(vs[0], vs[j])
+    comp = {}
+    for f in me.polygons: comp.setdefault(find(f.vertices[0]), []).append(f.index)
+    kill = []
+    for c, fs in comp.items():
+        if len(fs) < max_faces:
+            zs = [P[v, 2] for fi in fs for v in me.polygons[fi].vertices]
+            if min(zs) > zmin: kill += fs
+    if kill:
+        bm = bmesh.new(); bm.from_mesh(me); bm.faces.ensure_lookup_table()
+        bmesh.ops.delete(bm, geom=[bm.faces[i] for i in kill], context='FACES'); bm.to_mesh(me); bm.free(); me.update()
+    return len(kill)
+
 def delete_verts(obj, mask):
     bm = bmesh.new(); bm.from_mesh(obj.data); bm.verts.ensure_lookup_table()
     bmesh.ops.delete(bm, geom=[bm.verts[i] for i in np.nonzero(mask)[0]], context='VERTS')
@@ -201,6 +232,8 @@ if opt.get('keepOldBelow'): jaw &= PB[:, 2] > zmin_new + 0.012
 del_b |= jaw
 print('delete body verts (inside new head)', int(inside.sum()), 'old jaw', int(jaw.sum()), 'total', int(del_b.sum()), flush=True)
 delete_verts(body, del_b)
+mwi = body.matrix_world.inverted()
+print('small islands removed: body', drop_small_islands(body, neck_b.z - 0.06), 'new', drop_small_islands(bust, neck_b.z - 0.06), flush=True)
 
 # ── 가중치: 원본 몸 → 새 머리
 bust.parent = arm; bust.matrix_parent_inverse = arm.matrix_world.inverted()
