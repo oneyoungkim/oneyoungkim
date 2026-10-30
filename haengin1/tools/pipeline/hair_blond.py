@@ -1,7 +1,7 @@
 # 서진수 v3 머리카락 → 밝은 노란 탈색 금발(2026-10-30)
 #   머리 마스크 = 메시 기하(머리 꼭대기에서 잰 깊이 한계: 앞 7cm·옆 14cm·뒤 25cm — 이마·눈썹·귀 아래·수염 제외)를 UV 로 구움
 #                × 화소 색(피부 = 평면 (201,137,101) 색상 21.6° / 머리 27~29° → 색상 23.5° 위만 머리)
-#   다시 칠하기 = 머리 밝기 비율 → 금발 그라디언트(결 유지), Shade.jpg 는 화소별 원래 곱셈값(머리 .95) 유지, OutW 머리 외곽선 ×0.4
+#   다시 칠하기 = 머리 밝기 비율 → 금발 그라디언트(결 유지), Shade.jpg 는 화소별 원래 곱셈값 유지(머리는 1.0), OutW 머리 외곽선 ×0.4
 # 사용: blender -b --factory-startup --python mesh_dump.py -- <리깅 glb> <mesh.npz>
 #       python hair_blond.py <mesh.npz> <원본 폴더(Tex·Shade)> <출력 폴더> <미리보기 폴더>   (서진수 v3 값 — 다른 사람은 깊이 한계·색상 기준을 다시 잴 것)
 import sys
@@ -60,8 +60,8 @@ new = np.stack([np.interp(x, stops, cols[:, c]) for c in range(3)], -1)
 A = a[..., None]
 tex2 = tex * (1 - A) + new * A
 ratio = np.clip((sh + 0.01) / (tex + 0.01), 0.6, 1.0)
-ratio = np.where(A > 0.5, np.clip(ratio, 0.93, 0.97), ratio)              # 머리 그늘 곱셈값 .95 유지
 sh2 = np.clip(sh + (tex2 - tex) * ratio, 0, 1)
+sh2 = sh2 * (1 - A) + tex2 * A                                            # 머리 그늘 곱셈값 1.0(2026-10-30 체육관 낮 조명에서 금발이 올리브빛으로 보이던 것, 발광은 안 씀)
 print('new hair median', np.round(np.median(tex2[a > 0.8], 0) * 255).astype(int).tolist())
 Image.fromarray((np.clip(tex2, 0, 1) * 255 + 0.5).astype(np.uint8)).save(f"{dst}/{NAME}Tex.jpg", quality=95)
 Image.fromarray((sh2 * 255 + 0.5).astype(np.uint8)).save(f"{dst}/{NAME}Shade.jpg", quality=92)

@@ -1,7 +1,7 @@
 # face_masks.py 결과로 UTS 그림자·외곽선 지도를 만든다(face_tex.py 의 FUJIMOTO 6-3 · 7-4 값과 같음, 노이즈는 뺌)
 #   <이름>Shade.jpg = 몸 텍스처 × 곱셈값: 얼굴 앞면 .93·.88·.88 / 그 밖의 피부 .80·.72·.72 / 나머지 .78·.71·.74(지금 _1st_ShadeColor)
 #   <이름>OutW.png  = 1024² RGB, 실루엣 1.0 · 머리카락 .45 · 얼굴 앞면 0
-# 사용: python face_shade_outw.py <tex.jpg> <masks.npz> <out_prefix(…/Yunjun_v2)>
+# 사용: python face_shade_outw.py <tex.jpg> <masks.npz> <out_prefix(…/Yunjun_v2)> [머리카락 곱셈값] [목 마스크.npz]
 import sys
 import numpy as np
 from PIL import Image
@@ -9,6 +9,8 @@ texp, mp, pre = sys.argv[1], sys.argv[2], sys.argv[3]
 tex = np.asarray(Image.open(texp).convert('RGB')).astype(np.float32) / 255
 H, W = tex.shape[:2]
 m = np.load(mp); wf, wh, cov = m['wf'].copy(), m['wh'].copy(), m['cov'].copy()
+if len(sys.argv) > 5:                                              # 목 전체도 얼굴 앞면과 같은 값(neck_paint.py 마스크): Shade 밝게, OutW 0 — 헐 외곽선이 목 이음에 검은 선을 그리던 것
+    wn = np.load(sys.argv[5])['wn']; wf = np.maximum(wf, wn); cov = cov | (wn > 0)
 # UV 섬 가장자리 덧칠(패딩): 덮이지 않은 텍셀을 이웃 최댓값으로 6칸 — 정점이 섬 경계에서 읽어도 값이 맞게(얼굴에 흰 금이 생기던 것)
 for _ in range(6):
     pw = np.pad(wf, 1, mode='edge'); ph = np.pad(wh, 1, mode='edge'); pc = np.pad(cov, 1, mode='edge')
