@@ -71,6 +71,7 @@ nb, _ = neck_profile(PB, CB, neck_b.z - 0.01, head_b.z + 0.05, neck_b.x, neck_b.
 wneck = nb[1]
 hb_, _ = neck_profile(PB, CB, head_b.z + 0.03, head_b.z + 0.16, head_b.x, head_b.y, rmax=0.14, skin=skin_b, widest=True)
 zb, wb = hb_[0], hb_[1]; bx, by = head_b.x, head_b.y
+hcx, hcy = hb_[2], hb_[3]                                           # 옛 머리 단면의 가운데(머리 뼈는 목 뒤쪽이라 여기로 맞춤 — 2026-10-30 '목이 뒤로' 고침)
 print('BODY face widest z %.3f width %.3f, neck width %.3f (neck bone %.3f, Head bone %.3f)' % (zb, wb, wneck, neck_b.z, head_b.z), flush=True)
 
 # ── 새 머리+상반신
@@ -98,10 +99,33 @@ nn, _ = neck_profile(PN, CN, zbot + 0.45 * hh, zbot + 0.85 * hh, cxn, cyn, rmax=
 zn, wn, nx, _ = nn
 ny = float(np.median(PN[(np.abs(PN[:, 2] - zn) < 0.02 * hh), 1]))           # 그 높이 단면의 앞뒤 가운데
 s = wb / wn * float(opt.get('scale', 1.0))
-T = Matrix.Translation((bx, by, zb)) @ Matrix.Scale(s, 4) @ Matrix.Translation((-nx, -ny, -zn))
+T = Matrix.Translation((bx, hcy, zb)) @ Matrix.Scale(s, 4) @ Matrix.Translation((-nx, -ny, -zn))
 bust.data.transform(T); bust.data.update()
 PN = np.array([tuple(v.co) for v in bust.data.vertices])
 print('BUST face widest %.4f → scale %.4f, new head top %.3f (old %.3f)' % (wn, s, PN[:, 2].max(), PB[:, 2].max()), flush=True)
+
+# ── 귀·턱 기준 자동 정렬(옆면): 옛 머리(v2)와 새 머리의 귀 중심·턱 끝 앞뒤를 맞추고, 귀→턱 각도 차이는 귀를 축으로 피치를 돌림
+def landmarks(P, cx, zmin):
+    m = (P[:, 2] > zmin)
+    mid = P[m & (np.abs(P[:, 0] - cx) < 0.015)]
+    nose = mid[np.argmin(mid[:, 1])]
+    lowf = mid[(mid[:, 1] < nose[1] + 0.05) & (mid[:, 2] < nose[2] - 0.02)]
+    chin = lowf[np.argmin(lowf[:, 2])] if len(lowf) else nose
+    band = P[m & (np.abs(P[:, 2] - (nose[2] + 0.02)) < 0.015)]
+    side = band[np.abs(band[:, 0] - cx) > np.percentile(np.abs(band[:, 0] - cx), 97)]
+    return {'nose': nose, 'chin': chin, 'ear': side.mean(0), 'top': P[m][np.argmax(P[m][:, 2])]}
+gname0 = {g.index: g.name for g in body.vertex_groups}
+wh0 = np.array([sum(g.weight for g in v.groups if gname0.get(g.group) in ('Head', 'head_end', 'headfront')) for v in body.data.vertices])
+Lo = landmarks(PB[wh0 > 0.5], head_b.x, head_b.z + 0.02)
+if not opt.get('noAlign'):
+    # 옆면 정렬(2026-10-30 '목이 뒤로' 고침): 코끝·턱 끝의 앞뒤 차이 평균만큼 메시만 앞뒤로 옮김(뼈는 그대로).
+    # 귀(옆으로 튀어나온 점 무리)·귀 축 피치는 머리카락에 가려 기준점이 흔들려(피치 −9~+12° 로 튐) 쓰지 않음 — 결과만 찍어 둠
+    Ln = landmarks(PN, head_b.x, head_b.z + 0.02)
+    dy = ((Lo['nose'][1] - Ln['nose'][1]) + (Lo['chin'][1] - Ln['chin'][1])) / 2 + float(opt.get('alignDy', 0.0))
+    bust.data.transform(Matrix.Translation((0, dy, 0))); PN = np.array([tuple(v.co) for v in bust.data.vertices]); bust.data.update()
+    Ln = landmarks(PN, head_b.x, head_b.z + 0.02)
+    print('ALIGN dy %+.1fmm → 앞뒤(새−옛, mm) nose %+.1f chin %+.1f ear %+.1f' % (
+        dy * 1000, -(Ln['nose'][1] - Lo['nose'][1]) * 1000, -(Ln['chin'][1] - Lo['chin'][1]) * 1000, -(Ln['ear'][1] - Lo['ear'][1]) * 1000), flush=True)
 
 # ── 지울 곳 / 남길 곳(이음매 = 목 꼭대기, 턱 그늘·뒷머리 밑): 옛 목·옷깃·수건은 그대로 두고 머리만 지움
 r_tube = 0.8 * wneck
