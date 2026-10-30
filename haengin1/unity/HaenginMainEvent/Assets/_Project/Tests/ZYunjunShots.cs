@@ -12,6 +12,7 @@ using System.Text;
 using NUnit.Framework;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.TestTools;
 
 namespace Haengin.Tests
@@ -387,6 +388,153 @@ namespace Haengin.Tests
             }
             File.WriteAllText(Path.Combine(dir, "summary.txt"), string.Join("\n", log), new UTF8Encoding(true));
             Debug.Log("[Coach] 코치 게임 화면 → " + dir + "\n" + string.Join("\n", log));
+        }
+
+        // ───────────────────────── 서 있는 자세(2026-10-31 대표 "등이 굽어 보인다") — -standshots <폴더> [-standonly 이름,이름]
+        //   인물마다 원본 대기(FBX Idle) · 새 대기(Anim/Stand/Stand_<키>) 를 같은 자리·같은 카메라로 전신 정면·옆면. {키}_{before|after}_{front|side}.png + stand_points.txt(기준선용 화면 좌표)
+        [UnityTest, Timeout(1800000)]
+        public IEnumerator Z_Stand_Shots()
+        {
+            string dir = Shots.Arg("-standshots");
+            if (string.IsNullOrEmpty(dir)) { Assert.Ignore("-standshots <폴더> 없음"); yield break; }
+            if (!Shots.Graphics) { Assert.Ignore("그래픽 장치 없음(-nographics)"); yield break; }
+#if UNITY_EDITOR
+            Directory.CreateDirectory(dir);
+            WorldRunner w = null;
+            yield return M7Qa2Tests.Open(x => w = x);
+            GymManager gm = null;
+            yield return Enter(w, 312, 14 * 60, x => gm = x);
+            gm.ApplyPart(GymPart.Day);
+            foreach (var m in gm.Members) if (m != null) m.gameObject.SetActive(false);
+            if (gm.Gojun != null) gm.Gojun.gameObject.SetActive(false);
+            if (gm.Yunjun != null) gm.Yunjun.gameObject.SetActive(false);
+            foreach (var g in gm.Guests) if (g != null) g.gameObject.SetActive(false);
+            var cam = Camera.main; var brain = cam.GetComponent<CinemachineBrain>(); var me = M3Lab.Motor;
+            brain.enabled = false;
+            var meR = me.GetComponentsInChildren<Renderer>(true).Where(r => r.enabled).ToList();
+            foreach (var r in meR) r.enabled = false;
+            var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+            var feet = mat.position + mat.forward * 2.4f;
+            var dir0 = OpenDir(feet + Vector3.up * 1.2f, mat.forward);
+            float yaw0 = Mathf.Atan2(dir0.x, dir0.z) * Mathf.Rad2Deg;
+            var side = Quaternion.Euler(0f, 90f, 0f) * dir0;
+            const string M3 = "Assets/_Project/Art/Characters/M3/", CastD = "Assets/_Project/Art/Characters/Cast/", GymP = "Assets/_Project/Prefabs/Gym/", CastP = "Assets/_Project/Prefabs/Cast/";
+            var who = new List<(string key, string prefab, string fbx)>
+            {
+                ("Yunjun_v2", GymP + "Npc_Yunjun_v2.prefab", M3 + "Yunjun_v2.fbx"), ("Seungyeon_v2", GymP + "Npc_Seungyeon_v2.prefab", M3 + "Seungyeon_v2.fbx"),
+                ("JinsooSon_v2", GymP + "Npc_JinsooSon_v2.prefab", M3 + "JinsooSon_v2.fbx"), ("JinsooSeo_v2", GymP + "Npc_JinsooSeo_v2.prefab", M3 + "JinsooSeo_v2.fbx"),
+                ("SeungminBaek", GymP + "Npc_SeungminBaek.prefab", M3 + "SeungminBaek.fbx"), ("Gojun", GymP + "Npc_Gojun.prefab", M3 + "Gojun.fbx"),
+                ("Siwoo", null, "Assets/_Project/Art/Characters/Siwoo/Siwoo.fbx"), ("Taeo", "Assets/_Project/Prefabs/Char/Taeo.prefab", "Assets/_Project/Art/Characters/Taeo/Taeo.fbx"),
+            };
+            string[] enemies = { "Kkanjok", "Seokdal", "Naengjanggo", "Scrum" };
+            for (int i = 0; i < 4; i++) who.Add((enemies[i], GymP + $"Npc_Member_{i + 1:00}.prefab", null));
+            foreach (var k in new[] { "Mom", "Haneul", "Dokyungmin", "Minjae", "Geonwoo", "StudentM", "StudentF", "Gwak", "Halmeoni", "BakeryStaff", "Dad" }) who.Add((k, CastP + k + ".prefab", CastD + k + ".fbx"));
+            string only = Shots.Arg("-standonly");
+            var pick = string.IsNullOrEmpty(only) ? null : new HashSet<string>(only.Split(','));
+            var points = new List<string>();
+            AnimationClip FbxIdle(string path) => UnityEditor.AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().FirstOrDefault(c => c.name == "Idle");
+            foreach (var (key, prefab, fbx0) in who)
+            {
+                if (pick != null && !pick.Contains(key)) continue;
+                GameObject go = null; Animator an = null;
+                if (prefab == null) { foreach (var r in meR) r.enabled = true; me.Teleport(feet, yaw0); an = me.GetComponentInChildren<Animator>(); yield return Lab.Frames(10); }
+                else
+                {
+                    string pp = prefab;
+                    var pf = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(pp);
+                    if (pf == null) { Debug.LogWarning("[Stand] 프리팹 없음 " + pp); continue; }
+                    go = Object.Instantiate(pf, gm.transform);
+                    go.transform.SetPositionAndRotation(feet, Quaternion.Euler(0f, yaw0, 0f));
+                    an = go.GetComponentInChildren<Animator>();
+                    an.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                    gm.Lights.PushCharFill();
+                }
+                string fbx = fbx0 ?? $"Assets/_Project/Art/Characters/Enemy/{key}.fbx";
+                var before = FbxIdle(fbx);
+                var after = UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationClip>($"Assets/_Project/Anim/Stand/Stand_{key}.anim");
+                foreach (var (ver, clip) in new[] { ("before", before), ("after", after) })
+                {
+                    if (clip == null) { Debug.LogWarning($"[Stand] {key} {ver} 클립 없음"); continue; }
+                    var pc = UnityEngine.Playables.AnimationPlayableUtilities.PlayClip(an, clip, out var graph);
+                    pc.SetTime(clip.length * 0.3f); pc.SetSpeed(0f);
+                    yield return Lab.Frames(4);
+                    float ty = 0.92f;
+                    Vector3 P(HumanBodyBones b) => an.GetBoneTransform(b).position;
+                    var ear = P(HumanBodyBones.Head) + Vector3.up * 0.09f;
+                    var shm = (P(HumanBodyBones.LeftUpperArm) + P(HumanBodyBones.RightUpperArm)) * 0.5f;
+                    var hip = (P(HumanBodyBones.LeftUpperLeg) + P(HumanBodyBones.RightUpperLeg)) * 0.5f;
+                    var knee = (P(HumanBodyBones.LeftLowerLeg) + P(HumanBodyBones.RightLowerLeg)) * 0.5f;
+                    var ank = (P(HumanBodyBones.LeftFoot) + P(HumanBodyBones.RightFoot)) * 0.5f;
+                    foreach (var (view, dirV) in new[] { ("front", dir0), ("side", side) })
+                    {
+                        const float D = 6.5f;
+                        var target = feet + Vector3.up * ty;
+                        cam.transform.SetPositionAndRotation(target + dirV * D, Quaternion.LookRotation(-dirV, Vector3.up));
+                        cam.fieldOfView = 18f; float nearWas = cam.nearClipPlane; cam.nearClipPlane = D - 1.3f;
+                        yield return null;
+                        Shots.Shot(cam, Path.Combine(dir, $"{key}_{ver}_{view}.png"), 720, 1080, 2, false);
+                        string S(Vector3 q) { var v = cam.WorldToViewportPoint(q); return $"{Mathf.RoundToInt(v.x * 720f)},{Mathf.RoundToInt((1f - v.y) * 1080f)}"; }
+                        points.Add($"{key}\t{ver}\t{view}\t{S(ear)}\t{S(shm)}\t{S(hip)}\t{S(knee)}\t{S(ank)}");
+                        cam.nearClipPlane = nearWas;
+                    }
+                    graph.Destroy();
+                    yield return null;
+                }
+                if (go != null) Object.Destroy(go);
+                else foreach (var r in meR) r.enabled = false;
+                yield return null;
+            }
+            brain.enabled = true;
+            foreach (var r in meR) r.enabled = true;
+            File.WriteAllText(Path.Combine(dir, "stand_points.txt"), string.Join("\n", points), new UTF8Encoding(false));
+            Debug.Log("[Stand] 사진 → " + dir);
+#else
+            yield break;
+#endif
+        }
+
+        // ───────────────────────── 조연 대기(2026-10-31): 국밥집 사장 할머니 · 직원 누나 통화 · 아빠 회상 자리 — -standscene <폴더>
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Z_Stand_Cast_Shots()
+        {
+            string dir = Shots.Arg("-standscene");
+            if (string.IsNullOrEmpty(dir)) { Assert.Ignore("-standscene <폴더> 없음"); yield break; }
+            if (!Shots.Graphics) { Assert.Ignore("그래픽 장치 없음(-nographics)"); yield break; }
+            Directory.CreateDirectory(dir);
+            WorldRunner w = null;
+            yield return M7Qa2Tests.Open(x => w = x);
+            yield return M7Qa2Tests.Start(w, M7Qa2Tests.Mid(w.Def, 312, 14 * 60, SceneLoader.Zone1, m => { m.G.Fatigue = 0; }));
+            yield return Lab.Frames(20);
+            var cam = Camera.main; var brain = cam.GetComponent<CinemachineBrain>();
+            var log = new List<string>();
+            foreach (var (place, cmd, actor, file) in new[] { ("Gukbap", "cast:사장 할머니:할머니 카운터 자리", "사장 할머니", "halmeoni"), ("School", "call:직원 누나", "직원 누나", "staff"), ("Site", "cast:아빠:아빠 회상 자리", "아빠", "dad"), ("Home", "pose:엄마:TalkHip", "엄마", "mom"), ("School", "pose:도경민:TalkOpen", "도경민", "teacher") })
+            {
+                yield return w.Loader.Go(place, place == "Site" ? "Spawn" : "Door", false, Vector3.zero, 0f);
+                yield return Lab.Frames(20);
+                if (cmd.Length > 0) w.Story.ApplyNow(cmd);
+                yield return Lab.Frames(20);
+                var a = CutCtx.Actor(actor);
+                if (a == null) { log.Add($"{file}: 배우 없음 ({place})"); continue; }
+                a.gameObject.SetActive(true);
+                var an = a.GetComponentInChildren<Animator>();
+                if (an != null) an.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                yield return Lab.Frames(10);
+                log.Add($"{file}: {place} · 상태 Idle {(an != null && an.GetCurrentAnimatorStateInfo(0).IsName("Idle"))}");
+                brain.enabled = false;
+                var target = a.position + Vector3.up * 0.85f;
+                var d = a.forward; d.y = 0f; d.Normalize();
+                var cp = target + (Quaternion.Euler(0f, 25f, 0f) * d) * 3.6f + Vector3.up * 0.2f;
+                cam.transform.SetPositionAndRotation(cp, Quaternion.LookRotation(target - cp, Vector3.up)); cam.fieldOfView = 34f;
+                float near0 = cam.nearClipPlane; cam.nearClipPlane = 1.6f;      // 벽·책상을 지나 찍음(사진 전용)
+                yield return null;
+                Shots.Shot(cam, Path.Combine(dir, $"{file}.png"), 1920, 1080, 2, true);
+                cam.nearClipPlane = near0;
+                brain.enabled = true;
+                w.Story.RestoreCast();
+                yield return null;
+            }
+            File.WriteAllText(Path.Combine(dir, "cast_log.txt"), string.Join("\n", log), new UTF8Encoding(false));
+            Debug.Log("[Stand] 조연 장면\n" + string.Join("\n", log));
         }
 
         // ───────────────────────── 목 검수(2026-10-30 대표 "목이 찢어졌다 꿰맨 것 같다") — -neckcheck <폴더>

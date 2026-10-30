@@ -157,10 +157,10 @@ namespace Haengin.EditorTools
             float kw = walkSpeed / Mathf.Max(0.1f, gw.NaturalSpeed);
             float kr = runSpeed / Mathf.Max(0.1f, gr.NaturalSpeed);
             float offR = Mathf.Repeat(gr.PhaseL - gw.PhaseL, 1f);
-            SiwooController(idle, walk, run, kw, kr, offR);
+            SiwooController(StandIdle(SiwooFbx), walk, run, kw, kr, offR);   // 2026-10-31 대기 = 전용 곧은 자세(Anim/Stand)
             Debug.Log($"{Tag} 컨트롤러 {SiwooCtrl}: Blend 0 Idle ×1 · 1 Walk ×{kw:F3}(주기 {gw.Length / kw:F3}s, 분당 {120f * kw / gw.Length:F0}걸음) · " +
                       $"2 Run ×{kr:F3}(주기 {gr.Length / kr:F3}s, 분당 {120f * kr / gr.Length:F0}걸음, 주기 맞춤 {offR:F3}) · 상태 속도 = Rate · Foot IK 켬");
-            TaeoController(Clip(TaeoFbx, "Idle"));
+            TaeoController(StandIdle(TaeoFbx));
             AssetDatabase.SaveAssets();
         }
 
@@ -596,7 +596,7 @@ namespace Haengin.EditorTools
             var sm = ctrl.layers[0].stateMachine;
             var st = sm.states.Select(s => s.state).FirstOrDefault(s => s.name == "Idle") ?? sm.AddState("Idle");
             st.motion = idle;
-            st.iKOnFeet = true;
+            st.iKOnFeet = false;       // 전용 대기는 자세가 곧 발 자리(StandSetup)
             sm.defaultState = st;
             EditorUtility.SetDirty(st); EditorUtility.SetDirty(ctrl);
         }
@@ -616,6 +616,13 @@ namespace Haengin.EditorTools
 
         // ───────────────────────── 공용
         public static Avatar AvatarOf(string fbx) => AssetDatabase.LoadAllAssetsAtPath(fbx).OfType<Avatar>().FirstOrDefault();
+
+        /// 대기 클립: 그 모델의 전용 곧은 자세(Anim/Stand/Stand_<모델>.anim — EditorGame.StandSetup 이 구움)가 있으면 그것, 없으면 FBX 의 Idle
+        public static AnimationClip StandIdle(string fbx)
+        {
+            var c = AssetDatabase.LoadAssetAtPath<AnimationClip>($"{AnimDir}/Stand/Stand_{System.IO.Path.GetFileNameWithoutExtension(fbx)}.anim");
+            return c != null ? c : Clip(fbx, "Idle");
+        }
 
         public static AnimationClip Clip(string fbx, string name) =>
             AssetDatabase.LoadAllAssetsAtPath(fbx).OfType<AnimationClip>().FirstOrDefault(c => c.name == name && !c.name.StartsWith("__preview__"))

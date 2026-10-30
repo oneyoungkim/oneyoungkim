@@ -88,8 +88,9 @@ namespace Haengin.EditorGame
                 st.motion = clip; st.writeDefaultValues = true; st.iKOnFeet = true;
                 return st;
             }
-            var baseIdle = CharSetup.Clip(CharSetup.SiwooFbx, "Idle");
+            var baseIdle = StandSetup.Idle(CharSetup.SiwooFbx);      // 2026-10-31 대기 = 전용 곧은 자세(Anim/Stand)
             var idle = St("Idle", baseIdle);
+            idle.iKOnFeet = false;      // 전용 대기는 자세가 곧 발 자리(StandSetup)
             foreach (var (file, state, _, _) in Clips)
             {
                 string f = $"{ClipDir}/{file}.fbx";
@@ -118,7 +119,7 @@ namespace Haengin.EditorGame
             {
                 var model = AssetDatabase.LoadAssetAtPath<GameObject>(Fbx(k));
                 if (model == null) continue;
-                var oc = Override($"{Root}/Anim/Cast_{k}.overrideController", ctrl, baseIdle, CharSetup.Clip(Fbx(k), "Idle"));
+                var oc = Override($"{Root}/Anim/Cast_{k}.overrideController", ctrl, baseIdle, StandSetup.Idle(Fbx(k)));
                 var inst = (PrefabUtility.InstantiatePrefab(model) as GameObject) ?? Object.Instantiate(model);
                 inst.name = n;
                 CharSetup.Paint(inst, AssetDatabase.LoadAssetAtPath<Material>(Mat(k)), null);

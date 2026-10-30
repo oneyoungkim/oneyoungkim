@@ -93,14 +93,14 @@ namespace Haengin.Tests
             }
 
             yield return Lab.Seconds(1.0f);
-            Check("정지", "Idle", LocoAnim.Gait.Idle);
+            Check("정지", "Stand_Siwoo", LocoAnim.Gait.Idle);
             yield return Hold(m, 1f, false, 2.0f);
             Check($"걷기 {m.T.walkSpeed:F1}", "Walk", LocoAnim.Gait.Walk);
             Assert.That(loco.Rate, Is.EqualTo(1f).Within(0.03f), "걷기: 재생 속도 ×1(블렌드 트리의 걷기 배율 그대로)");
             yield return Hold(m, 1f, true, 2.0f);
             Check("달리기 4.5", "Run", LocoAnim.Gait.Run);
             yield return Hold(m, 0f, false, 1.5f);
-            Check("다시 정지", "Idle", LocoAnim.Gait.Idle);
+            Check("다시 정지", "Stand_Siwoo", LocoAnim.Gait.Idle);
             // 패드를 살짝 기울인 느린 걷기(0.5 ~ 걷기 속도): 걷기 클립을 느리게(대기와 섞지 않음)
             float amt = (0.8f - m.T.minWalkSpeed) / (m.T.walkSpeed - m.T.minWalkSpeed) * m.T.stickFull;
             yield return Hold(m, amt, false, 1.5f);

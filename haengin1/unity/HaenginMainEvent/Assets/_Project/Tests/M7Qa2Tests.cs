@@ -538,6 +538,82 @@ namespace Haengin.Tests
             Assert.IsEmpty(bad, string.Join(" | ", bad));
         }
 
+        // ───────────────────────── Q54 서 있는 자세(2026-10-31 대표 "등이 굽어 보인다"): 게임의 실제 컨트롤러로 대기 자세 재기 · 걷기↔대기 · 구경↔미트 전환이 튀지 않음
+        static string StandBad(string name, Animator an, Transform root, float armMax, List<string> log)
+        {
+            Vector3 L(HumanBodyBones b) => root.InverseTransformPoint(an.GetBoneTransform(b).position);
+            var sh = (L(HumanBodyBones.LeftUpperArm) + L(HumanBodyBones.RightUpperArm)) * 0.5f;
+            var hip = (L(HumanBodyBones.LeftUpperLeg) + L(HumanBodyBones.RightUpperLeg)) * 0.5f;
+            var down = (hip - sh).normalized;
+            float Front(Vector3 v) => Vector3.Angle(Vector3.ProjectOnPlane(v, Vector3.forward), Vector3.ProjectOnPlane(down, Vector3.forward));
+            float arm = Mathf.Max(Front(L(HumanBodyBones.LeftLowerArm) - L(HumanBodyBones.LeftUpperArm)), Front(L(HumanBodyBones.RightLowerArm) - L(HumanBodyBones.RightUpperArm)));
+            float shHip = (sh.z - hip.z) * 100f, dy = Mathf.Abs(L(HumanBodyBones.LeftUpperArm).y - L(HumanBodyBones.RightUpperArm).y) * 100f;
+            float head = (L(HumanBodyBones.Head).z - sh.z) * 100f, foot = Mathf.Max(L(HumanBodyBones.LeftFoot).y, L(HumanBodyBones.RightFoot).y) * 100f, hipY = hip.y;
+            log.Add($"{name}: 어깨-엉덩이 {shHip:+0.0;-0.0} · 머리뼈-어깨 {head:+0.0;-0.0} · 위팔 {arm:F1}° · 어깨차 {dy:F1} · 발목 높이 {foot:F1}cm · 엉덩이 {hipY:F2}m");
+            if (Mathf.Abs(shHip) > 3f) return $"{name} 어깨-엉덩이 {shHip:F1}";
+            if (arm > armMax) return $"{name} 위팔 {arm:F1}°";
+            if (dy > 1.5f) return $"{name} 어깨차 {dy:F1}";
+            if (foot > 25f || hipY < 0.45f) return $"{name} 다리 접힘(발목 {foot:F0}cm · 엉덩이 {hipY:F2}m)";
+            return null;
+        }
+
+        [UnityTest, Timeout(600000)]
+        public IEnumerator Q54_Standing_Posture_And_Transitions()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            yield return Start(w, Mid(w.Def, 312, 14 * 60, SceneLoader.Gym, m => { m.G.Fatigue = 0; }));
+            GymManager gm = null;
+            for (int i = 0; i < 300 && gm == null; i++) { gm = GymManager.Instance; yield return null; }
+            Assert.NotNull(gm, "체육관");
+            yield return Lab.Frames(10);
+            var log = new List<string>(); var bad = new List<string>();
+            var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+            var feet = mat.position + mat.forward * 2.4f;
+            foreach (var (name, n) in new[] { ("이윤준", gm.Yunjun), ("김승연", gm.Guest("seungyeon")), ("손진수", gm.Guest("jinsoo_son")), ("서진수", gm.Guest("jinsoo_seo")), ("백승민", gm.Guest("seungmin_baek")), ("관원 1", gm.Members.Count > 0 ? gm.Members[0] : null), ("관원 3", gm.Members.Count > 2 ? gm.Members[2] : null) })
+            {
+                Assert.NotNull(n, name);
+                n.gameObject.SetActive(true);
+                n.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                n.Place(feet, mat.forward, GymNpc.Routine.Watch);
+                yield return Lab.Frames(20);
+                string b = StandBad(name, n.Anim, n.transform, 12.5f, log);
+                if (b != null) bad.Add(b);
+                // 구경 → 미트 → 구경: 한 프레임에 머리·엉덩이가 튀지 않음(스톡 클립 사이 블렌드)
+                var head = n.Anim.GetBoneTransform(HumanBodyBones.Head); var hips = n.Anim.GetBoneTransform(HumanBodyBones.Hips);
+                float worst = 0f;
+                var ph = head.position; var pp = hips.position;
+                n.Place(feet, mat.forward, GymNpc.Routine.Mitts);
+                for (int i = 0; i < 30; i++) { yield return null; worst = Mathf.Max(worst, (head.position - ph).magnitude, (hips.position - pp).magnitude); ph = head.position; pp = hips.position; }
+                n.Place(feet, mat.forward, GymNpc.Routine.Watch);
+                for (int i = 0; i < 30; i++) { yield return null; worst = Mathf.Max(worst, (head.position - ph).magnitude, (hips.position - pp).magnitude); ph = head.position; pp = hips.position; }
+                log.Add($"{name}: 구경↔미트 한 프레임 최대 {worst * 100f:F1}cm");
+                if (worst > 0.05f) bad.Add($"{name} 구경↔미트 {worst * 100f:F1}cm 튐");
+                n.gameObject.SetActive(false);
+            }
+            // 걷기 ↔ 대기(시우)
+            {
+                var me = M3Lab.Motor;
+                me.Teleport(feet, 0f);
+                yield return Lab.Frames(40);
+                var an = me.GetComponentInChildren<Animator>();
+                string b = StandBad("시우", an, an.transform, 12.5f, log);
+                if (b != null) bad.Add(b);
+                var hips = an.GetBoneTransform(HumanBodyBones.Hips);
+                float worst = 0f, py = an.transform.InverseTransformPoint(hips.position).y;
+                me.SetMoveInput(mat.forward, 1f, false);
+                for (int i = 0; i < 60; i++) { yield return null; float y = an.transform.InverseTransformPoint(hips.position).y; worst = Mathf.Max(worst, Mathf.Abs(y - py)); py = y; }
+                me.ClearMoveInput();
+                for (int i = 0; i < 60; i++) { yield return null; float y = an.transform.InverseTransformPoint(hips.position).y; worst = Mathf.Max(worst, Mathf.Abs(y - py)); py = y; }
+                log.Add($"시우: 걷기↔대기 엉덩이 높이 한 프레임 최대 {worst * 100f:F1}cm");
+                if (worst > 0.03f) bad.Add($"시우 걷기↔대기 {worst * 100f:F1}cm 튐");
+            }
+            Debug.Log("[Q] Q54 서 있는 자세\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
+            w.Stop();
+            yield return Lab.Frames(5);
+        }
+
         // ───────────────────────── Q51 체육관 캐릭터 채움(2026-10-30 대표 "얼굴이 어둡고 납작"): 체육관 안 시우·코치에만, 나가면 시우 원래대로
         [UnityTest, Timeout(300000)]
         public IEnumerator Q51_Gym_Char_Fill_Only_In_Gym()

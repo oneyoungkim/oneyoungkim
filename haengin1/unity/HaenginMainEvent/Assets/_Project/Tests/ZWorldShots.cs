@@ -158,7 +158,7 @@ namespace Haengin.Tests
             var draw = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Draw Calls Count");
             var csv = new StringBuilder("경로,프레임,렌더ms,삼각형,SetPass,그리기\n");
             var summary = new List<string>();
-            double streetP95 = 0, indoorP95 = 0;
+            var streetRuns = new List<double>(); var indoorRuns = new List<double>(); var homeRuns = new List<double>();
             IEnumerator Measure(string name, Func<int, bool> step, int frames)
             {
                 bool was = cam.enabled; cam.enabled = false;
@@ -167,7 +167,7 @@ namespace Haengin.Tests
                 {
                     step(i);
                     yield return null;
-                    if (i % 6 != 0) continue;
+                    if (i % 2 != 0) continue;       // 2026-10-31: 6칸마다 → 2칸마다(표본 40 → 120 — 95% 가 두 번째로 나쁜 값이 아니라 진짜 95%)
                     var prev = cam.targetTexture; cam.targetTexture = rt;
                     var sw = Stopwatch.StartNew();
                     cam.Render();
@@ -183,31 +183,40 @@ namespace Haengin.Tests
                 cam.enabled = was;
                 var sorted = ms.OrderBy(x => x).ToList();
                 double p95 = sorted[(int)(sorted.Count * 0.95)];
-                if (name.StartsWith("밤 상가거리")) streetP95 = p95;
-                if (name.Contains("실내")) indoorP95 = System.Math.Max(indoorP95, p95);
+                if (name.StartsWith("밤 상가거리")) streetRuns.Add(p95);
+                else if (name.StartsWith("국밥집")) indoorRuns.Add(p95);
+                else homeRuns.Add(p95);
                 summary.Add($"{name}: 1080p 렌더 한 번 평균 {ms.Average():F2}ms · 95% {p95:F2} · 삼각형 최대 {tris.Max():N0} · SetPass 최대 {sps.Max()} · 그리기 최대 {dcs.Max()}");
             }
             // ① 밤 상가거리 걷기 — 오픈월드(세계 화면·시계·길잡이·문·지점 평가)
-            var dv = b0 - a0; M3Lab.Motor.Teleport(a0, Mathf.Atan2(dv.x, dv.z) * Mathf.Rad2Deg); M3Lab.Cam.SnapBehind();
-            yield return Lab.Frames(20);
-            yield return Measure("밤 상가거리 걷기 · 오픈월드", i => { var d = b0 - M3Lab.Motor.Position; d.y = 0f; M3Lab.Motor.SetMoveInput(d.normalized, 1f, false); return true; }, 600);
-            M3Lab.Motor.ClearMoveInput();
+            // 2026-10-31: 3회 중앙값(docs/15 8-8) — 표본 40개라 95% = 두 번째로 나쁜 값이고 첫 표본(무대를 막 올린 뒤 32~120ms)이 늘 가장 나빠, 한 번의 OS 끊김이 곧 95% 가 됨(같은 코드 6.55~10.02ms). 기준 수치는 그대로
+            var dv = b0 - a0;
+            for (int run = 0; run < 3; run++)
+            {
+                M3Lab.Motor.Teleport(a0, Mathf.Atan2(dv.x, dv.z) * Mathf.Rad2Deg); M3Lab.Cam.SnapBehind();
+                yield return Lab.Frames(20);
+                yield return Measure("밤 상가거리 걷기 · 오픈월드", i => { var d = b0 - M3Lab.Motor.Position; d.y = 0f; M3Lab.Motor.SetMoveInput(d.normalized, 1f, false); return true; }, 600);
+                M3Lab.Motor.ClearMoveInput();
+            }
             // ② 실내: 국밥집 저녁(손님 6 · 김 3) · 시우네 밤(이불·스탠드)
             GameClock.SetDate(2026, 3, 12, 19 * 60);
             yield return w.Loader.Go("Gukbap", "Door", false, Vector3.zero, 0f);
             yield return Lab.Frames(30);
-            yield return Measure("국밥집 저녁 실내(손님·김)", i => true, 240);
+            for (int run = 0; run < 3; run++) yield return Measure("국밥집 저녁 실내(손님·김)", i => true, 240);
             GameClock.SetDate(2026, 3, 12, 23 * 60);
             yield return w.Loader.Go("Home", "Spawn", false, Vector3.zero, 0f);
             yield return Lab.Frames(30);
-            yield return Measure("시우네 밤 실내(이불·스탠드)", i => true, 240);
+            for (int run = 0; run < 3; run++) yield return Measure("시우네 밤 실내(이불·스탠드)", i => true, 240);
             Directory.CreateDirectory("Logs");
             File.WriteAllText("Logs/perf_world.csv", csv.ToString(), new UTF8Encoding(true));
             var outDir = Shots.Arg("-worldshots");
             if (!string.IsNullOrEmpty(outDir)) { Directory.CreateDirectory(outDir); File.WriteAllText(Path.Combine(outDir, "perf_world.csv"), csv.ToString(), new UTF8Encoding(true)); }
             Debug.Log($"[W] W16 성능(에디터 배치, {SystemInfo.graphicsDeviceName}):\n{string.Join("\n", summary)}");
-            Assert.LessOrEqual(streetP95, 12.0, "밤 상가거리 오픈월드 95% ≤ 12ms");
-            Assert.LessOrEqual(indoorP95, 8.0, "실내(국밥집 저녁·시우네 밤) 95% ≤ 8ms(docs/14 룩데브 성능 기준)");
+            double Med(List<double> v) { var o = v.OrderBy(x => x).ToList(); return o[o.Count / 2]; }
+            Debug.Log($"[W] W16 3회 중앙값: 밤 상가거리 {Med(streetRuns):F2} [{string.Join(" ", streetRuns.Select(x => x.ToString("F2")))}] · 국밥집 {Med(indoorRuns):F2} [{string.Join(" ", indoorRuns.Select(x => x.ToString("F2")))}] · 시우네 {Med(homeRuns):F2} [{string.Join(" ", homeRuns.Select(x => x.ToString("F2")))}]");
+            Assert.LessOrEqual(Med(streetRuns), 12.0, "밤 상가거리 오픈월드 95% 3회 중앙값 ≤ 12ms");
+            Assert.LessOrEqual(Med(indoorRuns), 8.0, "국밥집 저녁 95% 3회 중앙값 ≤ 8ms(docs/14 룩데브 성능 기준)");
+            Assert.LessOrEqual(Med(homeRuns), 8.0, "시우네 밤 95% 3회 중앙값 ≤ 8ms(docs/14 룩데브 성능 기준)");
         }
 
         // ───────────────────────── 녹화·사진

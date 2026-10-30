@@ -356,7 +356,8 @@ namespace Haengin.EditorGame
                 st.motion = clip; st.writeDefaultValues = true; st.iKOnFeet = false;
                 return st;
             }
-            var baseIdle = Clip(ClipSetup.EnemyFbx(ClipSetup.Enemies[0]), "Idle");
+            var baseIdle = StandSetup.Idle(ClipSetup.EnemyFbx(ClipSetup.Enemies[0]));      // 2026-10-31 대기 = 전용 곧은 자세(Anim/Stand)
+            var enemyBaseIdle = Clip(ClipSetup.EnemyFbx(ClipSetup.Enemies[0]), "Idle");   // 전투 몸(Enemy.controller)은 원래 대기 그대로
             var idleSt = St("Idle", baseIdle);
             St("Stance", Clip($"{ClipSetup.ClipDir}/Stance.fbx", null));
             foreach (var s in GymStates.Skip(1)) { var c = Clip($"{ClipSetup.ClipDir}/{s}.fbx", null); if (c != null) St(s, c); }
@@ -403,7 +404,7 @@ namespace Haengin.EditorGame
             foreach (var n in Npcs)
             {
                 var model = AssetDatabase.LoadAssetAtPath<GameObject>(NpcFbx(n)); if (model == null) continue;
-                var oc = Override($"{Root}/Anim/Gym_{n}.overrideController", ctrl, baseIdle, Clip(NpcFbx(n), "Idle"));
+                var oc = Override($"{Root}/Anim/Gym_{n}.overrideController", ctrl, baseIdle, StandSetup.Idle(NpcFbx(n)));
                 var go = NpcInstance(model, NpcMat(n), oc, CharSetup.AvatarOf(NpcFbx(n)));
                 go.name = "Npc_" + n;
                 var npc = go.AddComponent<GymNpc>(); npc.Id = NpcNames[n].id; npc.DisplayName = NpcNames[n].name; npc.Anim = go.GetComponentInChildren<Animator>();
@@ -420,7 +421,7 @@ namespace Haengin.EditorGame
                 var mm = AssetDatabase.LoadAssetAtPath<Material>(mp);
                 if (mm == null && baseMat != null) { mm = new Material(baseMat) { name = Path.GetFileNameWithoutExtension(mp) }; AssetDatabase.CreateAsset(mm, mp); }
                 if (mm != null) { mm.SetColor("_BaseColor", tints[i]); mm.SetColor("_Color", tints[i]); EditorUtility.SetDirty(mm); }
-                var oc = Override($"{Root}/Anim/Gym_{en}.overrideController", ctrl, baseIdle, Clip(ClipSetup.EnemyFbx(en), "Idle"));
+                var oc = Override($"{Root}/Anim/Gym_{en}.overrideController", ctrl, baseIdle, StandSetup.Idle(ClipSetup.EnemyFbx(en)));
                 var go = NpcInstance(model, mp, oc, CharSetup.AvatarOf(ClipSetup.EnemyFbx(en)));
                 foreach (var rr in go.GetComponentsInChildren<Renderer>(true)) rr.shadowCastingMode = ShadowCastingMode.Off;   // 관원 8 은 그림자 없음(실내 삼각형 예산)
                 go.name = $"Npc_Member_{i + 1:00}";
@@ -433,7 +434,7 @@ namespace Haengin.EditorGame
                 var enemyCtrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ClipSetup.EnemyCtrl);
                 if (model != null && enemyCtrl != null)
                 {
-                    var go = NpcInstance(model, NpcMat("Gojun"), Override($"{Root}/Anim/Enemy_Gojun.overrideController", enemyCtrl, baseIdle, Clip(NpcFbx("Gojun"), "Idle")), CharSetup.AvatarOf(NpcFbx("Gojun")));
+                    var go = NpcInstance(model, NpcMat("Gojun"), Override($"{Root}/Anim/Enemy_Gojun.overrideController", enemyCtrl, enemyBaseIdle, Clip(NpcFbx("Gojun"), "Idle")), CharSetup.AvatarOf(NpcFbx("Gojun")));
                     go.name = "Gojun_Fighter";
                     var anim = go.GetComponentInChildren<Animator>(); anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                     var fa = go.AddComponent<FighterAnim>(); fa.Clips = table;

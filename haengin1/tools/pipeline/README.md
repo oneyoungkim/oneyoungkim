@@ -57,3 +57,4 @@ M3 인물 12명의 프롬프트는 `concept/art/fujimoto/m3/prompts/`.
 **이윤준 삐뚤어짐 원인**: 비율 맞춘다고 얼굴 아래를 내리는(`drop`) 좌우 감쇠의 가운데를 머리 뼈 x(0)로 잡았는데, 이윤준 얼굴은 x +3.3cm 에 놓여 있어 한쪽만 2cm 내려가 입이 +8° 기울고 턱 끝이 1.7cm 쏠렸다(텍스처 탓 아님, 메시). 감쇠 가운데를 두 눈 중점으로 고침(`head_swap.py` 는 그대로 — 이제 쓰지 않음). 내리는 양은 같은 비율이 나오게 0.0125 로 줄임. + `yawDeg`(대칭면 맞춤 값) 이윤준 3.1°·손진수 4.2°·서진수 1.2°·김승연 −1°.
 서진수: 내보내기 마지막에 `mesh_dump.py`·`hair_blond.py` 필수, 머리카락 Shade 곱셈값 1.0(체육관 낮 올리브빛 고침, `hair_blond.py` 안).
 - **v3 폐기(2026-10-31 대표 결정)**: 머리 교체로 목 이음 문제가 해결되지 않아 코치는 v2 유지. 위 v3 기록과 `head_swap.py`·`head_bridge.py`·`neck_paint.py`·`hair_blond.py`·`make_atlas.py` 는 참고용. 게임은 v3 파일을 참조하지 않음(docs/15 8-7).
+- **서 있는 자세 재기(2026-10-31)**: `stand_measure.py`(Blender, 리깅 GLB 의 휴지·클립) · `stand_table.py`(Unity `StandSetup` 의 stand_measure.tsv → 합격 표) · `stand_sheet.py`(`Z_Stand_Shots` 사진 → stand_fix.jpg, 옆면에 발목 세로선).

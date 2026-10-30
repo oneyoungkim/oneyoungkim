@@ -328,8 +328,8 @@ namespace Haengin.EditorGame
             oc.runtimeAnimatorController = baseCtrl;
             var pairs = new List<KeyValuePair<AnimationClip, AnimationClip>>();
             oc.GetOverrides(pairs);
-            var taeoIdle = CharSetup.Clip(CharSetup.TaeoFbx, "Idle");
-            for (int i = 0; i < pairs.Count; i++) if (pairs[i].Key != null && pairs[i].Key.name == "Idle") pairs[i] = new KeyValuePair<AnimationClip, AnimationClip>(pairs[i].Key, taeoIdle);
+            var taeoIdle = StandSetup.Idle(CharSetup.TaeoFbx);
+            for (int i = 0; i < pairs.Count; i++) if (pairs[i].Key != null && (pairs[i].Key.name == "Idle" || pairs[i].Key.name.StartsWith("Stand_"))) pairs[i] = new KeyValuePair<AnimationClip, AnimationClip>(pairs[i].Key, taeoIdle);
             oc.ApplyOverrides(pairs);
             EditorUtility.SetDirty(oc);
             Directory.CreateDirectory(Path.GetDirectoryName(TaeoPrefab));
