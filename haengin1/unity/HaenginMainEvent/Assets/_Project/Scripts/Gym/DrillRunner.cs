@@ -70,6 +70,9 @@ namespace Haengin
         public Transform Visual;
         public GymNpc Yunjun, Gojun;
         public Fighter Mitt;                       // 이윤준 미트(Fighter)
+        /// 미트 잡는 사람(레슨이면 그 코치 — 없으면 이윤준). 2026-10-30
+        public GymNpc MittNpc;
+        public GymNpc MittHolder => MittNpc != null && MittNpc.isActiveAndEnabled ? MittNpc : Yunjun;
         public List<BagSwing> Bags = new List<BagSwing>();
         public Transform Dummy, SpeedBag;
         public CombatMode Mode;

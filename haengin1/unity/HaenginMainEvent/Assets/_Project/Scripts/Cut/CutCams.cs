@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Haengin
 {
-    public enum CamPreset { LowAngle, Close, Wide, LowFront, BackTrack, SideTrack, Mid }
+    public enum CamPreset { LowAngle, Close, Wide, LowFront, BackTrack, SideTrack, Mid, Group }
 
     public static class CutCams
     {
@@ -18,12 +18,12 @@ namespace Haengin
 
         public static float Fov(CamPreset p) => p switch
         {
-            CamPreset.LowAngle => 74f, CamPreset.Close => 24f, CamPreset.Wide => 45f, CamPreset.LowFront => 40f, CamPreset.BackTrack => 45f, CamPreset.Mid => 30f, _ => 40f,
+            CamPreset.LowAngle => 74f, CamPreset.Close => 24f, CamPreset.Wide => 45f, CamPreset.LowFront => 40f, CamPreset.BackTrack => 45f, CamPreset.Mid => 30f, CamPreset.Group => 55f, _ => 40f,
         };
 
         public static string Name(CamPreset p) => p switch
         {
-            CamPreset.LowAngle => "로우앵글", CamPreset.Close => "근접", CamPreset.Wide => "와이드", CamPreset.LowFront => "낮은 정면", CamPreset.BackTrack => "등 뒤 트래킹", CamPreset.Mid => "미디엄", _ => "측면 트래킹",
+            CamPreset.LowAngle => "로우앵글", CamPreset.Close => "근접", CamPreset.Wide => "와이드", CamPreset.LowFront => "낮은 정면", CamPreset.BackTrack => "등 뒤 트래킹", CamPreset.Mid => "미디엄", CamPreset.Group => "그룹", _ => "측면 트래킹",
         };
 
         /// 프리셋 카메라를 만든다(꺼진 우선순위 0). subject = 주 대상, other = 둘째 대상(낮은 정면)
@@ -207,6 +207,11 @@ namespace Haengin
                         look = mid + Vector3.up * (h * 0.66f);
                         break;
                     }
+                case CamPreset.Group:
+                    // 2026-10-30 그룹 미디엄(N13): 대상(시우)을 둘러선 여럿의 얼굴이 다 보이게 — 대상 뒤 오른쪽 위에서 앞 반원 가운데를 봄(대상 머리 위로 지나감)
+                    pos = feet - fwd * 1.9f + right * 0.9f + Vector3.up * 2.3f;     // 뒤 1.9m(N13 — 3m 뒤면 케이지 철망 너머) · 오른쪽 0.9m(가운데 사람이 대상 몸에 안 가리게)
+                    look = feet + fwd * 1.8f + Vector3.up * 1.2f;
+                    break;
                 case CamPreset.BackTrack:
                     pos = feet - fwd * 3.4f + Vector3.up * 1.7f;
                     look = head + fwd * 2.0f;

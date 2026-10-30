@@ -491,11 +491,35 @@ namespace Haengin.Tests
                 IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; }
                 w.StartCoroutine(Wrap());
                 float t0 = Time.realtimeSinceStartup;
+                var five = new[] { "이윤준", "백승민", "김승연", "손진수", "서진수" };
+                bool laid = false;
                 while (!done && Time.realtimeSinceStartup - t0 < 300f)
                 {
-                    foreach (var n in new[] { "이윤준", "백승민", "김승연", "손진수", "서진수" }) { var a = CutCtx.Actor(n); if (a != null && a.gameObject.activeInHierarchy) seen.Add(n); }
+                    foreach (var n in five) { var a = CutCtx.Actor(n); if (a != null && a.gameObject.activeInHierarchy) seen.Add(n); }
+                    // 2026-10-30 대표 "균형도 안 맞고 이상하다": N13 = 시우 중심 반원(이웃 1.2m 넘게)·모두 시우를 봄·관원은 매트 밖·코치는 대기 자세(미트 자세 아님)
+                    if (card == "N13" && !laid && story.Talk != null && story.Talk.Current != null && story.Talk.Current.Id == "N13.07")
+                    {
+                        laid = true;
+                        var me = M3Lab.Motor.transform.position;
+                        var ps = five.Select(n => CutCtx.Actor(n)).Where(a => a != null).ToList();
+                        float gap = float.MaxValue;
+                        for (int i = 0; i < ps.Count; i++) for (int j = i + 1; j < ps.Count; j++) { var d = ps[i].position - ps[j].position; d.y = 0f; gap = Mathf.Min(gap, d.magnitude); }
+                        if (gap < 1.2f) bad.Add($"N13 코치 간격 {gap:F2}m < 1.2");
+                        foreach (var a in ps)
+                        {
+                            var to = me - a.position; to.y = 0f;
+                            var lp = M3Lab.Motor.transform.InverseTransformPoint(a.position);
+                            if (Vector3.Angle(a.forward, to) > 20f) bad.Add($"N13 {a.name} 시우를 안 봄({Vector3.Angle(a.forward, to):F0}° · 시우 기준 앞 {lp.z:F2} 옆 {lp.x:F2})");
+                            var npc = a.GetComponent<GymNpc>();
+                            if (npc != null && npc.Current != "Idle") bad.Add($"N13 {a.name} 자세 {npc.Current}(대기 아님)");
+                        }
+                        int on = gm.Members.Count(m => m != null && m.gameObject.activeInHierarchy);
+                        if (on > 0) bad.Add($"N13 관원 {on}명 남음");
+                        log.Add($"N13 배치: 최소 간격 {gap:F2}m · 관원 {on}");
+                    }
                     yield return null;
                 }
+                if (card == "N13" && !laid) bad.Add("N13.07 줄을 못 봄(배치 검사 안 됨)");
                 log.Add($"{card} 「{c.Title}」: 끝 {done} · 대사 장면 {story.DlgPlayed - d0} · 보인 사람 [{string.Join(",", seen)}] · 컷 못 피함 {CutCamDriver.StoryBad.Count}");
                 if (!done) bad.Add(card + " 안 끝남");
                 if (story.DlgPlayed - d0 < 1) bad.Add(card + " 대사 장면 없음");

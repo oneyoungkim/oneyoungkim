@@ -200,6 +200,14 @@ namespace Haengin.Tests
             log.Add($"{key}: 부름 {calls} · 사진 {shots}");
         }
 
+        static float MinGap(string[] names)
+        {
+            var ps = names.Select(n => CutCtx.Actor(n)).Where(a => a != null).Select(a => a.position).ToList();
+            float m = float.MaxValue;
+            for (int i = 0; i < ps.Count; i++) for (int j = i + 1; j < ps.Count; j++) { var d = ps[i] - ps[j]; d.y = 0f; m = Mathf.Min(m, d.magnitude); }
+            return ps.Count > 1 ? m : 0f;
+        }
+
         static IEnumerator HoldAt(GymNpc yj, Vector3 feet, Vector3 dir)
         {
             yj.gameObject.SetActive(true);
@@ -311,6 +319,24 @@ namespace Haengin.Tests
                 var names = new[] { "이윤준", "김승연", "손진수", "서진수", "백승민" };
                 bool All() => names.All(n => { var a = CutCtx.Actor(n); return a != null && a.gameObject.activeInHierarchy; });
                 yield return Until(() => All() || done, 120f);
+                // 2026-10-30: 그룹 카메라(N13.01·N13.12 줄 카메라 '그룹:시우' — 다섯 얼굴) 그대로 한 장(줄이 봇 읽기로 빨리 지나가 카메라를 직접 세움)
+                yield return Until(() => story.Talk != null && story.Talk.Current != null && story.Talk.Current.Id == "N13.07", 30f);
+                {
+                    var gc = CutCams.Make(CamPreset.Group, me.transform, null);
+                    gc.Snap();
+                    yield return null;
+                    gc.Snap();
+                    brain.enabled = false;
+                    cam.transform.SetPositionAndRotation(gc.transform.position, gc.transform.rotation);
+                    float fov = cam.fieldOfView; cam.fieldOfView = CutCams.Fov(CamPreset.Group);
+                    yield return null;
+                    Snap(gm, cam, Path.Combine(dir, "n13_0_group.png"), true);
+                    cam.fieldOfView = fov;
+                    CutCams.Release(gc);
+                    brain.enabled = true;
+                }
+                foreach (var n in names) { var a = CutCtx.Actor(n); if (a == null) continue; var lp = me.transform.InverseTransformPoint(a.position); log.Add($"  {n}: 시우 기준 앞 {lp.z:F2} · 옆 {lp.x:F2} · 켜짐 {a.gameObject.activeInHierarchy} · 자세 {(a.GetComponent<GymNpc>() != null ? a.GetComponent<GymNpc>().Current : "-")}"); }
+                log.Add($"N13 그룹 컷: 줄 {(story.Talk != null && story.Talk.Current != null ? story.Talk.Current.Id : "-")} · 관원 켜짐 {gm.Members.Count(m => m != null && m.gameObject.activeInHierarchy)} · 코치 사이 최소 간격 {MinGap(names):F2}m");
                 yield return Until(() => false, 1.0f);
                 Snap(gm, cam, Path.Combine(dir, "n13_1_play.png"), true);
                 // 시우 뒤 높은 데서 다섯을 한 화면에
@@ -332,6 +358,79 @@ namespace Haengin.Tests
             }
             File.WriteAllText(Path.Combine(dir, "summary.txt"), string.Join("\n", log), new UTF8Encoding(true));
             Debug.Log("[Coach] 코치 게임 화면 → " + dir + "\n" + string.Join("\n", log));
+        }
+
+        // ───────────────────────── 김승연 v2·v3 목(2026-10-30 대표 "목이 꺾여 있다") — -neckout <폴더>
+        //   같은 상태·같은 정규화 시각에서 두 아바타의 Neck·Head·가슴 뼈 회전(몸 기준)을 로그로 비교 + 새 미트 자세(대기 + MittArms) 나란히 사진(neck_v2_v3.png)
+        [UnityTest, Timeout(1200000)]
+        public IEnumerator Z_Coach_Neck()
+        {
+            string dir = Shots.Arg("-neckout");
+            if (string.IsNullOrEmpty(dir)) { Assert.Ignore("-neckout <폴더> 없음"); yield break; }
+            if (!Shots.Graphics) { Assert.Ignore("그래픽 장치 없음(-nographics)"); yield break; }
+            Directory.CreateDirectory(dir);
+            WorldRunner w = null;
+            yield return M7Qa2Tests.Open(x => w = x);
+            GymManager gm = null;
+            yield return Enter(w, 312, 14 * 60, x => gm = x);
+            gm.ApplyPart(GymPart.Day);
+            var cam = Camera.main; var brain = cam.GetComponent<CinemachineBrain>(); var me = M3Lab.Motor;
+            foreach (var r in me.GetComponentsInChildren<Renderer>(true)) r.enabled = false;
+            var v3 = gm.Guest("seungyeon"); Assert.NotNull(v3, "김승연 v3");
+            GymNpc v2 = null;
+#if UNITY_EDITOR
+            var pf = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Gym/Npc_Seungyeon_v2.prefab");
+            Assert.NotNull(pf, "Npc_Seungyeon_v2 프리팹");
+            v2 = Object.Instantiate(pf, v3.transform.parent).GetComponent<GymNpc>();
+#endif
+            Assert.NotNull(v2, "v2 GymNpc");
+            var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+            var dirOpen = OpenDir(mat.position + Vector3.up * 1.2f, mat.forward);
+            var side = Vector3.Cross(Vector3.up, dirOpen);
+            var log = new List<string>();
+            var bones = new[] { HumanBodyBones.Hips, HumanBodyBones.Chest, HumanBodyBones.UpperChest, HumanBodyBones.Neck, HumanBodyBones.Head };
+            foreach (var (state, t) in new[] { ("Stance", 0.25f), ("Stance", 0.6f), ("Idle", 0.3f), ("Block", 0.5f) })
+            {
+                foreach (var n in new[] { v2, v3 })
+                {
+                    n.gameObject.SetActive(true);
+                    n.Place(mat.position + side * (n == v2 ? -0.7f : 0.7f), dirOpen, GymNpc.Routine.Watch);
+                }
+                yield return Lab.Frames(3);
+                foreach (var n in new[] { v2, v3 }) { n.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate; n.Anim.speed = 0f; n.Anim.Play(state, 0, t); n.Anim.Update(0f); n.Anim.Update(0f); }
+                yield return null;
+                var parts = new List<string>();
+                foreach (var b in bones)
+                {
+                    var a = Bone(v2, b); var c = Bone(v3, b);
+                    if (a == v2.transform || c == v3.transform) continue;
+                    var ra = Quaternion.Inverse(v2.transform.rotation) * a.rotation; var rc = Quaternion.Inverse(v3.transform.rotation) * c.rotation;
+                    var pa = v2.transform.InverseTransformPoint(a.position); var pc = v3.transform.InverseTransformPoint(c.position);
+                    parts.Add($"{b} 회전 차 {Quaternion.Angle(ra, rc):F2}° (v2 {ra.eulerAngles.x:F1},{ra.eulerAngles.y:F1},{ra.eulerAngles.z:F1} / v3 {rc.eulerAngles.x:F1},{rc.eulerAngles.y:F1},{rc.eulerAngles.z:F1}) 위치 차 {(pa - pc).magnitude * 100f:F2}cm");
+                }
+                log.Add($"[{state} t={t:0.00}] " + string.Join(" · ", parts));
+                foreach (var n in new[] { v2, v3 }) n.Anim.speed = 1f;
+            }
+            // 새 미트 자세(대기 + MittArms) 나란히 — 목 확인
+            foreach (var n in new[] { v2, v3 }) { n.Place(mat.position + side * (n == v2 ? -0.45f : 0.45f), dirOpen, GymNpc.Routine.Mitts); }
+            yield return Lab.Frames(60);
+            foreach (var n in new[] { v2, v3 }) n.Anim.speed = 0f;
+            yield return null;
+            var mid = (Bone(v2, HumanBodyBones.Neck).position + Bone(v3, HumanBodyBones.Neck).position) * 0.5f;
+            brain.enabled = false;
+            Pose(cam, mid - Vector3.up * 0.15f, mid - Vector3.up * 0.15f + (Quaternion.Euler(0f, -20f, 0f) * dirOpen) * 3.1f + Vector3.up * 0.05f, 34f);
+            yield return null;
+            Snap(gm, cam, Path.Combine(dir, "mitt_v2_v3.png"), false);
+            Pose(cam, mid + Vector3.up * 0.02f, mid + Vector3.up * 0.02f + (Quaternion.Euler(0f, -12f, 0f) * dirOpen) * 2.3f, 30f);
+            yield return null;
+            Snap(gm, cam, Path.Combine(dir, "neck_v2_v3.png"), false);
+            brain.enabled = true;
+            var ma = v3.Anim.GetComponent<MittArms>();
+            log.Add($"미트 팔 v3: 켜짐 {ma != null && ma.On} · 무게 {(ma != null ? ma.CurrentWeight : 0f):F2} · 상태 {v3.Current}");
+            Object.Destroy(v2.gameObject);
+            foreach (var r in me.GetComponentsInChildren<Renderer>(true)) r.enabled = true;
+            File.WriteAllText(Path.Combine(dir, "neck_log.txt"), string.Join("\n", log), new UTF8Encoding(true));
+            Debug.Log("[Coach] 김승연 v2·v3 목 비교 → " + dir + "\n" + string.Join("\n", log));
         }
 
         // ───────────────────────── 코치 넷 얼굴 근접 — 체육관 낮·밤 두 조명, 같은 자리·같은 카메라(모델 판끼리 비교용, 2026-10-30) — -facesout <폴더>

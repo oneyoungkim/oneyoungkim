@@ -35,7 +35,7 @@ namespace Haengin
             Combo = null; nextCallAt = 1.0; guardWindow = false;
             callGap = round == 1 ? 1.2 : round == 2 ? 1.0 : 0.8;
             if (Actors.Me != null) { Actors.Me.ScriptAnim = null; Actors.Me.ResetFighter(); }
-            if (mitt) Actors.Yunjun?.Play("Stance");
+            if (mitt) Actors.MittHolder?.Mitt(false);
         }
 
         void Call(double t)
@@ -45,7 +45,7 @@ namespace Haengin
             strikesInCombo = 0; lastStrikeStart = -1; lastExpect = -1; lastOpen = -1;
             expectHits.Clear();
             Actors.Say?.Invoke("이윤준", Combo.Spoken);
-            if (mitt) Actors.Yunjun?.Play("Block", 0.08f);            // 미트 들림(코치 가드 올리기 클립 자리)
+            if (mitt) Actors.MittHolder?.Mitt(true);                   // 미트 들림(전용 클립 없음 — MittArms IK, 2026-10-30)
         }
 
         public override void Tick(float dt, double t, in DrillInput inp)
@@ -70,7 +70,7 @@ namespace Haengin
                     if (inp.Guard) { Log.Add("guard", t, 1, R.Round); guardWindow = false; }
                     else if (t >= guardDeadline) { Log.Add("guard", t, 0, R.Round); guardWindow = false; R.Toast("가드!"); }
                 }
-                if (!guardWindow) { Combo = null; nextCallAt = t + callGap; if (mitt) Actors.Yunjun?.Play("Stance"); }
+                if (!guardWindow) { Combo = null; nextCallAt = t + callGap; if (mitt) Actors.MittHolder?.Mitt(false); }
             }
         }
 
@@ -129,7 +129,7 @@ namespace Haengin
         public override void End(bool aborted)
         {
             if (Actors.Me != null) { Actors.Me.CancelAttack(); Actors.Me.ScriptAnim = null; }
-            if (mitt) Actors.Yunjun?.Play("Stance");
+            if (mitt) Actors.MittHolder?.Mitt(false);
         }
 
         // 봇: 호출 뒤 반응(skill 1 → 320ms) → 토큰마다 연결 창 열릴 때 + 오차, 끝나면 가드

@@ -5527,6 +5527,70 @@ MonoBehaviour:
     Cam: 
     Note: "\uCCB4\uC721\uAD00 \uB9E4\uD2B8 \uAC00\uC7A5\uC790\uB9AC(\uC785\uAD6C
       \uACC4\uB2E8\uC774\uBA74 \uCF54\uCE58\uB4E4\uC774 \uBCBD \uC18D\uC5D0 \uC12C)"
+  - Id: N13.00b
+    Scene: N13
+    No: 0
+    Who: 
+    Face: 
+    Mode: 5
+    Text: members:off
+    Wait: 0
+    Cam: 
+    Note: "\uC7A5\uBA74 \uB3D9\uC548 \uC77C\uBC18 \uAD00\uC6D0\xB7\uACE0\uC900\uC740
+      \uB9E4\uD2B8 \uBC16(2026-10-30 \u2014 \uB2E4\uC12F \uCF54\uCE58 \uC0AC\uC774\uC5D0
+      \uAD00\uC6D0\uC774 \uC11E\uC774\uB358 \uAC83)"
+  - Id: N13.00c
+    Scene: N13
+    No: 0
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "front:\uC774\uC724\uC900:\uC2DC\uC6B0:2.4"
+    Wait: 0
+    Cam: 
+    Note: "\uCF54\uCE58 \uB2E4\uC12F = \uC2DC\uC6B0 \uC911\uC2EC \uBC18\uC6D0(\uBC18\uC9C0\uB984
+      2.4m \xB7 30\xB0 \uAC04\uACA9 \u2192 \uC774\uC6C3 1.24m), \uBAA8\uB450 \uC2DC\uC6B0\uB97C
+      \uBD04(2026-10-30)"
+  - Id: N13.00d
+    Scene: N13
+    No: 0
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "front:\uAE40\uC2B9\uC5F0:\uC2DC\uC6B0:2.08:-1.2"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: N13.00e
+    Scene: N13
+    No: 0
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "front:\uC190\uC9C4\uC218:\uC2DC\uC6B0:2.08:1.2"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: N13.00f
+    Scene: N13
+    No: 0
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "front:\uC11C\uC9C4\uC218:\uC2DC\uC6B0:1.2:-2.08"
+    Wait: 0
+    Cam: 
+    Note: 
+  - Id: N13.00g
+    Scene: N13
+    No: 0
+    Who: 
+    Face: 
+    Mode: 5
+    Text: "front:\uBC31\uC2B9\uBBFC:\uC2DC\uC6B0:1.2:2.08"
+    Wait: 0
+    Cam: 
+    Note: 
   - Id: N13.01
     Scene: N13
     No: 1
@@ -5537,57 +5601,7 @@ MonoBehaviour:
       \uC544\uBB34\uB3C4 \uC548 \uAC14\uB2E4.\\n\uC0AC\uBB34\uC2E4 \uC55E\uC5D0 \uAD00\uC7A5\uC774
       \uB2E4\uC12F\uC774\uC5C8\uB2E4."
     Wait: 0
-    Cam: "\uB4F1 \uB4A4 \uD2B8\uB798\uD0B9"
-    Note: 
-  - Id: N13.02
-    Scene: N13
-    No: 2
-    Who: 
-    Face: 
-    Mode: 5
-    Text: "front:\uC774\uC724\uC900:\uC2DC\uC6B0:1.9"
-    Wait: 0
-    Cam: 
-    Note: 
-  - Id: N13.03
-    Scene: N13
-    No: 3
-    Who: 
-    Face: 
-    Mode: 5
-    Text: "front:\uAE40\uC2B9\uC5F0:\uC2DC\uC6B0:2.3:-1.2"
-    Wait: 0
-    Cam: 
-    Note: 
-  - Id: N13.04
-    Scene: N13
-    No: 4
-    Who: 
-    Face: 
-    Mode: 5
-    Text: "front:\uC190\uC9C4\uC218:\uC2DC\uC6B0:2.4:1.2"
-    Wait: 0
-    Cam: 
-    Note: 
-  - Id: N13.05
-    Scene: N13
-    No: 5
-    Who: 
-    Face: 
-    Mode: 5
-    Text: "front:\uC11C\uC9C4\uC218:\uC2DC\uC6B0:3.0:-2.2"
-    Wait: 0
-    Cam: 
-    Note: 
-  - Id: N13.06
-    Scene: N13
-    No: 6
-    Who: 
-    Face: 
-    Mode: 5
-    Text: "front:\uBC31\uC2B9\uBBFC:\uC2DC\uC6B0:3.1:2.2"
-    Wait: 0
-    Cam: 
+    Cam: "\uADF8\uB8F9:\uC2DC\uC6B0"
     Note: 
   - Id: N13.07
     Scene: N13
@@ -5652,7 +5666,7 @@ MonoBehaviour:
     Text: "\uB2E4\uC12F \uBA85\uC774 \uB098\uB97C \uB450\uACE0 \uC774\uC57C\uAE30\uD588\uB2E4.\\n\uB0B4\uAC00
       \uC5EC\uAE30 \uC788\uB294 \uAC8C \uC544\uC9C1\uB3C4 \uC774\uC0C1\uD588\uB2E4."
     Wait: 0
-    Cam: "\uBBF8\uB514\uC5C4:\uC2DC\uC6B0"
+    Cam: "\uADF8\uB8F9:\uC2DC\uC6B0"
     Note: 
   - Id: N13.13
     Scene: N13

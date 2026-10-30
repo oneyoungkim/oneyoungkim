@@ -154,7 +154,7 @@ namespace Haengin
                     for (int i = 0; i < 8; i++) Put(Member(i), $"Sock_NPC_Line_{i + 1:00}", i % 3 == 1 ? GymNpc.Routine.Rope : GymNpc.Routine.Shadow);
                     break;
                 case GymPart.Night:
-                    Put(Yunjun, "Sock_NPC_Coach_MatEdge", GymNpc.Routine.Mitts);
+                    Put(Yunjun, "Sock_NPC_Coach_MatEdge", GymNpc.Routine.Watch);   // 2026-10-30: 미트 자세는 드릴이 도는 동안만
                     break;
             }
         }

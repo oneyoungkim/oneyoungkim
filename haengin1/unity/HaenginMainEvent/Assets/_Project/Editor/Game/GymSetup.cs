@@ -308,7 +308,7 @@ namespace Haengin.EditorGame
             ti.GetSourceTextureWidthAndHeight(out int w, out int h);
             // 2026-10-30 v3: 몸 4096 + 머리 2048 을 한 장(6144×4096)에 — 8192 로 들여야 안 줄어듦
             int src = Mathf.Max(w, h);
-            int want = src > 4096 ? 8192 : src > 2048 ? Mathf.Min(max, 4096) : 2048;
+            int want = src > 4096 ? Mathf.Min(max, 8192) : src > 2048 ? Mathf.Min(max, 4096) : 2048;   // 2026-10-30: 그늘 지도는 max 4096(국밥집 W16 — 그늘은 낮은 해상도라도 티 안 남)
             CharSetup.Texture(path, srgb, want);
             // 2026-10-30: 6144×4096 v3 텍스처 여덟 장 — 밉맵 스트리밍(필요한 밉만 올림, 품질 설정 streamingMipmapsActive) — 프레임 시간 시험 W16
             if (want > 4096 && !ti.streamingMipmaps) { ti.streamingMipmaps = true; ti.SaveAndReimport(); }
@@ -328,7 +328,7 @@ namespace Haengin.EditorGame
             {
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(NpcFbx(n)) == null) { Notes.Add($"NPC 모델 없음: {NpcFbx(n)}"); continue; }
                 // 2026-10-29: 코치 텍스처는 원본 4096 — 2048 로 줄여 얼굴이 약 240px 이던 것 → 4096(BC7)
-                HiTex(NpcTex(n), true, 4096);
+                HiTex(NpcTex(n), true, 8192);
                 CharSetup.Human(NpcFbx(n), "Idle", -1, -1, false, null);
                 CharSetup.Ground(NpcFbx(n), "Idle", NpcFbx(n));
                 CharSetup.Toon(CharSetup.Load<GameObject>(NpcFbx(n)), NpcMat(n), NpcTex(n));
@@ -336,7 +336,7 @@ namespace Haengin.EditorGame
                 string shadeP = $"{CharDir}/{n}Shade.jpg", outP = $"{CharDir}/{n}OutW.png";
                 if (AssetDatabase.LoadAssetAtPath<Texture2D>(shadeP) != null)
                 {
-                    HiTex(shadeP, true, 4096);
+                    HiTex(shadeP, true, 4096);   // 그늘 지도는 4096 까지(6144 원본이어도)
                     if (AssetImporter.GetAtPath(outP) is TextureImporter oti) { oti.GetSourceTextureWidthAndHeight(out int ow, out int oh); CharSetup.Texture(outP, false, Mathf.Clamp(Mathf.Max(ow, oh), 1024, 2048)); }
                     var mat = AssetDatabase.LoadAssetAtPath<Material>(NpcMat(n));
                     var shade = AssetDatabase.LoadAssetAtPath<Texture2D>(shadeP);
@@ -390,6 +390,9 @@ namespace Haengin.EditorGame
             }
             clipsAsset.Entries = entries.ToArray(); EditorUtility.SetDirty(clipsAsset);
             sm.defaultState = sm.states.Select(s => s.state).First(s => s.name == "Stance");
+            // 2026-10-30: 기본 층 IK 패스(코치 미트 팔 MittArms · 관원 줄넘기 손 RopeArms)
+            var lys = ctrl.layers;
+            if (!lys[0].iKPass) { lys[0].iKPass = true; ctrl.layers = lys; sm = ctrl.layers[0].stateMachine; }
             EditorUtility.SetDirty(ctrl);
             // 비반복 동작은 끝나면 Stance 로(전이: 종료 시간)
             foreach (var s in sm.states.Select(x => x.state))

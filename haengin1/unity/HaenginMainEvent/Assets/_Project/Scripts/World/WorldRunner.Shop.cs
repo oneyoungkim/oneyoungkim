@@ -108,6 +108,7 @@ namespace Haengin
                 else if (gm.StartDrill(drill)) { while (gm.Busy) yield return null; }
                 StopCoroutine(cue);
                 gm.CoachName = "";
+                if (gm.Actors != null) gm.Actors.MittNpc = null;
             }
             string sum = "";
             if (lastDrill.HasValue)
@@ -170,6 +171,7 @@ namespace Haengin
                 holder.gameObject.SetActive(true);
                 holder.Place(y.position, y.forward, GymNpc.Routine.Mitts);
                 gm.Yunjun.gameObject.SetActive(false);
+                if (gm.Actors != null) gm.Actors.MittNpc = holder;
             }
             yield return new WaitForSeconds(2.5f);
             while (true)

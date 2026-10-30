@@ -514,7 +514,7 @@ namespace Haengin
         static CamPreset? PresetOf(string cam) => (cam ?? "").Trim() switch
         {
             "근접" => CamPreset.Close, "낮은 정면" => CamPreset.LowFront, "와이드" => CamPreset.Wide, "로우앵글" => CamPreset.LowAngle,
-            "등 뒤 트래킹" => CamPreset.BackTrack, "측면 트래킹" => CamPreset.SideTrack, "미디엄" => CamPreset.Mid, _ => (CamPreset?)null,
+            "등 뒤 트래킹" => CamPreset.BackTrack, "측면 트래킹" => CamPreset.SideTrack, "미디엄" => CamPreset.Mid, "그룹" => CamPreset.Group, _ => (CamPreset?)null,
         };
 
         void OnLine(DlgLine l)
@@ -840,9 +840,13 @@ namespace Haengin
                         float side = fp.Length >= 4 && float.TryParse(fp[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float sd) ? sd : 0f;
                         Remember(a);
                         if (!a.gameObject.activeSelf) a.gameObject.SetActive(true);
-                        a.position = to.position + f * dist + Vector3.Cross(Vector3.up, f) * side;
-                        var look = to.position - a.position; look.y = 0f;
-                        a.rotation = Quaternion.LookRotation(look.sqrMagnitude > 1e-4f ? look.normalized : -f, Vector3.up);
+                        var fpos = to.position + f * dist + Vector3.Cross(Vector3.up, f) * side;
+                        var look = to.position - fpos; look.y = 0f;
+                        var frot = Quaternion.LookRotation(look.sqrMagnitude > 1e-4f ? look.normalized : -f, Vector3.up);
+                        // 2026-10-30: 몸(CharacterController — 이윤준 미트 Fighter)이 있으면 그 몸째(옛 자리로 되돌아가거나 방향이 어긋나던 것 — Q49)
+                        var fb = a.GetComponent<FighterBody>();
+                        if (fb != null) fb.Place(fpos, frot.eulerAngles.y); else a.SetPositionAndRotation(fpos, frot);
+                        Physics.SyncTransforms();
                         break;
                     }
                 case "call":
@@ -860,6 +864,15 @@ namespace Haengin
                     {
                         var a = CutCtx.Actor(arg);
                         if (a != null) { Remember(a); a.gameObject.SetActive(false); }
+                        break;
+                    }
+                case "members":
+                    {
+                        // 2026-10-30 members:off — 체육관 일반 관원(·고준)을 장면 동안 매트에서 뺌(N13 다섯 코치 사이에 관원이 섞이던 것). 장면 끝에 원래대로
+                        var gm = GymManager.Instance;
+                        if (gm == null || arg != "off") break;
+                        foreach (var n in gm.Members.Concat(new[] { gm.Gojun }))
+                            if (n != null && n.gameObject.activeSelf) { Remember(n.transform); n.gameObject.SetActive(false); }
                         break;
                     }
                 case "wait": break;                                       // 건너뛰면 침묵 없음

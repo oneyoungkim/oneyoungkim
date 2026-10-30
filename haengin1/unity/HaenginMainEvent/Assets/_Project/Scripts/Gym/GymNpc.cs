@@ -1,5 +1,5 @@
 // 행인1의 메인이벤트 — 체육관 NPC(docs/12_체육관_설계.md 3장): 이윤준·고준·관원. 시간대별 자리(소켓)로 옮겨 서서 동작 반복(기존 전투 클립 상태 이름)
-// 이윤준은 스파링에 안 들어감(세게 맞을 수 없는 몸) — 미트만 잡고 케이지 문·매트 가장자리에서 큐.
+// 이윤준은 스파링에 안 들어감(세게 맞을 수 없는 몸) — 미트만 잡고 케이지 문·매트 가장자리에서 큐. 미트 자세는 드릴 중에만(2026-10-30).
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +22,26 @@ namespace Haengin
         Vector3 basePos;
         float hop;
 
+        bool pending;
+
         void Awake() { if (Anim == null) Anim = GetComponentInChildren<Animator>(); }
+
+        /// 2026-10-30 대표 "균형도 안 맞고 이상하다": 카드·대사·구경(Watch·None)은 자기 대기(243 Idle — 팔 내림), 미트는 대기 + MittArms(드릴 중에만)
+        public static string BaseState(Routine r) => r == Routine.Sit ? "ChairSit" : r == Routine.Stretch ? "Kneel" : r == Routine.Rope ? "JumpRope" : r == Routine.Kettlebell ? "Kettlebell" : r == Routine.Bag || r == Routine.Shadow ? "Stance" : "Idle";
+
+        /// 다시 켜지면 애니메이터가 기본 상태(전투 Stance)로 돌아감 → 다음 Update 에 자기 자세로(대사 장면 front·cast 로 켜진 출장 코치가 미트 자세로 서던 것)
+        void OnEnable() { pending = true; }
+
+        /// 미트 잡기(드릴 중): up = 호출 순간 미트 들기
+        public void Mitt(bool up)
+        {
+            if (Anim == null) return;
+            if (Current != "Idle") Play("Idle", 0.1f);
+            var m = Anim.GetComponent<MittArms>() ?? Anim.gameObject.AddComponent<MittArms>();
+            m.On = true; m.Up = up;
+        }
+
+        void MittOff() { var m = Anim != null ? Anim.GetComponent<MittArms>() : null; if (m != null) { m.On = false; m.Up = false; } }
 
         /// 자리로(발 위치·방향)
         public void Place(Vector3 feet, Vector3 forward, Routine r)
@@ -31,7 +50,9 @@ namespace Haengin
             if (forward.sqrMagnitude > 1e-4f) transform.rotation = Quaternion.LookRotation(new Vector3(forward.x, 0f, forward.z).normalized, Vector3.up);
             basePos = feet;
             Now = r; clock = 0f; next = 0.2f; step = 0;
-            Play(r == Routine.Sit ? "ChairSit" : r == Routine.Stretch ? "Kneel" : r == Routine.Rope ? "JumpRope" : r == Routine.Kettlebell ? "Kettlebell" : "Stance", 0.05f);
+            Play(BaseState(r), 0.05f);
+            if (r == Routine.Mitts) Mitt(false); else MittOff();
+            pending = false;
         }
 
         public void Play(string state, float fade = 0.08f)
@@ -46,6 +67,12 @@ namespace Haengin
 
         void Update()
         {
+            if (pending)
+            {
+                pending = false;
+                Play(BaseState(Now), 0f);
+                if (Now == Routine.Mitts) Mitt(false); else MittOff();
+            }
             if (Now == Routine.None || Now == Routine.Sit || Now == Routine.Watch || Now == Routine.Mitts || Now == Routine.Kettlebell) return;
             float dt = TimeFx.Dt;
             if (dt <= 0f) return;
