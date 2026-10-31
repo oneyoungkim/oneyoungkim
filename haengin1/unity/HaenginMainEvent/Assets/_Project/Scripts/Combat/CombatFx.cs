@@ -289,11 +289,20 @@ namespace Haengin
             // 앞 글자가 아직 떠 있으면 지운다(연타·마무리에서 '퍽!' 위에 '콰직!' 이 겹치던 것 — 11-4)
             if (wordImg != null && wordImg.gameObject.activeSelf) WordsCut++;
             // 2026-10-31 대표: 월드 판은 카메라가 가까우면 화면을 덮고 사라질 때 반투명으로 벽에 남았으며 먹선이 그 위로 지나감 → 화면 판(크기 고정·불투명·먹선 아래)
-            Ui();
             if (wordImg == null)
             {
+                // 화면 판들(드릴 12·결과 카드 14·전투 HUD …)보다 아래 — 라운드 끝 타격의 글이 결과 카드 위에 떠 있던 것
+                var cv = new GameObject("의성어 화면", typeof(RectTransform)) { layer = 5 };
+                cv.transform.SetParent(transform, false);
+                wordCanvas = cv.AddComponent<Canvas>();
+                wordCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                wordCanvas.sortingOrder = WordOrder;
+                var cs = cv.AddComponent<CanvasScaler>();
+                cs.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                cs.referenceResolution = new Vector2(1920f, 1080f);
+                cs.matchWidthOrHeight = 1f;
                 var go = new GameObject("의성어", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)) { layer = 5 };
-                go.transform.SetParent(canvas.transform, false);
+                go.transform.SetParent(cv.transform, false);
                 wordImg = go.GetComponent<RawImage>();
                 wordImg.raycastTarget = false;
                 var rt = wordImg.rectTransform;
@@ -310,7 +319,8 @@ namespace Haengin
         }
 
         public const float WordBaseW = 240f, WordPerP = 20f, WordSecs = 0.45f;
-        RawImage wordImg; Vector3 wordAt; float wordT;
+        public const int WordOrder = 8;
+        Canvas wordCanvas; RawImage wordImg; Vector3 wordAt; float wordT;
         /// 지금 떠 있는 의성어(시험)
         public bool WordShown => wordImg != null && wordImg.gameObject.activeSelf;
         public Vector2 WordSize => wordImg != null ? wordImg.rectTransform.sizeDelta : Vector2.zero;
@@ -324,7 +334,7 @@ namespace Haengin
             var sp = cam.WorldToScreenPoint(wordAt + Vector3.up * 0.35f * wordT);
             if (sp.z <= 0.05f) { wordImg.enabled = false; return; }
             wordImg.enabled = true;
-            float k = canvas.transform.lossyScale.x;
+            float k = wordCanvas.transform.lossyScale.x;
             var size = wordImg.rectTransform.sizeDelta * k;
             sp.x = Mathf.Clamp(sp.x, size.x * 0.5f + 8f, Screen.width - size.x * 0.5f - 8f);
             sp.y = Mathf.Clamp(sp.y, size.y * 0.5f + 8f, Screen.height - size.y * 0.5f - 8f);

@@ -504,6 +504,7 @@ namespace Haengin.Tests
                 log.Add($"{screen}: 글자 {items.Count}");
                 Object.Destroy(tex);
             }
+            Assert.Less(CombatFx.WordOrder, 12, "의성어는 드릴 화면·결과 카드 아래");
             log.Add($"화면 {Screen.width}×{Screen.height}");
             yield return Start(w, Mid(w.Def, 312, 14 * 60, SceneLoader.Zone1, m => { m.G.Fatigue = 0; }));
             yield return Lab.Frames(30);
