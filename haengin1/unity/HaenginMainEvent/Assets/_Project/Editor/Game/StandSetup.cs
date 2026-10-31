@@ -44,7 +44,14 @@ namespace Haengin.EditorGame
             public float Pelvis = 0f;        // 골반 기울기(도, 무게 실은 쪽이 위로)
             public float RelaxFoot = 0f;     // 무게 뺀 발을 앞으로(m)
             public float ShoulderTilt = 0f;  // 어깨 기울기(도, + = 캐릭터 오른쪽 어깨가 위)
-            public float HeadYaw = 0f;       // 고개 미세 돌림(도, + = 캐릭터 오른쪽으로)
+            public float HeadYaw = 0f;       // 고개 돌림(도, + = 캐릭터 오른쪽으로)
+            public float HeadRoll = 0f;      // 고개 기울임(도, + = 오른쪽 귀가 위)
+            public float RelaxOut = 3f;      // 무게 뺀 발끝을 더 바깥으로(도)
+            public float StanceZ = 0f;       // 앞뒤로 벌린 발(m, + = 왼발 앞·오른발 뒤)
+            public float TorsoYaw = 0f;      // 몸통 돌림(도, + = 왼쪽 어깨가 앞 — 왼발 앞 자세)
+            public float HeelLift = 0f;      // 뒤꿈치 들기(도 — 앞꿈치 무게)
+            public float ElbowL = 0f, ElbowR = 0f, ArmOutL = 0f, ArmOutR = 0f, HandFwdL = 0f, HandFwdR = 0f;   // 양팔 비대칭(더하는 값)
+            public float SwayAmp = 1f;       // 건들거림 크기(등·목 좌우 곡선 배수 — 뿌리는 그대로, 발이 미끄러지지 않게)
             public float BreathSec = 4f, SwaySec = 8f, Phase = 0f;   // 숨쉬기·무게 이동 주기(초)와 시작 시점 — 함께 흔들리지 않게
             public Tune Copy() => (Tune)MemberwiseClone();
         }
@@ -66,34 +73,34 @@ namespace Haengin.EditorGame
                 r.Add(w);
             }
             // 인물별 차이(2026-10-31 대표): 곧은 몸에서 좌우로만. 이윤준 = 여유, 시우 = 한쪽 다리에 뚜렷하게, 곽반장·아빠 = 묵직, 할머니 = 약간 낮게
-            Add("Yunjun_v2", GymSetup.NpcFbx("Yunjun_v2"), "이윤준", "코치", t => { t.Weight = 0.02f; t.Pelvis = 2.5f; t.KneeSide = 5f; t.ShoulderTilt = -1.2f; t.HeadYaw = 4f; t.Elbow = 9f; t.FootSep = 0.9f; t.FootOut = 11f; t.RelaxFoot = 0.03f; t.BreathSec = 4.4f; t.SwaySec = 8.8f; });
-            Add("Seungyeon_v2", GymSetup.NpcFbx("Seungyeon_v2"), "김승연", "코치", t => { t.Weight = -0.009f; t.Pelvis = 1f; t.KneeSide = 2f; t.HeadYaw = -3f; t.Elbow = 10f; t.FootSep = 0.92f; t.FootOut = 9f; t.BreathSec = 4.8f; t.SwaySec = 9.6f; });
-            Add("JinsooSon_v2", GymSetup.NpcFbx("JinsooSon_v2"), "손진수", "코치", t => { t.Weight = 0.006f; t.ShoulderTilt = 0.6f; t.Elbow = 12f; t.ChestBack = 2.5f; t.FootSep = 1.0f; t.FootOut = 11f; t.BreathSec = 3.9f; t.SwaySec = 7.8f; });
-            Add("JinsooSeo_v2", GymSetup.NpcFbx("JinsooSeo_v2"), "서진수", "코치", t => { t.Weight = -0.024f; t.Pelvis = 3f; t.KneeSide = 7f; t.ShoulderTilt = 1.6f; t.HeadYaw = 5f; t.FootOut = 13f; t.RelaxFoot = 0.035f; t.BreathSec = 4.2f; t.SwaySec = 8.4f; });
-            Add("SeungminBaek", GymSetup.NpcFbx("SeungminBaek"), "백승민", "코치", t => { t.Weight = 0.012f; t.Pelvis = 1.5f; t.KneeSide = 3f; t.HeadYaw = -3f; t.Elbow = 7f; t.FootSep = 0.86f; t.BreathSec = 4.6f; t.SwaySec = 9.2f; });
-            Add("Gojun", GymSetup.NpcFbx("Gojun"), "고준", "코치", t => { t.Weight = -0.014f; t.Pelvis = 1.8f; t.KneeSide = 4f; t.ShoulderTilt = 0.8f; t.ChestBack = 3f; t.HeadYaw = 3f; t.BreathSec = 3.6f; t.SwaySec = 7.2f; });
-            Add("Siwoo", CharSetup.SiwooFbx, "시우", "주인공", t => { t.Weight = 0.045f; t.Pelvis = 4.5f; t.KneeSide = 12f; t.ShoulderTilt = -2.5f; t.HeadYaw = -4f; t.HeadPitch = 1.5f; t.FootOut = 12f; t.RelaxFoot = 0.05f; });    // 시우 = 한쪽 다리에 뚜렷하게(246 의 성격)
-            Add("Taeo", CharSetup.TaeoFbx, "태오", "주인공", t => { t.ChestBack = 3.5f; t.Weight = -0.006f; t.Elbow = 8f; t.FootSep = 0.95f; t.FootOut = 10f; t.BreathSec = 3.7f; t.SwaySec = 7.4f; });
+            Add("Yunjun_v2", GymSetup.NpcFbx("Yunjun_v2"), "이윤준", "코치", t => { t.Weight = 0.08f; t.Pelvis = 6f; t.KneeSide = 20f; t.ShoulderTilt = -4f; t.HeadYaw = 12f; t.HeadRoll = 4f; t.FootSep = 1.05f; t.FootOut = 14f; t.RelaxFoot = 0.10f; t.RelaxOut = 14f; t.Elbow = 9f; t.ElbowL = 28f; t.ArmOutL = 6f; t.SwayAmp = 1.5f; t.BreathSec = 4.4f; t.SwaySec = 8.8f; });
+            Add("Seungyeon_v2", GymSetup.NpcFbx("Seungyeon_v2"), "김승연", "코치", t => { t.FootSep = 1.6f; t.FootOut = 18f; t.Weight = -0.02f; t.Pelvis = 1.5f; t.KneeSide = 4f; t.HeadYaw = -10f; t.HeadPitch = 1f; t.ChestBack = 3f; t.ArmOut = 9f; t.ForearmIn = 6f; t.Elbow = 14f; t.ElbowR = 10f; t.BreathSec = 4.8f; t.SwaySec = 9.6f; });
+            Add("JinsooSon_v2", GymSetup.NpcFbx("JinsooSon_v2"), "손진수", "코치", t => { t.HeelLift = 14f; t.FootSep = 0.62f; t.FootOut = 4f; t.Knee = 12f; t.StanceZ = 0.10f; t.TorsoYaw = 6f; t.Elbow = 34f; t.ElbowR = 14f; t.ArmOut = 8f; t.ForearmIn = 10f; t.HeadYaw = 6f; t.HeadPitch = 3f; t.ShoulderFwd = 0.012f; t.Weight = 0.006f; t.SwayAmp = 2f; t.BreathSec = 3.2f; t.SwaySec = 6.4f; });
+            Add("JinsooSeo_v2", GymSetup.NpcFbx("JinsooSeo_v2"), "서진수", "코치", t => { t.ShoulderTilt = 7f; t.Weight = -0.08f; t.Pelvis = 6f; t.KneeSide = 17f; t.HeadRoll = -7f; t.HeadYaw = 14f; t.FootOut = 18f; t.RelaxFoot = 0.08f; t.RelaxOut = 14f; t.FootSep = 1.2f; t.ElbowL = 6f; t.ElbowR = 20f; t.ArmOutR = 6f; t.SwayAmp = 4f; t.BreathSec = 4.2f; t.SwaySec = 8.4f; });
+            Add("SeungminBaek", GymSetup.NpcFbx("SeungminBaek"), "백승민", "코치", t => { t.StanceZ = -0.24f; t.TorsoYaw = -22f; t.FootSep = 0.95f; t.FootOut = 10f; t.Weight = -0.03f; t.Pelvis = 3f; t.KneeSide = 14f; t.HeadYaw = 10f; t.HeadPitch = 1f; t.Elbow = 26f; t.ElbowR = 16f; t.ForearmIn = 8f; t.HandFwdR = 0.10f; t.SwayAmp = 1.5f; t.BreathSec = 4.6f; t.SwaySec = 9.2f; });
+            Add("Gojun", GymSetup.NpcFbx("Gojun"), "고준", "코치", t => { t.FootSep = 1f; t.FootOut = 6f; t.ChestBack = 4f; t.Elbow = 4f; t.ArmOut = 5f; t.SwayAmp = 0.5f; t.BreathSec = 3.6f; t.SwaySec = 7.2f; });
+            Add("Siwoo", CharSetup.SiwooFbx, "시우", "주인공", t => { t.Weight = 0.09f; t.Pelvis = 6f; t.KneeSide = 26f; t.ShoulderTilt = -5f; t.HeadYaw = -9f; t.HeadPitch = 7f; t.EarFwd = -0.012f; t.HeadRoll = -4f; t.RelaxFoot = 0.10f; t.RelaxOut = 14f; t.FootOut = 14f; t.ElbowL = 18f; t.ArmOutL = 4f; t.SwayAmp = 1.5f; });    // 시우 = 한쪽 다리에 뚜렷하게(246 의 성격)
+            Add("Taeo", CharSetup.TaeoFbx, "태오", "주인공", t => { t.ChestBack = 9f; t.HeadPitch = -10f; t.ClavBack = 12f; t.FootSep = 1.3f; t.FootOut = 14f; t.ArmOut = 8f; t.ForearmIn = 7f; t.Elbow = 10f; t.Weight = -0.01f; t.BreathSec = 3.7f; t.SwaySec = 7.4f; });
             var tuneE = new Dictionary<string, Action<Tune>>
             {
-                ["Kkanjok"] = t => { t.Weight = -0.03f; t.Pelvis = 3.5f; t.KneeSide = 9f; t.ShoulderTilt = 2f; t.HeadYaw = 6f; t.RelaxFoot = 0.04f; t.BreathSec = 3.4f; t.SwaySec = 6.8f; },
-                ["Seokdal"] = t => { t.Weight = 0.014f; t.Pelvis = 1.5f; t.KneeSide = 3f; t.HeadYaw = -2f; t.Elbow = 12f; t.FootSep = 0.88f; t.BreathSec = 3.8f; t.SwaySec = 7.6f; },
-                ["Naengjanggo"] = t => { t.Weight = 0.006f; t.ArmOut = 4.5f; t.ForearmIn = 2f; t.FootSep = 1.02f; t.FootOut = 12f; t.BreathSec = 5f; t.SwaySec = 10f; },
-                ["Scrum"] = t => { t.ArmOut = 4.5f; t.ForearmIn = 2f; t.Elbow = 10f; t.FootSep = 1.0f; t.FootOut = 11f; t.BreathSec = 4.5f; t.SwaySec = 9f; },
+                ["Kkanjok"] = t => { t.Weight = -0.08f; t.Pelvis = 6f; t.KneeSide = 24f; t.ShoulderTilt = 6f; t.HeadYaw = 14f; t.HeadRoll = -6f; t.RelaxFoot = 0.09f; t.RelaxOut = 14f; t.ElbowL = 18f; t.ArmOutL = 6f; t.SwayAmp = 3.5f; t.BreathSec = 3.4f; t.SwaySec = 6.8f; },
+                ["Seokdal"] = t => { t.StanceZ = 0.20f; t.TorsoYaw = 18f; t.FootSep = 1f; t.FootOut = 12f; t.Elbow = 42f; t.ElbowR = 16f; t.HandFwdL = 0.08f; t.HeadYaw = -10f; t.HeadPitch = 3f; t.Weight = 0.02f; t.KneeSide = 8f; t.BreathSec = 3.8f; t.SwaySec = 7.6f; },
+                ["Naengjanggo"] = t => { t.FootSep = 1.55f; t.FootOut = 18f; t.ArmOut = 5f; t.ForearmIn = 2f; t.Knee = 6f; t.HeadPitch = 2.5f; t.EarFwd = 0f; t.Weight = 0.006f; t.BreathSec = 5f; t.SwaySec = 10f; },
+                ["Scrum"] = t => { t.FootSep = 1.45f; t.FootOut = 12f; t.ArmOut = 5f; t.ForearmIn = 2f; t.Elbow = 26f; t.ChestBack = 4f; t.HeadPitch = -5f; t.BreathSec = 4.5f; t.SwaySec = 9f; },
             };
             var tuneC = new Dictionary<string, Action<Tune>>
             {
-                ["Mom"] = t => { t.Weight = 0.009f; t.Pelvis = 1f; t.KneeSide = 2f; t.HeadYaw = 2f; t.Elbow = 12f; t.FootSep = 0.72f; t.FootOut = 6f; t.BreathSec = 4.2f; t.SwaySec = 8.4f; },
-                ["Haneul"] = t => { t.Weight = -0.012f; t.Pelvis = 1.5f; t.KneeSide = 4f; t.HeadYaw = 3f; t.FootSep = 0.7f; t.FootOut = 5f; t.BreathSec = 3.2f; t.SwaySec = 6.4f; },
-                ["Dokyungmin"] = t => { t.Weight = 0.005f; t.HeadYaw = -2f; t.Elbow = 8f; t.FootSep = 0.75f; t.BreathSec = 4.4f; t.SwaySec = 8.8f; },
-                ["Minjae"] = t => { t.Weight = 0.035f; t.Pelvis = 3.5f; t.KneeSide = 10f; t.ShoulderTilt = -2f; t.HeadYaw = 5f; t.HeadPitch = -1.5f; t.FootOut = 13f; t.RelaxFoot = 0.04f; t.BreathSec = 3.6f; t.SwaySec = 7.2f; },
-                ["Geonwoo"] = t => { t.ArmOut = 4.5f; t.ForearmIn = 2f; t.FootSep = 1f; t.FootOut = 11f; t.BreathSec = 5f; t.SwaySec = 10f; },
-                ["StudentM"] = t => { t.Weight = -0.012f; t.Pelvis = 1.5f; t.KneeSide = 4f; t.HeadYaw = -2f; t.BreathSec = 3.8f; t.SwaySec = 7.6f; },
-                ["StudentF"] = t => { t.Weight = 0.005f; t.FootSep = 0.62f; t.FootOut = 3f; t.BreathSec = 3.6f; t.SwaySec = 7.2f; },
-                ["Gwak"] = t => { t.Weight = 0.004f; t.ChestBack = 1.5f; t.Elbow = 12f; t.FootSep = 1.02f; t.FootOut = 12f; t.BreathSec = 5.2f; t.SwaySec = 10.4f; },
-                ["Halmeoni"] = t => { t.Knee = 8f; t.ClavDrop = 5f; t.ChestBack = 1f; t.HeadPitch = 2f; t.FootSep = 0.78f; t.FootOut = 9f; t.BreathSec = 4.6f; t.SwaySec = 9.2f; },
-                ["BakeryStaff"] = t => { t.Weight = -0.012f; t.Pelvis = 1.5f; t.KneeSide = 4f; t.HeadYaw = 2f; t.FootSep = 0.65f; t.FootOut = 5f; t.BreathSec = 4f; t.SwaySec = 8f; },
-                ["Dad"] = t => { t.Weight = 0.006f; t.ChestBack = 1.5f; t.Elbow = 12f; t.FootSep = 1.02f; t.FootOut = 12f; t.BreathSec = 5f; t.SwaySec = 10f; },
+                ["Mom"] = t => { t.Weight = 0.06f; t.Pelvis = 5f; t.KneeSide = 16f; t.ShoulderTilt = -3f; t.RelaxFoot = 0.07f; t.RelaxOut = 10f; t.HeadRoll = 4f; t.HeadYaw = 6f; t.Elbow = 20f; t.ElbowR = 18f; t.FootSep = 0.75f; t.FootOut = 6f; t.BreathSec = 4.2f; t.SwaySec = 8.4f; },
+                ["Haneul"] = t => { t.FootSep = 0.55f; t.FootOut = -6f; t.Weight = -0.03f; t.Pelvis = 3f; t.KneeSide = 10f; t.HeadRoll = 6f; t.HeadYaw = 5f; t.Elbow = 16f; t.ArmOut = 8f; t.SwayAmp = 1.5f; t.BreathSec = 3.2f; t.SwaySec = 6.4f; },
+                ["Dokyungmin"] = t => { t.Weight = 0.045f; t.Pelvis = 4f; t.KneeSide = 12f; t.ShoulderTilt = -3f; t.FootSep = 0.8f; t.Elbow = 16f; t.ElbowR = 20f; t.HeadYaw = -7f; t.HeadRoll = 2f; t.BreathSec = 4.4f; t.SwaySec = 8.8f; },
+                ["Minjae"] = t => { t.Weight = 0.07f; t.Pelvis = 6f; t.KneeSide = 20f; t.ShoulderTilt = -4f; t.HeadPitch = -10f; t.HeadYaw = 12f; t.HeadRoll = -5f; t.FootOut = 18f; t.RelaxFoot = 0.08f; t.RelaxOut = 14f; t.FootSep = 1.2f; t.ArmOutR = 4f; t.SwayAmp = 3.5f; t.BreathSec = 3.6f; t.SwaySec = 7.2f; },
+                ["Geonwoo"] = t => { t.FootSep = 1.5f; t.FootOut = 18f; t.ArmOut = 5f; t.ForearmIn = 2f; t.Knee = 6f; t.Elbow = 10f; t.HeadPitch = 4f; t.BreathSec = 5f; t.SwaySec = 10f; },
+                ["StudentM"] = t => { t.Weight = -0.05f; t.Pelvis = 5f; t.KneeSide = 16f; t.ShoulderTilt = 4f; t.HeadPitch = 6f; t.HeadYaw = -7f; t.RelaxFoot = 0.06f; t.ElbowL = 10f; t.BreathSec = 3.8f; t.SwaySec = 7.6f; },
+                ["StudentF"] = t => { t.FootSep = 0.5f; t.FootOut = -2f; t.Weight = 0.03f; t.Pelvis = 3f; t.KneeSide = 10f; t.HeadRoll = -6f; t.ElbowL = 16f; t.BreathSec = 3.6f; t.SwaySec = 7.2f; },
+                ["Gwak"] = t => { t.FootSep = 1.5f; t.FootOut = 18f; t.Knee = 6f; t.Elbow = 20f; t.ArmOut = 9f; t.ForearmIn = 6f; t.ChestBack = 2f; t.HeadPitch = 2f; t.Weight = 0.006f; t.BreathSec = 5.2f; t.SwaySec = 10.4f; },
+                ["Halmeoni"] = t => { t.FootSep = 0.5f; t.FootOut = 8f; t.Knee = 16f; t.ClavDrop = 7f; t.ChestBack = 1f; t.HeadPitch = 3f; t.ArmOut = 6f; t.Elbow = 26f; t.HeadYaw = -5f; t.BreathSec = 4.6f; t.SwaySec = 9.2f; },
+                ["BakeryStaff"] = t => { t.Weight = -0.06f; t.Pelvis = 5f; t.KneeSide = 16f; t.ShoulderTilt = 3f; t.RelaxFoot = 0.07f; t.RelaxOut = 10f; t.HeadRoll = -4f; t.HeadYaw = 5f; t.FootSep = 0.7f; t.FootOut = 5f; t.Elbow = 18f; t.ElbowL = 16f; t.BreathSec = 4f; t.SwaySec = 8f; },
+                ["Dad"] = t => { t.FootSep = 1.5f; t.FootOut = 18f; t.Knee = 6f; t.Elbow = 20f; t.ArmOut = 9f; t.ForearmIn = 6f; t.ChestBack = 2f; t.Weight = 0.012f; t.HeadPitch = 2f; t.BreathSec = 5f; t.SwaySec = 10f; },
             };
             foreach (var en in ClipSetup.Enemies) Add(en, ClipSetup.EnemyFbx(en), "관원(" + en + ")", "관원", tuneE.TryGetValue(en, out var te) ? te : null);
             foreach (var (k, n) in CastSetup.Cast) Add(k, CastSetup.Fbx(k), n, "조연", tuneC.TryGetValue(k, out var tc) ? tc : null);
@@ -484,12 +491,15 @@ namespace Haengin.EditorGame
             r.Hips.rotation = Quaternion.FromToRotation(hipLine.normalized, Vector3.right) * r.Hips.rotation;
             float wSign = t.Weight > 0f ? 1f : t.Weight < 0f ? -1f : 0f;
             r.Hips.rotation = Quaternion.AngleAxis(wSign * t.Pelvis, Vector3.forward) * r.Hips.rotation;     // 무게 실은 쪽 골반이 위로
+            r.Hips.rotation = Quaternion.AngleAxis(t.TorsoYaw * 0.6f, Vector3.up) * r.Hips.rotation;
+            var yawT = Quaternion.AngleAxis(t.TorsoYaw, Vector3.up);
 
             // 발목 자리(뿌리 기준): 휴지 때 엉덩이~발목 앞뒤 차를 살림(메시 다리가 곧은 그 선)
             float sep = shWidth * t.FootSep;
             var hipC = new Vector3(t.Weight, 0f, 0f);
-            var ankL = new Vector3(-sep * 0.5f + t.Weight * 0.3f, ankleH, -hipAnkleRest + (t.Weight > 0f ? t.RelaxFoot : 0f));
-            var ankR = new Vector3(sep * 0.5f + t.Weight * 0.3f, ankleH, -hipAnkleRest + (t.Weight < 0f ? t.RelaxFoot : 0f));
+            float heelUp = 0.12f * Mathf.Sin(t.HeelLift * Mathf.Deg2Rad);      // 앞꿈치를 축으로 — 발목이 그만큼 올라감
+            var ankL = new Vector3(-sep * 0.5f + t.Weight * 0.15f, ankleH + heelUp, -hipAnkleRest + t.StanceZ + (t.Weight > 0f ? t.RelaxFoot : 0f));
+            var ankR = new Vector3(sep * 0.5f + t.Weight * 0.15f, ankleH + heelUp, -hipAnkleRest - t.StanceZ + (t.Weight < 0f ? t.RelaxFoot : 0f));
 
             // 골반 높이
             float Reach(float a, float b, float k) => Mathf.Sqrt(a * a + b * b + 2f * a * b * Mathf.Cos(k * Mathf.Deg2Rad));
@@ -515,19 +525,29 @@ namespace Haengin.EditorGame
                 var knee = h + along * x + perp * y;
                 Aim(ul, ll.position, knee - h);
                 Aim(ll, foot.position, ank - ll.position);
-                foot.rotation = Quaternion.Euler(0f, outDeg, 0f) * footRot;
+                var yawF = Quaternion.Euler(0f, outDeg, 0f);
+                foot.rotation = Quaternion.AngleAxis(t.HeelLift, yawF * Vector3.right) * yawF * footRot;
             }
-            Leg(r.LUL, r.LLL, r.LF, ankL, l1L, l2L, footL, -(t.FootOut + (t.Weight > 0f ? 3f : 0f)));
-            Leg(r.RUL, r.RLL, r.RF, ankR, l1R, l2R, footR, t.FootOut + (t.Weight < 0f ? 3f : 0f));
+            Leg(r.LUL, r.LLL, r.LF, ankL, l1L, l2L, footL, -(t.FootOut + (t.Weight > 0f ? t.RelaxOut : 0f)));
+            Leg(r.RUL, r.RLL, r.RF, ankR, l1R, l2R, footR, t.FootOut + (t.Weight < 0f ? t.RelaxOut : 0f));
             // 골반이 기운 만큼 등에서 되돌려 몸통은 곧게
             r.Spine.rotation = Quaternion.AngleAxis(-wSign * t.Pelvis * 0.6f, Vector3.forward) * r.Spine.rotation;
             r.Chest.rotation = Quaternion.AngleAxis(-wSign * t.Pelvis * 0.4f, Vector3.forward) * r.Chest.rotation;
             r.Chest.rotation = Quaternion.AngleAxis(t.ShoulderTilt, Vector3.forward) * r.Chest.rotation;     // 어깨 기울기는 가슴에서(쇄골만 틀면 으쓱한 것처럼 보임)
+            // 짝다리 S 자: 엉덩이는 무게 실은 발 쪽으로, 어깨는 몸 가운데로 되돌림(등 아래를 기울이고 가슴에서 수평을 되찾음) — 머리가 옆으로 안 밀림(계산대 등 좁은 자리 카메라도 그대로)
+            for (int it = 0; it < 3 && Mathf.Abs(t.Weight) > 1e-4f; it++)
+            {
+                var shS = Mid(r.LUA.position, r.RUA.position);
+                float wantX = Mid(r.LUL.position, r.RUL.position).x - t.Weight * 0.6f;
+                float lean = Mathf.Rad2Deg * Mathf.Atan2(shS.x - wantX, Mathf.Max(0.2f, shS.y - r.Spine.position.y));
+                r.Spine.rotation = Quaternion.AngleAxis(lean, Vector3.forward) * r.Spine.rotation;
+                r.Chest.rotation = Quaternion.AngleAxis(-lean, Vector3.forward) * r.Chest.rotation;
+            }
 
             // 등: 휴지 각도를 두고 윗가슴만 조금 뒤로(가슴 펴기) · 어깨선이 정면을 보게
             r.Upper.rotation = Quaternion.AngleAxis(-t.ChestBack, Vector3.right) * r.Upper.rotation;
             var clav = r.RS.position - r.LS.position; clav.y = 0f;
-            if (clav.sqrMagnitude > 1e-6f) r.Upper.rotation = Quaternion.FromToRotation(clav.normalized, Vector3.right) * r.Upper.rotation;
+            if (clav.sqrMagnitude > 1e-6f) r.Upper.rotation = Quaternion.FromToRotation(clav.normalized, yawT * Vector3.right) * r.Upper.rotation;
 
             // 빗장뼈: 휴지에서 내려서 뒤로, 좌우 높이 맞춤
             void Clav(Transform c, Transform ua, float s)
@@ -563,23 +583,24 @@ namespace Haengin.EditorGame
             var shM = Mid(r.LUA.position, r.RUA.position);
             var hipM = Mid(r.LUL.position, r.RUL.position);
             var torsoDown = (hipM - shM).normalized;
+            Vector3 rightT = yawT * Vector3.right, fwdT = yawT * Vector3.forward;
             Vector3 Arm(float s, float af)
             {
-                float ao = t.ArmOut * Mathf.Deg2Rad;
-                return (torsoDown * Mathf.Cos(ao) * Mathf.Cos(af) + Vector3.right * (s * Mathf.Sin(ao)) + Vector3.forward * Mathf.Sin(af)).normalized;
+                float ao = (t.ArmOut + (s < 0f ? t.ArmOutL : t.ArmOutR)) * Mathf.Deg2Rad;
+                return (torsoDown * Mathf.Cos(ao) * Mathf.Cos(af) + rightT * (s * Mathf.Sin(ao)) + fwdT * Mathf.Sin(af)).normalized;
             }
             void ArmChain(Transform ua, Transform la, Transform h, float s)
             {
                 float e0 = Vector3.Angle(la.position - ua.position, h.position - la.position);
-                float e = (e0 + t.Elbow) * Mathf.Deg2Rad;
+                float e = (e0 + t.Elbow + (s < 0f ? t.ElbowL : t.ElbowR)) * Mathf.Deg2Rad;
                 float af = 0f;
                 for (int it = 0; it < 4; it++)
                 {
                     var d = Arm(s, af);
                     Aim(ua, la.position, d);
-                    var f = (d * Mathf.Cos(e) + Vector3.ProjectOnPlane(Vector3.forward, d).normalized * Mathf.Sin(e) - Vector3.right * (s * Mathf.Sin(t.ForearmIn * Mathf.Deg2Rad))).normalized;
+                    var f = (d * Mathf.Cos(e) + Vector3.ProjectOnPlane(fwdT, d).normalized * Mathf.Sin(e) - rightT * (s * Mathf.Sin(t.ForearmIn * Mathf.Deg2Rad))).normalized;
                     Aim(la, h.position, f);
-                    float err = h.position.z - (hipM.z + t.HandFwd);
+                    float err = h.position.z - (hipM.z + t.HandFwd + (s < 0f ? t.HandFwdL : t.HandFwdR));
                     float reach = Mathf.Max(0.2f, (h.position - ua.position).magnitude);
                     af -= Mathf.Atan2(err, reach);
                 }
@@ -589,7 +610,7 @@ namespace Haengin.EditorGame
 
             // 목·머리: 머리 방향은 휴지(정면 설정화의 수평)에 숙임 보정 — 머리 가운데가 어깨 바로 위(EarFwd)에 오게 목을 기울임
             var sh = Mid(r.LUA.position, r.RUA.position);
-            var headRot = Quaternion.AngleAxis(t.HeadYaw, Vector3.up) * Quaternion.AngleAxis(t.HeadPitch, Vector3.right) * headBind;
+            var headRot = Quaternion.AngleAxis(t.HeadYaw, Vector3.up) * Quaternion.AngleAxis(t.HeadRoll, Vector3.forward) * Quaternion.AngleAxis(t.HeadPitch, Vector3.right) * headBind;
             float neckLen = (r.Head.position - r.Neck.position).magnitude;
             float wantHeadZ = sh.z + t.EarFwd - (headRot * headCLocal).z;
             float dz = Mathf.Clamp(wantHeadZ - r.Neck.position.z, -neckLen * 0.8f, neckLen * 0.8f);
@@ -773,7 +794,9 @@ namespace Haengin.EditorGame
                 float v = pose.muscles[i];
                 if (BreathChest.Contains(name)) Set(name, t => v + Breath(t) * 0.012f, true);
                 else if (name == "Left Shoulder Down-Up" || name == "Right Shoulder Down-Up") Set(name, t => v + Breath(t) * 0.012f, true);
-                else if (name == "Spine Left-Right") Set(name, t => v + Sway(t) * 0.006f, true);
+                else if (name == "Spine Left-Right") Set(name, t => v + Sway(t) * 0.006f * tu.SwayAmp, true);
+                else if (name == "Chest Left-Right" || name == "Neck Tilt Left-Right") Set(name, t => v - Sway(t) * 0.006f * tu.SwayAmp, true);
+                else if (name == "Neck Turn Left-Right" || name == "Head Turn Left-Right") Set(name, t => v + Sway(t) * 0.006f * tu.SwayAmp, true);
                 else if (name == "Left Arm Down-Up" || name == "Right Arm Down-Up") Set(name, t => v + Breath(t) * 0.002f, true);
                 else Set(name, t => v, false);
             }

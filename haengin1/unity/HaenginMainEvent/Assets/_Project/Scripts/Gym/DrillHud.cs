@@ -105,6 +105,10 @@ namespace Haengin
             if (beatPlate != null && on) beatPlate.gameObject.SetActive(false);
         }
 
+        /// 말칸(시험·QA)
+        public bool CueShown => cuePlate != null && cuePlate.gameObject.activeSelf;
+        public string CueName => cueWho != null ? cueWho.text : "";
+
         public void Say(string who, string line)
         {
             Build();

@@ -440,6 +440,56 @@ namespace Haengin.Tests
             Assert.IsEmpty(bad, string.Join("\n", bad));
         }
 
+        // ───────────────────────── Q56 레슨 카드 카메라(2026-10-31 대표): 코치 6명 실제 레슨 흐름 — 카드 동안 코치 얼굴·가슴이 왼쪽 60%, 시우·기둥·샌드백에 안 가림, 카드 제목 이름, 드릴로 넘어가면 카메라 풀림
+        [UnityTest, Timeout(1500000)]
+        public IEnumerator Q56_Lesson_Card_Camera()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var bad = new List<string>(); var log = new List<string>();
+            foreach (var (id, day, enter, at) in new[] { ("yunjun", 312, 20 * 60 + 40, 21 * 60 + 10), ("gojun", 328, 15 * 60 + 20, 15 * 60 + 55), ("seungyeon", 328, 16 * 60 + 50, 17 * 60 + 25), ("jinsoo_son", 329, 9 * 60 + 30, 10 * 60 + 55), ("jinsoo_seo", 329, 18 * 60, 19 * 60 + 25), ("seungmin_baek", 328, 13 * 60, 13 * 60 + 55) })
+            {
+                yield return Start(w, Mid(w.Def, day, enter, SceneLoader.Gym, m => { m.G.Fatigue = 0; m.L.SetWallet(900000); m.Unlock("lesson"); m.Unlock("lesson.guests"); m.Unlock("lesson.seungmin"); }));
+                GymManager gm = null;
+                for (int i = 0; i < 300 && gm == null; i++) { gm = GymManager.Instance; yield return null; }
+                Assert.NotNull(gm, id);
+                yield return Lab.Frames(20);
+                w.BotRead = 8f;
+                var coach = w.Model.Sh.Coach(id);
+                string why = w.BookNext(id);
+                if (why != "") { bad.Add($"{id}: 예약 안 됨 {why}"); w.Stop(); yield return Lab.Frames(5); continue; }
+                var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+                var me = M3Lab.Motor;
+                var sp = mat.position + mat.forward * 2.4f; var to = mat.position - sp; to.y = 0f;
+                me.Teleport(sp, Mathf.Atan2(to.x, to.z) * Mathf.Rad2Deg);
+                yield return Lab.Frames(10);
+                GameClock.AdvanceTo(at);
+                var board = w.Story.Board;
+                float t0 = Time.realtimeSinceStartup;
+                while (Time.realtimeSinceStartup - t0 < 60f && !(board != null && board.Shown && w.LessonCamera != null)) yield return null;
+                if (board == null || !board.Shown || w.LessonCamera == null) { bad.Add($"{id}: 카드·카메라 안 뜸 (시각 {GameClock.TimeText})"); w.Stop(); yield return Lab.Frames(5); continue; }
+                var lc = w.LessonCamera;
+                var npc = id == "yunjun" ? gm.Yunjun : id == "gojun" ? gm.Gojun : gm.Guest(id);
+                npc.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                var head = npc.Anim.GetBoneTransform(HumanBodyBones.Head).position + Vector3.up * 0.08f;
+                var chest = npc.Anim.GetBoneTransform(HumanBodyBones.Chest).position;
+                // 레슨 카메라 자리 기준 화면 좌표(블렌드가 끝난 뒤 보일 그림 — FOV 30, 16:9)
+                Vector3 Vp(Vector3 q) { var lp = lc.transform.InverseTransformPoint(q); float ty = Mathf.Tan(CutCams.Fov(CamPreset.Mid) * 0.5f * Mathf.Deg2Rad); return new Vector3(0.5f + 0.5f * (lp.x / lp.z) / (ty * 16f / 9f), 0.5f + 0.5f * (lp.y / lp.z) / ty, lp.z); }
+                var vh = Vp(head); var vc = Vp(chest);
+                string blockedBy = lc.Blocked(lc.transform.position, head) ? "가림" : "";
+                log.Add($"{id}: 머리 화면 {vh.x:F2},{vh.y:F2} · 가슴 {vc.x:F2},{vc.y:F2} · 돌림 {lc.SpinDeg:F0}° · 카메라까지 {Vector3.Distance(lc.transform.position, chest):F1}m · 제목 {board.Title}");
+                if (vh.z <= 0f || vh.x < 0.05f || vh.x > 0.6f || vh.y < 0.2f || vh.y > 0.98f) bad.Add($"{id}: 얼굴이 왼쪽 60% 밖 {vh}");
+                if (vc.x < 0.05f || vc.x > 0.6f || vc.y < 0.05f) bad.Add($"{id}: 가슴이 왼쪽 60% 밖 {vc}");
+                if (blockedBy != "") bad.Add($"{id}: 코치 얼굴이 가림");
+                if (!board.Title.Contains(coach.Name)) bad.Add($"{id}: 카드 제목 이름 {board.Title}");
+                w.Stop();
+                yield return Lab.Frames(5);
+                if (w.LessonCamera != null) bad.Add($"{id}: 세계를 멈춰도 카메라가 남음");
+            }
+            Debug.Log("[Q] Q56 레슨 카메라\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join("\n", bad));
+        }
+
         // ───────────────────────── Q47 드릴 '팡!' 알림판이 두 사람 얼굴을 가리지 않음(2026-10-28 이윤준 캡처 중 발견 — 화면 가운데 위 +120 이 D04 드릴 카메라의 얼굴 자리)
         [UnityTest, Timeout(900000)]
         public IEnumerator Q47_Drill_Toast_Not_Over_Faces()
@@ -605,7 +655,7 @@ namespace Haengin.Tests
             log.Add($"{name}: 어깨-엉덩이 {shHip:+0.0;-0.0} · 머리뼈-어깨 {head:+0.0;-0.0} · 위팔 {arm:F1}° · 어깨차 {dy:F1} · 발목 높이 {foot:F1}cm · 엉덩이 {hipY:F2}m");
             if (Mathf.Abs(shHip) > 3f) return $"{name} 어깨-엉덩이 {shHip:F1}";
             if (arm > armMax) return $"{name} 위팔 {arm:F1}°";
-            if (dy > 2.5f) return $"{name} 어깨차 {dy:F1}";     // 2026-10-31 인물별 자세: 시우·민재·깐족이·서진수는 일부러 기움(2° 안팎)
+            if (dy > 6f) return $"{name} 어깨차 {dy:F1}";     // 2026-10-31 인물별 자세: 짝다리로 일부러 기움(서진수 5° 등, 인물별 값 = docs/15 8-10)
             if (foot > 25f || hipY < 0.45f) return $"{name} 다리 접힘(발목 {foot:F0}cm · 엉덩이 {hipY:F2}m)";
             return null;
         }
@@ -630,7 +680,7 @@ namespace Haengin.Tests
                 n.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 n.Place(feet, mat.forward, GymNpc.Routine.Watch);
                 yield return Lab.Frames(20);
-                string b = StandBad(name, n.Anim, n.transform, 12.5f, log);
+                string b = StandBad(name, n.Anim, n.transform, 19f, log);
                 if (b != null) bad.Add(b);
                 // 구경 → 미트 → 구경: 한 프레임에 머리·엉덩이가 튀지 않음(스톡 클립 사이 블렌드)
                 var head = n.Anim.GetBoneTransform(HumanBodyBones.Head); var hips = n.Anim.GetBoneTransform(HumanBodyBones.Hips);
@@ -650,7 +700,7 @@ namespace Haengin.Tests
                 me.Teleport(feet, 0f);
                 yield return Lab.Frames(40);
                 var an = me.GetComponentInChildren<Animator>();
-                string b = StandBad("시우", an, an.transform, 12.5f, log);
+                string b = StandBad("시우", an, an.transform, 19f, log);
                 if (b != null) bad.Add(b);
                 var hips = an.GetBoneTransform(HumanBodyBones.Hips);
                 float worst = 0f, py = an.transform.InverseTransformPoint(hips.position).y;

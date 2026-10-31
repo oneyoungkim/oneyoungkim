@@ -69,4 +69,22 @@ elif mode == 'var':
             label(d, x0 + c * W, y0 + H - 26, tag, FS)
         label(d, x0, y0, n)
     im.save(out, quality=90)
+if mode == 'row':
+    # row <전 폴더> <후 폴더> <결과.jpg> front|side 키:이름 … : 전/후 두 줄(전신 그대로 나란히)
+    a, b, out, view, keys = sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6:]
+    W, H = 110, 330
+    im = Image.new('RGB', (W * len(keys), H * 2 + 44), (20, 20, 20))
+    d = ImageDraw.Draw(im)
+    for r, fold in enumerate((a, b)):
+        for c, kn in enumerate(keys):
+            k, n = kn.split(':')
+            src = Image.open(os.path.join(fold, f"{k}_after_{view}.png")).convert('RGB')
+            cw = src.width * 0.5
+            crop = src.crop((int(src.width / 2 - cw / 2), 0, int(src.width / 2 + cw / 2), src.height)).resize((W, H), Image.LANCZOS)
+            im.paste(crop, (c * W, 22 + r * (H + 22)))
+    for c, kn in enumerate(keys):
+        d.text((c * W + 2, 3), kn.split(':')[1], font=FS, fill=(255, 255, 255))
+        d.text((c * W + 2, H + 25), '후' if False else kn.split(':')[1], font=FS, fill=(255, 220, 120))
+    d.text((2, 22), '전', font=F, fill=(255, 255, 255)); d.text((2, H + 44), '후', font=F, fill=(255, 220, 120))
+    im.save(out, quality=92)
 print('저장', out)

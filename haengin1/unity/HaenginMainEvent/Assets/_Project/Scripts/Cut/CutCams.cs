@@ -69,6 +69,11 @@ namespace Haengin
         public CamPreset Preset;
         public Transform Subject, Other;
         public CinemachineCamera Cam;
+        /// 카메라를 오른쪽으로 더 돌림(도) — 대상이 화면 왼쪽에 옴(레슨 카드: 오른쪽 판이 덮지 않는 왼쪽 60%). 가림 검사는 대상 기준 그대로
+        public float ScreenYaw;
+        /// 카메라를 위로 더 돌림(도) — 대상이 화면 아래로 내려옴(머리 위 여백)
+        public float ScreenPitch;
+        Quaternion Aim(Vector3 dir) => Quaternion.LookRotation(dir) * Quaternion.Euler(-ScreenPitch, ScreenYaw, 0f);
         /// 트래킹 따라가는 빠르기(1/초)
         public float Follow = 6f;
 
@@ -330,7 +335,7 @@ namespace Haengin
                 StoryFixes += spin != 0f ? 1 : 0;
                 if (!Good(p)) StoryBad.Add($"{CutCams.Name(Preset)}:{(Subject != null ? Subject.name : "-")} {(Blocked(p, l) ? "가림" : Vector3.Distance(p, o) < want * 0.6f ? $"벽에 당김 {Vector3.Distance(p, o):F1}/{want:F1}m" : !Physics.Raycast(p + Vector3.up * 0.1f, Vector3.down, 6f, Block, QueryTriggerInteraction.Ignore) ? "바닥 밖" : "지붕 밖")}");
             }
-            transform.SetPositionAndRotation(p, Quaternion.LookRotation((l - p).sqrMagnitude > 1e-6f ? l - p : Vector3.forward));
+            transform.SetPositionAndRotation(p, Aim((l - p).sqrMagnitude > 1e-6f ? l - p : Vector3.forward));
             if (Cam != null) Cam.PreviousStateIsValid = false;
         }
 
@@ -346,7 +351,7 @@ namespace Haengin
             bool track = Preset == CamPreset.BackTrack || Preset == CamPreset.SideTrack;
             float k = track ? 1f - Mathf.Exp(-Follow * UiKit.RealDt) : 1f;
             var np = Vector3.Lerp(transform.position, p, k);
-            transform.SetPositionAndRotation(np, Quaternion.LookRotation((l - np).sqrMagnitude > 1e-6f ? l - np : transform.forward));
+            transform.SetPositionAndRotation(np, (l - np).sqrMagnitude > 1e-6f ? Aim(l - np) : transform.rotation);
         }
     }
 }

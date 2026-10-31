@@ -34,6 +34,7 @@ namespace Haengin
             Picker?.Hide();
             if (Model != null) { Model.LessonCoach = null; Model.LessonBooking = null; }
             inLesson = false;
+            LessonCamOff();
             if (GymManager.Instance != null) GymManager.Instance.CoachName = "";
         }
 
@@ -77,6 +78,7 @@ namespace Haengin
             GymNpc coachNpc = c.Id == "yunjun" ? gm.Yunjun : c.Id == "gojun" ? gm.Gojun : gm.Guest(c.Id);
             var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
             if (coachNpc != null && mat != null) { coachNpc.gameObject.SetActive(true); coachNpc.Place(mat.position, mat.forward, GymNpc.Routine.Watch); }
+            yield return LessonCamOn(coachNpc);
             bool first = Model.Count("lesson." + c.Id) < 1;
             int seed = Model.DayIndex * 7 + bk.At;
             string say = Model.Sh.Line(c.Id, first ? "intro" : "start", seed);
@@ -104,6 +106,7 @@ namespace Haengin
             {
                 gm.CoachName = c.Name;
                 var cue = StartCoroutine(Cues(c, gm));
+                if (lessonCam != null) { var dc = lessonCam; lessonCam = null; StartCoroutine(LessonCamToDrill(dc)); }
                 if (BotSkill > 0f) yield return gm.PlayBot(drill, BotSkill);
                 else if (gm.StartDrill(drill)) { while (gm.Busy) yield return null; }
                 StopCoroutine(cue);
@@ -127,6 +130,8 @@ namespace Haengin
                 }
                 if (c.Visit) { string tip = Model.Sh.Line(c.Id, "tip", seed); if (tip.Length > 0) q.Add($"{c.Name}|{tip}"); }
                 var body = new List<string> { $"{d.NameKr} {DrillGrader.Letter(r.Grade)} · 점수 {r.Score:0.#}{(r.Assist > 0 ? $"(코치 큐 +{r.Assist:0.#})" : "")}", sum, $"신뢰 {Model.Rel(c.Id):+0;-0;0} · 피로 {Model.G.Fatigue}" };
+                if (coachNpc != null && mat != null) { coachNpc.gameObject.SetActive(true); coachNpc.Place(mat.position, mat.forward, GymNpc.Routine.Watch); }
+                yield return LessonCamOn(coachNpc);
                 yield return Board($"개인레슨   ·   {GameClock.TimeText}", $"{c.Name} — 끝", "레슨", c.Visit, body.ToArray(), q.ToArray());
             }
             else
@@ -135,8 +140,10 @@ namespace Haengin
                 bk.State = 1; Model.AddCount("lesson." + c.Id, 1); Model.AddCount("rel." + c.Id, 1);
                 GameClock.Advance(Model.Sh.Minutes);
                 sum = $"{c.Name} 레슨 — 오늘은 몸 상태 때문에 말로만";
+                if (lessonCam == null) yield return LessonCamOn(coachNpc);
                 yield return Board($"개인레슨   ·   {GameClock.TimeText}", $"{c.Name} — 말로 하는 레슨", "레슨", c.Visit, new[] { sum }, new[] { $"{c.Name}|{Model.Sh.Line(c.Id, "bad", seed)}" });
             }
+            LessonCamOff();
             LastLessonLine = sum;
             LessonsRun++;
             Trace.Add($"레슨 {c.Id} {bk.Drill} {WorldModel.Grade2(bk.Grade)}");
@@ -145,6 +152,38 @@ namespace Haengin
             inLesson = false;
             if (coachNpc != null && c.Visit) coachNpc.gameObject.SetActive(false);
             gm.ApplyPart(gm.Part);
+        }
+
+        // ───────────────────────── 레슨 카드 카메라(2026-10-31 대표 — 게임 카메라에서 코치가 시우 뒤에 가림): 카드가 떠 있는 동안 코치 쪽 미디엄,
+        //   코치 얼굴·상반신이 오른쪽 판이 덮지 않는 왼쪽 60% 에(ScreenYaw). 시우·기둥·샌드백은 CutCamDriver 돌려 피하기(StoryAvoid). 드릴로 넘어갈 때 0.8초 블렌드
+        const float LessonCamYaw = 10f, LessonCamBlend = 0.8f;
+        CutCamDriver lessonCam;
+        public CutCamDriver LessonCamera => lessonCam;
+
+        IEnumerator LessonCamOn(GymNpc npc)
+        {
+            LessonCamOff();
+            if (npc == null || !npc.isActiveAndEnabled) yield break;
+            yield return null; yield return null;      // 새 자리로 애니메이션이 돈 뒤 머리 뼈를 잼
+            lessonCam = CutCams.Make(CamPreset.Mid, npc.transform, null);
+            lessonCam.ScreenYaw = LessonCamYaw;
+            lessonCam.ScreenPitch = 2f;
+            lessonCam.Snap();
+            lessonCam.SetLive(true);
+        }
+
+        void LessonCamOff() { if (lessonCam != null) { CutCams.Release(lessonCam); lessonCam = null; } }
+
+        IEnumerator LessonCamToDrill(CutCamDriver d)
+        {
+            var brain = Camera.main != null ? Camera.main.GetComponent<Unity.Cinemachine.CinemachineBrain>() : null;
+            var prev = brain != null ? brain.DefaultBlend : default;
+            if (brain != null) brain.DefaultBlend = new Unity.Cinemachine.CinemachineBlendDefinition(Unity.Cinemachine.CinemachineBlendDefinition.Styles.EaseInOut, LessonCamBlend);
+            yield return null;       // StartDrill 이 드릴 카메라를 켠 뒤
+            if (d != null) d.SetLive(false);
+            yield return new WaitForSecondsRealtime(LessonCamBlend + 0.1f);
+            if (brain != null) brain.DefaultBlend = prev;
+            CutCams.Release(d);
         }
 
         /// 레슨 카드 = 오른쪽 세로 판(2026-10-29 — 가운데 큰 카드가 코치를 가림)
