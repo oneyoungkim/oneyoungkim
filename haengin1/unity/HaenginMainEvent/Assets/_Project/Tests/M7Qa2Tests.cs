@@ -655,7 +655,7 @@ namespace Haengin.Tests
             log.Add($"{name}: 어깨-엉덩이 {shHip:+0.0;-0.0} · 머리뼈-어깨 {head:+0.0;-0.0} · 위팔 {arm:F1}° · 어깨차 {dy:F1} · 발목 높이 {foot:F1}cm · 엉덩이 {hipY:F2}m");
             if (Mathf.Abs(shHip) > 3f) return $"{name} 어깨-엉덩이 {shHip:F1}";
             if (arm > armMax) return $"{name} 위팔 {arm:F1}°";
-            if (dy > 6f) return $"{name} 어깨차 {dy:F1}";     // 2026-10-31 인물별 자세: 짝다리로 일부러 기움(서진수 5° 등, 인물별 값 = docs/15 8-10)
+            if (dy > 3.8f) return $"{name} 어깨차 {dy:F1}";     // 2026-10-31 인물별 자세: 짝다리로 일부러 기움(실측 최대 깐족이 3.6, 인물별 값 = docs/15 8-11)
             if (foot > 25f || hipY < 0.45f) return $"{name} 다리 접힘(발목 {foot:F0}cm · 엉덩이 {hipY:F2}m)";
             return null;
         }
@@ -680,7 +680,7 @@ namespace Haengin.Tests
                 n.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 n.Place(feet, mat.forward, GymNpc.Routine.Watch);
                 yield return Lab.Frames(20);
-                string b = StandBad(name, n.Anim, n.transform, 19f, log);
+                string b = StandBad(name, n.Anim, n.transform, 16f, log);
                 if (b != null) bad.Add(b);
                 // 구경 → 미트 → 구경: 한 프레임에 머리·엉덩이가 튀지 않음(스톡 클립 사이 블렌드)
                 var head = n.Anim.GetBoneTransform(HumanBodyBones.Head); var hips = n.Anim.GetBoneTransform(HumanBodyBones.Hips);
@@ -700,7 +700,7 @@ namespace Haengin.Tests
                 me.Teleport(feet, 0f);
                 yield return Lab.Frames(40);
                 var an = me.GetComponentInChildren<Animator>();
-                string b = StandBad("시우", an, an.transform, 19f, log);
+                string b = StandBad("시우", an, an.transform, 16f, log);
                 if (b != null) bad.Add(b);
                 var hips = an.GetBoneTransform(HumanBodyBones.Hips);
                 float worst = 0f, py = an.transform.InverseTransformPoint(hips.position).y;
