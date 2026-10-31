@@ -106,7 +106,7 @@ namespace Haengin
             for (int i = 0; i < Max; i++)
             {
                 bool sel = i == Selected;
-                rows[i].Plate.color = sel ? UiKit.Paper : new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.78f);
+                rows[i].Plate.color = sel ? UiKit.Paper : new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.92f);
                 rows[i].Bar.enabled = sel;
                 rows[i].Label.color = sel ? UiKit.Ink : UiKit.Paper;
             }

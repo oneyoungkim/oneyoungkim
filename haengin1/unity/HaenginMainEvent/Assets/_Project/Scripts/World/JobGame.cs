@@ -49,8 +49,8 @@ namespace Haengin
             UiKit.Place(scoreText.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-40f, -26f), new Vector2(420f, 40f));
             help = UiKit.Text("방법", bg.transform, Fonts != null ? Fonts.B : null, 22f, UiKit.Grey, TextAlignmentOptions.Left, wrap: true);
             UiKit.Place(help.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -74f), new Vector2(1100f, 34f));
-            prompt = UiKit.Text("문제", bg.transform, Fonts != null ? Fonts.Br : null, 52f, UiKit.Ink, TextAlignmentOptions.Center);
-            UiKit.Place(prompt.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -120f), new Vector2(1100f, 70f));
+            prompt = UiKit.Text("문제", bg.transform, Fonts != null ? Fonts.Br : null, 44f, UiKit.Ink, TextAlignmentOptions.Center);
+            UiKit.Place(prompt.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -112f), new Vector2(1100f, 56f));
             slots = new TextMeshProUGUI[4];
             for (int i = 0; i < 4; i++)
             {

@@ -127,7 +127,7 @@ namespace Haengin
             if (hint != null)
             {
                 string want = HintOverride ?? Hint;
-                if (hint.text != want) hint.text = want;
+                if (hint.text != want) { hint.text = want; UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)hint.transform.parent); }      // 판 크기를 같은 프레임에(긴 글이 판 밖으로 한 프레임 나감)
             }
 
             // 짧은 알림(DebugHud.Toast 가 넣음)
@@ -253,7 +253,7 @@ namespace Haengin
             for (int i = 0; i < rows.Length; i++)
             {
                 bool sel = i == Selected;
-                rows[i].Plate.color = sel ? Paper : new Color(Ink.r, Ink.g, Ink.b, 0.62f);
+                rows[i].Plate.color = sel ? Paper : new Color(Ink.r, Ink.g, Ink.b, 0.92f);
                 rows[i].Bar.enabled = sel;
                 rows[i].Label.color = sel ? Ink : Paper;
             }
@@ -287,14 +287,14 @@ namespace Haengin
             gameObject.layer = 5;   // UI
 
             // 조작 안내(왼쪽 아래 한 줄)
-            var hp = Panel("조작 안내", transform, Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(16f, 14f), Vector2.zero, new Color(Paper.r, Paper.g, Paper.b, 0.78f));
+            var hp = Panel("조작 안내", transform, Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(16f, 14f), Vector2.zero, new Color(Paper.r, Paper.g, Paper.b, 0.95f));
             Fit(hp, 12, 14, 5, 6);
             hint = Text("글", hp.transform, font, 18f, Ink, TextAlignmentOptions.MidlineLeft);
             hint.text = Hint;
 
             // 짧은 알림(아래 가운데)
             var b0 = new Vector2(0.5f, 0f);
-            toastPlate = Panel("알림", transform, b0, b0, b0, new Vector2(0f, 96f), Vector2.zero, new Color(Ink.r, Ink.g, Ink.b, 0.82f)).gameObject;
+            toastPlate = Panel("알림", transform, b0, b0, b0, new Vector2(0f, 96f), Vector2.zero, new Color(Ink.r, Ink.g, Ink.b, 0.94f)).gameObject;
             Fit(toastPlate.GetComponent<Image>(), 18, 18, 8, 9);
             toastText = Text("글", toastPlate.transform, font, 22f, Paper, TextAlignmentOptions.Center);
             toastPlate.SetActive(false);
@@ -307,6 +307,8 @@ namespace Haengin
             dim.color = new Color(0f, 0f, 0f, 0.55f);
             dim.raycastTarget = false;
 
+            var c50 = new Vector2(0.5f, 0.5f);
+            Panel("일시정지 판", menuRoot.transform, c50, c50, c50, new Vector2(0f, -90f), new Vector2(680f, 620f), new Color(Ink.r, Ink.g, Ink.b, 0.95f));     // 2026-10-31: 제목·조작 글이 판 없이 화면 위에
             var title = Text("제목", menuRoot.transform, font, 44f, Paper, TextAlignmentOptions.Center);
             Place(title.rectTransform, new Vector2(0f, 150f), new Vector2(600f, 64f));
             title.text = "일시정지";

@@ -207,23 +207,19 @@ namespace Haengin.EditorGame
                 var quad = GameObject.CreatePrimitive(PrimitiveType.Quad); quad.name = "먹 원"; Object.DestroyImmediate(quad.GetComponent<Collider>());
                 quad.transform.SetParent(mk.transform, false); quad.transform.localPosition = new Vector3(0f, pos.y + 0.012f, 0f); quad.transform.localRotation = Quaternion.Euler(90f, 0f, 0f); quad.transform.localScale = Vector3.one * 1.1f;
                 var qr = quad.GetComponent<Renderer>(); qr.sharedMaterial = ringMat; qr.shadowCastingMode = ShadowCastingMode.Off; qr.receiveShadows = false;
-                var labelGo = new GameObject("이름표"); labelGo.transform.SetParent(mk.transform, false); labelGo.transform.localPosition = new Vector3(0f, DrillMarker.LabelHeight, 0f);     // QA 2차 A7: 머리 위·작게
-                var tmp = labelGo.AddComponent<TextMeshPro>(); tmp.font = fonts != null ? fonts.B : null; tmp.fontSize = DrillMarker.LabelSize; tmp.alignment = TextAlignmentOptions.Center; tmp.color = UiKit.Ink; tmp.rectTransform.sizeDelta = new Vector2(3f, 1f);
                 var ia = mk.AddComponent<Interactable>(); ia.Radius = 1.7f;
-                // 바닥 스티커(먹 원 옆 — QA 2차 A7: 가까이 갈 때만, 작게)
-                var stGo = new GameObject("스티커"); stGo.transform.SetParent(mk.transform, false); stGo.transform.localPosition = new Vector3(0f, pos.y + 0.014f, -0.78f); stGo.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-                var st = stGo.AddComponent<TextMeshPro>(); st.font = fonts != null ? fonts.B : null; st.fontSize = DrillMarker.StickerSize; st.alignment = TextAlignmentOptions.Center; st.color = new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.85f); st.rectTransform.sizeDelta = new Vector2(2.2f, 0.3f);
-                var dm = mk.AddComponent<DrillMarker>(); dm.DrillId = id; dm.Interact = ia; dm.Label = tmp; dm.Sticker = st; dm.Ring = qr; dm.Gym = gym;
+                var dm = mk.AddComponent<DrillMarker>(); dm.DrillId = id; dm.Interact = ia; dm.Ring = qr; dm.Gym = gym;
                 markerList.Add(dm);
                 seen.Add(id);
             }
             gym.Markers = markerList;
-            // 벽 라운드 타이머(남벽 x 10.5 h 2.5, 발광 숫자판 자리 → TMP)
-            var timerGo = new GameObject("라운드 타이머"); timerGo.transform.SetParent(root.transform, false); timerGo.transform.localPosition = new Vector3(10.5f, 2.5f, 0.34f); timerGo.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
-            var timer = timerGo.AddComponent<TextMeshPro>(); timer.font = fonts != null ? fonts.Br : null; timer.fontSize = 4f; timer.alignment = TextAlignmentOptions.Center; timer.color = new Color(1f, 0.25f, 0.2f); timer.text = "3:00"; timer.rectTransform.sizeDelta = new Vector2(1.6f, 0.6f);
-            gym.WallTimer = timer;
+            // 2026-10-31 대표: 벽 라운드 타이머 글자 없앰(포스터와 겹침 · 화면 타이머와 중복)
             // 체육관 이름 현수막 글자(글자는 TMP — 포스터 아틀라스에는 글자 없음)
             var banner = new GameObject("현수막 글자"); banner.transform.SetParent(root.transform, false); banner.transform.localPosition = new Vector3(11.3f, 2.35f, 12.95f); banner.transform.localRotation = Quaternion.identity;   // 북벽(의자 위), 남쪽에서 읽힘
+            // 2026-10-31: 흰 글자가 베이지 벽·옆 포스터에 걸침 → 먹 판 위
+            var bannerBoard = GameObject.CreatePrimitive(PrimitiveType.Cube); bannerBoard.name = "현수막 판"; Object.DestroyImmediate(bannerBoard.GetComponent<Collider>());
+            bannerBoard.transform.SetParent(root.transform, false); bannerBoard.transform.localPosition = new Vector3(11.3f, 2.35f, 12.97f); bannerBoard.transform.localScale = new Vector3(2.9f, 0.86f, 0.02f);
+            bannerBoard.GetComponent<Renderer>().sharedMaterial = BannerMat();
             var bt = banner.AddComponent<TextMeshPro>(); bt.font = fonts != null ? fonts.Br : null; bt.fontSize = 5f; bt.alignment = TextAlignmentOptions.Center; bt.color = UiKit.Paper; bt.text = "혜화 MMA"; bt.rectTransform.sizeDelta = new Vector2(4f, 0.8f);
             // 오디오 소켓(자리): 스피커 2 + 대학로 소음
             foreach (var so in sockList)
@@ -328,6 +324,17 @@ namespace Haengin.EditorGame
         }
 
         /// +Z 를 보는 사각형(UV u = −x → +x, v = 아래 → 위)
+        static Material BannerMat()
+        {
+            const string P = "Assets/_Project/Materials/Env/Gym/M_BannerBoard.mat";
+            var m = AssetDatabase.LoadAssetAtPath<Material>(P);
+            if (m != null) return m;
+            m = new Material(Shader.Find("Universal Render Pipeline/Unlit")) { name = "M_BannerBoard" };
+            m.SetColor("_BaseColor", UiKit.Ink);
+            AssetDatabase.CreateAsset(m, P);
+            return m;
+        }
+
         static Mesh MirrorQuad(float hw, float hh)
         {
             string p = GymDir + (hw < 1f ? "/UnitQuad.asset" : "/MirrorQuad.asset");

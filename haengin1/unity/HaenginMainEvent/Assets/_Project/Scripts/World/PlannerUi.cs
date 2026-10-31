@@ -58,7 +58,7 @@ namespace Haengin
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < 5; c++)
                 {
-                    var p = UiKit.Panel($"칸 {r},{c}", card.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(colX[c] - 8f, -124f - r * 52f), new Vector2(c == 0 ? 270f : 255f, 46f), new Color(0f, 0f, 0f, 0f));
+                    var p = UiKit.Panel($"칸 {r},{c}", card.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(colX[c] - 8f, -120f - r * 50f), new Vector2(c == 0 ? 270f : 255f, 46f), new Color(0f, 0f, 0f, 0f));
                     plates[r, c] = p;
                     var t = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 22f, UiKit.Ink, TextAlignmentOptions.Left);
                     UiKit.Place(t.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(10f, 0f), new Vector2(c == 0 ? 260f : 245f, 44f));
@@ -74,7 +74,7 @@ namespace Haengin
                 buttonText[i].text = bt[i];
             }
             foot = UiKit.Text("발", card.transform, Fonts != null ? Fonts.B : null, 20f, UiKit.Grey, TextAlignmentOptions.Right);
-            UiKit.Place(foot.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-50f, 108f), new Vector2(1400f, 30f));
+            UiKit.Place(foot.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-50f, 98f), new Vector2(1400f, 30f));
             foot.text = "↑↓ 날짜   ← → 칸   × 바꾸기   맡기면: 돈 100% · 부 스탯 75% · 관계 이벤트 없음 · 시간·피로 그대로";
             montage = UiKit.Text("몽타주", dim.transform, Fonts != null ? Fonts.B : null, 28f, UiKit.Paper, TextAlignmentOptions.TopLeft, wrap: true);
             UiKit.Place(montage.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1400f, 900f));

@@ -37,25 +37,26 @@ namespace Haengin
             card = plate.rectTransform;
             var band = UiKit.Panel("먹 띠", plate.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1320f, 78f), UiKit.Ink);
             title = UiKit.Text("제목", band.transform, br, 36f, UiKit.Paper, TextAlignmentOptions.Left); UiKit.Place(title.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(28f, 0f), new Vector2(1000f, 70f));
-            grade = UiKit.Text("등급", plate.transform, br, 300f, UiKit.Ink, TextAlignmentOptions.Center); UiKit.Place(grade.rectTransform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(230f, -30f), new Vector2(400f, 360f));
+            grade = UiKit.Text("등급", plate.transform, br, 240f, UiKit.Ink, TextAlignmentOptions.Center); UiKit.Place(grade.rectTransform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(230f, -30f), new Vector2(400f, 360f));
             var gl = UiKit.Text("등급 글", plate.transform, f, 24f, UiKit.Grey, TextAlignmentOptions.Center); UiKit.Place(gl.rectTransform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(230f, -215f), new Vector2(400f, 34f)); gl.text = "등급";
             for (int i = 0; i < 5; i++)
             {
-                float y = -120f - i * 84f;
+                float y = -110f - i * 72f;      // 2026-10-31: 다섯째 막대가 코치 말과 겹침
                 labels[i] = UiKit.Text("지표 " + i, plate.transform, f, 26f, UiKit.Ink, TextAlignmentOptions.Left); UiKit.Place(labels[i].rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(500f, y), new Vector2(300f, 34f));
                 backs[i] = UiKit.Panel("막대 바탕 " + i, plate.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(500f, y - 36f), new Vector2(620f, 22f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.12f));
                 fills[i] = UiKit.Panel("막대 " + i, plate.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(500f, y - 36f), new Vector2(0f, 22f), UiKit.Ink);
                 values[i] = UiKit.Text("값 " + i, plate.transform, f, 24f, UiKit.Grey, TextAlignmentOptions.Right); UiKit.Place(values[i].rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(800f, y), new Vector2(320f, 34f));
             }
             coach = UiKit.Text("코치", plate.transform, f, 30f, UiKit.Ink, TextAlignmentOptions.Left, true); UiKit.Place(coach.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(500f, 92f), new Vector2(760f, 70f));
-            reward = UiKit.Text("보상", plate.transform, f, 24f, UiKit.Accent, TextAlignmentOptions.Left); UiKit.Place(reward.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(500f, 40f), new Vector2(760f, 34f));
+            reward = UiKit.Text("보상", plate.transform, f, 24f, UiKit.AccentText, TextAlignmentOptions.Left); UiKit.Place(reward.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(500f, 40f), new Vector2(760f, 34f));
             simFrame = UiKit.Panel("시뮬 테두리", plate.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-30f, 110f), new Vector2(252f, 84f), UiKit.Ink);
             var inner = UiKit.Panel("시뮬 안", simFrame.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(236f, 68f), UiKit.Paper);
             simChip = UiKit.Text("시뮬", inner.transform, br, 32f, UiKit.Ink, TextAlignmentOptions.Center); UiKit.Stretch(simChip.rectTransform); simChip.text = "[시뮬] 해금";
             simNote = UiKit.Text("시뮬 설명", plate.transform, f, 20f, UiKit.Grey, TextAlignmentOptions.Right); UiKit.Place(simNote.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-30f, 80f), new Vector2(420f, 28f));
             simNote.text = "다음부터 이 드릴은 시뮬로 돌릴 수 있다(보상 75%)";
             simFrame.gameObject.SetActive(false); simNote.gameObject.SetActive(false);
-            prompt = UiKit.Text("닫기", root.transform, f, 22f, new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.8f), TextAlignmentOptions.Center); UiKit.Place(prompt.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 40f), new Vector2(800f, 32f));
+            var promptPlate = UiKit.Panel("닫기 판", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 34f), new Vector2(420f, 44f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.95f));
+            prompt = UiKit.Text("닫기", root.transform, f, 22f, UiKit.Paper, TextAlignmentOptions.Center); UiKit.Place(prompt.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 40f), new Vector2(800f, 32f));
             prompt.text = "× (A) · Enter — 닫기";
             root.SetActive(false);
         }
@@ -69,7 +70,7 @@ namespace Haengin
             var d = r.Def;
             title.text = $"{d.Id} {d.NameKr}{(r.Aborted ? " — 중단" : r.Concussion ? " — 스톱(뇌진탕 의심)" : "")}";
             grade.text = r.Aborted ? "—" : DrillGrader.Letter(r.Grade);
-            grade.color = r.Grade == Grade.S ? UiKit.Accent : UiKit.Ink;
+            grade.color = r.Grade == Grade.S ? UiKit.AccentText : UiKit.Ink;
             for (int i = 0; i < 5; i++)
             {
                 bool on = i < d.MetricCount;
@@ -105,7 +106,7 @@ namespace Haengin
 
         IEnumerator Appear(bool unlock)
         {
-            grade.fontSize = grade.text == "시뮬" ? 120f : 300f;
+            grade.fontSize = grade.text == "시뮬" ? 120f : 240f;
             float t = 0f;
             while (t < 0.4f)
             {

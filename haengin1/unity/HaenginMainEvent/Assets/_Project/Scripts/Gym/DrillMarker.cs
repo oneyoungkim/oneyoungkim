@@ -17,7 +17,6 @@ namespace Haengin
         public TextMeshPro Sticker;
         public Renderer Ring;
         public const float ShowDist = 1.9f;
-        public const float LabelSize = 1.0f, StickerSize = 0.75f, LabelHeight = 2.05f;
         public bool StickerShown => Sticker != null && Sticker.gameObject.activeSelf;
         public bool LabelShown => Label != null && Label.gameObject.activeSelf;
         public GymManager Gym;
@@ -35,44 +34,24 @@ namespace Haengin
         /// QA 2차 A7: 크기·높이·깊이 검사(장면이 예전 값이어도 여기서 맞춤)
         public void Tidy()
         {
-            foreach (var t in new[] { Label, Sticker })
-            {
-                if (t == null) continue;
-                var m = t.fontMaterial;     // 사본(이 마커만)
-                if (m != null) m.SetFloat("unity_GUIZTestMode", (float)UnityEngine.Rendering.CompareFunction.LessEqual);
-            }
-            if (Label != null)
-            {
-                Label.fontSize = LabelSize;
-                var p = Label.transform.localPosition; if (p.y < LabelHeight - 0.01f) Label.transform.localPosition = new Vector3(p.x, LabelHeight, p.z);
-            }
-            if (Sticker != null) { Sticker.fontSize = StickerSize; Sticker.gameObject.SetActive(false); }
+            // 2026-10-31 대표: 공중에 뜬 이름표·바닥에 뒤집혀 깔린 스티커 없앰(옛 장면이어도 끔) — 이름·최고 등급은 화면 안내로
+            if (Label != null) Label.gameObject.SetActive(false);
+            if (Sticker != null) Sticker.gameObject.SetActive(false);
         }
 
         public void Refresh()
         {
-            if (Label == null || Gym == null) return;
+            if (Gym == null) return;
             var def = Gym.Book != null ? Gym.Book.Find(DrillId) : null;
             var ds = GymState.Current.Of(DrillId, false);
             string best = ds != null && ds.HasBest ? DrillGrader.Letter(ds.BestGrade) : "—";
-            Label.text = def != null ? $"{def.NameKr}\n<size=70%>최고 {best}{(ds != null && ds.SimUnlocked ? " · 시뮬" : "")}{(def.Playable ? "" : " · 자리만")}</size>" : DrillId;
-            if (Sticker != null) Sticker.text = def != null ? $"{def.Id} {def.NameKr}  {best}" : DrillId;
-            if (Interact != null) Interact.Prompt = def != null ? $"{def.NameKr}{(def.Playable ? "" : "(자리만)")}" : DrillId;
+            if (Interact != null) Interact.Prompt = def != null ? $"{def.NameKr}  ·  최고 {best}{(ds != null && ds.SimUnlocked ? " · 시뮬" : "")}{(def.Playable ? "" : " · 자리만")}" : DrillId;
         }
 
         void Update()
         {
             if (player == null) { var m = FindAnyObjectByType<PlayerMotor>(); if (m != null) player = m.transform; }
-            if (Label == null) return;
             bool near = player != null && (new Vector2(player.position.x - transform.position.x, player.position.z - transform.position.z)).magnitude < ShowDist;
-            bool show = near && (Gym == null || !Gym.Busy);
-            if (Label.gameObject.activeSelf != show) Label.gameObject.SetActive(show);
-            if (Sticker != null && Sticker.gameObject.activeSelf != show) Sticker.gameObject.SetActive(show);
-            if (show && Camera.main != null)
-            {
-                var to = Camera.main.transform.position - Label.transform.position; to.y = 0f;
-                if (to.sqrMagnitude > 1e-4f) Label.transform.rotation = Quaternion.LookRotation(-to.normalized, Vector3.up);
-            }
             if (Ring != null) { blink += UiKit.RealDt; var c = Ring.material.color; c.a = near ? 0.85f + 0.15f * Mathf.Sin(blink * 4f) : 0.55f; Ring.material.color = c; }
         }
     }

@@ -40,7 +40,7 @@ namespace Haengin
             body = UiKit.Text("본문", bg.transform, Fonts != null ? Fonts.B : null, 30f, UiKit.Paper, TextAlignmentOptions.TopLeft, wrap: true);
             UiKit.Place(body.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -440f), new Vector2(1300f, 520f));
             body.lineSpacing = 14f;
-            foot = UiKit.Text("발", bg.transform, Fonts != null ? Fonts.B : null, 24f, UiKit.Grey, TextAlignmentOptions.Right);
+            foot = UiKit.Text("발", bg.transform, Fonts != null ? Fonts.B : null, 24f, UiKit.PaperDim, TextAlignmentOptions.Right);
             UiKit.Place(foot.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-80f, 50f), new Vector2(1200f, 36f));
             root.SetActive(false);
         }

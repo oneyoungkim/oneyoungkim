@@ -90,6 +90,7 @@ namespace Haengin
             {
                 bool sel = i == Tab;
                 tabPlate[i].color = sel ? UiKit.Accent : UiKit.Ink;
+                tabText[i].color = sel ? UiKit.Ink : UiKit.Paper;       // 주황 판 위 종이색은 대비 3.2
             }
             body.text = Content != null ? Content(Tab) ?? "" : "";
             string al = ActLabel != null ? ActLabel(Tab) : "";

@@ -15,6 +15,7 @@ namespace Haengin
         public float Speed;
         [Tooltip("컨트롤러 달리기·걷기 고유 속도(배율 계산)")] public float RunClip = 4.5f, WalkClip = 1.4f;
         public TextMeshPro Bubble;
+        ScreenTag bubbleTag;
         public float S { get; private set; }
         public float Length { get; private set; }
         public bool Running => Speed > 0.05f;
@@ -82,8 +83,9 @@ namespace Haengin
         public void Say(string text, float secs = 0.8f)
         {
             if (Bubble == null) return;
-            Bubble.text = text;
-            Bubble.gameObject.SetActive(true);
+            if (bubbleTag == null) { bubbleTag = ScreenTag.Make("말풍선", Bubble.font, 30f); bubbleTag.transform.SetParent(transform, false); }      // 2026-10-31: 공중 3D 글자 대신 화면 판
+            Bubble.gameObject.SetActive(false);
+            bubbleTag.Show(text, Bubble.transform.position);
             bubbleLeft = secs;
             Bubbles++;
         }
@@ -120,11 +122,10 @@ namespace Haengin
             if (bubbleLeft > 0f)
             {
                 bubbleLeft -= dt;
-                if (Bubble != null)
+                if (bubbleTag != null)
                 {
-                    var cam = Camera.main;
-                    if (cam != null) Bubble.transform.rotation = Quaternion.LookRotation(Bubble.transform.position - cam.transform.position, Vector3.up);
-                    if (bubbleLeft <= 0f) Bubble.gameObject.SetActive(false);
+                    bubbleTag.Follow(Bubble.transform.position);
+                    if (bubbleLeft <= 0f) bubbleTag.Hide();
                 }
             }
         }

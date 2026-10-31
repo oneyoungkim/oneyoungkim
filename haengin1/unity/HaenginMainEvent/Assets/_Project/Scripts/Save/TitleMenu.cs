@@ -229,7 +229,7 @@ namespace Haengin
                 if (!on) continue;
                 bool sel = i == Selected;
                 rows[i].Label.text = page.Items[i].Text();
-                rows[i].Plate.color = sel ? UiKit.Paper : new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.82f);
+                rows[i].Plate.color = sel ? UiKit.Paper : new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.93f);
                 rows[i].Bar.enabled = sel;
                 rows[i].Label.color = sel ? UiKit.Ink : UiKit.Paper;
                 rows[i].Rt.anchoredPosition = new Vector2(0f, (main ? -60f : 120f) - i * 66f);
@@ -257,9 +257,9 @@ namespace Haengin
             sub.text = "1장 「행인1」 오픈월드 데모 — 2026년 3월 3일 ~ 5월 8일";
             head = UiKit.Text("쪽 제목", transform, Fonts != null ? Fonts.Br : null, 54f, UiKit.Ink, TextAlignmentOptions.Center);
             UiKit.Place(head.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 250f), new Vector2(1500f, 80f));
-            note = UiKit.Text("설명", transform, Fonts != null ? Fonts.B : null, 24f, new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.75f), TextAlignmentOptions.Center);
+            note = UiKit.Text("설명", transform, Fonts != null ? Fonts.B : null, 24f, UiKit.Grey, TextAlignmentOptions.Center);
             UiKit.Place(note.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 190f), new Vector2(1500f, 40f));
-            var hint = UiKit.Text("조작", transform, Fonts != null ? Fonts.B : null, 20f, new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.6f), TextAlignmentOptions.Center);
+            var hint = UiKit.Text("조작", transform, Fonts != null ? Fonts.B : null, 20f, UiKit.Grey, TextAlignmentOptions.Center);
             UiKit.Place(hint.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 30f), new Vector2(1500f, 34f));
             hint.text = "↑↓ 고르기    × (A) · Enter 선택    ○ (B) · Backspace 돌아가기";
             rows = new Row[MaxRows];

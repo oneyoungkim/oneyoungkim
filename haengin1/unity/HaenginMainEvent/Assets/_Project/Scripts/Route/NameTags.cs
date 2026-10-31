@@ -27,6 +27,7 @@ namespace Haengin
         }
 
         public Tag[] Tags = new Tag[0];
+        bool worldHidden;
         [Tooltip("이 거리에서 원래 크기. 거리에 비례해 키우고 줄여 화면 크기를 거의 일정하게(1080p 에서 글 높이 약 40px)")]
         public float RefDist = 14f;
         [Tooltip("최소·최대 배율(아주 가까우면 조금 커지고, 아주 멀면 조금 작아짐)")]
@@ -70,6 +71,9 @@ namespace Haengin
 
         void LateUpdate()
         {
+            // 2026-10-31 대표: 하늘·건물 위에 뜬 이름표 글자가 어지러움 → 오픈월드에서는 안 띄움(장소 이름은 문 앞 화면 안내·휴대폰 지도). 옛 길잡이 모드만 그대로
+            if (WorldRunner.Instance != null && WorldRunner.Instance.Active) { if (!worldHidden) { worldHidden = true; foreach (var t in Tags) if (t.Text != null) t.Text.renderer.enabled = false; } return; }
+            worldHidden = false;
             var cam = Cam != null ? Cam : Camera.main;
             if (cam != null) Apply(cam);
         }

@@ -86,7 +86,7 @@ namespace Haengin
             var lines = new List<string> { $"{c.Title} · {GameClock.Hm(bk.At)} · {(bk.Ticket ? $"회권(남은 {Model.Tickets(c.Id)})" : Ledger.Won(bk.Paid) + "원")}" };
             if (c.Visit && !string.IsNullOrEmpty(c.Bio)) lines.Add(c.Bio);
             lines.Add($"이번 판: 스탯 ×{c.Mul:0.#} · 판정 +{c.Bonus:0}{(Model.CondBonus > 0 ? $" · 컨디션 +{Model.CondBonus:0.#}" : "")} · 피로 ×{c.FatigueMul:0.#}");
-            yield return Board($"개인레슨   ·   {GameClock.DateText} {GameClock.TimeText}   ·   혜화 MMA", $"{c.Name}{(c.Visit ? $"({c.Gym})" : "")} — {(first ? "첫 레슨" : "레슨")}", "레슨", c.Visit, lines.ToArray(), new[] { $"{c.Name}|{say}" });
+            yield return Board($"개인레슨   ·   {GameClock.DateText} {GameClock.TimeText}", $"{c.Name}{(c.Visit ? $"({c.Gym})" : "")} — {(first ? "첫 레슨" : "레슨")}", "레슨", c.Visit, lines.ToArray(), new[] { $"{c.Name}|{say}" });
             // 드릴 고르기
             var opts = LessonDrills(c);
             string drill = null;

@@ -21,7 +21,6 @@ namespace Haengin
         public static CombatFx Instance { get; private set; }
         /// 테스트·녹화용 기록
         public static int Hits, Words, WordsCut, Flashes, Shocks, Slams, Plays;
-        Item lastWordItem;
         public static string LastWord = "", LastSound = "";
         public int Live => live.Count;
 
@@ -38,6 +37,7 @@ namespace Haengin
             public Transform Tr; public MeshRenderer R; public bool Busy;
             public float Life, Max, S0, S1, Aspect, O0, Rot, Spin, Grav;
             public Vector3 Vel; public bool Pop, Flat, Top, Crack; public Color Col; public Texture Tex;
+            public float Hold = 0.7f;     // 팝: 이 비율까지 진하게(의성어 0.93 — 2026-10-31 반투명 큰 글자가 벽 위에 남던 것)
             public Quaternion Plane;    // Flat: 바닥·벽 면 방향
         }
         readonly List<Item> pool = new List<Item>();
@@ -287,9 +287,50 @@ namespace Haengin
             var right = cam != null ? cam.transform.right : Vector3.right;
             var at = pos + Vector3.up * 0.32f + right * ((R() - 0.5f) * 0.2f);
             // 앞 글자가 아직 떠 있으면 지운다(연타·마무리에서 '퍽!' 위에 '콰직!' 이 겹치던 것 — 11-4)
-            if (lastWordItem != null && lastWordItem.Busy && live.Contains(lastWordItem)) { live.Remove(lastWordItem); Free(lastWordItem); WordsCut++; }
-            lastWordItem = Spawn(tex, at, 0.2f * scale, (0.55f + 0.12f * p) * scale, 0.55f, Color.white, vel: Vector3.up * 0.35f, aspect: 2f,
-                  rot: (R() - 0.5f) * 2f * 8f * Mathf.Deg2Rad, top: true, pop: true, keepVel: true);
+            if (wordImg != null && wordImg.gameObject.activeSelf) WordsCut++;
+            // 2026-10-31 대표: 월드 판은 카메라가 가까우면 화면을 덮고 사라질 때 반투명으로 벽에 남았으며 먹선이 그 위로 지나감 → 화면 판(크기 고정·불투명·먹선 아래)
+            Ui();
+            if (wordImg == null)
+            {
+                var go = new GameObject("의성어", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)) { layer = 5 };
+                go.transform.SetParent(canvas.transform, false);
+                wordImg = go.GetComponent<RawImage>();
+                wordImg.raycastTarget = false;
+                var rt = wordImg.rectTransform;
+                rt.anchorMin = rt.anchorMax = Vector2.zero; rt.pivot = new Vector2(0.5f, 0.5f);
+            }
+            wordImg.texture = tex;
+            float wWidth = (WordBaseW + WordPerP * p) * scale;
+            wordImg.rectTransform.sizeDelta = new Vector2(wWidth, wWidth * 0.5f);
+            wordImg.rectTransform.localRotation = Quaternion.Euler(0f, 0f, (R() - 0.5f) * 2f * 8f);
+            wordImg.color = Color.white;
+            wordImg.gameObject.SetActive(true);
+            wordAt = at; wordT = 0f;
+            PlaceWord(0f);
+        }
+
+        public const float WordBaseW = 240f, WordPerP = 20f, WordSecs = 0.45f;
+        RawImage wordImg; Vector3 wordAt; float wordT;
+        /// 지금 떠 있는 의성어(시험)
+        public bool WordShown => wordImg != null && wordImg.gameObject.activeSelf;
+        public Vector2 WordSize => wordImg != null ? wordImg.rectTransform.sizeDelta : Vector2.zero;
+
+        void PlaceWord(float dt)
+        {
+            wordT += dt;
+            var cam = Camera.main;
+            float u = Mathf.Clamp01(wordT / WordSecs);
+            if (u >= 1f || cam == null) { wordImg.gameObject.SetActive(false); return; }
+            var sp = cam.WorldToScreenPoint(wordAt + Vector3.up * 0.35f * wordT);
+            if (sp.z <= 0.05f) { wordImg.enabled = false; return; }
+            wordImg.enabled = true;
+            float k = canvas.transform.lossyScale.x;
+            var size = wordImg.rectTransform.sizeDelta * k;
+            sp.x = Mathf.Clamp(sp.x, size.x * 0.5f + 8f, Screen.width - size.x * 0.5f - 8f);
+            sp.y = Mathf.Clamp(sp.y, size.y * 0.5f + 8f, Screen.height - size.y * 0.5f - 8f);
+            wordImg.rectTransform.position = new Vector3(sp.x, sp.y, 0f);
+            wordImg.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.55f, 1f, BackOut(Mathf.Min(1f, u * 3f)));
+            wordImg.color = new Color(1f, 1f, 1f, u < 0.93f ? 1f : 1f - (u - 0.93f) / 0.07f);
         }
 
         // ───────────────────────── 화면
@@ -369,7 +410,7 @@ namespace Haengin
             var it = Get();
             if (it == null) return null;
             it.Life = 0f; it.Max = life; it.S0 = s0; it.S1 = s1; it.Aspect = aspect; it.O0 = opacity; it.Rot = rot; it.Grav = grav;
-            it.Vel = vel; it.Pop = pop; it.Top = top; it.Col = col; it.Tex = tex;
+            it.Vel = vel; it.Pop = pop; it.Top = top; it.Col = col; it.Tex = tex; it.Hold = 0.7f;
             it.Flat = flat.HasValue; it.Plane = flat ?? Quaternion.identity;
             it.Crack = crack;     // 균열: 75% 까지 진하게, 그 뒤 사라짐
             it.Tr.position = pos;
@@ -421,7 +462,7 @@ namespace Haengin
             it.Tr.rotation = face * Quaternion.Euler(0f, 0f, it.Rot * Mathf.Rad2Deg);
             it.Tr.localScale = new Vector3(sc * it.Aspect, sc, 1f);
             float a = it.Crack ? (u < 0.75f ? 1f : 1f - (u - 0.75f) / 0.25f)
-                                   : it.O0 * (it.Pop ? (u < 0.7f ? 1f : 1f - (u - 0.7f) / 0.3f) : 1f - u * u);
+                                   : it.O0 * (it.Pop ? (u < it.Hold ? 1f : 1f - (u - it.Hold) / (1f - it.Hold)) : 1f - u * u);
             var c = it.Col; c.a *= Mathf.Clamp01(a);
             mpb.Clear();
             mpb.SetTexture(IdTex, it.Tex);
@@ -441,6 +482,7 @@ namespace Haengin
                 Apply(it, fdt);
                 if (it.Life >= it.Max) { Free(it); live.RemoveAt(i); }
             }
+            if (wordImg != null && wordImg.gameObject.activeSelf) PlaceWord(rdt);
             // 휘두름 소리(판정 0.09초 전)
             for (int i = swings.Count - 1; i >= 0; i--)
             {

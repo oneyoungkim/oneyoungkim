@@ -19,6 +19,7 @@ namespace Haengin
         public string DateText => dateText != null ? dateText.text : "";
         public bool StubShown => stub != null && stub.gameObject.activeSelf;
         public string StubText => stubText != null ? stubText.text : "";
+        Image screenPlate;
         public bool ScreenShown => screen != null && screen.gameObject.activeSelf;
         public string ScreenText => screen != null ? screen.text : "";
         /// 조작 장면(시각 칩을 남김)
@@ -40,12 +41,12 @@ namespace Haengin
             band.rectTransform.anchorMax = new Vector2(0f, 1f);
             datePlate.gameObject.SetActive(false);
 
-            chip = UiKit.Panel("시각 칩", transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(32f, -30f), new Vector2(110f, 44f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.7f));
+            chip = UiKit.Panel("시각 칩", transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(32f, -30f), new Vector2(110f, 44f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.94f));
             chipText = UiKit.Text("글", chip.transform, Fonts != null ? Fonts.B : null, 24f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Stretch(chipText.rectTransform);
             chip.gameObject.SetActive(false);
 
-            stub = UiKit.Panel("자리 장면", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(1300f, 200f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.72f));
+            stub = UiKit.Panel("자리 장면", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(1300f, 200f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.94f));
             UiKit.Fit(stub, 40, 40, 20, 24);
             stubText = UiKit.Text("글", stub.transform, Fonts != null ? Fonts.B : null, 28f, UiKit.Paper, TextAlignmentOptions.Center, wrap: true);
             stubText.GetComponent<RectTransform>().sizeDelta = new Vector2(1220f, 0f);
@@ -53,14 +54,16 @@ namespace Haengin
             le.preferredWidth = 1220f;
             stub.gameObject.SetActive(false);
 
-            screen = UiKit.Text("화면 글자", transform, Fonts != null ? Fonts.Br : null, 64f, UiKit.Paper, TextAlignmentOptions.Center, wrap: true);
-            UiKit.Place(screen.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 40f), new Vector2(1600f, 260f));
+            screenPlate = UiKit.Panel("화면 글자 판", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 40f), new Vector2(800f, 160f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.95f));     // 2026-10-31: 판 없이 배경 위에
+            screenPlate.gameObject.SetActive(false);
+            screen = UiKit.Text("화면 글자", screenPlate.transform, Fonts != null ? Fonts.Br : null, 64f, UiKit.Paper, TextAlignmentOptions.Center, wrap: true);
+            UiKit.Stretch(screen.rectTransform, 24f);
             var m = new Material(screen.fontSharedMaterial);
             m.EnableKeyword(ShaderUtilities.Keyword_Outline);
             m.SetColor(ShaderUtilities.ID_OutlineColor, UiKit.Ink);
             m.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.3f);
             screen.fontMaterial = m;
-            screen.gameObject.SetActive(false);
+            screen.gameObject.SetActive(false); screenPlate.gameObject.SetActive(false);
         }
 
         void Awake() => Build();
@@ -89,7 +92,7 @@ namespace Haengin
             Build();
             screen.text = text ?? "";
             screenLeft = secs;
-            screen.gameObject.SetActive(!string.IsNullOrEmpty(text));
+            bool screenOn = !string.IsNullOrEmpty(text); if (screenOn) { var pref = screen.GetPreferredValues(screen.text, 1560f, 0f); screenPlate.rectTransform.sizeDelta = new Vector2(Mathf.Min(1640f, pref.x + 96f), pref.y + 60f); } screenPlate.gameObject.SetActive(screenOn); screen.gameObject.SetActive(screenOn);
         }
 
         /// 날짜 판·시각 칩만 끔(오픈월드 HUD 가 다시 뜰 때 — 같은 왼쪽 위에 겹치던 것)
@@ -105,7 +108,7 @@ namespace Haengin
         public void HideAll()
         {
             Build();
-            datePlate.gameObject.SetActive(false); chip.gameObject.SetActive(false); stub.gameObject.SetActive(false); screen.gameObject.SetActive(false);
+            datePlate.gameObject.SetActive(false); chip.gameObject.SetActive(false); stub.gameObject.SetActive(false); screen.gameObject.SetActive(false); screenPlate.gameObject.SetActive(false);
             dateLeft = screenLeft = 0f;
         }
 
@@ -122,7 +125,7 @@ namespace Haengin
             bool wantChip = KeepChip && !datePlate.gameObject.activeSelf;
             if (chip.gameObject.activeSelf != wantChip) chip.gameObject.SetActive(wantChip);
             if (wantChip) chipText.text = GameClock.TimeText;
-            if (screen.gameObject.activeSelf && screenLeft > 0f) { screenLeft -= rdt; if (screenLeft <= 0f) screen.gameObject.SetActive(false); }
+            if (screen.gameObject.activeSelf && screenLeft > 0f) { screenLeft -= rdt; if (screenLeft <= 0f) screen.gameObject.SetActive(false); screenPlate.gameObject.SetActive(false); }
         }
     }
 }

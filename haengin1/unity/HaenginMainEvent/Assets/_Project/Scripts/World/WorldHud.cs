@@ -35,7 +35,7 @@ namespace Haengin
         {
             if (plate != null) return;
             UiKit.Canvas(gameObject, 28);
-            plate = UiKit.Panel("세계 판", transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(28f, -24f), new Vector2(560f, 214f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.80f));
+            plate = UiKit.Panel("세계 판", transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(28f, -24f), new Vector2(560f, 214f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.94f));
             var band = UiKit.Panel("주황 띠", plate.transform, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, new Vector2(6f, 214f), UiKit.Accent);
             band.rectTransform.anchorMax = new Vector2(0f, 1f); band.rectTransform.sizeDelta = new Vector2(6f, 0f);
             dateText = UiKit.Text("날짜", plate.transform, Fonts != null ? Fonts.Br : null, 34f, UiKit.Paper, TextAlignmentOptions.Left);
@@ -85,7 +85,7 @@ namespace Haengin
             {
                 if (i >= chips.Count)
                 {
-                    var p = UiKit.Panel("효과 " + i, buffRoot, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(130f, 36f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.82f));
+                    var p = UiKit.Panel("효과 " + i, buffRoot, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(130f, 36f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.93f));
                     var t = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 19f, UiKit.Paper, TextAlignmentOptions.Left);
                     UiKit.Place(t.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(8f, 0f), new Vector2(240f, 34f));
                     chips.Add((p, t));
@@ -118,7 +118,7 @@ namespace Haengin
 
         void Spawn(string line)
         {
-            var p = UiKit.Panel("알림 줄", toastRoot, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, new Vector2(740f, 40f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.78f));
+            var p = UiKit.Panel("알림 줄", toastRoot, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, new Vector2(740f, 40f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.93f));
             var t = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 22f, UiKit.Paper, TextAlignmentOptions.Left);
             UiKit.Place(t.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(16f, 0f), new Vector2(720f, 36f));
             t.text = line;
@@ -138,7 +138,10 @@ namespace Haengin
         void LateUpdate()
         {
             if (plate == null) return;
-            if (plate.gameObject.activeSelf != Shown) plate.gameObject.SetActive(Shown);
+            // 2026-10-31: 가운데 큰 카드가 뜨면 왼쪽 위 판을 잠깐 숨김(카드 가장자리에 HUD 글자가 반쯤 걸림)
+            var boardNow = WorldRunner.Instance != null && WorldRunner.Instance.Story != null ? WorldRunner.Instance.Story.Board : null;
+            bool showPlate = Shown && !(boardNow != null && boardNow.Shown && !boardNow.Side);
+            if (plate.gameObject.activeSelf != showPlate) plate.gameObject.SetActive(showPlate);
             // QA Q15: 카드·미니게임 판·휴대폰이 떠 있는 동안(HUD 숨김)에도 알림 줄이 왼쪽 아래에 떠서 판 글자와 겹치던 것 → 그동안 알림을 멈추고 숨김(끝나면 이어서)
             if (toastRoot.gameObject.activeSelf != Shown) toastRoot.gameObject.SetActive(Shown);
             if (!Shown) return;
@@ -152,7 +155,7 @@ namespace Haengin
                 if (left <= 0f) { Destroy(p.gameObject); live.RemoveAt(i); continue; }
                 live[i] = (t, p, left);
                 float a = Mathf.Clamp01(left / 0.4f);
-                p.color = new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.78f * a);
+                p.color = new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.93f * a);
                 t.alpha = a;
             }
             float y = 0f;

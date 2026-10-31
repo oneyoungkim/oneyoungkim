@@ -544,6 +544,7 @@ namespace Haengin.EditorGame
                     // QA(2026-10-26): 개발용 '자리 무대 — 9단계에서 키트로' 글이 현장 알바 화면에 그대로 보였음 → 현장 = 공사 안내판, 나머지는 빈 판
                     tmp.text = key == "Site" ? "안전 제일\n<size=60%>혜화동 다세대 신축 현장</size>" : "";
                     tmp.rectTransform.sizeDelta = new Vector2(Mathf.Max(4f, w - 0.6f), 2f);
+                    if (key == "Site") TextFixSetup.Board(label.transform);      // 2026-10-31: 깨끗한 판 위로
                 }
                 // 스폰 자리
                 var spawns = new List<Transform>();

@@ -31,18 +31,21 @@ namespace Haengin
 
         static readonly Color GreyCell = new Color(0.80f, 0.78f, 0.76f), WarmCell = new Color(0.93f, 0.78f, 0.58f);
 
+        Image wordPlate;
         void Build()
         {
             if (word != null) return;
             UiKit.Canvas(gameObject, 47);
-            word = UiKit.Text("호칭", transform, Fonts != null ? Fonts.Br : null, 76f, UiKit.Ink, TextAlignmentOptions.Center);
-            UiKit.Place(word.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 300f), new Vector2(900f, 110f));
+            // 2026-10-31: 호칭 글이 판 없이 배경 위에 → 종이 판(판째로 날아감)
+            wordPlate = UiKit.Panel("호칭 판", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 300f), new Vector2(500f, 120f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.97f));
+            word = UiKit.Text("호칭", wordPlate.transform, Fonts != null ? Fonts.Br : null, 76f, UiKit.Ink, TextAlignmentOptions.Center);
+            UiKit.Stretch(word.rectTransform);
             var m = new Material(word.fontSharedMaterial);
             m.EnableKeyword(ShaderUtilities.Keyword_Outline);
             m.SetColor(ShaderUtilities.ID_OutlineColor, UiKit.Paper);
             m.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.28f);
             word.fontMaterial = m;
-            word.gameObject.SetActive(false);
+            wordPlate.gameObject.SetActive(false);
 
             icon = UiKit.Panel("도감 아이콘", transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-40f, -36f), new Vector2(64f, 64f), UiKit.Ink);
             iconText = UiKit.Text("글", icon.transform, Fonts != null ? Fonts.Br : null, 21f, UiKit.Paper, TextAlignmentOptions.Center);
@@ -74,9 +77,11 @@ namespace Haengin
                 LastName = n;
                 Shows++;
                 word.text = n;
-                word.gameObject.SetActive(true);
+                wordPlate.gameObject.SetActive(true);
                 icon.gameObject.SetActive(true);
-                var rt = word.rectTransform;
+                var rt = wordPlate.rectTransform;
+                var prefW = word.GetPreferredValues(n);
+                rt.sizeDelta = new Vector2(prefW.x + 70f, prefW.y + 24f);
                 Vector2 a = new Vector2(0f, 300f);
                 float u = 0f;
                 while (u < WriteSecs) { u += UiKit.RealDt; word.maxVisibleCharacters = Mathf.CeilToInt(n.Length * Mathf.Clamp01(u / (WriteSecs * 0.7f))); rt.anchoredPosition = a; rt.localScale = Vector3.one; yield return null; }
@@ -86,7 +91,7 @@ namespace Haengin
                 Vector2 b = new Vector2(canvasRt.rect.width * 0.5f - 72f, canvasRt.rect.height * 0.5f - 68f);
                 u = 0f;
                 while (u < FlySecs) { u += UiKit.RealDt; float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(u / FlySecs)); rt.anchoredPosition = Vector2.Lerp(a, b, k); rt.localScale = Vector3.one * Mathf.Lerp(1f, 0.25f, k); yield return null; }
-                word.gameObject.SetActive(false);
+                wordPlate.gameObject.SetActive(false);
                 pulse = 0.5f;
                 iconLeft = 1.5f;
             }
@@ -99,7 +104,7 @@ namespace Haengin
             StopAllCoroutines();
             queue.Clear();
             Busy = false;
-            word.gameObject.SetActive(false);
+            wordPlate.gameObject.SetActive(false);
         }
 
         void LateUpdate()

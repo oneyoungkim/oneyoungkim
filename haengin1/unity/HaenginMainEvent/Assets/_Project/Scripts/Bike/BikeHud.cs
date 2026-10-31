@@ -25,7 +25,7 @@ namespace Haengin
         {
             if (root != null) return;
             UiKit.Canvas(gameObject, 40);
-            root = UiKit.Panel("국물 게이지", transform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(40f, 120f), new Vector2(420f, 64f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.82f));
+            root = UiKit.Panel("국물 게이지", transform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(40f, 120f), new Vector2(420f, 64f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.94f));
             label = UiKit.Text("이름", root.transform, Fonts != null ? Fonts.Br : null, 30f, UiKit.Paper, TextAlignmentOptions.Left);
             UiKit.Place(label.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(18f, 0f), new Vector2(110f, 50f));
             var bg = UiKit.Panel("바 바탕", root.transform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(130f, 0f), new Vector2(210f, 22f), new Color(0.25f, 0.22f, 0.22f));

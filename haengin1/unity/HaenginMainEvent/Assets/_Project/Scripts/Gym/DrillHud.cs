@@ -19,6 +19,8 @@ namespace Haengin
         RectTransform topRt;
         CombatHud combatHud;
         public float PlateY => topRt != null ? topRt.anchoredPosition.y : 0f;
+        Image timerPlate, hintPlate, metricsPlate;
+        bool noticeOnly;
         public string HintText => hint != null && hint.gameObject.activeInHierarchy ? hint.text : "";
         public void ClearHint() { if (hint != null) hint.text = ""; }
         Image cuePlate, beatPlate, beatLine, toastPlate;
@@ -47,18 +49,24 @@ namespace Haengin
             UiKit.Stretch((RectTransform)root.transform);
             var f = Fonts != null ? Fonts.B : null; var br = Fonts != null ? Fonts.Br : null;
             var c5 = new Vector2(0.5f, 0.5f);
-            var top = UiKit.Panel("이름판", root.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -36f), new Vector2(520f, 64f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.85f));
+            var top = UiKit.Panel("이름판", root.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -36f), new Vector2(520f, 64f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.95f));
             topRt = top.rectTransform;
             nameText = UiKit.Text("이름", top.transform, br, 30f, UiKit.Paper, TextAlignmentOptions.Left); UiKit.Place(nameText.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(18f, 0f), new Vector2(380f, 60f));
             round = UiKit.Text("라운드", top.transform, f, 24f, UiKit.Paper, TextAlignmentOptions.Right); UiKit.Place(round.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-16f, 0f), new Vector2(140f, 60f));
-            timer = UiKit.Text("타이머", root.transform, br, 84f, UiKit.Ink, TextAlignmentOptions.Center); UiKit.Place(timer.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(400f, 110f));
-            cuePlate = UiKit.Panel("큐판", root.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-40f, -36f), new Vector2(620f, 92f), UiKit.Paper);
+            // 2026-10-31: 판 없는 큰 타이머가 천장·벽 위에 그대로 → 먹 판 위 종이색
+            timerPlate = UiKit.Panel("타이머 판", root.transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -30f), new Vector2(190f, 80f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.95f));
+            timer = UiKit.Text("타이머", timerPlate.transform, br, 60f, UiKit.Paper, TextAlignmentOptions.Center); UiKit.Stretch(timer.rectTransform);
+            cuePlate = UiKit.Panel("큐판", root.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-40f, -36f), new Vector2(560f, 92f), UiKit.Paper);
             var bar = UiKit.Panel("큐 띠", cuePlate.transform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(10f, 92f), UiKit.Accent);
-            cueWho = UiKit.Text("누가", cuePlate.transform, f, 22f, UiKit.Accent, TextAlignmentOptions.Left); UiKit.Place(cueWho.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -6f), new Vector2(560f, 30f));
-            cueText = UiKit.Text("말", cuePlate.transform, f, 30f, UiKit.Ink, TextAlignmentOptions.Left, true); UiKit.Place(cueText.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(24f, 6f), new Vector2(580f, 50f));
-            hint = UiKit.Text("안내", root.transform, f, 22f, new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.7f), TextAlignmentOptions.Center); UiKit.Place(hint.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 26f), new Vector2(1500f, 32f));
-            beatPlate = UiKit.Panel("박자 띠", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 70f), new Vector2(1200f, 56f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.8f));
-            beatLine = UiKit.Panel("기준선", beatPlate.transform, c5, c5, Vector2.zero, new Vector2(6f, 56f), UiKit.Accent);
+            cueWho = UiKit.Text("누가", cuePlate.transform, f, 22f, UiKit.AccentText, TextAlignmentOptions.Left); UiKit.Place(cueWho.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -6f), new Vector2(520f, 30f));
+            cueText = UiKit.Text("말", cuePlate.transform, f, 30f, UiKit.Ink, TextAlignmentOptions.Left, true); UiKit.Place(cueText.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(24f, 6f), new Vector2(524f, 50f)); cueText.enableAutoSizing = true; cueText.fontSizeMin = 18f; cueText.fontSizeMax = 30f;
+            // 2026-10-31: 왼쪽 아래 조작 안내와 겹치던 판 없는 드릴 안내 → 오른쪽 아래 판 위로
+            hintPlate = UiKit.Panel("안내 판", root.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-16f, 14f), new Vector2(40f, 40f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.95f));
+            UiKit.Fit(hintPlate, 14, 14, 6, 7);
+            hint = UiKit.Text("안내", hintPlate.transform, f, 22f, UiKit.Paper, TextAlignmentOptions.Center);
+            hintPlate.gameObject.SetActive(false);
+            beatPlate = UiKit.Panel("박자 띠", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 56f), new Vector2(1200f, 88f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.95f));
+            beatLine = UiKit.Panel("기준선", beatPlate.transform, c5, c5, Vector2.zero, new Vector2(6f, 88f), UiKit.Accent);
             for (int i = 0; i < MaxTicks; i++)
             {
                 var t = UiKit.Panel("박자 " + i, beatPlate.transform, c5, c5, Vector2.zero, new Vector2(10f, 36f), UiKit.Paper); t.gameObject.SetActive(false); ticks.Add(t);
@@ -73,7 +81,8 @@ namespace Haengin
             toastPlate = UiKit.Panel("알림판", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), ToastPos, new Vector2(360f, 70f), UiKit.Ink);
             toast = UiKit.Text("알림", toastPlate.transform, br, 40f, UiKit.Paper, TextAlignmentOptions.Center); UiKit.Stretch(toast.rectTransform);
             toastPlate.gameObject.SetActive(false);
-            metrics = UiKit.Text("지표 미리", root.transform, f, 26f, UiKit.Ink, TextAlignmentOptions.Center, true); UiKit.Place(metrics.rectTransform, c5, c5, new Vector2(0f, 40f), new Vector2(900f, 300f)); metrics.gameObject.SetActive(false);
+            metricsPlate = UiKit.Panel("지표 판", root.transform, c5, c5, new Vector2(0f, 40f), new Vector2(760f, 300f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.96f));
+            metrics = UiKit.Text("지표 미리", metricsPlate.transform, f, 26f, UiKit.Ink, TextAlignmentOptions.Center, true); UiKit.Stretch(metrics.rectTransform, 16f); metricsPlate.gameObject.SetActive(false);
             sfx = gameObject.AddComponent<AudioSource>(); sfx.playOnAwake = false; sfx.spatialBlend = 0f; sfx.volume = 0.35f;
             tick = MakeTick();
             root.SetActive(false);
@@ -87,7 +96,7 @@ namespace Haengin
             var c = AudioClip.Create("drill_tick", n, 1, sr, false); c.SetData(data, 0); return c;
         }
 
-        public void Show(bool on) { Build(); root.SetActive(on); if (!on) { cueLeft = 0f; toastLeft = 0f; } NoticeOnly(false); }
+        public void Show(bool on) { Build(); root.SetActive(on); GameUi.HintOverride = on ? "일시정지 Esc · Options" : null; if (!on) { cueLeft = 0f; toastLeft = 0f; } NoticeOnly(false); }
 
         /// QA Q34: 드릴을 못 시작할 때(문 닫음·회원만·막힘) 관장 말만 — 예전엔 Show(true) 로 지난 드릴의 이름판·타이머(0:40·R3/3)·안내까지 다시 떠 세계 HUD 와 겹쳤음
         public void Notice(string who, string line)
@@ -99,9 +108,10 @@ namespace Haengin
         void NoticeOnly(bool on)
         {
             if (topRt != null) topRt.gameObject.SetActive(!on);
-            if (timer != null) timer.gameObject.SetActive(!on);
-            if (hint != null) hint.gameObject.SetActive(!on);
-            if (metrics != null && on) metrics.gameObject.SetActive(false);
+            if (timerPlate != null) timerPlate.gameObject.SetActive(!on);
+            noticeOnly = on;
+            if (hintPlate != null && on) hintPlate.gameObject.SetActive(false);
+            if (metricsPlate != null && on) metricsPlate.gameObject.SetActive(false);
             if (beatPlate != null && on) beatPlate.gameObject.SetActive(false);
         }
 
@@ -135,12 +145,13 @@ namespace Haengin
             double left = Runner.State == DrillRunner.Phase.Round ? Runner.RoundLeft : Runner.State == DrillRunner.Phase.Rest ? d.RestSec : d.RoundSec;
             int li = Mathf.CeilToInt((float)left);
             timer.text = $"{li / 60}:{li % 60:00}";
-            if (WallTimer != null) WallTimer.text = timer.text;
             var st = Runner.Station;
             // QA Q35: 결과 카드의 '× (A) · Enter — 닫기' 와 드릴 안내('박자에 × 점프 — 발끝')가 화면 아래에서 겹쳤음 → 결과·대기 땐 안내를 비움
             var gmI = GymManager.Instance;
             bool cardUp = gmI != null && gmI.Card != null && gmI.Card.Visible;
             hint.text = st != null && !cardUp && Runner.State != DrillRunner.Phase.Result && Runner.State != DrillRunner.Phase.Idle ? st.Hint : "";
+            bool hintOn = !noticeOnly && !string.IsNullOrEmpty(hint.text);
+            if (hintPlate.gameObject.activeSelf != hintOn) hintPlate.gameObject.SetActive(hintOn);
             // 박자 띠
             var beat = st != null && Runner.State == DrillRunner.Phase.Round ? st.Beat : null;
             beatPlate.gameObject.SetActive(beat != null);
@@ -154,7 +165,7 @@ namespace Haengin
                     if (!on) continue;
                     var (b, t) = visible[i];
                     float x = (float)((t - Runner.T) / BeatSpan) * 560f;      // 오른쏙에서 왼쪽 기준선으로
-                    ticks[i].rectTransform.anchoredPosition = new Vector2(x, 0f);
+                    ticks[i].rectTransform.anchoredPosition = new Vector2(x, -18f);
                     int mark = beat.Mark(b);
                     bool taken = beat.Taken(b);
                     ticks[i].color = taken ? new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.25f) : mark == 1 ? UiKit.Warm : UiKit.Paper;
@@ -180,7 +191,7 @@ namespace Haengin
             for (int i = 0; i < MaxIcons; i++) icons[i].rectTransform.anchoredPosition = new Vector2(x0 + i * 100f, 150f);
             // 휴식 중 지표 미리 보기
             bool rest = Runner.State == DrillRunner.Phase.Rest;
-            metrics.gameObject.SetActive(rest);
+            metricsPlate.gameObject.SetActive(rest);
             if (rest)
             {
                 var vals = DrillMetrics.Compute(d, Runner.Log);

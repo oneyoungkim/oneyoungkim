@@ -29,12 +29,12 @@ namespace Haengin
         {
             if (plate != null) return;
             UiKit.Canvas(gameObject, 49);      // 가계부 표(46)·도감(47) 위
-            plate = UiKit.Panel("자막 판", transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 56f), new Vector2(1000f, 120f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.86f));
+            plate = UiKit.Panel("자막 판", transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 56f), new Vector2(1000f, 120f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.95f));
             UiKit.Fit(plate, 36, 36, 14, 18);
             var lay = plate.GetComponent<VerticalLayoutGroup>();
             lay.spacing = 4f;
             lay.childAlignment = TextAnchor.UpperCenter;
-            who = UiKit.Text("화자", plate.transform, Fonts != null ? Fonts.B : null, 21f, new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.72f), TextAlignmentOptions.Center);
+            who = UiKit.Text("화자", plate.transform, Fonts != null ? Fonts.B : null, 21f, new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.85f), TextAlignmentOptions.Center);
             text = UiKit.Text("대사", plate.transform, Fonts != null ? Fonts.B : null, 31f, UiKit.Ink, TextAlignmentOptions.Center);
             text.lineSpacing = 6f;
             plate.gameObject.SetActive(false);

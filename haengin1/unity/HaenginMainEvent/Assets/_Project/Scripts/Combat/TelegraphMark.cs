@@ -11,30 +11,21 @@ namespace Haengin
     {
         public Fighter Me;
         public float Show = 0.3f, Above = 0.35f;
-        TextMeshPro text;
+        ScreenTag text;
         AttackRun shownFor;
         float left;
         int flashes;
         float flashAt;
 
         /// 지금 보이는 표시('!'·'!!'·없음) — 테스트용
-        public string Current => text != null && text.gameObject.activeSelf ? text.text : "";
+        public string Current => text != null && text.Shown ? text.Text : "";
         public int Shown { get; private set; }
 
         void Awake()
         {
             if (Me == null) Me = GetComponent<Fighter>();
-            var go = new GameObject("Telegraph");
-            go.transform.SetParent(transform, false);
-            text = go.AddComponent<TextMeshPro>();
-            text.alignment = TextAlignmentOptions.Center;
-            text.fontSize = 6f;
-            text.fontStyle = FontStyles.Bold;
-            text.color = new Color(0.102f, 0.078f, 0.090f);
-            text.outlineWidth = 0.25f;
-            text.outlineColor = new Color32(244, 239, 230, 255);
-            text.rectTransform.sizeDelta = new Vector2(2f, 1f);
-            go.SetActive(false);
+            text = ScreenTag.Make("공격 예고", null, 44f);      // 2026-10-31: 공중 3D 글자 대신 화면 판
+            text.transform.SetParent(transform, false);
         }
 
         void LateUpdate()
@@ -48,8 +39,7 @@ namespace Haengin
                 {
                     shownFor = r;
                     left = Show;
-                    text.text = r.Warn >= 2 ? "!!" : "!";
-                    text.gameObject.SetActive(true);
+                    text.Show(r.Warn >= 2 ? "!!" : "!", Me.Position + Vector3.up * (Me.Height + Above));
                     Shown++;
                     if (r.Move.Warn >= 2 && Me.React != null) { Me.React.Flash(); flashes = 1; flashAt = 0.15f; }
                 }
@@ -62,12 +52,8 @@ namespace Haengin
             if (left > 0f)
             {
                 left -= TimeFx.RealDt;
-                float s = 1f + Mathf.Clamp01((Show - left) / 0.08f) * 0.0f;
-                text.transform.position = Me.Position + Vector3.up * (Me.Height + Above);
-                var cam = Camera.main;
-                if (cam != null) text.transform.rotation = Quaternion.LookRotation(text.transform.position - cam.transform.position);
-                text.transform.localScale = Vector3.one * s;
-                if (left <= 0f) text.gameObject.SetActive(false);
+                text.Follow(Me.Position + Vector3.up * (Me.Height + Above));
+                if (left <= 0f) text.Hide();
             }
         }
     }

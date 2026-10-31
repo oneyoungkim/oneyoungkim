@@ -95,6 +95,7 @@ namespace Haengin
             // 7-1 시우(왼쪽 위)
             var tl = new Vector2(0f, 1f);
             var me = Rect("시우", root, tl, tl, tl, new Vector2(48f, -48f), new Vector2(440f, 110f));
+            Img("시우 판", me, null, new Color(Ink.r, Ink.g, Ink.b, 0.93f), new Vector2(-12f, 10f), new Vector2(530f, 108f));      // 2026-10-31: 이름·기세 글이 판 없이 배경 위에
             nameText = Text("이름", me, font, 28f, Color.white, TextAlignmentOptions.TopLeft, new Vector2(0f, 0f), new Vector2(420f, 36f));
             nameText.text = "반시우";
             Outline(nameText, 0.22f);
@@ -113,7 +114,7 @@ namespace Haengin
             mr.anchorMin = mr.anchorMax = mr.pivot = tl;
             mr.anchoredPosition = new Vector2(0f, -52f);
             mr.sizeDelta = new Vector2(440f, 50f);
-            maxBrush = Img("먹 붓 획", mr, Kit != null ? Kit.Brush : null, new Color(Ink.r, Ink.g, Ink.b, 0.9f), new Vector2(-8f, 6f), new Vector2(460f, 56f));
+            maxBrush = Img("먹 붓 획", mr, Kit != null ? Kit.Brush : null, new Color(Ink.r, Ink.g, Ink.b, 0.9f), new Vector2(-8f, 6f), new Vector2(436f, 56f));
             maxText = Text("기세 글", mr, font, 20f, Color.white, TextAlignmentOptions.Left, new Vector2(432f, -12f), new Vector2(80f, 28f));
             maxText.text = "기세";
             Outline(maxText, 0.25f);
@@ -135,6 +136,7 @@ namespace Haengin
             tr.pivot = new Vector2(0.5f, 0f);
             tr.sizeDelta = new Vector2(220f, 70f);
             tgTri = Img("역삼각형", tr, Kit != null ? Kit.Tri : null, Color.white, new Vector2(0f, 46f), new Vector2(22f, 22f), center: true, bottom: true);
+            Img("이름 판", tr, null, new Color(Ink.r, Ink.g, Ink.b, 0.93f), new Vector2(0f, 14f), new Vector2(200f, 32f), center: true, bottom: true);      // 2026-10-31
             tgName = Text("이름", tr, font, 24f, Color.white, TextAlignmentOptions.Bottom, new Vector2(-110f, 14f), new Vector2(220f, 30f), bottom: true);
             Outline(tgName, 0.25f);
             var tgBack = Img("바 바탕", tr, null, Ink, new Vector2(0f, 0f), new Vector2(166f, 14f), center: true, bottom: true);

@@ -66,7 +66,7 @@ namespace Haengin
             var s = subs.Find(x => x.Anchor == anchor) ?? subs.Find(x => x.Left <= 0f);
             if (s == null)
             {
-                var go = Plate("자막", root, new Color(Ink.r, Ink.g, Ink.b, 0.78f), out var t, 24f, Paper);
+                var go = Plate("자막", root, new Color(Ink.r, Ink.g, Ink.b, 0.93f), out var t, 24f, Paper);
                 s = new Sub { Go = go, Text = t };
                 subs.Add(s);
             }
@@ -266,7 +266,7 @@ namespace Haengin
             for (int i = 0; i < 2; i++)
             {
                 bool sel = i == dialogSel;
-                dialogOptPlate[i].color = sel ? Paper : new Color(Ink.r, Ink.g, Ink.b, 0.7f);
+                dialogOptPlate[i].color = sel ? Paper : new Color(Ink.r, Ink.g, Ink.b, 0.92f);
                 dialogOpt[i].color = sel ? Ink : Paper;
             }
         }
@@ -317,7 +317,7 @@ namespace Haengin
             Anchor(result, new Vector2(1f, 0f), new Vector2(-48f, 120f), pivot: new Vector2(1f, 0f));
             result.SetActive(false);
 
-            prompt = Plate("상호작용", root, new Color(Ink.r, Ink.g, Ink.b, 0.85f), out promptText, 26f, Paper);
+            prompt = Plate("상호작용", root, new Color(Ink.r, Ink.g, Ink.b, 0.94f), out promptText, 26f, Paper);
             Anchor(prompt, new Vector2(0.5f, 0f), new Vector2(0f, 150f));
             prompt.SetActive(false);
 

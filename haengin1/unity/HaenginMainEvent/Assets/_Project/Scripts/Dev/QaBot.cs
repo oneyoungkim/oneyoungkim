@@ -267,6 +267,26 @@ namespace Haengin
             L($"녹화 {name} 끝 — {recFrame}장");
         }
 
+        // 글자·배경 검사(2026-10-31): 사진마다 실제 화면으로 — text_inv.tsv(보인 글자 전부) · text_bad.tsv(규칙 위반) · text_world.tsv(월드 글자)
+        StreamWriter auditInv, auditBad, auditWorld;
+        void AuditShot(Texture2D tex, string file)
+        {
+            try
+            {
+                if (auditInv == null)
+                {
+                    auditInv = new StreamWriter(Path.Combine(Out, "text_inv.tsv"), false, new UTF8Encoding(false)) { AutoFlush = true };
+                    auditBad = new StreamWriter(Path.Combine(Out, "text_bad.tsv"), false, new UTF8Encoding(false)) { AutoFlush = true };
+                    auditWorld = new StreamWriter(Path.Combine(Out, "text_world.tsv"), false, new UTF8Encoding(false)) { AutoFlush = true };
+                }
+                var items = TextAudit.Ui(tex);
+                foreach (var i in items) auditInv.WriteLine($"{sec}\t{file}\t{i.Path}\t{i.Text}\t{i.Size:0}\t{i.PlateA:0.00}\t{i.Plate}\t{i.Contrast:0.0}\t{i.R.xMin:0},{i.R.yMin:0},{i.R.width:0},{i.R.height:0}");
+                foreach (var b in TextAudit.Problems(items)) auditBad.WriteLine($"{sec}\t{file}\t{b}");
+                foreach (var w in TextAudit.World(Camera.main)) auditWorld.WriteLine($"{sec}\t{file}\t{w.Path}\t{w.Text}\t{(w.Floating ? "공중" : "표면")}\t{(w.Lying ? "누움" : "")}\t{w.Pos.x:0.0},{w.Pos.y:0.0},{w.Pos.z:0.0}");
+            }
+            catch (Exception e) { L("글자 검사 실패 " + e.Message); }
+        }
+
         IEnumerator EndFrames()
         {
             var eof = new WaitForEndOfFrame();
@@ -285,7 +305,7 @@ namespace Haengin
                 if (tex == null) continue;
                 try
                 {
-                    while (shotQ.Count > 0) File.WriteAllBytes(shotQ.Dequeue(), tex.EncodeToJPG(88));
+                    while (shotQ.Count > 0) { string shotPath = shotQ.Dequeue(); File.WriteAllBytes(shotPath, tex.EncodeToJPG(88)); AuditShot(tex, Path.GetFileName(shotPath)); }
                     if (rec) { File.WriteAllBytes(Path.Combine(recDir, $"f_{recFrame:00000}.jpg"), RecBytes(tex)); recFrame++; recLeft--; if (recLeft == 0 && recAsync) { recAsync = false; Time.captureDeltaTime = baseDelta; } }
                     if (lap || hash)
                     {

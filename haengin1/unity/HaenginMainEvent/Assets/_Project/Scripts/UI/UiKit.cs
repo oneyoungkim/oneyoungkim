@@ -13,7 +13,12 @@ namespace Haengin
         public static readonly Color Accent = new Color(0.886f, 0.345f, 0.173f);
         public static readonly Color Endure = new Color(0.478f, 0.118f, 0.118f);
         public static readonly Color Warm = new Color(0.851f, 0.584f, 0.353f);
-        public static readonly Color Grey = new Color(0.55f, 0.53f, 0.52f);
+        /// 종이 판 위 흐린 글(2026-10-31: 0.55 → 0.37 — 종이와 대비 3.1 → 6.6:1). 먹 판 위에는 쓰지 말 것 → PaperDim
+        public static readonly Color Grey = new Color(0.37f, 0.35f, 0.34f);
+        /// 먹 판 위 흐린 글
+        public static readonly Color PaperDim = new Color(0.80f, 0.78f, 0.74f);
+        /// 종이 판 위 작은 주황 글(대비 5.5:1 — Accent 는 3.2:1 이라 큰 글자·띠에만)
+        public static readonly Color AccentText = new Color(0.68f, 0.22f, 0.08f);
 
         /// 화면 덮는 캔버스(오버레이, 1920×1080 기준, 높이 맞춤)
         public static Canvas Canvas(GameObject go, int order)

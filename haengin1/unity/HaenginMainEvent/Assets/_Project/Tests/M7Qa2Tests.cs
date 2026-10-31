@@ -288,23 +288,14 @@ namespace Haengin.Tests
             GymManager gm = null;
             yield return Gym(w, 310, 16 * 60 + 45, x => gm = x);
             var me = M3Lab.Motor;
-            var mk = gm.Markers.First(x => x != null && x.Label != null);
-            me.Teleport(mk.transform.position + mk.transform.forward * 6f + Vector3.up * 0.05f, 0f);
+            // 2026-10-31 대표: 공중 이름표·바닥 스티커 없앰 — 가까이 가면 화면 안내에 이름·최고 등급
+            var mk = gm.Markers.First(x => x != null);
+            var me0 = mk.transform.position + mk.transform.right * 1.2f + Vector3.up * 0.05f;
+            me.Teleport(me0, 0f);
             yield return Lab.Frames(15);
-            Assert.IsFalse(mk.StickerShown, "멀리서도 바닥 스티커가 보임");
-            Assert.IsFalse(mk.LabelShown, "멀리서도 이름표가 보임");
-            me.Teleport(mk.transform.position + mk.transform.right * 1.2f + Vector3.up * 0.05f, 0f);
-            yield return Lab.Frames(15);
-            Assert.IsTrue(mk.LabelShown && mk.StickerShown, "가까이 가도 글이 안 뜸");
-            Assert.LessOrEqual(mk.Label.fontSize, DrillMarker.LabelSize + 0.01f, "이름표가 큼");
-            Assert.LessOrEqual(mk.Sticker.fontSize, DrillMarker.StickerSize + 0.01f, "스티커가 큼");
-            Assert.GreaterOrEqual(mk.Label.transform.localPosition.y, DrillMarker.LabelHeight - 0.01f, "이름표가 사람 몸 높이(머리 위가 아님)");
-            foreach (var t in new TMP_Text[] { mk.Label, mk.Sticker })
-            {
-                var m = t.fontMaterial;
-                Assert.AreEqual((float)UnityEngine.Rendering.CompareFunction.LessEqual, m.GetFloat("unity_GUIZTestMode"), 0.01f, $"{t.name} 깊이 검사 꺼짐(사람 앞에 그려짐)");
-            }
-            Debug.Log($"[Q] Q43 드릴 자리 글: 이름표 {mk.Label.fontSize} · {mk.Label.transform.localPosition.y:F2}m · 스티커 {mk.Sticker.fontSize} · 멀리 숨김·가까이 보임 · ZTest LessEqual");
+            Assert.IsFalse(mk.LabelShown || mk.StickerShown, "드릴 자리 월드 글자가 남아 있음");
+            Assert.IsTrue(mk.Interact != null && mk.Interact.Prompt.Contains("최고"), "화면 안내에 최고 등급이 없음: " + mk.Interact?.Prompt);
+            Debug.Log($"[Q] Q43 드릴 자리 글: 월드 글자 없음 · 안내 {mk.Interact.Prompt}");
         }
 
         // ───────────────────────── Q44 계산대 알바 카메라 — 손님 쪽에서, 호빵 찜기 유리·포스기가 시우를 가리지 않음
@@ -488,6 +479,98 @@ namespace Haengin.Tests
             }
             Debug.Log("[Q] Q56 레슨 카메라\n" + string.Join("\n", log));
             Assert.IsEmpty(bad, string.Join("\n", bad));
+        }
+
+        // ───────────────────────── Q57 글자·배경(2026-10-31 대표 "글자와 배경이 어지럽게 겹친다"): 대표 화면마다 판 ≥ 85% · 대비 · 글자끼리 겹침 0 · 화면 밖 0 · 공중/누운 월드 글자 0
+        //   화면은 사실 화면 대신 UI 뺀 카메라 그림으로 배경을 잼. 나머지 화면(알바·전투·자전거·일시정지…)은 QA 봇 실제 화면(text_bad.tsv) — docs/15 8-12
+        [UnityTest, Timeout(1800000)]
+        public IEnumerator Q57_Text_Audit()
+        {
+            if (!Shots.Graphics) { Assert.Ignore("그래픽 장치 없음(-nographics)"); yield break; }
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var bad = new List<string>(); var log = new List<string>();
+            IEnumerator Check(string screen)
+            {
+                yield return null; yield return null; yield return null;
+                var tex = Shots.Grab(Camera.main, Screen.width, Screen.height, 1, false);
+                var items = TextAudit.Ui(tex, false);
+                foreach (var pr in TextAudit.Problems(items))
+                {
+                    if ((pr.StartsWith("겹침") || pr.StartsWith("가림")) && (pr.Contains("조작 안내") || pr.Contains("상호작용"))) continue;     // 배치 화면이 4:3 · 시험이 자유 상태에서 자막을 띄움 — 16:9 실제 화면은 QA 봇(text_bad.tsv)
+                    bad.Add(screen + ": " + pr);
+                }
+                foreach (var wi in TextAudit.World(Camera.main)) if (wi.Floating || wi.Lying) bad.Add($"{screen}: 월드 글자 {(wi.Floating ? "공중" : "누움")} {wi.Path} '{wi.Text}'");
+                log.Add($"{screen}: 글자 {items.Count}");
+                Object.Destroy(tex);
+            }
+            log.Add($"화면 {Screen.width}×{Screen.height}");
+            yield return Start(w, Mid(w.Def, 312, 14 * 60, SceneLoader.Zone1, m => { m.G.Fatigue = 0; }));
+            yield return Lab.Frames(30);
+            yield return Check("Zone1 낮");
+            foreach (var place in new[] { SceneLoader.Gym, "Gukbap", "Home", "Conv", "School" })
+            {
+                var d = w.FindDoor(place);
+                if (d == null) continue;
+                M3Lab.Motor.Teleport(d.transform.position + d.transform.forward * 1.2f + Vector3.up * 0.05f, 0f);
+                w.Loader.Cam?.SnapBehind();
+                yield return Lab.Frames(12);
+                yield return Check("Zone1 문 " + place);
+            }
+            w.Phone.Open();
+            for (int i = 0; i < PhoneUi.Tabs.Length; i++) { w.Phone.SetTab(i); yield return Check("휴대폰 " + PhoneUi.Tabs[i]); }
+            w.Phone.Close();
+            yield return Lab.Frames(5);
+            var sub = Object.FindAnyObjectByType<SubtitleUi>(FindObjectsInactive.Include);
+            var inner = Object.FindAnyObjectByType<InnerVoiceUi>(FindObjectsInactive.Include);
+            if (sub != null) { sub.Show("이윤준", "다 모였네. 얘 보러 온 거 맞지?"); yield return Check("자막"); sub.Hide(); }
+            if (inner != null) { inner.Show("토요일 저녁, 레슨이 끝났는데 아무도 안 갔다. 사무실 앞에 관장이 다섯이었다."); yield return Check("속마음"); inner.Hide(); }
+            var board = w.Story.Board;
+            board.ShowCard("개인레슨   ·   3월 14일(토) 17:30", "김승연(딥마카이) — 첫 레슨", "레슨", true, new[] { "출장 레슨 — 타격 기본기 · 17:30 · 50,000원", "이번 판: 스탯 ×1.8 · 판정 +6 · 피로 ×1.5" }, new[] { "김승연|관장님한테 얘기 들었어." }, "× · Enter · 마우스 왼쪽   다음", true);
+            yield return Check("레슨 카드");
+            board.Hide();
+            board.ShowCard("식사   ·   3월 14일(토) 12:30", "국밥", "식사", false, new[] { "돈 8,000원 · 피로 −5" }, new[] { "사장 할머니|많이 먹어." }, "× · Enter · 마우스 왼쪽   다음", false);
+            yield return Check("식사 카드");
+            board.Hide();
+            yield return Start(w, Mid(w.Def, 312, 22 * 60 + 10, SceneLoader.Zone1, m => { m.G.Fatigue = 0; }));
+            yield return Lab.Frames(30);
+            yield return Check("Zone1 밤");
+            foreach (var place in new[] { "Gukbap", "Home", "Conv", "School" })
+            {
+                yield return Start(w, Mid(w.Def, 312, 14 * 60, place, m => { m.G.Fatigue = 0; }));
+                yield return Lab.Frames(25);
+                yield return Check("실내 " + place);
+            }
+            GymManager gm = null;
+            yield return Gym(w, 312, 19 * 60, x => gm = x);
+            yield return Check("체육관");
+            var drillIds = gm.Markers.Where(x => x != null && gm.Book != null && gm.Book.Find(x.DrillId) != null && gm.Book.Find(x.DrillId).Playable).Select(x => x.DrillId).Distinct().ToList();
+            log.Add("드릴 " + string.Join(",", drillIds));
+            foreach (var drillId in drillIds)
+            {
+                // 드릴마다 새로 들어감(하루 횟수·피로 제한에 걸리지 않게)
+                w.Stop();
+                yield return Lab.Frames(5);
+                yield return Gym(w, 312, 19 * 60, x => gm = x);
+                GymState.Current.Fatigue = 0;
+                if (!gm.StartDrill(drillId, 0.9f)) { bad.Add($"드릴 {drillId}: 시작 안 됨"); continue; }
+                float t0 = Time.realtimeSinceStartup;
+                while (gm.Runner.State != DrillRunner.Phase.Round && Time.realtimeSinceStartup - t0 < 30f) yield return null;
+                float t1 = Time.realtimeSinceStartup;
+                while (Time.realtimeSinceStartup - t1 < 1.5f) yield return null;
+                yield return Check("드릴 " + drillId);
+                gm.Runner.Abort();
+                float t2 = Time.realtimeSinceStartup;
+                while (Time.realtimeSinceStartup - t2 < 0.8f) yield return null;
+                yield return Check("드릴 결과 " + drillId);
+                for (int i = 0; i < 300 && gm.Busy; i++) { gm.CloseCard(); yield return null; }
+                yield return Lab.Frames(5);
+            }
+            w.Stop();
+            Debug.Log("[Q] Q57 글자\n" + string.Join("\n", log));
+            System.IO.File.WriteAllText(System.IO.Path.Combine(Application.temporaryCachePath, "q57_bad.txt"), string.Join("\n", bad));
+            Debug.Log("[Q] Q57 위반 " + bad.Count + "\n" + string.Join("\n", bad.Take(120)));
+            Assert.IsEmpty(bad, string.Join("\n", bad.Take(40)));
         }
 
         // ───────────────────────── Q47 드릴 '팡!' 알림판이 두 사람 얼굴을 가리지 않음(2026-10-28 이윤준 캡처 중 발견 — 화면 가운데 위 +120 이 D04 드릴 카메라의 얼굴 자리)

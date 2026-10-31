@@ -46,7 +46,7 @@ namespace Haengin
                 UiKit.Place(rows[i].rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(16f, 0f), new Vector2(752f, 48f));
                 rows[i].overflowMode = TextOverflowModes.Ellipsis;
             }
-            foot = UiKit.Text("발", frame.transform, Fonts != null ? Fonts.B : null, 19f, UiKit.Grey, TextAlignmentOptions.Center);
+            foot = UiKit.Text("발", frame.transform, Fonts != null ? Fonts.B : null, 19f, UiKit.PaperDim, TextAlignmentOptions.Center);
             UiKit.Place(foot.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 10f), new Vector2(780f, 30f));
             root.SetActive(false);
         }
@@ -103,7 +103,7 @@ namespace Haengin
             {
                 bool sel = i == Selected;
                 plates[i].color = sel ? UiKit.Accent : UiKit.Paper;
-                rows[i].color = sel ? UiKit.Paper : UiKit.Ink;
+                rows[i].color = UiKit.Ink;       // 주황 판 위 종이색은 대비 3.2
             }
         }
     }

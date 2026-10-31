@@ -103,7 +103,7 @@ namespace Haengin
             title.text = t;
             tag.gameObject.SetActive(false);
             body.text = string.Join("\n\n", lines ?? new string[0]);
-            quotes.text = string.IsNullOrEmpty(note) ? "" : $"<size=26><color=#8C8784>{note}</color></size>";
+            quotes.text = string.IsNullOrEmpty(note) ? "" : $"<size=26><color=#5E5957>{note}</color></size>";
             foot.text = "× · Enter · 마우스 왼쪽   시작";
             Open();
         }
@@ -120,7 +120,7 @@ namespace Haengin
             if (side) { c.anchorMin = c.anchorMax = new Vector2(1f, 0.5f); c.pivot = new Vector2(1f, 0.5f); c.anchoredPosition = new Vector2(-36f, 20f); c.sizeDelta = new Vector2(SideW, SideH); }
             else { c.anchorMin = c.anchorMax = new Vector2(0.5f, 0.5f); c.pivot = new Vector2(0.5f, 0.5f); c.anchoredPosition = new Vector2(0f, 10f); c.sizeDelta = new Vector2(1480f, 800f); }
             float w = side ? SideW - 90f : 1340f;
-            head.rectTransform.sizeDelta = new Vector2(side ? SideW - 120f : 1000f, 40f);
+            head.rectTransform.sizeDelta = new Vector2(side ? SideW - 260f : 1000f, 40f);      // 2026-10-31: 오른쪽 위 표(레슨)와 안 겹치게
             head.fontSize = side ? 22f : 26f;
             title.rectTransform.sizeDelta = new Vector2(w, side ? 120f : 80f);
             title.fontSize = side ? 42f : 58f;
@@ -132,6 +132,8 @@ namespace Haengin
             quotes.rectTransform.anchoredPosition = new Vector2(side ? 55f : 90f, side ? -580f : -540f);
             quotes.rectTransform.sizeDelta = new Vector2(side ? w - 10f : 1320f, side ? 220f : 180f);
             quotes.fontSize = side ? 30f : 36f;
+            // 2026-10-31: 긴 대사(서진수 끝 카드 4줄)가 아래 안내와 겹침 → 칸 안으로 줄임
+            quotes.enableAutoSizing = true; quotes.fontSizeMin = 18f; quotes.fontSizeMax = quotes.fontSize;
             foot.rectTransform.sizeDelta = new Vector2(side ? SideW - 80f : 900f, 36f);
             tag.rectTransform.sizeDelta = new Vector2(side ? 200f : 330f, 50f);
         }
@@ -145,7 +147,7 @@ namespace Haengin
                 int i = e.IndexOf('|');
                 string who = i >= 0 ? e.Substring(0, i) : "", line = i >= 0 ? e.Substring(i + 1) : e;
                 if (sb.Length > 0) sb.Append('\n');
-                sb.Append(string.IsNullOrEmpty(who) ? $"“{line}”" : $"<size=26><color=#8C8784>{who}</color></size>   “{line}”");
+                sb.Append(string.IsNullOrEmpty(who) ? $"“{line}”" : $"<size=26><color=#5E5957>{who}</color></size>   “{line}”");
             }
             return sb.ToString();
         }
