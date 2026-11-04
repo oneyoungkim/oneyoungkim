@@ -33,6 +33,28 @@ namespace Haengin
         public const float FirstSecs = 8f;
         public bool HintExpanded => hintPlate != null && hintPlate.activeSelf;
         public bool ChipShown => chip != null && chip.activeSelf;
+        public RectTransform HintRect => hintRt;
+
+        /// B8(2026-11-05): 조작 안내 설정 −1 자동 · 1 펼침 · 0 접음(설정 화면과 H · R3 가 같이 씀 — 한 번 누르면 '자동'으로 돌아갈 길이 없던 것)
+        public static int HintMode
+        {
+            get => PlayerPrefs.GetInt(OpenKey, -1);
+            set { int v = Mathf.Clamp(value, -1, 1); PlayerPrefs.SetInt(OpenKey, v); PlayerPrefs.Save(); userOpen = v; }
+        }
+        public static readonly string[] HintModeNames = { "자동", "접음", "펼침" };      // −1 · 0 · 1
+        /// 결과-5·D7: 칩·펼친 안내를 숨기는 화면(결과 카드·휴대폰·계획…). 숨긴 동안 H · R3 토글도 막음
+        static readonly System.Collections.Generic.HashSet<object> hiders = new System.Collections.Generic.HashSet<object>();
+        public static void HideHints(object who, bool on) { if (who == null) return; if (on) hiders.Add(who); else hiders.Remove(who); }
+        public static bool HintsHidden { get { hiders.RemoveWhere(h => h is UnityEngine.Object o && o == null); return hiders.Count > 0; } }
+        /// H · R3 — 칩이나 펼친 안내가 보일 때만(안 보이면 무엇이 바뀌었는지 알 길이 없음)
+        public bool ToggleHint()
+        {
+            if (!(ChipShown || HintExpanded) || HintsHidden) return false;
+            userOpen = HintExpanded ? 0 : 1;
+            PlayerPrefs.SetInt(OpenKey, userOpen);
+            firstLeft = 0f;
+            return true;
+        }
 
         /// 메뉴 항목. M1 의 셋(계속·카메라 자동 정렬·끝내기)은 순서 그대로 두고 M2 항목을 뒤에 붙인다(08 7-5·8-1·8-2):
         /// 흔들림 줄이기(늘) · 전투 다시(인카운터를 이긴 뒤 그 근처에서) · 항복(야차 중에만)
@@ -70,8 +92,9 @@ namespace Haengin
         float repeatAt;
         Vector2 lastMouse;
         GameObject menuRoot, toastPlate, hintPlate, chip;
-        TextMeshProUGUI hint, toastText, menuHint, chipKey;
-        RectTransform chipKeyBox, hintRt, chipRt;
+        TextMeshProUGUI hint, toastText, menuHint, chipKey, foldKey;
+        RectTransform chipKeyBox, hintRt, chipRt, foldKeyBox;
+        LayoutElement foldLe;
         static readonly System.Collections.Generic.HashSet<string> seenHints = new System.Collections.Generic.HashSet<string>();
         string lastHint;
         float firstLeft;
@@ -83,7 +106,7 @@ namespace Haengin
         void OnDisable() { if (Instance == this) Instance = null; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; Teach = false; seenHints.Clear(); userOpen = -2; RetryHook = null; SurrenderHook = null; BookHook = TitleHook = SubClose = null; SubOpen = null; BookLabel = "도감"; }
+        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; Teach = false; seenHints.Clear(); userOpen = -2; hiders.Clear(); RetryHook = null; SurrenderHook = null; BookHook = TitleHook = SubClose = null; SubOpen = null; BookLabel = "도감"; }
 
         System.Collections.IEnumerator Start()
         {
@@ -288,22 +311,18 @@ namespace Haengin
             }
             var kb = Keyboard.current; var gp = Gamepad.current;
             if (userOpen < -1) userOpen = PlayerPrefs.GetInt(OpenKey, -1);
-            bool Expanded() => userOpen == 1 || (userOpen != 0 && Teach) || firstLeft > 0f;
-            if (!paused && ((kb != null && kb.hKey.wasPressedThisFrame) || (gp != null && gp.rightStickButton.wasPressedThisFrame)))
-            {
-                userOpen = Expanded() ? 0 : 1;
-                PlayerPrefs.SetInt(OpenKey, userOpen);
-                firstLeft = 0f;
-            }
+            bool Expanded() => userOpen == 1 || (userOpen != 0 && (Teach || firstLeft > 0f));      // B8: '접음'이면 처음 보는 안내도 안 펼침
+            if (!paused && ((kb != null && kb.hKey.wasPressedThisFrame) || (gp != null && gp.rightStickButton.wasPressedThisFrame))) ToggleHint();
             if (firstLeft > 0f) firstLeft -= UiKit.RealDt;
-            bool expanded = Expanded();
+            bool hidden = HintsHidden;
+            bool expanded = Expanded() && !hidden;
             // 대사 판(화면 아래 1416 폭)이 떠 있으면: 칩은 숨기고, 펼친 안내는 대사 판 오른쪽 위로(이름띠는 판 왼쪽 위)
             if (subUi == null && Time.unscaledTime > subLook) { subUi = FindAnyObjectByType<SubtitleUi>(); innerUi = FindAnyObjectByType<InnerVoiceUi>(); subLook = Time.unscaledTime + 2f; }
             bool talk = (subUi != null && subUi.Visible) || (innerUi != null && innerUi.Visible);
             bool relayout = hint.text != want;
             if (relayout) hint.text = want;
             if (hintPlate.activeSelf != expanded) { hintPlate.SetActive(expanded); relayout = true; }
-            bool chipOn = !expanded && !talk;
+            bool chipOn = !expanded && !talk && !hidden;
             if (chip.activeSelf != chipOn) chip.SetActive(chipOn);
             if (expanded)
             {
@@ -311,17 +330,41 @@ namespace Haengin
                 hintRt.anchorMin = hintRt.anchorMax = Vector2.zero;
                 if (talk)
                 {
+                    // B3(2026-11-05): 대사·속마음 판의 실제 위 끝(자막 크기·줄 수·동시 표시) + 10 — 상수 PlateH 로는 21~27px 겹쳤음
                     float half = ((RectTransform)transform).rect.width * 0.5f, right = Mathf.Min(half + SubtitleUi.Width * 0.5f, half * 2f - 16f);
                     hintRt.pivot = new Vector2(1f, 0f);
-                    hintRt.anchoredPosition = new Vector2(right, SubtitleUi.PlateH + 10f);
+                    float hintL = right - hintRt.rect.width;
+                    float top = Mathf.Max(TalkTop(subUi != null && subUi.Visible ? subUi.PlateRect : null, subUi != null && subUi.Visible ? subUi.TagRect : null, hintL),
+                                          TalkTop(innerUi != null && innerUi.Visible ? innerUi.PlateRect : null, null, hintL));
+                    hintRt.anchoredPosition = new Vector2(right, Mathf.Max(SubtitleUi.PlateH, top) + 10f);
                 }
                 else { hintRt.pivot = Vector2.zero; hintRt.anchoredPosition = new Vector2(38f, 40f); }
             }
-            if (chipOn)
+            string k = UiKit.PadLast ? "R3" : "H";
+            if (chipOn && chipKey.text != k) { UiKit.SetKey(chipKeyBox, chipKey, k, 34f); LayoutRebuilder.ForceRebuildLayoutImmediate(chipRt); }
+            if (expanded && foldKey.text != k)
             {
-                string k = CombatHud.PadLast ? "R3" : "H";
-                if (chipKey.text != k) { UiKit.SetKey(chipKeyBox, chipKey, k, 34f); LayoutRebuilder.ForceRebuildLayoutImmediate(chipRt); }
+                UiKit.SetKey(foldKeyBox, foldKey, k, 30f);
+                foldLe.preferredWidth = foldKeyBox.sizeDelta.x;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(hintRt);
             }
+        }
+
+        /// 판(과 이름띠가 안내 판 가로 범위에 걸치면 이름띠까지)의 위 끝 — 이 캔버스 단위
+        float TalkTop(RectTransform plate, RectTransform tag, float hintL)
+        {
+            if (plate == null) return 0f;
+            var cv = GetComponent<Canvas>();
+            float sf = cv != null && cv.scaleFactor > 0f ? cv.scaleFactor : 1f;
+            var c = new Vector3[4];
+            plate.GetWorldCorners(c);
+            float top = c[1].y / sf;
+            if (tag != null && tag.gameObject.activeInHierarchy)
+            {
+                tag.GetWorldCorners(c);
+                if (c[2].x / sf > hintL - 8f) top = Mathf.Max(top, c[1].y / sf);
+            }
+            return top;
         }
 
         // ───────────────────────── 부품 만들기(실행할 때 한 번)
@@ -348,6 +391,12 @@ namespace Haengin
             hint = Text("글", hp.transform, UiKit.FMed(), 20f, Paper, TextAlignmentOptions.MidlineLeft);
             hint.text = Hint;
             hintPlate = hp.gameObject; hintRt = hp.rectTransform;
+            // 동네-6(2026-11-05): 펼친 동안 접는 법이 화면에 없던 것 → 줄 끝에 'H 접기'(패드 R3)
+            hp.GetComponent<HorizontalLayoutGroup>().spacing = 10f;
+            foldKeyBox = UiKit.KeyChip("접기 키", hp.transform, null, "H", 30f, false, out foldKey);
+            foldLe = foldKeyBox.gameObject.AddComponent<LayoutElement>(); foldLe.preferredWidth = foldKeyBox.sizeDelta.x; foldLe.preferredHeight = 30f;
+            var fl = Text("접기", hp.transform, UiKit.FMed(), 20f, UiKit.PaperDim, TextAlignmentOptions.MidlineLeft);
+            fl.text = "접기";
             var cp = Panel("조작 보기", transform, Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(38f, 40f), new Vector2(10f, 46f), UiKit.InkPlate);
             var lay = cp.gameObject.AddComponent<HorizontalLayoutGroup>();
             lay.padding = new RectOffset(6, 14, 6, 6); lay.spacing = 10f; lay.childAlignment = TextAnchor.MiddleLeft;

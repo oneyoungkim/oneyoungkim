@@ -339,8 +339,13 @@ namespace Haengin
             wordImg.enabled = true;
             float k = wordCanvas.transform.lossyScale.x;
             var size = wordImg.rectTransform.sizeDelta * k;
+            // A2(2026-11-05): 기울인 그림의 실제 높이 · 위쪽 한계 = 드릴 머리글 아래 끝 + 여백(CombatHud.TopReserve — 의성어 캔버스 8 이 머리글 12 아래라 깔리던 것)
+            float rz = Mathf.Abs(wordImg.rectTransform.localEulerAngles.z * Mathf.Deg2Rad);
+            float halfH = 0.5f * (size.x * Mathf.Abs(Mathf.Sin(rz)) + size.y * Mathf.Abs(Mathf.Cos(rz)));
+            float topLimit = Screen.height - 8f;
+            if (CombatHud.TopReserve > 0f) topLimit = Mathf.Min(topLimit, Screen.height - CombatHud.TopReserve * k);
             sp.x = Mathf.Clamp(sp.x, size.x * 0.5f + 8f, Screen.width - size.x * 0.5f - 8f);
-            sp.y = Mathf.Clamp(sp.y, size.y * 0.5f + 8f, Screen.height - size.y * 0.5f - 8f);
+            sp.y = Mathf.Clamp(sp.y, halfH + 8f, Mathf.Max(halfH + 8f, topLimit - halfH));
             wordImg.rectTransform.position = new Vector3(sp.x, sp.y, 0f);
             wordImg.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.55f, 1f, BackOut(Mathf.Min(1f, u * 3f)));
             wordImg.color = new Color(1f, 1f, 1f, u < 0.93f ? 1f : 1f - (u - 0.93f) / 0.07f);

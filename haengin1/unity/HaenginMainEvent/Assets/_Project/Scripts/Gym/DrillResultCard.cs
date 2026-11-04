@@ -67,6 +67,9 @@ namespace Haengin
             // 지표 표
             for (int i = 0; i < 5; i++)
                 rows[i] = UiKit.Table("지표 " + i, card, f, new Vector2(480f, -96f - i * 106f), 1224f, 106f, 276f, 160f, 30f, 60f, 12f);
+            // A6: 막대 뜻(D→S 점수) — 막대 칸 오른쪽 끝 위에 작은 머리말
+            var sh = UiKit.TextAt("표 머리말", card, UiKit.FMed(f), 18f, UiKit.PaperDim, new Vector2(480f + 300f + 740f - 300f, -100f), new Vector2(300f, 26f), TextAlignmentOptions.TopRight);
+            sh.text = "S 기준까지";
             // 코치 한 줄
             coachPlate = UiKit.Plate("코치 판", card, tl, tl, new Vector2(0f, -713f), new Vector2(912f, 89f));
             coachWho = UiKit.NameTag("이름띠", coachPlate.transform, f, tl, Vector2.zero, Vector2.zero, new Vector2(180f, 41f), 24f, out coachTag);
@@ -143,7 +146,7 @@ namespace Haengin
             if (w.FirstS) extra.Add("첫 S +50");
             if (w.Efficiency < 1f) extra.Add("피로 효율 ×0.6");
             if (unlock) extra.Add("다음부터 이 드릴은 시뮬로 돌릴 수 있다(보상 75%)");
-            note.text = string.Join(" · ", extra);
+            note.text = UiKit.NumRich(string.Join(" · ", extra), Fonts);      // B10: 덧말 숫자 Barlow
             simPlate.gameObject.SetActive(false);
             gradePanel.localScale = Vector3.one;
             Reveal();
@@ -169,7 +172,7 @@ namespace Haengin
             if (d.SubStat != Stat.None) Reward(GymSave.NameOf(d.SubStat), $"+{w.SubDelta}", false);
             Reward("피로", $"+{w.Fatigue}", true);
             LayoutRewards();
-            note.text = $"오늘 남은 시뮬 {left}";
+            note.text = UiKit.NumRich($"오늘 남은 시뮬 {left}", Fonts);
             simPlate.gameObject.SetActive(false);
             gradePanel.localScale = Vector3.one;
             Reveal();
@@ -225,7 +228,7 @@ namespace Haengin
             float t = ShownFor;
             // 좁은 화면(4:3)에선 카드 전체를 줄여 화면 안에
             float cw = ((RectTransform)transform).rect.width;
-            float k = cw > 10f ? Mathf.Min(1f, (cw - 48f) / Content) : 1f;
+            float k = cw > 10f ? Mathf.Min(1f, (cw - 76f) / Content) : 1f;      // 결과-7: 좌우 여백 38 씩
             if (Mathf.Abs(card.localScale.y - k) > 0.001f) card.localScale = new Vector3(k, k, 1f);
             int shown = 0;
             for (int i = 0; i < 5; i++)
@@ -255,12 +258,16 @@ namespace Haengin
             r.Back.color = new Color(UiKit.Track.r, UiKit.Track.g, UiKit.Track.b, a);
             r.Rule.color = new Color(UiKit.RuleColor.r, UiKit.RuleColor.g, UiKit.RuleColor.b, a);
             r.Fill.color = new Color(UiKit.Accent.r, UiKit.Accent.g, UiKit.Accent.b, a);
+            r.STick.color = new Color(UiKit.PaperDim.r, UiKit.PaperDim.g, UiKit.PaperDim.b, a);
         }
 
         public void Hide() { if (root != null) root.SetActive(false); }
 
+        void OnDisable() => GameUi.HideHints(this, false);
+
         void Update()
         {
+            GameUi.HideHints(this, Visible);      // 결과-5: 카드가 떠 있는 동안 'H 조작 보기' 칩·펼친 안내를 숨기고 H · R3 토글도 막음
             if (!Visible) return;
             ShownFor += UiKit.RealDt;
             Reveal();

@@ -72,7 +72,10 @@ namespace Haengin
 
         static long Order(Graphic g)
         {
-            var cv = g.canvas != null ? g.canvas.rootCanvas : null;
+            // 순서를 따로 정한 안쪽 캔버스(overrideSorting — 도감 아이콘 50)는 그 순서로
+            var cv = g.canvas;
+            while (cv != null && !cv.isRootCanvas && !cv.overrideSorting) cv = cv.transform.parent != null ? cv.transform.parent.GetComponentInParent<Canvas>() : null;
+            if (cv == null && g.canvas != null) cv = g.canvas.rootCanvas;
             return (cv != null ? (long)cv.sortingOrder : 0L) * 100000L + g.canvasRenderer.absoluteDepth;
         }
 

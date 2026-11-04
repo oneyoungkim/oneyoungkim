@@ -42,6 +42,8 @@ namespace Haengin
         string last;
 
         void OnEnable() { Hook(); BStyle(); }
+        /// 지금 '도착'(1.6초)·완주(4초) 알림 중인지 — 자유 이동 중엔 이 판 대신 세계 HUD '다음' 판 머리말이 '도착'으로 바뀜(B12)
+        public bool Flashing => !string.IsNullOrEmpty(flash) && Time.unscaledTime < flashUntil;
         void OnDisable() => Unhook();
 
         /// 실행 확인 한 줄(Player.log, DebugHud 의 '[M1] 실행 확인' 옆): HUD 글·한글 글리프가 실제로 그려지는지

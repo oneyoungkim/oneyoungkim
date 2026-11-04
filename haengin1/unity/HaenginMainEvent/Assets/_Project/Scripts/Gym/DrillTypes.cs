@@ -36,7 +36,7 @@ namespace Haengin
         public string Format(double v)
         {
             string n = Unit == "ms" || Unit == "회" || Unit == "점" || Unit == "s" ? Math.Round(v).ToString("0") : v.ToString("0.#");
-            return Unit == "%" ? $"{n}%" : Unit == "ms" ? $"{n} ms" : $"{n}{(string.IsNullOrEmpty(Unit) ? "" : " " + Unit)}";
+            return string.IsNullOrEmpty(Unit) || Unit == "%" ? n + Unit : Unit[0] < 128 ? n + " " + Unit : n + Unit;      // 결과-6(2026-11-05): 한글 단위는 붙여 씀(0회·0점), ms·s 앞 빈칸·% 는 그대로
         }
     }
 

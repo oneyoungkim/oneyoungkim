@@ -58,7 +58,7 @@ namespace Haengin
         public int NavStep { get; private set; }
         public bool MapOn => map != null && map.enabled;
         /// 패드로 마지막 입력(안내 글자 × / Enter)
-        public bool PadLast { get; private set; }
+        public bool PadLast => UiKit.PadLast;      // B7: 전역 하나로
         /// 일시정지 중이거나 막 풀린 프레임(메뉴 입력이 대사·선택지로 새지 않게)
         public bool Blocked { get; private set; }
 
@@ -120,7 +120,7 @@ namespace Haengin
                 else if (dir != heldDir) { NavStep = dir; heldDir = dir; repeatAt = clock + 0.40f; }
                 else if (clock >= repeatAt) { NavStep = dir; repeatAt = clock + 0.15f; }
                 var dev = next != null && next.activeControl != null ? next.activeControl.device : nav?.activeControl?.device;
-                if (dev != null) PadLast = dev is Gamepad;
+                if (dev != null) UiKit.PadLast = dev is Gamepad;
             }
             else HoldTime = 0f;
 

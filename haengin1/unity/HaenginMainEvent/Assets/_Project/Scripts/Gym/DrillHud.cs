@@ -29,14 +29,19 @@ namespace Haengin
         string hintRaw = "";
         public string HintText => hint != null && hint.gameObject.activeInHierarchy ? hintRaw : "";
         public void ClearHint() { if (hint != null) { hint.text = ""; hintRaw = ""; } }
-        Image cuePlate, beatPlate, beatLine, toastPlate;
+        Image cuePlate, beatPlate, beatLine, beatLine2, toastPlate;
         readonly List<Image> ticks = new List<Image>();
         readonly List<TextMeshProUGUI> tickMarks = new List<TextMeshProUGUI>();
         readonly List<Image> icons = new List<Image>();
         readonly List<TextMeshProUGUI> iconTexts = new List<TextMeshProUGUI>();
+        readonly List<Image> holdBars = new List<Image>();
         readonly List<(int, double)> visible = new List<(int, double)>();
         readonly TextMeshProUGUI[] mLabels = new TextMeshProUGUI[5], mValues = new TextMeshProUGUI[5];
         float cueLeft, toastLeft, topW = TopW;
+        // A4 아래 줄 배치
+        const float Mg = 38f, Gap = 24f, HintY = 41f, RowY = 108f, CueMinW = 420f, HintMinW = 360f;
+        float hintPW = 60f, hintLayW = -1f, hintLayH = 60f, cueWantW = CueW, cueTop;
+        bool cueRaised;
         int lastRound = -1, lastSec = -1;
         string lastId;
         AudioSource sfx;
@@ -74,8 +79,8 @@ namespace Haengin
             UiKit.Place(round.rectTransform, tl, new Vector2(0.5f, 0.5f), new Vector2(55f, -84f), new Vector2(110f, 60f));
             timer = UiKit.Text("타이머", top.transform, UiKit.FNum(f), 106f, UiKit.Paper, TextAlignmentOptions.Baseline);
             UiKit.Place(timer.rectTransform, tl, new Vector2(0.5f, 0.5f), new Vector2(226f, -92f), new Vector2(220f, 120f));
-            codeText = UiKit.TextAt("코드", top.transform, UiKit.FNum(f), 26f, UiKit.Warm, new Vector2(343f, -10f), new Vector2(220f, 46f), TextAlignmentOptions.BaselineLeft);
-            nameText = UiKit.TextAt("이름", top.transform, UiKit.FBlack(f), 26f, UiKit.Paper, new Vector2(343f, -50f), new Vector2(220f, 46f), TextAlignmentOptions.BaselineLeft);
+            codeText = UiKit.TextAt("코드", top.transform, UiKit.FNum(f), 26f, UiKit.Warm, new Vector2(343f, -20f), new Vector2(220f, 46f), TextAlignmentOptions.BaselineLeft);      // 드릴-10: 코드·이름 묶음을 10px 내려 타이머 가운데와 맞춤
+            nameText = UiKit.TextAt("이름", top.transform, UiKit.FBlack(f), 26f, UiKit.Paper, new Vector2(343f, -60f), new Vector2(220f, 46f), TextAlignmentOptions.BaselineLeft);
             // 코치 말(왼쪽 아래 — 이름띠 + 먹 판)
             cuePlate = UiKit.Plate("큐판", root.transform, Vector2.zero, Vector2.zero, new Vector2(38f, 108f), new Vector2(CueW, CueH));
             cueWho = UiKit.NameTag("이름띠", cuePlate.transform, f, tl, Vector2.zero, Vector2.zero, new Vector2(192f, 43f), 25f, out cueTag);
@@ -92,7 +97,9 @@ namespace Haengin
             // 박자 띠(아래 가운데 — 입력 칸 자리, 기준선 왼쪽)
             beatPlate = UiKit.Plate("박자 띠", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 108f), new Vector2(BeatW, BeatH));
             // 기준선은 박자 막대 줄(−38~+2)에만 — 막대 위 □△ 표시가 지나갈 때 선이 글자에 걸치지 않게(글자 감사 Q57)
-            beatLine = UiKit.Panel("기준선", beatPlate.transform, c5, c5, new Vector2(BeatLineX, -18f), new Vector2(6f, 40f), UiKit.Accent);
+            // 드릴-7(2026-11-05): 기준선은 흰 눈금(10×36)과 색만 다르던 것 → 눈금이 들어가는 주황 문기둥 두 개(4×44, 사이 14)로 모양부터 다르게
+            beatLine = UiKit.Panel("기준선", beatPlate.transform, c5, c5, new Vector2(BeatLineX - 9f, -18f), new Vector2(4f, 44f), UiKit.Accent);
+            beatLine2 = UiKit.Panel("기준선 2", beatPlate.transform, c5, c5, new Vector2(BeatLineX + 9f, -18f), new Vector2(4f, 44f), UiKit.Accent);
             for (int i = 0; i < MaxTicks; i++)
             {
                 var t = UiKit.Panel("박자 " + i, beatPlate.transform, c5, c5, Vector2.zero, new Vector2(10f, 36f), UiKit.Paper); t.gameObject.SetActive(false); ticks.Add(t);
@@ -103,7 +110,9 @@ namespace Haengin
             {
                 var ic = UiKit.Panel("아이콘 " + i, root.transform, new Vector2(0.5f, 0f), Vector2.zero, Vector2.zero, new Vector2(106f, 106f), UiKit.InkPlate); ic.gameObject.SetActive(false); icons.Add(ic);
                 var tx = UiKit.Text("글", ic.transform, UiKit.FNum(f), 58f, UiKit.Paper, TextAlignmentOptions.Center); UiKit.Stretch(tx.rectTransform, 10f); iconTexts.Add(tx);
-                tx.enableAutoSizing = true; tx.fontSizeMin = 26f; tx.fontSizeMax = 58f;      // '□─'(길게)·'↓△' 두 글자도 칸 안에
+                tx.enableAutoSizing = true; tx.fontSizeMin = 26f; tx.fontSizeMax = 58f;
+                // A3(2026-11-05): '길게'는 글자('─')가 아니라 칸 아래 막대(□ 획 굵기)로 — '□-' 가 빼기표처럼 읽히던 것
+                var hb = UiKit.Panel("길게", ic.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 14f), new Vector2(60f, 5f), UiKit.Paper); hb.gameObject.SetActive(false); holdBars.Add(hb);      // '□─'(길게)·'↓△' 두 글자도 칸 안에
             }
             // QA 2차(2026-10-28): 화면 가운데 위(+120)는 드릴 카메라에서 두 사람 얼굴 자리 — '팡!' 판은 아래 입력 칸 바로 위로
             toastPlate = UiKit.Plate("알림판", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), ToastPos, new Vector2(360f, 70f), UiKit.Edge.Left);
@@ -155,6 +164,58 @@ namespace Haengin
         public bool CueShown => cuePlate != null && cuePlate.gameObject.activeSelf;
         public string CueName => cueWho != null ? cueWho.text : "";
 
+        /// A4(2026-11-05) 아래 줄 배치 규칙 하나: 왼쪽 코치 말 / 가운데 박자 띠·입력 칸 / 오른쪽 아래 드릴 안내.
+        ///   ① 안내 판은 가운데 묶음 오른쪽 자리(≥ 360)에 들어가게 폭을 줄이고 줄을 바꿈 — 자리가 없으면(4:3) 802 폭 그대로 두고 가운데 묶음을 안내 판 위로 올림(계단, 틈 24)
+        ///   ② 코치 말은 가운데 묶음 왼쪽 자리에 — 모자라면 폭을 줄여 두 줄로(최소 420, 글자 크기 자동 32~60), 그래도 모자라면 묶음 위로 올림
+        /// 반환 = 가운데 묶음을 올린 양, stackTop = 가운데 묶음 위 끝(아래 기준)
+        float LayoutBottom(bool hintOn, bool beatOn, float iconsW, out float stackTop)
+        {
+            float W = ((RectTransform)transform).rect.width;
+            float cW = Mathf.Max(beatOn ? BeatW : 0f, iconsW);
+            float cL = W * 0.5f - cW * 0.5f, cR = W * 0.5f + cW * 0.5f;
+            float lift = 0f, hintL = W, hintTop = 0f;
+            if (hintOn)
+            {
+                float full = Mathf.Min(802f, W - Mg * 2f);
+                float hw = Mathf.Min(hintPW, full);
+                if (cW > 0f)
+                {
+                    float room = W - Mg - (cR + Gap);
+                    if (hw > room && room >= HintMinW) hw = room;
+                }
+                if (Mathf.Abs(hw - hintLayW) > 0.5f)
+                {
+                    hintLayW = hw;
+                    hintLayH = hintPW > hw + 0.5f ? Mathf.Max(60f, hint.GetPreferredValues(hint.text, hw - 44f, 0f).y + 14f) : 60f;
+                    hintPlate.rectTransform.sizeDelta = new Vector2(hw, hintLayH);
+                }
+                hintL = W - Mg - hw; hintTop = HintY + hintLayH;
+                if (cW > 0f && hintL < cR + Gap) lift = Mathf.Max(0f, hintTop + Gap - RowY);
+            }
+            float bandY = RowY + lift;
+            var br = beatPlate.rectTransform;
+            if (Mathf.Abs(br.anchoredPosition.y - bandY) > 0.5f) br.anchoredPosition = new Vector2(0f, bandY);
+            stackTop = iconsW > 0f ? (beatOn ? bandY + BeatH + 14f : bandY) + 125f : beatOn ? bandY + BeatH : 0f;
+            cueRaised = false;
+            if (cuePlate.gameObject.activeSelf)
+            {
+                float roomL = cW > 0f ? cL - Gap - Mg : W - Mg * 2f;
+                float w = Mathf.Min(cueWantW, W - Mg * 2f), y = RowY;
+                if (w > roomL)
+                {
+                    if (roomL >= CueMinW) w = roomL;
+                    else { cueRaised = true; y = Mathf.Max(RowY, stackTop + 14f); }
+                }
+                if (hintOn && Mg + w > hintL - Gap && y < hintTop + 14f) y = hintTop + 14f;      // 줄 바꾼 안내 판이 코치 말 줄까지 올라옴
+                var cr = cuePlate.rectTransform;
+                if (Mathf.Abs(cr.sizeDelta.x - w) > 0.5f) cr.sizeDelta = new Vector2(w, CueH);
+                if (Mathf.Abs(cr.anchoredPosition.y - y) > 0.5f || Mathf.Abs(cr.anchoredPosition.x - Mg) > 0.5f) cr.anchoredPosition = new Vector2(Mg, y);
+                cueTop = y + CueH + 43f;      // 이름띠까지
+                if (cueRaised && Mg + w < W * 0.5f - 180f) cueRaised = false;      // '팡!' 판(가운데 360)과 가로로 안 겹치면 그대로
+            }
+            return lift;
+        }
+
         public void Say(string who, string line)
         {
             Build();
@@ -165,19 +226,27 @@ namespace Haengin
             cueText.enableAutoSizing = false; cueText.fontSize = 60f;
             float w = cueText.GetPreferredValues(line).x + 38f + 4f;
             cueText.enableAutoSizing = true;
-            cuePlate.rectTransform.sizeDelta = new Vector2(Mathf.Clamp(w, CueW, CueMaxW), CueH);
+            cueWantW = Mathf.Clamp(w, CueW, CueMaxW);
+            cuePlate.rectTransform.sizeDelta = new Vector2(cueWantW, CueH);
             cueLeft = 2.6f + line.Length * 0.05f; cuePlate.gameObject.SetActive(true);
             if (sfx != null && tick != null && !Application.isBatchMode) sfx.PlayOneShot(tick, 0.5f);      // 음성 자리(합성음)
         }
 
+        static readonly HashSet<string> Onoma = new HashSet<string> { "팡!", "퍽!", "빡!", "탁!", "팍!", "쾅!", "쿵!", "짝!", "착!", "툭!" };
+        static readonly char[] DigitChars = "0123456789".ToCharArray();
+        /// 의성어인지(붓 글꼴로 그릴 글)
+        public static bool IsWord(string s) => !string.IsNullOrEmpty(s) && Onoma.Contains(s.Trim());
+
         public void ShowToast(string s)
         {
             Build();
-            // 의성어('팡!')만 붓 글꼴(B안 7) · '땀 12' 같은 글은 Noto Black
-            bool word = !string.IsNullOrEmpty(s) && s.EndsWith("!");
-            var want = word ? UiKit.FBrush(Fonts) : UiKit.FBlack(Fonts);
+            // 의성어('팡!')만 붓 글꼴(B안 7) — B2: '!' 로 끝나는 말(페이크!·순서!·걸림!·가드!)은 의성어가 아님 → 목록으로 판별, 나머지는 Noto Black
+            // B10: 숫자가 든 글('땀 12')은 Barlow(한글은 대체 글꼴)
+            bool word = IsWord(s);
+            bool num = !word && !string.IsNullOrEmpty(s) && s.IndexOfAny(DigitChars) >= 0;
+            var want = word ? UiKit.FBrush(Fonts) : num ? UiKit.FNum(Fonts) : UiKit.FBlack(Fonts);
             if (want != null && toast.font != want) toast.font = want;
-            toast.fontSize = word ? 40f : 32f;
+            toast.fontSize = word ? 40f : num ? 36f : 32f;
             toast.text = word ? s : UiKit.Tab(s);
             toastLeft = 0.8f; SetToast(true);
         }
@@ -223,11 +292,12 @@ namespace Haengin
             if ((combatHud != null && combatHud.Visible) || Runner.Station is SparStation)
             {
                 float half = ((RectTransform)transform).rect.width * 0.5f;
-                float need = CombatHud.MeRight + 12f - (half - tw * 0.5f);
-                if (need > 0f) { if (half + tw * 0.5f + need <= half * 2f - 38f) hx = need; else hy = -(CombatHud.MeBottom + 12f); }
+                float need = CombatHud.MeRight + 38f - (half - tw * 0.5f);      // 드릴-5(2026-11-05): 반시우 판과 틈 38 · 위 끝을 판(−38)에 맞춤 · 자리가 없으면 판 아래로
+                hy = -(CombatHud.MeBottom - 108f);
+                if (need > 0f) { if (half + tw * 0.5f + need <= half * 2f - 38f) hx = need; else hy = -(CombatHud.MeBottom + 24f); }
             }
             if (Mathf.Abs(topRt.anchoredPosition.y - hy) > 0.5f || Mathf.Abs(topRt.anchoredPosition.x - hx) > 0.5f) topRt.anchoredPosition = new Vector2(hx, hy);
-            CombatHud.TopReserve = topOn ? -hy + TopH + 10f : 0f;      // 스파링: 머리 위 대상 바가 머리글 판을 지나가지 않게
+            CombatHud.TopReserve = topOn ? -hy + TopH + 24f : 0f;      // 스파링: 머리 위 대상 바·의성어가 머리글 판을 지나가지 않게(드릴-6: 틈 24)
         }
 
         void Update()
@@ -245,6 +315,7 @@ namespace Haengin
             bool topOn = !noticeOnly && !cardUp;
             if (topRt.gameObject.activeSelf != topOn) topRt.gameObject.SetActive(topOn);
             if (cardUp && cuePlate.gameObject.activeSelf) { cuePlate.gameObject.SetActive(false); cueLeft = 0f; }
+            if (cardUp && toastPlate.gameObject.activeSelf) { SetToast(false); toastLeft = 0f; }      // B13: 결과 카드가 뜨면 '팡!' 알림판도 내림
             var rs = Runner.State;
             int rkey = (int)rs * 1000 + Runner.Round * 10 + d.Rounds;      // 바뀔 때만 글을 새로 씀(매 프레임 문자열·정규식 없게)
             if (rkey != lastRound)
@@ -262,10 +333,8 @@ namespace Haengin
             {
                 hintRaw = h ?? "";
                 hint.text = UiKit.KeyMark(hintRaw);
-                float pw = hint.GetPreferredValues(hint.text).x + 44f;
-                float hw = Mathf.Min(802f, pw);
-                float hh = pw > 802f ? Mathf.Max(60f, hint.GetPreferredValues(hint.text, 802f - 44f, 0f).y + 14f) : 60f;
-                hintPlate.rectTransform.sizeDelta = new Vector2(hw, hh);
+                hintPW = hint.GetPreferredValues(hint.text).x + 44f;
+                hintLayW = -1f;
             }
             bool hintOn = !noticeOnly && hintRaw.Length > 0;
             if (hintPlate.gameObject.activeSelf != hintOn) hintPlate.gameObject.SetActive(hintOn);
@@ -276,6 +345,14 @@ namespace Haengin
             if (beatOn)
             {
                 beat.Visible(Runner.T, 0.25, BeatSpan, visible, d.RoundSec);
+                // 표시(□△)가 있는 드릴만 눈금을 아래로 내려 위에 표시 자리 — 없으면 띠 세로 가운데
+                bool marks = d.Id == "D02" || d.Id == "D06";
+                float ly = marks ? -18f : 0f;
+                if (Mathf.Abs(beatLine.rectTransform.anchoredPosition.y - ly) > 0.5f)
+                {
+                    beatLine.rectTransform.anchoredPosition = new Vector2(BeatLineX - 9f, ly);
+                    beatLine2.rectTransform.anchoredPosition = new Vector2(BeatLineX + 9f, ly);
+                }
                 for (int i = 0; i < MaxTicks; i++)
                 {
                     bool on = i < visible.Count;
@@ -283,7 +360,7 @@ namespace Haengin
                     if (!on) continue;
                     var (b, t) = visible[i];
                     float x = BeatLineX + (float)((t - Runner.T) / BeatSpan) * BeatScale;      // 오른쪽에서 왼쪽 기준선으로
-                    ticks[i].rectTransform.anchoredPosition = new Vector2(x, -18f);
+                    ticks[i].rectTransform.anchoredPosition = new Vector2(x, ly);
                     int mark = beat.Mark(b);
                     bool taken = beat.Taken(b);
                     ticks[i].color = taken ? UiKit.RuleColor : mark == 1 ? UiKit.Warm : UiKit.Paper;
@@ -291,11 +368,13 @@ namespace Haengin
                 }
             }
             // 입력 칸(지금 칠 칸 = 주황 125 · 나머지 = 먹 106 · 맞음 = 종이 칸 · 틀림 = 먹 칸에 Warm ×)
-            var combo = st != null && !cardUp ? st.Combo : null;
-            float baseY = beatOn ? 108f + BeatH + 14f : 108f;
+            //   휴식 중에는 숨김(A4 — 쉬는 시간의 긴 말 900 폭과 같이 뜨던 것)
+            var combo = st != null && !cardUp && rs != DrillRunner.Phase.Rest ? st.Combo : null;
             float total = 0f;
             int n = combo != null ? Mathf.Min(combo.Tokens.Count, MaxIcons) : 0;
             for (int i = 0; i < n; i++) total += (i == combo.Next ? 125f : 106f) + (i > 0 ? 4f : 0f);
+            float lift = LayoutBottom(hintOn, beatOn, n > 0 ? total : 0f, out float stackTop);
+            float baseY = (beatOn ? RowY + BeatH + 14f : RowY) + lift;
             float x0 = -total * 0.5f;
             for (int i = 0; i < MaxIcons; i++)
             {
@@ -313,15 +392,24 @@ namespace Haengin
                 x0 += s + 4f;
                 icons[i].color = cur ? UiKit.Accent : ok ? UiKit.Paper : UiKit.InkPlate;
                 // 두 글자 표시('□─' 길게 · '↓△' · 'R2')는 작게 — '─'(U+2500)는 본문 글꼴에서 1em 넘게 그려져 칸을 넘음 → '–'
-                string icon = judged && !ok ? "×" : (tok.Icon ?? "").Replace("─", "–");      // QA Q26: × = U+00D7(숫자 글꼴에 없으면 본문 글꼴 대체)
+                bool miss = judged && !ok;
+                bool hold = tok.Hold && !miss;
+                string icon = miss ? "×" : (tok.Icon ?? "").Replace("─", "");      // QA Q26: × = U+00D7(숫자 글꼴에 없으면 본문 글꼴 대체)
                 bool two = icon.Length >= 2;
                 iconTexts[i].fontSizeMax = cur ? (two ? 52f : 70f) : (two ? 44f : 58f);
                 iconTexts[i].color = cur || ok ? UiKit.Ink : judged ? UiKit.Warm : UiKit.Paper;
                 iconTexts[i].text = icon;
+                holdBars[i].gameObject.SetActive(hold);
+                if (hold)
+                {
+                    holdBars[i].color = iconTexts[i].color;
+                    holdBars[i].rectTransform.sizeDelta = new Vector2(Mathf.Round(s * 0.56f), cur ? 6f : 5f);
+                    holdBars[i].rectTransform.anchoredPosition = new Vector2(0f, Mathf.Round(s * 0.12f));
+                }
             }
             // '팡!' 판은 입력 칸·박자 띠 위로
-            float topOfBottom = n > 0 ? baseY + 125f : beatOn ? 108f + BeatH : 0f;
-            float ty = Mathf.Max(ToastPos.y, topOfBottom + 12f);
+            float ty = Mathf.Max(ToastPos.y, stackTop + 12f);
+            if (cueRaised && cuePlate.gameObject.activeSelf) ty = Mathf.Max(ty, cueTop + 12f);
             if (Mathf.Abs(toastPlate.rectTransform.anchoredPosition.y - ty) > 0.5f) toastPlate.rectTransform.anchoredPosition = new Vector2(0f, ty);
             // 휴식 중 지표 표
             bool rest = rs == DrillRunner.Phase.Rest && !noticeOnly && !cardUp;

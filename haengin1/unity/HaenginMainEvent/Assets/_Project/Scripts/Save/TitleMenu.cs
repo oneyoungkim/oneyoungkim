@@ -142,12 +142,20 @@ namespace Haengin
             Add(p, () => $"흔들림 줄이기 ◀ {(Accessibility.Reduced ? "켬" : "끔")} ▶", () => Accessibility.Reduced = !Accessibility.Reduced, s => Accessibility.Reduced = !Accessibility.Reduced);
             Add(p, () => $"자막 크기 ◀ {SizeNames[Mathf.Clamp(PlayerPrefs.GetInt(SubtitleUi.SizeKey, 1), 0, 2)]} ▶", () => CycleSize(1), CycleSize);
             Add(p, () => $"자동 진행 ◀ {(DialogueRunner.Auto ? "켬" : "끔")} ▶", () => DialogueRunner.Auto = !DialogueRunner.Auto, s => DialogueRunner.Auto = !DialogueRunner.Auto);
+            Add(p, () => $"조작 안내 ◀ {GameUi.HintModeNames[GameUi.HintMode + 1]} ▶", () => CycleHint(1), CycleHint);      // B8: 자동 · 접음 · 펼침
             Add(p, () => $"진동 ◀ {(PlayerPrefs.GetInt(EndureFx.RumbleKey, 1) == 1 ? "켬" : "끔")} ▶", ToggleRumble, s => ToggleRumble());
             Add(p, "돌아가기", () => Show(back));
             return p;
         }
 
         static void CycleSize(int d) { int v = (PlayerPrefs.GetInt(SubtitleUi.SizeKey, 1) + (d >= 0 ? 1 : 2)) % 3; PlayerPrefs.SetInt(SubtitleUi.SizeKey, v); PlayerPrefs.Save(); }
+        /// 조작 안내 자동(−1) → 펼침(1) → 접음(0) → 자동
+        public static void CycleHint(int d)
+        {
+            int[] order = { -1, 1, 0 };
+            int i = System.Array.IndexOf(order, GameUi.HintMode);
+            GameUi.HintMode = order[((i < 0 ? 0 : i) + (d >= 0 ? 1 : 2)) % 3];
+        }
         static void ToggleRumble() { PlayerPrefs.SetInt(EndureFx.RumbleKey, PlayerPrefs.GetInt(EndureFx.RumbleKey, 1) == 1 ? 0 : 1); PlayerPrefs.Save(); }
 
         static void Add(Page p, string text, Action act) => p.Items.Add(new Item { Text = () => text, Do = act });

@@ -515,6 +515,69 @@ namespace Haengin.Tests
             Assert.IsEmpty(bad, string.Join("\n", bad));
         }
 
+        // ───────────────────────── Q59 조작 안내(2026-11-05 B3·B8·결과-5): 펼친 안내는 대사·속마음 판의 실제 위 끝 위(자막 0.85/1.2 · 1줄/3줄 · 속마음+자막)
+        //   설정 자동/접음/펼침 · 칩을 숨긴 화면(결과 카드 등)에서는 칩이 안 보이고 H · R3 토글도 막힘
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q59_Hint_Over_Talk_And_Modes()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var bad = new List<string>(); var log = new List<string>();
+            yield return Start(w, Mid(w.Def, 312, 14 * 60, SceneLoader.Zone1, m => { m.G.Fatigue = 0; }));
+            yield return Lab.Frames(20);
+            var ui = GameUi.Instance;
+            Assert.NotNull(ui, "GameUi");
+            var sub = Object.FindAnyObjectByType<SubtitleUi>(FindObjectsInactive.Include);
+            var inner = Object.FindAnyObjectByType<InnerVoiceUi>(FindObjectsInactive.Include);
+            Assert.NotNull(sub, "SubtitleUi"); Assert.NotNull(inner, "InnerVoiceUi");
+            int keepMode = GameUi.HintMode, keepSize = PlayerPrefs.GetInt(SubtitleUi.SizeKey, 1);
+            Rect R(RectTransform r) { var c = new Vector3[4]; r.GetWorldCorners(c); return Rect.MinMaxRect(c[0].x, c[0].y, c[2].x, c[2].y); }
+            bool Hit(Rect a, Rect b) => a.xMin < b.xMax - 1f && b.xMin < a.xMax - 1f && a.yMin < b.yMax - 1f && b.yMin < a.yMax - 1f;
+            try
+            {
+                GameUi.HintMode = 0; yield return Lab.Frames(3);
+                if (ui.HintExpanded || !ui.ChipShown) bad.Add($"접음: 펼침 {ui.HintExpanded} · 칩 {ui.ChipShown}");
+                GameUi.HintMode = 1; yield return Lab.Frames(3);
+                if (!ui.HintExpanded) bad.Add("펼침 설정인데 안 펼쳐짐");
+                string one = "다 모였네. 얘 보러 온 거 맞지?";
+                string three = "토요일 저녁, 레슨이 끝났는데 아무도 안 갔다. 사무실 앞에 관장이 다섯이었다. 다들 시우를 보러 왔다고 했다. 이윤준 관장은 웃기만 했다. 오늘은 그냥 넘어가지 않을 것 같았다.";
+                foreach (int size in new[] { 0, 2 })
+                    foreach (bool both in new[] { false, true })
+                        foreach (string line in new[] { one, three })
+                        {
+                            PlayerPrefs.SetInt(SubtitleUi.SizeKey, size);
+                            sub.Show("이윤준", line);
+                            if (both) inner.Show("관장이 다섯. 다들 나를 보러 왔다고 했다."); else inner.Hide();
+                            yield return Lab.Frames(3);
+                            if (!ui.HintExpanded) { bad.Add($"크기 {size}: 대사 중 펼친 안내가 사라짐"); continue; }
+                            var h = R(ui.HintRect);
+                            var parts = new List<(string, Rect)> { ("대사 판", R(sub.PlateRect)) };
+                            if (sub.TagRect != null && sub.TagRect.gameObject.activeInHierarchy) parts.Add(("이름띠", R(sub.TagRect)));
+                            if (both && inner.Visible) parts.Add(("속마음 판", R(inner.PlateRect)));
+                            foreach (var (nm, r) in parts) if (Hit(h, r)) bad.Add($"크기 {size} · {(line == one ? "1줄" : "여러 줄")} · 속마음 {both}: 펼친 안내가 {nm}과 겹침 {h} ↔ {r}");
+                            log.Add($"크기 {size} · {(line == one ? "1줄" : "여러 줄")} · 속마음 {both}: 안내 아래 {h.yMin:0} · 대사 판 위 {R(sub.PlateRect).yMax:0}");
+                        }
+                sub.Hide(); inner.Hide();
+                GameUi.HintMode = 0; yield return Lab.Frames(3);
+                var owner = new object();
+                GameUi.HideHints(owner, true); yield return Lab.Frames(3);
+                if (ui.ChipShown || ui.HintExpanded) bad.Add("숨김 중 칩·안내가 보임");
+                if (ui.ToggleHint()) bad.Add("숨김 중 토글이 먹힘");
+                GameUi.HideHints(owner, false); yield return Lab.Frames(3);
+                if (!ui.ChipShown) bad.Add("숨김을 풀어도 칩이 안 보임");
+                if (!ui.ToggleHint()) bad.Add("칩이 보이는데 토글이 안 먹힘");
+                yield return Lab.Frames(3);
+                if (!ui.HintExpanded || GameUi.HintMode != 1) bad.Add($"토글 뒤 펼침이 아님(설정 {GameUi.HintMode})");
+                TitleMenu.CycleHint(1);
+                if (GameUi.HintMode != 0) bad.Add($"설정 펼침 → 다음은 접음이어야 함: {GameUi.HintMode}");
+                TitleMenu.CycleHint(1);
+                if (GameUi.HintMode != -1) bad.Add($"설정 접음 → 다음은 자동이어야 함: {GameUi.HintMode}");
+            }
+            finally { GameUi.HintMode = keepMode; PlayerPrefs.SetInt(SubtitleUi.SizeKey, keepSize); }
+            Debug.Log("[Q] Q59 조작 안내" + System.Environment.NewLine + string.Join(System.Environment.NewLine, log));
+            Assert.IsEmpty(bad, string.Join(System.Environment.NewLine, bad));
+        }
+
         // ───────────────────────── Q57 글자·배경(2026-10-31 대표 "글자와 배경이 어지럽게 겹친다"): 대표 화면마다 판 ≥ 85% · 대비 · 글자끼리 겹침 0 · 화면 밖 0 · 공중/누운 월드 글자 0
         //   화면은 사실 화면 대신 UI 뺀 카메라 그림으로 배경을 잼. 나머지 화면(알바·전투·자전거·일시정지…)은 QA 봇 실제 화면(text_bad.tsv) — docs/15 8-12
         [UnityTest, Timeout(1800000)]

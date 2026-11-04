@@ -46,7 +46,8 @@ namespace Haengin
         public bool GuardShown => guard != null && guard.gameObject.activeSelf;
         public int OtherBarsShown { get { int n = 0; foreach (var b in bars.Values) if (b.Root.activeSelf) n++; return n; } }
         public TMP_FontAsset UsedFont => nameText != null ? nameText.font : null;
-        public static bool PadLast;
+        /// 마지막 입력 장치가 패드인지 — UiKit.PadLast 하나로 모음(B7)
+        public static bool PadLast { get => UiKit.PadLast; set => UiKit.PadLast = value; }
 
         Canvas canvas;
         RectTransform root;
@@ -222,9 +223,6 @@ namespace Haengin
             var me = pc.Me;
 
             // 조작 안내(마지막 입력 장치)
-            var gp = Gamepad.current; var kb = Keyboard.current; var ms = Mouse.current;
-            double tg = gp != null ? gp.lastUpdateTime : -1, tk = System.Math.Max(kb != null ? kb.lastUpdateTime : -1, ms != null ? ms.lastUpdateTime : -1);
-            if (tg > 0 || tk > 0) PadLast = tg > tk;
             GameUi.HintOverride = PadLast ? PadHint : KeyHint;
 
             // 7-1 체력(깎인 만큼 흰색 0.4초 남았다 줄어듦) · 30% 아래 깜빡

@@ -13,6 +13,7 @@ namespace Haengin
         public SubtitleUi Sub;
 
         public bool Visible => plate != null && plate.gameObject.activeSelf;
+        public RectTransform PlateRect => plate != null ? plate.rectTransform : null;
         Image plate;
         public string Text => text != null ? text.text : "";
         public TextMeshProUGUI Label => text;

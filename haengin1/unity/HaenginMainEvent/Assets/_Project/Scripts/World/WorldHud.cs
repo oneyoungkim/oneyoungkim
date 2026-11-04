@@ -41,10 +41,13 @@ namespace Haengin
         public RectTransform NextRect => next != null ? next.Plate.rectTransform : null;
 
         Image plate, goalPlate, fatFill;
-        TextMeshProUGUI dateText, dateExtra, timeText, walletText, envText, houseText, dueText, fatText, fatState, goalText, goalCount;
+        TextMeshProUGUI dateText, dateExtra, timeText, walletText, envText, envLabel, houseText, dueText, fatText, fatState, goalText, goalCount;
+        float envLabelW;
         UiKit.NextPlate next;
+        RouteHud routeHud; float routeLook; bool lastArrived;
         RectTransform toastRoot, buffRoot;
-        readonly List<(Image p, TextMeshProUGUI t)> chips = new List<(Image, TextMeshProUGUI)>();
+        readonly List<(Image p, TextMeshProUGUI t, TextMeshProUGUI v)> chips = new List<(Image, TextMeshProUGUI, TextMeshProUGUI)>();
+        string buffKey = "";
         public string BuffLine { get; private set; } = "";
         readonly List<(TextMeshProUGUI t, Image p, float left)> live = new List<(TextMeshProUGUI, Image, float)>();
         readonly Queue<string> pending = new Queue<string>();
@@ -68,11 +71,15 @@ namespace Haengin
             UiKit.Place(timeText.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-24f, -24f), new Vector2(200f, 62f));
             UiKit.Rule(pt, new Vector2(24f, -67f), 576f);
             // 머리말 글 상자(TMP 는 글꼴 ascender~descender 로 잼)가 값(Barlow 50) 상자와 닿지 않게 -71
-            UiKit.Label("지갑 머리말", pt, f, new Vector2(24f, -71f), 140f).text = "지갑";
-            UiKit.Label("생활비 머리말", pt, f, new Vector2(HouseX, -71f), 200f).text = "생활비";
-            UiKit.Label("피로 머리말", pt, f, new Vector2(FatX, -71f), 140f).text = "피로";
+            // 동네-3(2026-11-05): 머리말 줄을 4px 내림 — 8px(값 위 12px)는 바를로 글 상자 위 여백(1em)과 겹쳐 글자 감사(Q57) 겹침에 걸림
+            UiKit.Label("지갑 머리말", pt, f, new Vector2(24f, -75f), 140f).text = "지갑";
+            UiKit.Label("생활비 머리말", pt, f, new Vector2(HouseX, -75f), 200f).text = "생활비";
+            UiKit.Label("피로 머리말", pt, f, new Vector2(FatX, -75f), 140f).text = "피로";
             walletText = UiKit.TextAt("지갑", pt, UiKit.FNum(f), 50f, UiKit.Paper, new Vector2(24f, -118f), new Vector2(140f, 64f), TextAlignmentOptions.BaselineLeft);
-            envText = UiKit.TextAt("봉투", pt, UiKit.FNum(f), 22f, UiKit.PaperDim, new Vector2(24f, -170f), new Vector2(140f, 28f), TextAlignmentOptions.BaselineLeft);
+            envLabel = UiKit.TextAt("봉투 머리말", pt, UiKit.FMed(f), 18f, UiKit.PaperDim, new Vector2(24f, -170f), new Vector2(60f, 28f), TextAlignmentOptions.BaselineLeft);
+            envLabel.text = "봉투";
+            envLabelW = envLabel.GetPreferredValues("봉투").x + 8f;
+            envText = UiKit.TextAt("봉투", pt, UiKit.FNum(f), 22f, UiKit.PaperDim, new Vector2(24f + envLabelW, -170f), new Vector2(140f, 28f), TextAlignmentOptions.BaselineLeft);
             houseText = UiKit.TextAt("생활비", pt, UiKit.FNum(f), 50f, UiKit.Paper, new Vector2(HouseX, -118f), new Vector2(150f, 64f), TextAlignmentOptions.BaselineLeft);
             dueText = UiKit.TextAt("생활비 목표", pt, UiKit.FNum(f), 29f, UiKit.PaperDim, new Vector2(300f, -118f), new Vector2(150f, 64f), TextAlignmentOptions.BaselineLeft);
             fatText = UiKit.TextAt("피로 수", pt, UiKit.FNum(f), 50f, UiKit.Paper, new Vector2(FatX, -118f), new Vector2(70f, 64f), TextAlignmentOptions.BaselineLeft);
@@ -122,8 +129,9 @@ namespace Haengin
             timeText.text = UiKit.Tab(i.Time);
             walletText.text = UiKit.Tab(UiKit.Won(i.Wallet));
             UiKit.FitWidth(walletText, HouseX - 24f - 14f, 50f, 34f);      // 큰 지갑(10만 넘음)이 생활비 칸에 닿지 않게
-            envText.text = i.EnvelopeKnown ? "봉투 " + UiKit.Tab(UiKit.Won(i.Envelope), 0.46f) : "";
-            UiKit.FitWidth(envText, HouseX - 24f - 14f, 22f, 16f);
+            envText.text = i.EnvelopeKnown ? UiKit.Tab(UiKit.Won(i.Envelope)) : "";
+            envLabel.gameObject.SetActive(i.EnvelopeKnown);
+            UiKit.FitWidth(envText, HouseX - 24f - envLabelW - 14f, 22f, 16f);
             houseText.text = UiKit.Tab(UiKit.Won(i.Household));
             dueText.text = "/ " + UiKit.Won(i.Due);
             // 생활비 + '/ 목표' 가 피로 칸 앞(12px)에서 끝나게
@@ -152,28 +160,38 @@ namespace Haengin
         {
             Build();
             var sb = new System.Text.StringBuilder();
+            foreach (var (tag, text, _) in list) sb.Append(tag).Append(' ').Append(text).Append(" | ");
+            string key = sb.ToString();
+            if (key == buffKey) return;      // D10: 바뀔 때만 다시 그림(매 프레임 문자열·배치 계산 없게)
+            buffKey = key;
+            string paper = ColorUtility.ToHtmlStringRGB(UiKit.Paper);
             for (int i = 0; i < list.Count || i < chips.Count; i++)
             {
                 if (i >= chips.Count)
                 {
                     var p = UiKit.Plate("효과 " + i, buffRoot, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(130f, 40f));
                     var t = UiKit.Text("글", p.transform, UiKit.FMed(Fonts), 19f, UiKit.Paper, TextAlignmentOptions.MidlineLeft);
-                    UiKit.Place(t.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(8f, 0f), new Vector2(260f, 38f));
-                    chips.Add((p, t));
+                    UiKit.Place(t.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(8f, 0f), new Vector2(60f, 38f));
+                    var v = UiKit.Text("값", p.transform, UiKit.FNum(Fonts), 22f, UiKit.Paper, TextAlignmentOptions.MidlineLeft);
+                    UiKit.Place(v.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(40f, 0f), new Vector2(240f, 38f));
+                    chips.Add((p, t, v));
                 }
-                var (pl, tx) = chips[i];
+                var (pl, tx, vx) = chips[i];
                 bool on = i < list.Count;
                 pl.gameObject.SetActive(on);
                 if (!on) continue;
                 var (tag, text, col) = list[i];
-                tx.text = $"<mark=#{ColorUtility.ToHtmlStringRGB(col)}cc><color=#F4EFE6> {tag} </color></mark> {text}";
-                float w = Mathf.Min(280f, tx.preferredWidth + 18f);
+                tx.text = $"<mark=#{ColorUtility.ToHtmlStringRGB(col)}cc><color=#{paper}> {tag} </color></mark>";
+                float tw = tx.GetPreferredValues(tx.text).x;
+                tx.rectTransform.sizeDelta = new Vector2(tw + 2f, 38f);
+                vx.text = UiKit.Tab(text);
+                vx.rectTransform.anchoredPosition = new Vector2(8f + tw + 6f, 0f);
+                float w = Mathf.Min(300f, 8f + tw + 6f + vx.GetPreferredValues(vx.text).x + 12f);
                 pl.rectTransform.sizeDelta = new Vector2(w, 40f);
                 float x = 0f; for (int k = 0; k < i; k++) x += chips[k].p.rectTransform.sizeDelta.x + 8f;
                 pl.rectTransform.anchoredPosition = new Vector2(x, 0f);
-                sb.Append(tag).Append(' ').Append(text).Append(" | ");
             }
-            BuffLine = sb.ToString();
+            BuffLine = key;
         }
 
         /// 왼쪽 아래 알림(3.2초, 최대 4줄 — 넘치면 줄 서서 기다림)
@@ -269,9 +287,12 @@ namespace Haengin
             if (!on) return;
             var g = RouteGuide.Current;
             int dm = g != null && g.isActiveAndEnabled && g.CurrentTarget != null ? Mathf.RoundToInt(g.Distance) : -1;
-            if (dm == lastDist && next.Title.text == nextTitle && nextPlace == lastPlace && nextTime == lastTime) return;      // 바뀔 때만(매 프레임 문자열 없게)
-            lastDist = dm; lastPlace = nextPlace; lastTime = nextTime;
-            string head = "다음" + (nextPlace.Length > 0 ? " · " + nextPlace : "") + (dm >= 0 ? $" · {dm}m" : "");
+            // B12(2026-11-05): 길잡이 '도착'·완주 알림은 자유 이동 중엔 안 보이던 것 → 그동안 머리말을 '도착'으로
+            if (routeHud == null && Time.unscaledTime > routeLook) { routeHud = FindAnyObjectByType<RouteHud>(); routeLook = Time.unscaledTime + 2f; }
+            bool arrived = routeHud != null && routeHud.isActiveAndEnabled && routeHud.Flashing;
+            if (dm == lastDist && next.Title.text == nextTitle && nextPlace == lastPlace && nextTime == lastTime && arrived == lastArrived) return;      // 바뀔 때만(매 프레임 문자열 없게)
+            lastDist = dm; lastPlace = nextPlace; lastTime = nextTime; lastArrived = arrived;
+            string head = arrived ? "도착" : "다음" + (nextPlace.Length > 0 ? " · " + nextPlace : "") + (dm >= 0 ? $" · {dm}m" : "");
             nextHead = head; next.Set(head, nextTitle, nextTime);
         }
 

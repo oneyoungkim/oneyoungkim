@@ -25,6 +25,23 @@ namespace Haengin
         public static readonly Color EndureLit = new Color32(255, 64, 64, 255);
         public enum Edge { None, Top, Left }
 
+        // ───────────────────────── 마지막 입력 장치(B7 — 칩 H/R3 · 상호작용 E/× · 패배 안내 · 전투 안내가 같이 씀, 프레임마다 한 번 잼)
+        static int padFrame = -1;
+        static bool padLast;
+        public static bool PadLast
+        {
+            get
+            {
+                if (padFrame == Time.frameCount) return padLast;
+                padFrame = Time.frameCount;
+                var gp = UnityEngine.InputSystem.Gamepad.current; var kb = UnityEngine.InputSystem.Keyboard.current; var ms = UnityEngine.InputSystem.Mouse.current;
+                double tg = gp != null ? gp.lastUpdateTime : -1, tk = System.Math.Max(kb != null ? kb.lastUpdateTime : -1, ms != null ? ms.lastUpdateTime : -1);
+                if (tg > 0 || tk > 0) padLast = tg > tk;
+                return padLast;
+            }
+            set { padLast = value; padFrame = Time.frameCount; }
+        }
+
         // ───────────────────────── 선형 색공간 보정(2026-11-05 A1)
         // 프로젝트가 Linear 색공간이라 UI 알파가 선형 빛 공간에서 섞인다 → 시안(브라우저 sRGB 섞기)의 0.93 이 화면에서는 밝은 배경 위 0.73~0.84 로 옅게 보였다.
         // 규칙: ① 어두운 반투명(먹 판·덮개)은 Seen(색, 시안 알파)로만 지정한다 — 가장 밝은 배경(흰색)에서 시안과 같게 보이는 섞기 알파로 바꿔 줌(어두운 배경에선 시안보다 조금 진함).
@@ -105,10 +122,20 @@ namespace Haengin
         public static TextMeshProUGUI Label(string name, Transform parent, UiFonts f, Vector2 pos, float width = 300f, float size = 18f, Color? c = null) =>
             TextAt(name, parent, FMed(f), size, c ?? PaperDim, pos, new Vector2(width, size * 1.45f));
 
-        static readonly Regex Digits = new Regex("[0-9]+");
+        static readonly Regex Digits = new Regex("(<[^>]*>)|([0-9]+)");      // B14: 서식 태그(<size=29>·<color=#…>) 안 숫자는 건너뜀
         /// 바뀌는 숫자는 자리 폭 고정 — 숫자 덩어리만 &lt;mspace&gt;(쉼표·쌍점·빗금은 제 폭). Barlow 숫자 폭(옆 여백 포함) 0.28~0.48em, 잉크 폭은 0.45em 안 → 0.45em
         public static string Tab(string s, float em = 0.45f) =>
-            string.IsNullOrEmpty(s) ? "" : Digits.Replace(s, m => "<mspace=" + em.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "em>" + m.Value + "</mspace>");
+            string.IsNullOrEmpty(s) ? "" : Digits.Replace(s, m => m.Groups[1].Success ? m.Value : "<mspace=" + em.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "em>" + m.Value + "</mspace>");
+
+        /// 본문 글꼴 글 속 숫자만 Barlow(+ 자리 폭 고정) — HUD 덧말처럼 한 글에 글꼴이 하나인 곳(B10). 대사·선택지 문장 속 숫자는 본문 글꼴 그대로(A6)
+        public static string NumRich(string s, UiFonts f = null, float em = 0.45f)
+        {
+            var n = FNum(f);
+            if (string.IsNullOrEmpty(s) || n == null) return s ?? "";
+            MaterialReferenceManager.AddFontAsset(n);      // <font="이름"> 이 Resources 없이 찾게
+            string open = "<font=\"" + n.name + "\"><mspace=" + em.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "em>";
+            return Digits.Replace(s, m => m.Groups[1].Success ? m.Value : open + m.Value + "</mspace></font>");
+        }
 
         /// 글이 maxW 보다 넓으면 글자 크기를 줄임(min 까지) — 큰 돈 숫자가 옆 칸에 닿지 않게
         public static float FitWidth(TextMeshProUGUI t, float maxW, float size, float min)
@@ -124,21 +151,22 @@ namespace Haengin
 
         // ───────────────────────── 이름띠
         /// 이름띠(주황 바탕 · 먹 글자 Noto Black). 폭은 SetTag 가 글에 맞춤
-        public static TextMeshProUGUI NameTag(string name, Transform parent, UiFonts f, Vector2 anchor, Vector2 pivot, Vector2 pos, Vector2 size, float fontSize, out Image plate)
+        public static TextMeshProUGUI NameTag(string name, Transform parent, UiFonts f, Vector2 anchor, Vector2 pivot, Vector2 pos, Vector2 size, float fontSize, out Image plate, float padL = -1f)
         {
             plate = Panel(name, parent, anchor, pivot, pos, size, Accent);
             var t = Text("이름", plate.transform, FBlack(f), fontSize, Ink, TextAlignmentOptions.MidlineLeft);
             Stretch(t.rectTransform);
-            t.rectTransform.offsetMin = new Vector2(fontSize * 0.6f, 0f);
+            t.rectTransform.offsetMin = new Vector2(padL >= 0f ? padL : fontSize * 0.6f, 0f);      // 대화-2: 대사 판은 본문 왼쪽 여백(PadX)과 같게
             t.rectTransform.offsetMax = new Vector2(-fontSize * 0.4f, 0f);
             return t;
         }
 
         /// 이름띠 글 + 폭(최소 minW, 글 + 양옆 여백). 빈 글이면 띠를 숨김
-        public static void SetTag(Image plate, TextMeshProUGUI t, string s, float minW)
+        public static void SetTag(Image plate, TextMeshProUGUI t, string s, float minW, float padL = -1f)
         {
             t.text = s ?? "";
-            float w = Mathf.Max(minW, t.GetPreferredValues(t.text).x + t.fontSize * 1.0f + 2f);
+            if (padL >= 0f) t.rectTransform.offsetMin = new Vector2(padL, 0f);
+            float w = Mathf.Max(minW, t.GetPreferredValues(t.text).x + (padL >= 0f ? padL : t.fontSize * 0.6f) + t.fontSize * 0.4f + 2f);
             plate.rectTransform.sizeDelta = new Vector2(w, plate.rectTransform.sizeDelta.y);
             plate.gameObject.SetActive(!string.IsNullOrEmpty(s));
         }
@@ -228,7 +256,7 @@ namespace Haengin
 
         // ───────────────────────── 표 줄
         /// 표 줄: 항목(Noto Medium) · 얇은 주황 막대 · 값(Barlow, 오른쪽 맞춤) · 아래 구분선. 판 왼쪽 위 기준
-        public struct TableRow { public RectTransform Rt; public TextMeshProUGUI Label, Value; public Image Fill, Back, Rule; }
+        public struct TableRow { public RectTransform Rt; public TextMeshProUGUI Label, Value; public Image Fill, Back, Rule, STick; }
 
         public static TableRow Table(string name, Transform parent, UiFonts f, Vector2 pos, float width, float height, float labelW, float valueW, float labelSize, float valueSize, float barH)
         {
@@ -243,10 +271,13 @@ namespace Haengin
             var value = Text("값", row, FNum(f), valueSize, Paper, TextAlignmentOptions.MidlineRight);
             Place(value.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), Vector2.zero, new Vector2(valueW, height));
             var rule = Panel("구분선", row, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, new Vector2(width, RuleW), RuleColor);
-            return new TableRow { Rt = row, Label = label, Value = value, Fill = fill, Back = back, Rule = rule };
+            // A6(2026-11-05): 막대 = D→S 점수 → 오른쪽 끝에 S 눈금(막대가 어디까지 차면 S 인지)
+            var tick = Panel("S 눈금", row, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(labelW + gap + barW, 0f), new Vector2(2f, barH + 14f), PaperDim);
+            return new TableRow { Rt = row, Label = label, Value = value, Fill = fill, Back = back, Rule = rule, STick = tick };
         }
 
         // ───────────────────────── 안내 글의 키 이름 강조(작은 글 → Warm)
+        static readonly Regex Symbols = new Regex("^[□△○×]+$");
         static readonly Regex KeyWords = new Regex(@"(L1|L2|R1|R2|L3|R3|L↓|L↑|L 좌/우|Space|Shift|Ctrl|Enter|Esc|[□△○×]+)");
         /// '다음' 안내 판(오른쪽 위 538×106 · 왼쪽 주황 줄): 머리말 '다음 · 국밥집 · 73m'(Medium 18 흐림) · 제목(Noto Black 32) · 시각(Barlow 38 Warm).
         /// 세계 HUD(WorldHud)와 이야기 이동 장면의 길잡이(RouteHud)가 같은 판을 씀
@@ -287,7 +318,8 @@ namespace Haengin
         {
             if (string.IsNullOrEmpty(s)) return "";
             string hex = ColorUtility.ToHtmlStringRGB(Warm);
-            return KeyWords.Replace(s, m => "<color=#" + hex + ">" + m.Value + "</color>");
+            // 드릴-8(2026-11-05): □△○× 기호는 가는 외곽선이라 Warm 이 흐림(3.6~4.3:1) → 기호만 한 단계 크고 굵게
+            return KeyWords.Replace(s, m => "<color=#" + hex + ">" + (Symbols.IsMatch(m.Value) ? "<size=118%><b>" + m.Value + "</b></size>" : m.Value) + "</color>");
         }
     }
 }

@@ -53,6 +53,8 @@ namespace Haengin
             UiKit.Stretch(iconText.rectTransform);
             iconText.text = "도감";
             icon.gameObject.SetActive(false);
+            // B6(2026-11-05): 4:3 에서 대사 판(49) 뒤로 가려지던 것 → 아이콘만 대사 판 위 순서(50)
+            var ic = icon.gameObject.AddComponent<Canvas>(); ic.overrideSorting = true; ic.sortingOrder = 50;
 
             var g = UiKit.Panel("도감", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1240f, 900f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.97f));
             grid = g.gameObject;
