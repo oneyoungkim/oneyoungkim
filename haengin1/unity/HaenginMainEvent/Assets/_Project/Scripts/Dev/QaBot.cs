@@ -563,6 +563,7 @@ namespace Haengin
             if (parts.Contains("b")) yield return PartB();
             if (parts.Contains("c")) yield return PartC();      // QA 2차: A 항목 고친 뒤 사진 · 핵심 카드 실제 장면 녹화
             if (parts.Contains("l")) yield return PartL();      // 레슨 카드 카메라: 코치 6명 실제 흐름 · 실제 화면(오버레이 그대로) · N13
+            if (parts.Contains("u")) yield return PartU();      // B안 「중계 화면」 전/후: 동네 HUD · 대화·속마음 · 선택지 · 드릴 HUD · 드릴 결과
             Summary();
             yield return Frames(30);
             Application.Quit();

@@ -1,5 +1,7 @@
 // 행인1의 메인이벤트 — 선택지(docs/09_M3_버티컬슬라이스_설계.md 2-2·2-3): 1~3개 세로 목록. 십자키·왼스틱·방향키(Talk/Navigate), × · Enter 고르기(Talk/Next),
 // 마우스는 움직였을 때만 올린 항목을 고르고 누르면 고름(GameUi 메뉴와 같은 규칙). 실제 시간으로 돈다.
+// B안(docs/16): 화면 오른쪽 576×77 줄 10px 간격, 글자 35 — 고른 줄 = 종이 판 + 왼쪽 주황 6px + 먹 Black, 안 고른 줄 = 먹 판 + 종이색 Bold.
+// 보기 글의 [ ] 괄호는 화면에서만 뺌(데이터·Label 은 그대로).
 using System;
 using System.Collections;
 using TMPro;
@@ -19,13 +21,16 @@ namespace Haengin
         public bool Visible => root != null && root.activeSelf;
         public int Selected { get; private set; }
         public int Count { get; private set; }
-        public string Label(int i) => rows != null && i >= 0 && i < Count ? rows[i].Label.text : "";
+        public string Label(int i) => rows != null && i >= 0 && i < Count ? opts[i] : "";
+        /// 화면에 보이는 글(괄호 뺀 것)
+        public string Shown(int i) => rows != null && i >= 0 && i < Count ? rows[i].Label.text : "";
         /// 지금 고르는 중인 보기 위치(테스트·봇 — 화면 좌표)
         public RectTransform Row(int i) => rows != null && i >= 0 && i < Max ? rows[i].Rt : null;
 
-        struct R { public RectTransform Rt; public Image Plate, Bar; public TextMeshProUGUI Label; }
+        public const float RowW = 576f, RowH = 77f, RowGap = 10f, FontSize = 35f;
         GameObject root;
-        R[] rows;
+        UiKit.Row[] rows;
+        readonly string[] opts = new string[Max];
         Vector2 lastMouse;
         int forced = -1;
 
@@ -36,16 +41,10 @@ namespace Haengin
             var n = UiKit.Node("선택지", transform);
             UiKit.Stretch(n);
             root = n.gameObject;
-            rows = new R[Max];
+            rows = new UiKit.Row[Max];
+            var c5 = new Vector2(0.5f, 0.5f);
             for (int i = 0; i < Max; i++)
-            {
-                var c5 = new Vector2(0.5f, 0.5f);
-                var plate = UiKit.Panel("보기 " + (i + 1), root.transform, c5, c5, Vector2.zero, new Vector2(620f, 58f), UiKit.Ink);
-                var bar = UiKit.Panel("고른 표시", plate.transform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(8f, 58f), UiKit.Accent);
-                var label = UiKit.Text("글", plate.transform, Fonts != null ? Fonts.B : null, 27f, UiKit.Paper, TextAlignmentOptions.Center);
-                UiKit.Stretch(label.rectTransform);
-                rows[i] = new R { Rt = (RectTransform)plate.transform, Plate = plate, Bar = bar, Label = label };
-            }
+                rows[i] = UiKit.ListRow("보기 " + (i + 1), root.transform, Fonts, c5, c5, Vector2.zero, new Vector2(RowW, RowH), FontSize);
             root.SetActive(false);
         }
 
@@ -58,13 +57,17 @@ namespace Haengin
             Count = Mathf.Clamp(options.Length, 1, Max);
             Selected = 0;
             forced = -1;
+            // 오른쪽(1920 기준 x 1116~1692) — 좁은 화면에선 오른쪽 여백 38 안으로
+            float half = ((RectTransform)transform).rect.width * 0.5f;
+            float cx = half > 10f ? Mathf.Min(444f, half - 38f - RowW * 0.5f) : 444f;
             for (int i = 0; i < Max; i++)
             {
                 bool on = i < Count;
                 rows[i].Rt.gameObject.SetActive(on);
                 if (!on) continue;
-                rows[i].Label.text = options[i];
-                rows[i].Rt.anchoredPosition = new Vector2(220f, 40f - i * 70f);
+                opts[i] = options[i] ?? "";
+                rows[i].Label.text = Bare(opts[i]);
+                rows[i].Rt.anchoredPosition = new Vector2(cx, 31f - i * (RowH + RowGap));
             }
             Refresh();
             root.SetActive(true);
@@ -103,13 +106,16 @@ namespace Haengin
 
         void Refresh()
         {
-            for (int i = 0; i < Max; i++)
-            {
-                bool sel = i == Selected;
-                rows[i].Plate.color = sel ? UiKit.Paper : new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.92f);
-                rows[i].Bar.enabled = sel;
-                rows[i].Label.color = sel ? UiKit.Ink : UiKit.Paper;
-            }
+            for (int i = 0; i < Max; i++) UiKit.SetRow(rows[i], i == Selected, Fonts);
+        }
+
+        /// 화면용: 글 앞뒤를 감싼 [ ] 만 뺌('[참는다]' → '참는다')
+        public static string Bare(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return "";
+            var t = s.Trim();
+            if (t.Length >= 2 && t[0] == '[' && t[t.Length - 1] == ']' && t.IndexOf(']') == t.Length - 1) t = t.Substring(1, t.Length - 2).Trim();
+            return t;
         }
 
         int RowAt(Vector2 screen)

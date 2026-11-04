@@ -33,7 +33,7 @@ namespace Haengin
         public bool ResultShown => result != null && result.activeSelf;
         public bool YachaBarShown => ybar != null && ybar.activeSelf;
         public float YachaBarValue => yFill != null ? yFill.fillAmount : 0f;
-        public string PromptText => prompt != null && prompt.activeSelf ? promptText.text : "";
+        public string PromptText => prompt != null && prompt.activeSelf ? promptLine : "";
 
         Canvas canvas, top;
         RectTransform root, topRoot;
@@ -176,7 +176,7 @@ namespace Haengin
             if (pc != null && !pc.Active && !GameState.Modal && !GameState.InputLocked && !storyBusy) near = Interactable.Nearest(pc.transform.position);
             bool showP = near != null;
             if (prompt.activeSelf != showP) prompt.SetActive(showP);
-            if (showP) promptText.text = (CombatHud.PadLast ? "× " : "E ") + near.Prompt;
+            if (showP) SetPrompt(CombatHud.PadLast ? "×" : "E", near.Prompt);
 
             // 패배 화면: 먹이 1초에 번짐 → 「…일어나.」 → 다시 / 그만
             if (DefeatShown)
@@ -317,8 +317,16 @@ namespace Haengin
             Anchor(result, new Vector2(1f, 0f), new Vector2(-48f, 120f), pivot: new Vector2(1f, 0f));
             result.SetActive(false);
 
-            prompt = Plate("상호작용", root, new Color(Ink.r, Ink.g, Ink.b, 0.94f), out promptText, 26f, Paper);
-            Anchor(prompt, new Vector2(0.5f, 0f), new Vector2(0f, 150f));
+            // 상호작용 안내(B안 docs/16): 아래 가운데 먹 판 408×72 — 주황 키 칸 72×72(먹 글자 Barlow) · 행동(Noto Black 30) · 대상(Medium 22 흐림)
+            if (UiKit.Fallback == null && Font != null) UiKit.Fallback = Font;
+            var pimg = UiKit.Plate("상호작용", root, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 106f), new Vector2(408f, 72f));
+            prompt = pimg.gameObject;
+            promptKeyBox = UiKit.KeyChip("키 칸", pimg.transform, null, "E", 72f, true, out promptKey);
+            promptKeyBox.anchoredPosition = Vector2.zero;
+            promptText = UiKit.Text("행동", pimg.transform, UiKit.FBlack(), 30f, Paper, TextAlignmentOptions.MidlineLeft);
+            UiKit.Place(promptText.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(94f, 0f), new Vector2(300f, 60f));
+            promptWhat = UiKit.Text("대상", pimg.transform, UiKit.FMed(), 22f, UiKit.PaperDim, TextAlignmentOptions.MidlineLeft);
+            UiKit.Place(promptWhat.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(300f, 1f), new Vector2(300f, 60f));
             prompt.SetActive(false);
 
             // 야차 큰 바(위 가운데 600×14) + 이름 + 다운 점 3개
@@ -384,6 +392,34 @@ namespace Haengin
             r.anchorMin = r.anchorMax = a;
             r.pivot = pivot ?? new Vector2(0.5f, 0.5f);
             r.anchoredPosition = pos;
+        }
+
+        TextMeshProUGUI promptKey, promptWhat;
+        RectTransform promptKeyBox;
+        string promptLine = "", promptSrc;
+
+        /// 상호작용 안내 글: "나가기 — 마을버스(후문시장 앞)" → 행동 「나가기」 + 대상 「마을버스(후문시장 앞)」. PromptText 는 원래 한 줄("E " + 글)
+        void SetPrompt(string key, string text)
+        {
+            string line = key + " " + text;
+            if (line == promptLine) return;
+            promptLine = line;
+            if (promptKey.text != key) UiKit.SetKey(promptKeyBox, promptKey, key, 72f);
+            if (text == promptSrc) return;
+            promptSrc = text;
+            string act = text ?? "", what = "";
+            int i = act.IndexOf(" — ", System.StringComparison.Ordinal);
+            if (i < 0) i = act.IndexOf("  ·  ", System.StringComparison.Ordinal);
+            if (i > 0) { what = act.Substring(i).Trim(' ', '—', '·').Trim(); act = act.Substring(0, i).Trim(); }
+            promptText.text = act;
+            promptWhat.text = what;
+            float aw = Mathf.Min(promptText.GetPreferredValues(act).x, 520f);
+            float ww = what.Length > 0 ? Mathf.Min(promptWhat.GetPreferredValues(what).x, 420f) : 0f;
+            promptText.rectTransform.sizeDelta = new Vector2(aw + 4f, 60f);
+            promptWhat.rectTransform.anchoredPosition = new Vector2(94f + aw + 14f, 1f);
+            promptWhat.rectTransform.sizeDelta = new Vector2(ww + 4f, 60f);
+            float w = 94f + aw + (ww > 0f ? 14f + ww : 0f) + 24f;
+            ((RectTransform)prompt.transform).sizeDelta = new Vector2(Mathf.Max(408f, w), 72f);
         }
 
         GameObject Plate(string name, Transform parent, Color c, out TextMeshProUGUI t, float size, Color tc)

@@ -85,19 +85,24 @@ namespace Haengin.EditorGame
             var brush = KoreanFont.EnsureFont(KoreanFont.BrushTtf, KoreanFont.BrushAsset, "KR_Brush_SDF", Notes);
             var hand = File.Exists(KoreanFont.HandTtf) ? KoreanFont.EnsureFont(KoreanFont.HandTtf, KoreanFont.HandAsset, "KR_Hand_SDF", Notes) : null;
             if (hand == null) Notes.Add($"손글씨 글꼴 없음: {KoreanFont.HandTtf} — 자리만(본문 글꼴로 대신)");
+            // B안(docs/16): 본문 Medium · 제목·이름 Black · 숫자 Barlow(표본 128 — 등급 480px)
+            var medium = KoreanFont.EnsureFont(KoreanFont.MediumTtf, KoreanFont.MediumAsset, "KR_Medium_SDF", Notes);
+            var black = KoreanFont.EnsureFont(KoreanFont.BlackTtf, KoreanFont.BlackAsset, "KR_Black_SDF", Notes);
+            var num = KoreanFont.EnsureFont(KoreanFont.NumTtf, KoreanFont.NumAsset, "Num_Barlow_SDF", Notes, 128, 12);
             var f = AssetDatabase.LoadAssetAtPath<UiFonts>(FontsPath);
             if (f == null) { f = ScriptableObject.CreateInstance<UiFonts>(); AssetDatabase.CreateAsset(f, FontsPath); }
             f.Body = body; f.Brush = brush; f.Hand = hand;
-            // 붓·손글씨 글꼴에 없는 기호(〈〉 등)는 본문 글꼴로 대신 그린다(TMP 대체 글꼴)
-            foreach (var fa in new[] { brush, hand })
+            f.Medium = medium; f.Black = black; f.Num = num;
+            // 붓·손글씨 글꼴에 없는 기호(〈〉 등)는 본문 글꼴로 대신 그린다(TMP 대체 글꼴). 숫자 글꼴(라틴뿐)에 섞인 한글·기호(□△×)도 본문 글꼴로 — 빈 네모 없게
+            foreach (var fa in new[] { brush, hand, medium, black, num })
             {
                 if (fa == null || body == null) continue;
                 if (fa.fallbackFontAssetTable == null) fa.fallbackFontAssetTable = new List<TMP_FontAsset>();
                 if (!fa.fallbackFontAssetTable.Contains(body)) { fa.fallbackFontAssetTable.Add(body); EditorUtility.SetDirty(fa); }
             }
             EditorUtility.SetDirty(f);
-            foreach (var fa in new[] { body, brush, hand }) if (fa != null) KoreanFont.ResetDynamic(fa);
-            Notes.Add($"글꼴: 본문 {body?.name} · 붓 {brush?.name} · 손글씨 {(hand != null ? hand.name : "없음")} → {FontsPath}");
+            foreach (var fa in new[] { body, brush, hand, medium, black, num }) if (fa != null) KoreanFont.ResetDynamic(fa);
+            Notes.Add($"글꼴: 본문 {body?.name} · 붓 {brush?.name} · 손글씨 {(hand != null ? hand.name : "없음")} · B안 {medium?.name}·{black?.name}·{num?.name} → {FontsPath}");
             return f;
         }
 

@@ -71,9 +71,15 @@ namespace Haengin
             {
                 var title = FindAnyObjectByType<TitleMenu>();
                 if (title != null) title.Choose("새 게임");
-                for (int i = 0; i < 3600 && (W == null || !W.Active); i++) yield return null;
-                W.BotSkill = 0.9f; W.BotRead = 0.05f;
-                for (int i = 0; i < 60 * 600 && !W.Free; i++) yield return null;
+                // 2026-11-05: 봇 읽기를 세계가 생기자마자 켬(1장 카드는 뜰 때 봇 값을 읽음 — 예전엔 Active 를 기다리다 1장 카드에서 멈춤) · 그래도 떠 있으면 Enter
+                for (int i = 0; i < 3600 && W == null; i++) yield return null;
+                if (W != null) { W.BotSkill = 0.9f; W.BotRead = 0.05f; }
+                float held = 0f;
+                for (int i = 0; i < 60 * 600 && (W == null || !W.Free); i++)
+                {
+                    if (W != null && W.ChapterView != null && W.ChapterView.Shown) { held += Time.unscaledDeltaTime; if (held > 1.5f) { held = 0f; yield return Tap(Key.Enter); } }
+                    yield return null;
+                }
             }
         }
 

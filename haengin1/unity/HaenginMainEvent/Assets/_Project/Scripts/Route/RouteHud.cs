@@ -1,4 +1,4 @@
-// 행인1의 메인이벤트 — 길잡이 HUD 한 줄(화면 위 가운데): "다음: 반시우네 집 앞 · 23m"
+// 행인1의 메인이벤트 — 길잡이 HUD 한 줄: "다음: 반시우네 집 앞 · 23m" — B안(docs/16): 오른쪽 위 '다음' 판(머리말 '다음 · 23m' + 제목). 자유 이동 중엔 세계 HUD 의 '다음' 판이 맡고 이 판은 숨김
 // 글은 RouteGuide.Current 에서 읽기만 한다(HudLine). 도착하면 1.6초 동안 "도착: …" 을 보이고 다음 목표로 넘어간다.
 // 마지막 체크포인트에 닿으면 "도착: …" 을 4초 보인 뒤 판을 접는다. 부품(Canvas·판·글)은 RouteSetup(에디터)이 만든다.
 // 다른 HUD(대사·퀘스트)는 RouteGuide 의 공개 값·이벤트(CurrentTarget · Distance · Reached · Completed)를 직접 써도 된다.
@@ -41,7 +41,7 @@ namespace Haengin
         bool finished;
         string last;
 
-        void OnEnable() => Hook();
+        void OnEnable() { Hook(); BStyle(); }
         void OnDisable() => Unhook();
 
         /// 실행 확인 한 줄(Player.log, DebugHud 의 '[M1] 실행 확인' 옆): HUD 글·한글 글리프가 실제로 그려지는지
@@ -93,6 +93,7 @@ namespace Haengin
         void LateUpdate()
         {
             Hook();
+            BStyle();
             string line;
             if (hooked != null && !hooked.isActiveAndEnabled) line = "";      // M3: 무대 장면(Zone1 루트 꺼짐)에선 도착 알림도 숨김
             else if (Time.unscaledTime < flashUntil) line = flash;
@@ -103,11 +104,19 @@ namespace Haengin
         }
 
         /// 길잡이 판의 화면 사각형(픽셀, 아래 왼쪽 원점). 판이 꺼져 있으면 false. 이름표가 판 밑으로 비켜 갈 때 쓴다(NameTags)
+        /// B안: 자유 이동 중엔 세계 HUD 의 '다음' 판이 이 판 대신 뜸 → 그 판의 사각형
         public bool TryGetPlateRect(out Rect r)
         {
             r = default;
+            var world = WorldHud.Live;
+            if (world != null && world.NextShown && world.NextRect != null && world.NextRect.gameObject.activeInHierarchy) return ScreenRect(world.NextRect, out r);
             if (Plate == null || !Plate.activeInHierarchy) return false;
-            var rt = (RectTransform)Plate.transform;
+            return ScreenRect((RectTransform)Plate.transform, out r);
+        }
+
+        static bool ScreenRect(RectTransform rt, out Rect r)
+        {
+            r = default;
             var cv = rt.GetComponentInParent<Canvas>();
             if (cv == null) return false;
             cv = cv.rootCanvas;
@@ -225,8 +234,8 @@ namespace Haengin
             if (vis) arrowImg.color = new Color(1f, 1f, 1f, arrowAlpha);
         }
 
-        /// 지금 글(테스트용)
-        public string Current => Text != null ? Text.text : "";
+        /// 지금 글(테스트용) — B안 판은 머리말·제목으로 나눠 보여 주므로 원래 한 줄을 돌려줌
+        public string Current => last ?? (Text != null ? Text.text : "");
 
         /// 도착 알림·완주 상태를 지운다(순간 이동·이어하기·촬영 때 RouteGuide.SetIndex 와 같이 부름)
         public void ResetFlash()
@@ -238,11 +247,57 @@ namespace Haengin
 
         public void Show(string line)
         {
-            if (line == last) return;
-            last = line;
-            bool on = !string.IsNullOrEmpty(line);
-            if (Text != null) { Text.text = line ?? ""; Text.enabled = on; }
+            if (line != last)
+            {
+                last = line;
+                bool has = !string.IsNullOrEmpty(line);
+                if (bHead != null)
+                {
+                    // "다음: 국밥집 · 73m" → 머리말 「다음 · 73m」 + 제목 「국밥집」 · "도착: 국밥집" → 「도착」 + 「국밥집」
+                    string s = line ?? "", head = "", title = s;
+                    int c = s.IndexOf(": ", System.StringComparison.Ordinal);
+                    if (c > 0) { head = s.Substring(0, c); title = s.Substring(c + 2); }
+                    int dot = title.LastIndexOf(" · ", System.StringComparison.Ordinal);
+                    if (dot > 0 && title.EndsWith("m")) { head += " · " + title.Substring(dot + 3); title = title.Substring(0, dot); }
+                    bHead.text = UiKit.Tab(head);
+                    Text.text = title;
+                    UiKit.FitWidth(Text, UiKit.NextPlate.Inner, 32f, 22f);
+                }
+                else if (Text != null) Text.text = line ?? "";
+                if (Text != null) Text.enabled = has;
+            }
+            // B안: 자유 이동 중엔 세계 HUD 오른쪽 위 '다음' 판이 같은 안내(거리 포함)를 맡음 → 이 판은 숨김(겹침·중복 없앰)
+            var world = WorldHud.Live;
+            bool on = !string.IsNullOrEmpty(last) && !(world != null && world.NextShown);
             if (Plate != null && Plate.activeSelf != on) Plate.SetActive(on);
+        }
+
+        // ───────────────────────── B안 판(docs/16): 장면에 저장된 옛 판(위 가운데 종이 띠)을 실행할 때 오른쪽 위 '다음' 판 모양으로
+        TextMeshProUGUI bHead;
+        bool bDone;
+
+        void BStyle()
+        {
+            if (bDone || Plate == null || Text == null) return;
+            bDone = true;
+            var img = Plate.GetComponent<UnityEngine.UI.Image>();
+            if (img == null || Text.gameObject == Plate || !Text.transform.IsChildOf(Plate.transform)) return;      // 시험용 맨 글 판은 그대로
+            var f = UiFonts.Current;
+            if (UiKit.Fallback == null) UiKit.Fallback = Text.font;
+            foreach (var lg in Plate.GetComponents<UnityEngine.UI.LayoutGroup>()) lg.enabled = false;
+            foreach (var cf in Plate.GetComponents<UnityEngine.UI.ContentSizeFitter>()) cf.enabled = false;
+            for (int i = 0; i < Plate.transform.childCount; i++) { var ch = Plate.transform.GetChild(i); if (ch != Text.transform) ch.gameObject.SetActive(false); }
+            var rt = (RectTransform)Plate.transform;
+            var tr = new Vector2(1f, 1f);
+            UiKit.Place(rt, tr, tr, new Vector2(-38f, -38f), new Vector2(UiKit.NextPlate.W, UiKit.NextPlate.H));
+            img.color = UiKit.InkPlate;
+            UiKit.EdgeLine(Plate.transform, UiKit.Edge.Left, UiKit.Accent);
+            bHead = UiKit.Label("머리말", Plate.transform, f, new Vector2(UiKit.NextPlate.X, -12f), UiKit.NextPlate.Inner);
+            if (f != null) Text.font = f.K;
+            Text.fontSize = 32f; Text.color = UiKit.Paper; Text.alignment = TextAlignmentOptions.BaselineLeft;
+            Text.textWrappingMode = TextWrappingModes.NoWrap; Text.overflowMode = TextOverflowModes.Ellipsis;
+            UiKit.Place(Text.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(UiKit.NextPlate.X, -46f), new Vector2(UiKit.NextPlate.Inner, 60f));
+            string l = last; last = null; Show(l);
         }
     }
 }

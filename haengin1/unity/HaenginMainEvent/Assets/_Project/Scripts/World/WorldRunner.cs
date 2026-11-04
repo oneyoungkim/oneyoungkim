@@ -67,7 +67,7 @@ namespace Haengin
         string guideLabel = "";
 
         void OnEnable() { Instance = this; GameClock.DayChanged += OnDayChanged; }
-        void OnDisable() { if (Instance == this) Instance = null; GameClock.DayChanged -= OnDayChanged; }
+        void OnDisable() { if (Instance == this) Instance = null; GameClock.DayChanged -= OnDayChanged; GameUi.Teach = false; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() { Instance = null; BotPreset = null; }

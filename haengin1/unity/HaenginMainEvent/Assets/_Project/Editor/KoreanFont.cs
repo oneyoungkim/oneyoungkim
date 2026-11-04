@@ -20,7 +20,11 @@ namespace Haengin.EditorTools
         // M3(09 2-2·D04): 붓 = Black Han Sans(OFL) · 손글씨 = Gaegu(OFL, 이 PC 의 OYK 글꼴 후보 폴더에서 복사 — 7장 결정 19)
         public const string BrushTtf = Dir + "/BlackHanSans-Regular.ttf", BrushAsset = Dir + "/KR_Brush_SDF.asset";
         public const string HandTtf = Dir + "/Gaegu-Regular.ttf", HandAsset = Dir + "/KR_Hand_SDF.asset";
-        public static readonly string[] AllAssets = { AssetPath, BrushAsset, HandAsset };
+        // B안(2026-11-05, docs/16): 본문 Noto Sans KR Medium · 제목·이름 Black(google/fonts 변수 글꼴에서 fontTools 로 wght 500·900 정적 추출) · 숫자 Barlow Condensed Bold — 모두 OFL(같은 폴더 OFL-*.txt)
+        public const string MediumTtf = Dir + "/NotoSansKR-Medium.ttf", MediumAsset = Dir + "/KR_Medium_SDF.asset";
+        public const string BlackTtf = Dir + "/NotoSansKR-Black.ttf", BlackAsset = Dir + "/KR_Black_SDF.asset";
+        public const string NumTtf = Dir + "/BarlowCondensed-Bold.ttf", NumAsset = Dir + "/Num_Barlow_SDF.asset";
+        public static readonly string[] AllAssets = { AssetPath, BrushAsset, HandAsset, MediumAsset, BlackAsset, NumAsset };
         const string Tag = "[KoreanFont]";
 
         static readonly Color Paper = new Color(0.957f, 0.937f, 0.902f); // #F4EFE6
@@ -29,7 +33,10 @@ namespace Haengin.EditorTools
         public static TMP_FontAsset Ensure(List<string> notes) => EnsureFont(Ttf, AssetPath, "KR_Bold_SDF", notes);
 
         /// 같은 규칙(동적·표본 64·2048 아틀라스·빌드 때 비움)으로 다른 글꼴 에셋을 찾거나 만든다
-        public static TMP_FontAsset EnsureFont(string ttf, string assetPath, string assetName, List<string> notes)
+        public static TMP_FontAsset EnsureFont(string ttf, string assetPath, string assetName, List<string> notes) => EnsureFont(ttf, assetPath, assetName, notes, 64, 6);
+
+        /// 표본 크기·여백을 정해서(숫자 글꼴 = 표본 128 — 결과 카드 등급 480px 도 모서리가 무르지 않게. 라틴 글자뿐이라 아틀라스 하나로 충분)
+        public static TMP_FontAsset EnsureFont(string ttf, string assetPath, string assetName, List<string> notes, int sample, int padding)
         {
             if (AssetDatabase.FindAssets("t:TMP_Settings").Length == 0)
                 throw new Exception("TMP 기본 리소스(Assets/TextMesh Pro/Resources/TMP Settings.asset)가 없습니다. Window › TextMeshPro › Import TMP Essential Resources 로 넣으세요");
@@ -43,7 +50,7 @@ namespace Haengin.EditorTools
             var font = AssetDatabase.LoadAssetAtPath<Font>(ttf) ?? throw new Exception("글꼴을 읽지 못했습니다: " + ttf);
 
             // 표본 크기 64 · 여백 6(SDF 8% 남짓) · 2048 아틀라스(약 900자) · 모자라면 아틀라스를 더 만든다
-            fa = TMP_FontAsset.CreateFontAsset(font, 64, 6, GlyphRenderMode.SDFAA, 2048, 2048, AtlasPopulationMode.Dynamic, true)
+            fa = TMP_FontAsset.CreateFontAsset(font, sample, padding, GlyphRenderMode.SDFAA, 2048, 2048, AtlasPopulationMode.Dynamic, true)
                  ?? throw new Exception("TMP 글꼴 에셋을 만들지 못했습니다(Include Font Data 확인)");
             fa.name = assetName;
             AssetDatabase.CreateAsset(fa, assetPath);
@@ -53,7 +60,7 @@ namespace Haengin.EditorTools
             AssetDatabase.AddObjectToAsset(fa.atlasTextures[0], fa);
             EnsureFlags(fa);
             AssetDatabase.SaveAssets();
-            notes?.Add($"한글 글꼴 에셋 새로 만듦: {assetPath} (동적, 표본 64pt, 2048 아틀라스)");
+            notes?.Add($"글꼴 에셋 새로 만듦: {assetPath} (동적, 표본 {sample}pt, 2048 아틀라스)");
             Debug.Log($"{Tag} 만듦: {assetPath}");
             return fa;
         }

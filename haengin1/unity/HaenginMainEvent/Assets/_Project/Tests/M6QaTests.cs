@@ -546,10 +546,12 @@ namespace Haengin.Tests
 #if UNITY_EDITOR
             var fonts = UnityEditor.AssetDatabase.LoadAssetAtPath<UiFonts>("Assets/_Project/Settings/UiFonts.asset");
             Assert.NotNull(fonts, "UiFonts");
-            Assert.NotNull(fonts.Br, "붓 글꼴");
-            string need = "□△─↓R2×";     // □ △ ─ ↓ R 2 × — 콤비 토큰 아이콘 + 틀림 표시
-            bool all = fonts.Br.HasCharacters(need, out uint[] miss, true, false);
-            Assert.IsTrue(all, "붓 글꼴에 없는 드릴 아이콘 글자: " + (miss != null ? string.Concat(miss.Select(u => char.ConvertFromUtf32((int)u))) : ""));
+            // 2026-11-05 B안: 입력 칸 글은 숫자 글꼴(Barlow) + 대체 글꼴(본문 Bold)로 그림 · '─'(길게)는 화면에서 '–' 로 바꿔 씀(본문 글꼴 '─' 가 1em 넘게 그려져 칸을 넘음)
+            // 동적 글꼴이라 아틀라스에 아직 없는 글자는 원본 글꼴 파일에서 찾아봄(tryAdd) — 예전엔 앞 시험이 그린 글자에만 기대 순서에 따라 결과가 달라졌음
+            Assert.NotNull(fonts.N, "숫자 글꼴");
+            string need = "□△–↓R2×";     // □ △ – ↓ R 2 × — 콤비 토큰 아이콘 + 틀림 표시
+            bool all = fonts.N.HasCharacters(need, out uint[] miss, true, true);
+            Assert.IsTrue(all, "입력 칸 글꼴(숫자 + 대체)에 없는 드릴 아이콘 글자: " + (miss != null ? string.Concat(miss.Select(u => char.ConvertFromUtf32((int)u))) : ""));
             var src = System.IO.File.ReadAllText("Assets/_Project/Scripts/Gym/DrillHud.cs");
             Assert.IsFalse(src.Contains("✕"), "DrillHud 가 붓 글꼴에 없는 '✕'(U+2715)를 씀 — 화면에 네모(□)");
 #else
@@ -750,21 +752,33 @@ namespace Haengin.Tests
             for (int i = 0; i < 300 && gm == null; i++) { gm = GymManager.Instance; yield return null; }
             Assert.NotNull(gm);
             var run = w.StartCoroutine(gm.PlayBot("D11", 1f));
-            CombatHud ch = null; int both = 0, clash = 0; float plate = 0f;
+            CombatHud ch = null; RectTransform me = null; int both = 0, clash = 0; float plate = 0f; Rect pr = default, mr = default; string first = "";
+            // 2026-11-05 B안: 머리글 판이 위 가운데(576 폭)로 옮겨 감 → 예전 기준(이름판 y ≤ −150, 왼쪽 위 판 아래) 대신 두 판의 화면 사각형이 겹치는지 잼
+            // 화면 픽셀 사각형 = 뿌리 캔버스 기준 자리 × 배율 + 화면 가운데. 전투 HUD 캔버스는 움직이는 플레이어 밑이라 라운드 사이 순간 이동한 프레임엔
+            // 캔버스 뿌리의 월드 자리가 비켜 있음(그리는 화면은 가운데 그대로) → 월드 꼭짓점을 그대로 쓰면 그 프레임만 겹친 것처럼 잼
+            Rect Scr(RectTransform rt)
+            {
+                var cv = rt.GetComponentInParent<Canvas>().rootCanvas; var cr = (RectTransform)cv.transform;
+                var c = new Vector3[4]; rt.GetWorldCorners(c);
+                Vector3 a = cr.InverseTransformPoint(c[0]), b = cr.InverseTransformPoint(c[2]);
+                float k = cv.scaleFactor, hx = Screen.width * 0.5f, hy = Screen.height * 0.5f;
+                return Rect.MinMaxRect(a.x * k + hx, a.y * k + hy, b.x * k + hx, b.y * k + hy);
+            }
             for (int i = 0; i < 60 * 120 && (gm.Busy || i < 60); i++)
             {
                 if (ch == null) ch = Object.FindAnyObjectByType<CombatHud>();
-                if (ch != null && ch.Visible && gm.Hud != null && gm.Busy)
+                if (ch != null && me == null) me = ch.GetComponentsInChildren<RectTransform>(true).FirstOrDefault(r => r.name == "시우 판");
+                if (ch != null && ch.Visible && gm.Hud != null && gm.Busy && gm.Hud.PlateRect != null && gm.Hud.PlateRect.gameObject.activeInHierarchy && me != null && me.gameObject.activeInHierarchy)
                 {
-                    both++; plate = gm.Hud.PlateY;
-                    if (gm.Hud.PlateY > -150f) clash++;      // 전투 HUD '시우' 판 = 위 48 + 높이 110 → 이름판은 그 아래(-176)
+                    both++; plate = gm.Hud.PlateY; pr = Scr(gm.Hud.PlateRect); mr = Scr(me);
+                    if (pr.Overlaps(mr)) { clash++; if (first.Length == 0) first = $" · 처음 겹친 프레임 {both}: 머리글 {pr} · 시우 판 {mr} · 머리글 자리 {gm.Hud.PlateRect.anchoredPosition} · 판 배율 {me.lossyScale.x:F3}/{gm.Hud.PlateRect.lossyScale.x:F3} · 시우 자리 {((RectTransform)me.parent).anchoredPosition} · 전투 캔버스 {((RectTransform)me.parent.parent).position}/{((RectTransform)me.parent.parent).rect.size} · 프레임 {Time.frameCount}"; }
                     if (both > 120) break;
                 }
                 yield return null;
             }
-            Debug.Log($"[Q] Q32 스파링 중 전투 HUD·드릴 판 같이 뜬 프레임 {both} · 겹침 {clash} · 이름판 y {plate}");
+            Debug.Log($"[Q] Q32 스파링 중 전투 HUD·드릴 판 같이 뜬 프레임 {both} · 겹침 {clash} · 머리글 y {plate} · 머리글 {pr} · 시우 판 {mr} · 화면 {Screen.width}×{Screen.height}{first}");
             Assert.Greater(both, 0, "스파링 중 전투 HUD 가 안 떴음(시험 전제)");
-            Assert.AreEqual(0, clash, "스파링 드릴 이름판이 전투 HUD 와 겹침");
+            Assert.AreEqual(0, clash, "스파링 드릴 머리글 판이 전투 HUD '시우' 판과 겹침");
         }
 
         // ───────────────────────── Q33 스파링(D11) 카메라가 케이지 안(철망·윗테 너머가 아님)

@@ -18,6 +18,8 @@ namespace Haengin
         void UpdateHud()
         {
             if (Hud == null || Model == null) return;
+            // 조작 안내: 첫날(새 게임 튜토리얼 흐름 — 1장 카드·안내 카드·첫 자유 이동)엔 늘 펼침, 그 뒤엔 「조작 보기」 칩만(docs/16 정보 구조)
+            GameUi.Teach = GameClock.Month * 100 + GameClock.Day == Def.Balance.StartDate;
             // QA Q10: 드릴 중(체육관 DrillRunner·결과 카드·메뉴)에도 세계 HUD(날짜·지갑)가 드릴 이름판 위에 겹쳐 떴음 → 숨김
             bool drill = GymManager.Instance != null && GymManager.Instance.Busy;
             // QA Q36: 주차장 시비(길거리 싸움) 중에도 세계 HUD(날짜·지갑·목표)가 전투 HUD('반시우' 체력)와 왼쪽 위에서 겹쳐 '응화 10일'로 읽혔음 → 싸우는 동안 숨김
@@ -30,27 +32,44 @@ namespace Haengin
             if (!show) return;
             // QA Q21: 이야기 체인이 끝난 뒤 몇 초 남는 이야기 날짜 판('5월 1일(금) 17:50 저녁')이 세계 HUD 날짜 줄과 왼쪽 위에서 겹쳤음
             if (Story != null && Story.Hud != null) Story.Hud.HideDate();
-            string band = Model.Band(Model.Now);
-            string date = $"{GameClock.Month}월 {GameClock.Day}일({GameClock.Weekday}) {GameClock.TimeText} · {band}{(Model.RainToday ? " · 비" : "")}";
-            int due = Def.Balance.FixedTotal(GameClock.Month);
-            string money = $"지갑 {Ledger.Won(Model.L.Wallet)}{(EnvelopeKnown ? $" · 봉투 {Ledger.Won(Model.L.Envelope)}" : "")} · 생활비 {Ledger.Won(Model.S.Household)}/{Ledger.Won(due)}";
+            // B안(docs/16): 날짜·시각·돈·피로·목표·'다음'을 칸마다 따로 넘김(숫자는 Barlow 칸)
+            var info = new WorldHud.Info
+            {
+                Date = $"{GameClock.Month}월 {GameClock.Day}일 {GameClock.Weekday}",
+                DateExtra = Model.Band(Model.Now) + (Model.RainToday ? " · 비" : ""),
+                Time = GameClock.TimeText,
+                Wallet = Model.L.Wallet, EnvelopeKnown = EnvelopeKnown, Envelope = Model.L.Envelope,
+                Household = Model.S.Household, Due = Def.Balance.FixedTotal(GameClock.Month),
+                Fatigue = Model.G.Fatigue,
+            };
             var ch = Def.Chapter(Model.S.Chapter);
-            string goal = "";
             if (ch != null)
             {
                 var gs = ch.HasDemo && Model.S.DemoState == 0 ? ch.DemoGoals : ch.Goals;
                 int done = gs.Count(g => Model.GoalMet(g));
-                goal = Model.S.DemoState == 1 ? "데모 목표 달성 — 계속 돌아다녀도 된다" : $"목표: {(ch.HasDemo ? ch.DemoGoal : ch.Goal)} ({done}/{gs.Length})";
+                if (Model.S.DemoState == 1) info.Goal = "데모 목표 달성 — 계속 돌아다녀도 된다";
+                else { info.Goal = ch.HasDemo ? ch.DemoGoal : ch.Goal; info.GoalCount = $"{done}/{gs.Length}"; }
             }
-            Hud.Set(date, money, Model.G.Fatigue, goal, NextHint(out _, out _));
+            var nx = NextInfo(out _, out _);
+            info.NextTitle = nx.Title; info.NextTime = nx.Time; info.NextPlace = nx.Place;
+            Hud.Set(info);
             HudBuffs();
         }
 
         /// QA Q18: 하늘 케이크 봉투는 3/6(C1-03) 뒤에 생기는데 첫날부터 '봉투 0'·'하늘 케이크 0 / 40,000' 이 보였음 → 봉투가 생긴 뒤에만
         public bool EnvelopeKnown => Model != null && (Model.F.Has("cake_quest") || Model.L.Envelope > 0);
 
+        /// '다음' 칸(제목 · 시각 · 장소) — B안 오른쪽 위 판
+        public struct Next { public string Title, Time, Place; }
+
         /// '다음' 한 줄 + 길잡이 자리(Zone1 지점)
         string NextHint(out string pointId, out string label)
+        {
+            var n = NextInfo(out pointId, out label);
+            return $"다음: {n.Title}{(n.Time.Length > 0 ? " " + n.Time : "")}{(n.Place.Length > 0 ? " — " + n.Place : "")}";
+        }
+
+        Next NextInfo(out string pointId, out string label)
         {
             pointId = ""; label = "";
             int now = Model.Now;
@@ -60,9 +79,9 @@ namespace Haengin
                 if (c.From < 0 || c.Kind != CardKind.Core) continue;
                 pointId = PointFor(c.Place, c.Zone);
                 label = c.Title;
-                return $"◆ {GameClock.Hm(c.From)} 「{c.Title}」 — {PlaceName(c.Place)}";
+                return new Next { Title = c.Title, Time = GameClock.Hm(c.From), Place = PlaceName(c.Place) };
             }
-            if (now >= 22 * 60 || now < Def.Balance.Wake) { pointId = "home_door"; label = "집"; return "다음: 집에서 잠(이불)"; }
+            if (now >= 22 * 60 || now < Def.Balance.Wake) { pointId = "home_door"; label = "집"; return new Next { Title = "잠(이불)", Time = "", Place = "집" }; }
             ActivityDef best = null;
             foreach (var a in Def.Activities)
             {
@@ -73,10 +92,10 @@ namespace Haengin
                 if (Model.CanStart(a, Mathf.Max(now, a.Open)).Length > 0) continue;
                 if (best == null || a.Start < best.Start) best = a;
             }
-            if (best == null) return "다음: 자유 — 동네·체육관·집";
+            if (best == null) return new Next { Title = "자유 — 동네·체육관·집", Time = "", Place = "" };
             pointId = PointFor(best.Place, "");
             label = best.Name;
-            return $"다음: {best.Name} {GameClock.Hm(best.Start)} — {PlaceName(best.Place)}";
+            return new Next { Title = best.Name, Time = GameClock.Hm(best.Start), Place = PlaceName(best.Place) };
         }
 
         static string PointFor(string place, string zone) => place switch

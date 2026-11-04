@@ -23,6 +23,10 @@ namespace Haengin
         public TMP_FontAsset Font;
 
         public static readonly Color Ink = new Color(0.102f, 0.078f, 0.090f), Paper = new Color(0.957f, 0.937f, 0.902f), Orange = new Color(0.886f, 0.345f, 0.173f);
+        /// 왼쪽 위 '반시우' 판의 오른쪽·아래 끝(1080 기준, 위 왼쪽에서) — 드릴 머리글 판이 비켜 갈 때
+        public const float MeRight = 566f, MeBottom = 146f;
+        /// 화면 위쪽에서 비워 둘 높이(1080 기준) — 드릴 머리글 판(위 가운데)이 떠 있으면 머리 위 대상 이름·바를 그 아래로(B안 2026-11-05)
+        public static float TopReserve;
         public const string PadHint = "□ 약 · △ 강 · ○ 잡기 · × 회피 · R1 막기 · L1 락온";
         public const string KeyHint = "좌클릭 약 · 우클릭 강 · F 잡기 · Space 회피 · Ctrl 막기 · Q 락온";
 
@@ -90,6 +94,7 @@ namespace Haengin
             sc.referenceResolution = new Vector2(1920f, 1080f);
             sc.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             sc.matchWidthOrHeight = 1f;
+            sc.enabled = false; sc.enabled = true;      // 2026-11-05: LateUpdate 에서 처음 만들 때 그 프레임은 기본 배율(1)로 그려져 판이 크게 한 번 번쩍(Q32) → 바로 다시 계산
             root = (RectTransform)go.transform;
 
             // 7-1 시우(왼쪽 위)
@@ -115,7 +120,8 @@ namespace Haengin
             mr.anchoredPosition = new Vector2(0f, -52f);
             mr.sizeDelta = new Vector2(440f, 50f);
             maxBrush = Img("먹 붓 획", mr, Kit != null ? Kit.Brush : null, new Color(Ink.r, Ink.g, Ink.b, 0.9f), new Vector2(-8f, 6f), new Vector2(436f, 56f));
-            maxText = Text("기세 글", mr, font, 20f, Color.white, TextAlignmentOptions.Left, new Vector2(432f, -12f), new Vector2(80f, 28f));
+            // 2026-11-05: 붓 획이 가로로 1.03배까지 숨 쉬어(오른쪽 끝 441) '기세' 글 왼쪽에 걸침(글자 감사 Q57) → 글을 452 로
+            maxText = Text("기세 글", mr, font, 20f, Color.white, TextAlignmentOptions.Left, new Vector2(452f, -12f), new Vector2(60f, 28f));
             maxText.text = "기세";
             Outline(maxText, 0.25f);
             maxRoot.transform.SetSiblingIndex(heatFrame.transform.GetSiblingIndex());     // 바 뒤에 붓 획
@@ -359,7 +365,13 @@ namespace Haengin
         void Place(RectTransform r, Vector3 screen, Vector2 offset)
         {
             float k = Scale();
-            r.anchoredPosition = new Vector2(screen.x / k, screen.y / k) + offset;
+            var p = new Vector2(screen.x / k, screen.y / k) + offset;
+            if (TopReserve > 0f && root != null)
+            {
+                float top = p.y + (1f - r.pivot.y) * r.sizeDelta.y, limit = root.rect.height - TopReserve;
+                if (top > limit) p.y -= top - limit;
+            }
+            r.anchoredPosition = p;
         }
 
         void EdgeArrow(Camera cam, Vector3 world)

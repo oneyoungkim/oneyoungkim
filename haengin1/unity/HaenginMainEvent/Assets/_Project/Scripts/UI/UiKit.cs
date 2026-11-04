@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Haengin
 {
-    public static class UiKit
+    public static partial class UiKit
     {
         public static readonly Color Ink = new Color(0.102f, 0.078f, 0.090f);
         public static readonly Color Paper = new Color(0.957f, 0.937f, 0.902f);
@@ -32,6 +32,7 @@ namespace Haengin
             s.referenceResolution = new Vector2(1920f, 1080f);
             s.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             s.matchWidthOrHeight = 1f;
+            s.enabled = false; s.enabled = true;      // 프레임 중간(LateUpdate·첫 Show)에 만들어도 그 프레임부터 1080 기준 배율로(안 그러면 한 프레임 배율 1)
             return c;
         }
 

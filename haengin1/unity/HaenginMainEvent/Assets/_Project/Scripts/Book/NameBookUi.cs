@@ -47,8 +47,9 @@ namespace Haengin
             word.fontMaterial = m;
             wordPlate.gameObject.SetActive(false);
 
-            icon = UiKit.Panel("도감 아이콘", transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-40f, -36f), new Vector2(64f, 64f), UiKit.Ink);
-            iconText = UiKit.Text("글", icon.transform, Fonts != null ? Fonts.Br : null, 21f, UiKit.Paper, TextAlignmentOptions.Center);
+            // B안(2026-11-05): 오른쪽 위는 '다음' 안내 판 자리 → 오른쪽 아래 먹 칩(96×60, Noto Bold)
+            icon = UiKit.Plate("도감 아이콘", transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-38f, 40f), new Vector2(96f, 60f));
+            iconText = UiKit.Text("글", icon.transform, UiKit.FBold(Fonts), 23f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Stretch(iconText.rectTransform);
             iconText.text = "도감";
             icon.gameObject.SetActive(false);
@@ -86,9 +87,9 @@ namespace Haengin
                 float u = 0f;
                 while (u < WriteSecs) { u += UiKit.RealDt; word.maxVisibleCharacters = Mathf.CeilToInt(n.Length * Mathf.Clamp01(u / (WriteSecs * 0.7f))); rt.anchoredPosition = a; rt.localScale = Vector3.one; yield return null; }
                 word.maxVisibleCharacters = n.Length;
-                // 오른쪽 위 아이콘으로(캔버스 기준: 아이콘 중심 ≈ (화면 폭/2 − 72, 540 − 68))
+                // 오른쪽 아래 아이콘으로(캔버스 기준: 아이콘 중심 ≈ (화면 폭/2 − 86, −540 + 70))
                 var canvasRt = (RectTransform)transform;
-                Vector2 b = new Vector2(canvasRt.rect.width * 0.5f - 72f, canvasRt.rect.height * 0.5f - 68f);
+                Vector2 b = new Vector2(canvasRt.rect.width * 0.5f - 86f, -canvasRt.rect.height * 0.5f + 70f);
                 u = 0f;
                 while (u < FlySecs) { u += UiKit.RealDt; float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(u / FlySecs)); rt.anchoredPosition = Vector2.Lerp(a, b, k); rt.localScale = Vector3.one * Mathf.Lerp(1f, 0.25f, k); yield return null; }
                 wordPlate.gameObject.SetActive(false);

@@ -280,6 +280,7 @@ namespace Haengin
             if (tex == null) return;
             double now = TimeFx.Real;     // 게임의 실제 시간(테스트의 고정 프레임에서도 같은 시계)
             if (lastWord >= 0 && now - lastWord < 0.12) return;
+            if (DrillHud.ToastUp) { WordsCut++; return; }      // 드릴 알림판('팡!')이 떠 있으면 전투 의성어는 안 띄움(QA 2026-11-05 D05)
             lastWord = now;
             Words++;
             LastWord = text;
@@ -323,6 +324,8 @@ namespace Haengin
         Canvas wordCanvas; RawImage wordImg; Vector3 wordAt; float wordT;
         /// 지금 떠 있는 의성어(시험)
         public bool WordShown => wordImg != null && wordImg.gameObject.activeSelf;
+        /// 떠 있는 의성어를 바로 내림(드릴 알림판 '팡!'이 뜰 때 — 같은 순간 판 두 개)
+        public void HideWord() { if (wordImg != null && wordImg.gameObject.activeSelf) { wordImg.gameObject.SetActive(false); WordsCut++; } }
         public Vector2 WordSize => wordImg != null ? wordImg.rectTransform.sizeDelta : Vector2.zero;
 
         void PlaceWord(float dt)

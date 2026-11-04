@@ -222,7 +222,8 @@ namespace Haengin.Tests
                 var flat = new Vector3(to.x, 0f, to.z).normalized;
                 var feet = t.Pos - flat * d;
                 if (Physics.Raycast(feet + Vector3.up * 3f, Vector3.down, out var hit, 8f, 1 << Layers.Ground)) feet.y = hit.point.y;
-                motor.Teleport(feet, face);
+                // 2026-11-05 B안: 길잡이 판이 위 가운데 → 오른쪽 위로 옮겨 감 → 목표가 화면 오른쪽(판 아래)에 오게 16° 왼쪽을 봄(이름표가 판과 겹칠 자리 = 시험 조건)
+                motor.Teleport(feet, face - 16f);
                 if (rig != null) { rig.SnapBehind(); if (lookUp && rig.Orbit != null) rig.Orbit.VerticalAxis.Value = 22f; }
                 yield return Frames(15);
                 Canvas.ForceUpdateCanvases();

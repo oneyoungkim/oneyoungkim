@@ -26,6 +26,13 @@ namespace Haengin
         public static Action QuitHook;
         /// 조작 안내 줄을 바꿔 쓴다(전투 중 CombatHud 가 전투 조작으로 — 08 7-5). null = 탐색 안내
         public static string HintOverride;
+        /// B안(docs/16 정보 구조): 조작 안내 줄은 기본 접음 — 왼쪽 아래 「조작 보기」 칩(H · R3)만. 펼치는 때 = 첫날 튜토리얼 흐름(Teach, WorldRunner) ·
+        /// 이번 실행에서 처음 보는 안내(8초) · 사용자가 켬(H · R3, 설정에 남음)
+        public static bool Teach;
+        public const string OpenKey = "haengin.hint.open";
+        public const float FirstSecs = 8f;
+        public bool HintExpanded => hintPlate != null && hintPlate.activeSelf;
+        public bool ChipShown => chip != null && chip.activeSelf;
 
         /// 메뉴 항목. M1 의 셋(계속·카메라 자동 정렬·끝내기)은 순서 그대로 두고 M2 항목을 뒤에 붙인다(08 7-5·8-1·8-2):
         /// 흔들림 줄이기(늘) · 전투 다시(인카운터를 이긴 뒤 그 근처에서) · 항복(야차 중에만)
@@ -62,15 +69,21 @@ namespace Haengin
         int heldDir, heldSide;
         float repeatAt;
         Vector2 lastMouse;
-        GameObject menuRoot, toastPlate;
-        TextMeshProUGUI hint, toastText, menuHint;
+        GameObject menuRoot, toastPlate, hintPlate, chip;
+        TextMeshProUGUI hint, toastText, menuHint, chipKey;
+        RectTransform chipKeyBox, hintRt, chipRt;
+        static readonly System.Collections.Generic.HashSet<string> seenHints = new System.Collections.Generic.HashSet<string>();
+        string lastHint;
+        float firstLeft;
+        static int userOpen = -2;      // -2 = 아직 안 읽음 · -1 정한 적 없음(자동) · 0 접음 · 1 펼침(H · R3)
+        SubtitleUi subUi; InnerVoiceUi innerUi; float subLook;
         Row[] rows;
 
         void OnEnable() { Instance = this; }
         void OnDisable() { if (Instance == this) Instance = null; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; RetryHook = null; SurrenderHook = null; BookHook = TitleHook = SubClose = null; SubOpen = null; BookLabel = "도감"; }
+        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; Teach = false; seenHints.Clear(); userOpen = -2; RetryHook = null; SurrenderHook = null; BookHook = TitleHook = SubClose = null; SubOpen = null; BookLabel = "도감"; }
 
         System.Collections.IEnumerator Start()
         {
@@ -123,12 +136,8 @@ namespace Haengin
             if (paused && SubOpen != null && SubOpen()) { if (sub || can) SubClose?.Invoke(); }
             else if (paused) Menu(sub, can);
 
-            // 조작 안내 줄(전투 중엔 전투 조작)
-            if (hint != null)
-            {
-                string want = HintOverride ?? Hint;
-                if (hint.text != want) { hint.text = want; UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)hint.transform.parent); }      // 판 크기를 같은 프레임에(긴 글이 판 밖으로 한 프레임 나감)
-            }
+            // 조작 안내 줄(전투 중엔 전투 조작) — B안: 접어 두고 「조작 보기」 칩, 펼치는 때만 판
+            if (hint != null) HintUpdate(paused);
 
             // 짧은 알림(DebugHud.Toast 가 넣음)
             bool on = !string.IsNullOrEmpty(DebugHud.ToastText) && Time.unscaledTime < DebugHud.ToastUntil;
@@ -269,12 +278,59 @@ namespace Haengin
             return -1;
         }
 
+        void HintUpdate(bool paused)
+        {
+            string want = HintOverride ?? Hint;
+            if (want != lastHint)
+            {
+                lastHint = want;
+                if (seenHints.Add(want)) firstLeft = FirstSecs;       // 처음 해 보는 조작 = 이번 실행에서 처음 보는 안내
+            }
+            var kb = Keyboard.current; var gp = Gamepad.current;
+            if (userOpen < -1) userOpen = PlayerPrefs.GetInt(OpenKey, -1);
+            bool Expanded() => userOpen == 1 || (userOpen != 0 && Teach) || firstLeft > 0f;
+            if (!paused && ((kb != null && kb.hKey.wasPressedThisFrame) || (gp != null && gp.rightStickButton.wasPressedThisFrame)))
+            {
+                userOpen = Expanded() ? 0 : 1;
+                PlayerPrefs.SetInt(OpenKey, userOpen);
+                firstLeft = 0f;
+            }
+            if (firstLeft > 0f) firstLeft -= UiKit.RealDt;
+            bool expanded = Expanded();
+            // 대사 판(화면 아래 1416 폭)이 떠 있으면: 칩은 숨기고, 펼친 안내는 대사 판 오른쪽 위로(이름띠는 판 왼쪽 위)
+            if (subUi == null && Time.unscaledTime > subLook) { subUi = FindAnyObjectByType<SubtitleUi>(); innerUi = FindAnyObjectByType<InnerVoiceUi>(); subLook = Time.unscaledTime + 2f; }
+            bool talk = (subUi != null && subUi.Visible) || (innerUi != null && innerUi.Visible);
+            bool relayout = hint.text != want;
+            if (relayout) hint.text = want;
+            if (hintPlate.activeSelf != expanded) { hintPlate.SetActive(expanded); relayout = true; }
+            bool chipOn = !expanded && !talk;
+            if (chip.activeSelf != chipOn) chip.SetActive(chipOn);
+            if (expanded)
+            {
+                if (relayout) LayoutRebuilder.ForceRebuildLayoutImmediate(hintRt);      // 판 크기를 같은 프레임에(글이 바뀌거나 펼칠 때만)
+                hintRt.anchorMin = hintRt.anchorMax = Vector2.zero;
+                if (talk)
+                {
+                    float half = ((RectTransform)transform).rect.width * 0.5f, right = Mathf.Min(half + SubtitleUi.Width * 0.5f, half * 2f - 16f);
+                    hintRt.pivot = new Vector2(1f, 0f);
+                    hintRt.anchoredPosition = new Vector2(right, SubtitleUi.PlateH + 10f);
+                }
+                else { hintRt.pivot = Vector2.zero; hintRt.anchoredPosition = new Vector2(38f, 40f); }
+            }
+            if (chipOn)
+            {
+                string k = CombatHud.PadLast ? "R3" : "H";
+                if (chipKey.text != k) { UiKit.SetKey(chipKeyBox, chipKey, k, 34f); LayoutRebuilder.ForceRebuildLayoutImmediate(chipRt); }
+            }
+        }
+
         // ───────────────────────── 부품 만들기(실행할 때 한 번)
         void Build()
         {
             if (built) return;
             built = true;
             var font = Font != null ? Font : TMP_Settings.defaultFontAsset;
+            if (UiKit.Fallback == null && Font != null) UiKit.Fallback = Font;
 
             if (!TryGetComponent<Canvas>(out var canvas)) canvas = gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -286,11 +342,23 @@ namespace Haengin
             scaler.matchWidthOrHeight = 1f;
             gameObject.layer = 5;   // UI
 
-            // 조작 안내(왼쪽 아래 한 줄)
-            var hp = Panel("조작 안내", transform, Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(16f, 14f), Vector2.zero, new Color(Paper.r, Paper.g, Paper.b, 0.95f));
-            Fit(hp, 12, 14, 5, 6);
-            hint = Text("글", hp.transform, font, 18f, Ink, TextAlignmentOptions.MidlineLeft);
+            // 조작 안내(왼쪽 아래 한 줄 — B안 먹 판, 기본 접음) + 「조작 보기」 칩(H · R3)
+            var hp = Panel("조작 안내", transform, Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(38f, 40f), Vector2.zero, UiKit.InkPlate);
+            Fit(hp, 16, 18, 8, 9);
+            hint = Text("글", hp.transform, UiKit.FMed(), 20f, Paper, TextAlignmentOptions.MidlineLeft);
             hint.text = Hint;
+            hintPlate = hp.gameObject; hintRt = hp.rectTransform;
+            var cp = Panel("조작 보기", transform, Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(38f, 40f), new Vector2(10f, 46f), UiKit.InkPlate);
+            var lay = cp.gameObject.AddComponent<HorizontalLayoutGroup>();
+            lay.padding = new RectOffset(6, 14, 6, 6); lay.spacing = 10f; lay.childAlignment = TextAnchor.MiddleLeft;
+            lay.childControlWidth = lay.childControlHeight = false; lay.childForceExpandWidth = lay.childForceExpandHeight = false;
+            var cfit = cp.gameObject.AddComponent<ContentSizeFitter>(); cfit.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            chipKeyBox = UiKit.KeyChip("키", cp.transform, null, "H", 34f, false, out chipKey);
+            var cl = Text("글", cp.transform, UiKit.FMed(), 20f, Paper, TextAlignmentOptions.MidlineLeft);
+            cl.text = "조작 보기";
+            cl.rectTransform.sizeDelta = new Vector2(cl.GetPreferredValues("조작 보기").x + 2f, 34f);
+            chip = cp.gameObject; chipRt = cp.rectTransform;
+            chip.SetActive(false);
 
             // 짧은 알림(아래 가운데)
             var b0 = new Vector2(0.5f, 0f);
