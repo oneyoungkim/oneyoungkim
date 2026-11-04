@@ -41,6 +41,7 @@ namespace Haengin
             var band = UiKit.Panel("주황 띠", datePlate.transform, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, new Vector2(UiKit.Stripe, 0f), UiKit.Accent);
             band.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
             band.rectTransform.anchorMax = new Vector2(0f, 1f);
+            UiMotion.On(datePlate, new Vector2(-1f, 0f));
             datePlate.gameObject.SetActive(false);
 
             chip = UiKit.Panel("시각 칩", transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(38f, -38f), new Vector2(110f, 44f), UiKit.InkPlate);
@@ -119,7 +120,7 @@ namespace Haengin
             {
                 dateText.text = GameClock.Label;
                 dateLeft -= rdt;
-                if (dateLeft <= 0f) { datePlate.gameObject.SetActive(false); }
+                if (dateLeft <= 0f) { UiMotion.Hide(datePlate.gameObject); }      // D8
             }
             bool wantChip = KeepChip && !datePlate.gameObject.activeSelf;
             if (chip.gameObject.activeSelf != wantChip) chip.gameObject.SetActive(wantChip);

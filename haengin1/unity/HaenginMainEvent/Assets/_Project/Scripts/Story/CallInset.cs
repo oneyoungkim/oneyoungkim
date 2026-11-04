@@ -47,7 +47,8 @@ namespace Haengin
                 var go = new GameObject("통화 그림", typeof(RectTransform)); go.transform.SetParent(frame.transform, false);
                 img = go.AddComponent<RawImage>(); img.texture = rt;
                 var r = img.rectTransform; r.anchorMin = r.anchorMax = new Vector2(0.5f, 0.5f); r.sizeDelta = new Vector2(W, H); r.anchoredPosition = new Vector2(0f, -18f);
-                var t = UiKit.Text("통화 이름", frame.transform, font, 24f, UiKit.Paper, TMPro.TextAlignmentOptions.Left);
+                UiKit.EdgeLine(frame.transform, UiKit.Edge.Top, UiKit.Accent);      // D2(2026-11-05): B안 — 먹 테 + 위 주황 줄 · 이름 Noto Black
+                var t = UiKit.Text("통화 이름", frame.transform, UiKit.FBlack() ?? font, 24f, UiKit.Paper, TMPro.TextAlignmentOptions.Left);
                 UiKit.Place(t.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(14f, -6f), new Vector2(W, 30f));
                 t.name = "통화 이름";
             }

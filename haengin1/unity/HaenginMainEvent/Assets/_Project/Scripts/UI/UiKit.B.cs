@@ -82,7 +82,16 @@ namespace Haengin
         {
             var p = Panel(name, parent, anchor, pivot, pos, size, InkPlate);
             if (edge != Edge.None) EdgeLine(p.transform, edge, edgeColor ?? Accent);
+            UiMotion.On(p, SideOf(anchor));      // D8: 붙은 쪽에서 10px · 150ms 로 등장
             return p;
+        }
+
+        /// 판이 붙은 화면 쪽(앵커로) — 왼쪽·오른쪽 먼저, 그다음 위·아래, 가운데는 아래에서
+        public static Vector2 SideOf(Vector2 anchor)
+        {
+            if (anchor.x <= 0.01f) return new Vector2(-1f, 0f);
+            if (anchor.x >= 0.99f) return new Vector2(1f, 0f);
+            return anchor.y >= 0.99f ? new Vector2(0f, 1f) : new Vector2(0f, -1f);
         }
 
         /// 판 가장자리 강조 줄(판 크기를 따라감, 판의 첫 자식 — 글보다 뒤). 글이 줄에 걸치지 않게 판 안 여백을 줄 폭보다 크게

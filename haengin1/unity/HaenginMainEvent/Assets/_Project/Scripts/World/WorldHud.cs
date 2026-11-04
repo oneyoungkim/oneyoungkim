@@ -53,7 +53,7 @@ namespace Haengin
         readonly Queue<string> pending = new Queue<string>();
         float gap;
         bool hasNext;
-        string nextHead = "", nextTitle = "", nextTime = "", nextPlace = "", lastPlace, lastTime;
+        string nextTitle = "", nextTime = "", nextPlace = "", lastPlace, lastTime;
         int lastDist = -2;
 
         void Build()
@@ -127,8 +127,8 @@ namespace Haengin
             var dr = dateExtra.rectTransform;
             dr.anchoredPosition = new Vector2(24f + dateText.GetPreferredValues(dateText.text).x + 12f, dr.anchoredPosition.y);
             timeText.text = UiKit.Tab(i.Time);
-            walletText.text = UiKit.Tab(UiKit.Won(i.Wallet));
-            UiKit.FitWidth(walletText, HouseX - 24f - 14f, 50f, 34f);      // 큰 지갑(10만 넘음)이 생활비 칸에 닿지 않게
+            RollTo(ref wallet, i.Wallet);
+            WalletShow();
             envText.text = i.EnvelopeKnown ? UiKit.Tab(UiKit.Won(i.Envelope)) : "";
             envLabel.gameObject.SetActive(i.EnvelopeKnown);
             UiKit.FitWidth(envText, HouseX - 24f - envLabelW - 14f, 22f, 16f);
@@ -143,10 +143,9 @@ namespace Haengin
             FatigueFill = Mathf.Clamp01(i.Fatigue / 100f);
             UiKit.SetBar(fatFill, FatigueFill);
             fatFill.color = i.Fatigue >= 85 ? UiKit.EndureLit : UiKit.Accent;      // A6(2026-11-05): 85 이상 = 위험 붉은색(트랙 대비 3:1 넘게 밝힌 값), 그 밖 = 주황
-            fatText.text = UiKit.Tab(i.Fatigue.ToString());
+            RollTo(ref fat, i.Fatigue);
             fatState.text = i.Fatigue >= 85 ? "한계" : i.Fatigue >= 70 ? "지침" : "";
-            var sr = fatState.rectTransform;
-            sr.anchoredPosition = new Vector2(FatX + fatText.GetPreferredValues(fatText.text).x + 8f, sr.anchoredPosition.y);
+            FatShow();
             goalText.text = i.Goal ?? "";
             goalCount.text = UiKit.Tab(i.GoalCount ?? "");
             goalPlate.gameObject.SetActive(!string.IsNullOrEmpty(i.Goal) && plate.gameObject.activeSelf);
@@ -239,9 +238,47 @@ namespace Haengin
             live.Add((t, p, 3.2f));
         }
 
+        // ───────────────────────── D8 숫자 올라감(돈·피로 바뀌면 250ms 동안 옛 값 → 새 값, 흔들림 줄이기면 바로)
+        struct Roll { public long From, To, Shown; public float U; public bool Has; }
+        Roll wallet, fat;
+        const float RollSecs = 0.25f;
+
+        static void RollTo(ref Roll r, long v)
+        {
+            if (!r.Has || Accessibility.Reduced) { r.From = r.To = r.Shown = v; r.U = 1f; r.Has = true; return; }
+            if (v == r.To) return;
+            r.From = r.Shown; r.To = v; r.U = 0f;
+        }
+
+        static bool Tick(ref Roll r)
+        {
+            if (r.U >= 1f) return false;
+            r.U = Mathf.Min(1f, r.U + UiKit.RealDt / RollSecs);
+            float e = 1f - (1f - r.U) * (1f - r.U);
+            long s = r.From + (long)System.Math.Round((r.To - r.From) * (double)e);
+            if (s == r.Shown && r.U < 1f) return false;
+            r.Shown = r.U >= 1f ? r.To : s;
+            return true;
+        }
+
+        void WalletShow()
+        {
+            walletText.text = UiKit.Tab(UiKit.Won(wallet.Shown));
+            UiKit.FitWidth(walletText, HouseX - 24f - 14f, 50f, 34f);      // 큰 지갑(10만 넘음)이 생활비 칸에 닿지 않게
+        }
+
+        void FatShow()
+        {
+            fatText.text = UiKit.Tab(fat.Shown.ToString());
+            var sr = fatState.rectTransform;
+            sr.anchoredPosition = new Vector2(FatX + fatText.GetPreferredValues(fatText.text).x + 8f, sr.anchoredPosition.y);
+        }
+
         void LateUpdate()
         {
             if (plate == null) return;
+            if (Tick(ref wallet)) WalletShow();
+            if (Tick(ref fat)) FatShow();
             // 2026-10-31: 가운데 큰 카드가 뜨면 왼쪽 위 판을 잠깐 숨김(카드 가장자리에 HUD 글자가 반쯤 걸림)
             bool showPlate = Shown && !BoardCenter();
             if (plate.gameObject.activeSelf != showPlate) plate.gameObject.SetActive(showPlate);
@@ -293,7 +330,7 @@ namespace Haengin
             if (dm == lastDist && next.Title.text == nextTitle && nextPlace == lastPlace && nextTime == lastTime && arrived == lastArrived) return;      // 바뀔 때만(매 프레임 문자열 없게)
             lastDist = dm; lastPlace = nextPlace; lastTime = nextTime; lastArrived = arrived;
             string head = arrived ? "도착" : "다음" + (nextPlace.Length > 0 ? " · " + nextPlace : "") + (dm >= 0 ? $" · {dm}m" : "");
-            nextHead = head; next.Set(head, nextTitle, nextTime);
+            next.Set(head, nextTitle, nextTime);
         }
 
         public void ClearToasts()

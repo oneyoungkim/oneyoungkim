@@ -305,7 +305,7 @@ namespace Haengin
             if (!built || !root.activeSelf || Runner == null) return;
             PlaceTop();
             float rdt = UiKit.RealDt;
-            if (cueLeft > 0f) { cueLeft -= rdt; if (cueLeft <= 0f) cuePlate.gameObject.SetActive(false); }
+            if (cueLeft > 0f) { cueLeft -= rdt; if (cueLeft <= 0f) UiMotion.Hide(cuePlate.gameObject); }      // D8: 100ms 옅어진 뒤
             if (toastLeft > 0f) { toastLeft -= rdt; if (toastLeft <= 0f) SetToast(false); }
             var d = Runner.Def;
             if (d == null) return;
@@ -326,6 +326,12 @@ namespace Haengin
             double left = rs == DrillRunner.Phase.Round ? Runner.RoundLeft : rs == DrillRunner.Phase.Rest ? d.RestSec : d.RoundSec;
             int li = Mathf.CeilToInt((float)left);
             if (li != lastSec) { lastSec = li; timer.text = UiKit.Tab($"{li / 60}:{li % 60:00}", 0.5f); }
+            // D8: 라운드 마지막 10초 = 주황 + 1초마다 1.04배 맥박(0.25초에 돌아옴, 흔들림 줄이기면 맥박 없음)
+            bool last10 = rs == DrillRunner.Phase.Round && li <= 10 && li > 0;
+            var tc = last10 ? UiKit.Accent : UiKit.Paper;
+            if (timer.color != tc) timer.color = tc;
+            float pulse = last10 && !Accessibility.Reduced ? 1f + 0.04f * Mathf.Clamp01(1f - (float)(li - left) / 0.25f) : 1f;
+            if (Mathf.Abs(timer.rectTransform.localScale.x - pulse) > 0.0005f) timer.rectTransform.localScale = new Vector3(pulse, pulse, 1f);
             var st = Runner.Station;
             // QA Q35: 결과 카드의 닫기 안내와 드릴 안내가 화면 아래에서 겹쳤음 → 결과·대기 땐 안내를 비움
             string h = st != null && !cardUp && rs != DrillRunner.Phase.Result && rs != DrillRunner.Phase.Idle ? st.Hint : "";

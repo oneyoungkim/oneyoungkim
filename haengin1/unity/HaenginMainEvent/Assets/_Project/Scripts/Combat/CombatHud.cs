@@ -101,7 +101,8 @@ namespace Haengin
             // 7-1 시우(왼쪽 위)
             var tl = new Vector2(0f, 1f);
             var me = Rect("시우", root, tl, tl, tl, new Vector2(48f, -48f), new Vector2(440f, 110f));
-            Img("시우 판", me, null, UiKit.InkPlate, new Vector2(-12f, 10f), new Vector2(530f, 108f));      // 2026-10-31: 이름·기세 글이 판 없이 배경 위에
+            var mePlate = Img("시우 판", me, null, UiKit.InkPlate, new Vector2(-12f, 10f), new Vector2(530f, 108f));
+            UiKit.EdgeLine(mePlate.transform, UiKit.Edge.Top, UiKit.Accent);      // 드릴-9(2026-11-05): 상태 판 = 위 주황 줄      // 2026-10-31: 이름·기세 글이 판 없이 배경 위에
             nameText = Text("이름", me, font, 28f, UiKit.Paper, TextAlignmentOptions.TopLeft, new Vector2(0f, 0f), new Vector2(420f, 36f));
             nameText.text = "반시우";
             Outline(nameText, 0.22f);

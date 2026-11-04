@@ -92,6 +92,7 @@ namespace Haengin
         TextMeshProUGUI hint, toastText, menuHint, chipKey, foldKey;
         RectTransform chipKeyBox, hintRt, chipRt, foldKeyBox;
         LayoutElement foldLe;
+        string hintMarked = "";
         static readonly System.Collections.Generic.HashSet<string> seenHints = new System.Collections.Generic.HashSet<string>();
         string lastHint;
         float firstLeft;
@@ -302,6 +303,7 @@ namespace Haengin
             if (want != lastHint)
             {
                 lastHint = want;
+                hintMarked = UiKit.KeyMark(want);      // D2: 펼친 안내 줄 키 이름 Warm(드릴 안내와 같은 규칙)
                 if (seenHints.Add(want)) firstLeft = FirstSecs;       // 처음 해 보는 조작 = 이번 실행에서 처음 보는 안내
             }
             var kb = Keyboard.current; var gp = Gamepad.current;
@@ -314,8 +316,8 @@ namespace Haengin
             // 대사 판(화면 아래 1416 폭)이 떠 있으면: 칩은 숨기고, 펼친 안내는 대사 판 오른쪽 위로(이름띠는 판 왼쪽 위)
             if (subUi == null && Time.unscaledTime > subLook) { subUi = FindAnyObjectByType<SubtitleUi>(); innerUi = FindAnyObjectByType<InnerVoiceUi>(); subLook = Time.unscaledTime + 2f; }
             bool talk = (subUi != null && subUi.Visible) || (innerUi != null && innerUi.Visible);
-            bool relayout = hint.text != want;
-            if (relayout) hint.text = want;
+            bool relayout = hint.text != hintMarked;
+            if (relayout) hint.text = hintMarked;
             if (hintPlate.activeSelf != expanded) { hintPlate.SetActive(expanded); relayout = true; }
             bool chipOn = !expanded && !talk && !hidden;
             if (chip.activeSelf != chipOn) chip.SetActive(chipOn);

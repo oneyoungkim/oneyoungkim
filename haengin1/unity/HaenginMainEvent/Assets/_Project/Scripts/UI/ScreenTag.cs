@@ -20,9 +20,9 @@ namespace Haengin
             var go = new GameObject(name);
             UiKit.Canvas(go, order);
             var tag = go.AddComponent<ScreenTag>();
-            tag.plate = UiKit.Panel("판", go.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(40f, 40f), UiKit.Seen(UiKit.Ink, 0.94f));
+            tag.plate = UiKit.Panel("판", go.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(40f, 40f), UiKit.InkPlate);
             UiKit.Fit(tag.plate, 14, 14, 5, 7);
-            tag.text = UiKit.Text("글", tag.plate.transform, font, size, UiKit.Paper, TextAlignmentOptions.Center);
+            tag.text = UiKit.Text("글", tag.plate.transform, UiFonts.Current != null ? UiKit.FMed() : font, size, UiKit.Paper, TextAlignmentOptions.Center);      // D2: B안 본문 글꼴
             tag.plate.gameObject.SetActive(false);
             return tag;
         }

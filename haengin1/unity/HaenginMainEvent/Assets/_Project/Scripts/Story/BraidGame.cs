@@ -32,7 +32,8 @@ namespace Haengin
             UiKit.Canvas(gameObject, 62);
             root = UiKit.Panel("땋기", transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-330f, 290f), new Vector2(600f, 470f), UiKit.Paper);   // 오른쪽 — 왼쪽엔 하늘(3D)이 보이게
             // QA Q14: 제목(44, 가운데)이 오른쪽 위 '박자 0/8' 과 붙어 '1번째박자 0/8' 로 읽히던 것 → 제목을 줄이고 왼쪽으로(점수 칸 비움)
-            title = UiKit.Text("제목", root.transform, Fonts != null ? Fonts.Br : null, 36f, UiKit.Ink, TextAlignmentOptions.Left);
+            UiKit.EdgeLine(root.transform, UiKit.Edge.Top, UiKit.Accent);      // D2(2026-11-05): 종이 작업 면 + 위 주황 줄 · 제목 Noto Black(붓 글꼴은 의성어만 — D5)
+            title = UiKit.Text("제목", root.transform, UiKit.FBlack(Fonts), 34f, UiKit.Ink, TextAlignmentOptions.Left);
             UiKit.Place(title.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(28f, -24f), new Vector2(360f, 60f));
             title.enableAutoSizing = true; title.fontSizeMin = 24f; title.fontSizeMax = 36f;
             strandL = UiKit.Panel("왼 가닥", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-90f, 10f), new Vector2(34f, 240f), new Color(0.20f, 0.16f, 0.15f));
@@ -41,11 +42,11 @@ namespace Haengin
             var bar = UiKit.Panel("박자 줄", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 96f), new Vector2(BarW, 8f), new Color(0.75f, 0.71f, 0.66f));
             UiKit.Panel("판정 칸", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 84f), new Vector2(BarW * Window * 2f / Interval, 32f), new Color(UiKit.Accent.r, UiKit.Accent.g, UiKit.Accent.b, 0.35f));
             marker = UiKit.Panel("박자", root.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 84f), new Vector2(10f, 32f), UiKit.Ink);
-            prompt = UiKit.Text("안내", root.transform, Fonts != null ? Fonts.B : null, 30f, UiKit.Ink, TextAlignmentOptions.Center);
+            prompt = UiKit.Text("안내", root.transform, UiKit.FMed(Fonts), 28f, UiKit.Ink, TextAlignmentOptions.Center);
             UiKit.Place(prompt.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 26f), new Vector2(600f, 44f));
-            score = UiKit.Text("점수", root.transform, Fonts != null ? Fonts.B : null, 26f, UiKit.Grey, TextAlignmentOptions.Right);
+            score = UiKit.Text("점수", root.transform, UiKit.FNum(Fonts), 30f, UiKit.Grey, TextAlignmentOptions.Right);
             UiKit.Place(score.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-24f, -30f), new Vector2(240f, 40f));
-            stamp = UiKit.Text("결과", root.transform, Fonts != null ? Fonts.Br : null, 120f, UiKit.Accent, TextAlignmentOptions.Center);
+            stamp = UiKit.Text("결과", root.transform, UiKit.FBlack(Fonts), 110f, UiKit.AccentText, TextAlignmentOptions.Center);
             UiKit.Place(stamp.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 20f), new Vector2(600f, 180f));
             root.gameObject.SetActive(false);
         }
