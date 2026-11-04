@@ -23,7 +23,7 @@ namespace Haengin
         /// '제작 중 장면 · 스토리보드' 로 뜬 횟수(QA 2차 B 시험 — 실제 장면으로 바꾼 카드는 늘지 않아야)
         public int StoryboardShows { get; private set; }
 
-        Image dim, card, tag;
+        Image dim, card, tagPlate;
         TextMeshProUGUI head, title, body, quotes, foot, tagText;
 
         void Build()
@@ -32,23 +32,24 @@ namespace Haengin
             UiKit.Canvas(gameObject, 65);
             dim = UiKit.Panel("어둡게", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, UiKit.Seen(Color.black, 0.55f));
             UiKit.Stretch(dim.rectTransform);
-            card = UiKit.Panel("카드", dim.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 10f), new Vector2(1480f, 800f), UiKit.Paper);
-            var band = UiKit.Panel("먹 띠", card.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1480f, 10f), UiKit.Ink);
+            // D2(2026-11-05): B안 — 먹 판 + 위 주황 줄 · 제목 Noto Black · 흐름 Medium · 대사(D6: 손글씨가 아님) Medium Warm
+            card = UiKit.Panel("카드", dim.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 10f), new Vector2(1480f, 800f), UiKit.InkPlate);
+            var band = UiKit.Panel("주황 줄", card.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1480f, UiKit.Stripe), UiKit.Accent);
             band.rectTransform.anchorMax = new Vector2(1f, 1f);
-            head = UiKit.Text("머리", card.transform, Fonts != null ? Fonts.B : null, 26f, UiKit.Grey, TextAlignmentOptions.Left);
+            head = UiKit.Text("머리", card.transform, UiKit.FMed(Fonts), 24f, UiKit.PaperDim, TextAlignmentOptions.Left);
             UiKit.Place(head.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(70f, -40f), new Vector2(1000f, 40f));
-            tag = UiKit.Panel("제작 중", card.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-60f, -34f), new Vector2(330f, 50f), UiKit.Accent);
-            tagText = UiKit.Text("글", tag.transform, Fonts != null ? Fonts.B : null, 24f, UiKit.Paper, TextAlignmentOptions.Center);
+            tagPlate = UiKit.Panel("제작 중", card.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-60f, -34f), new Vector2(330f, 50f), UiKit.Accent);
+            tagText = UiKit.Text("글", tagPlate.transform, UiKit.FBlack(Fonts), 24f, UiKit.Ink, TextAlignmentOptions.Center);
             UiKit.Stretch(tagText.rectTransform);
-            title = UiKit.Text("제목", card.transform, Fonts != null ? Fonts.Br : null, 58f, UiKit.Ink, TextAlignmentOptions.Left, wrap: true);
+            title = UiKit.Text("제목", card.transform, UiKit.FBlack(Fonts), 54f, UiKit.Paper, TextAlignmentOptions.Left, wrap: true);
             UiKit.Place(title.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(70f, -92f), new Vector2(1340f, 80f));
-            body = UiKit.Text("흐름", card.transform, Fonts != null ? Fonts.B : null, 29f, UiKit.Ink, TextAlignmentOptions.TopLeft, wrap: true);
+            body = UiKit.Text("흐름", card.transform, UiKit.FMed(Fonts), 29f, UiKit.Paper, TextAlignmentOptions.TopLeft, wrap: true);
             UiKit.Place(body.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(70f, -200f), new Vector2(1340f, 330f));
             body.lineSpacing = 18f;
-            quotes = UiKit.Text("대사", card.transform, Fonts != null ? Fonts.H : null, 36f, new Color(0.30f, 0.16f, 0.12f), TextAlignmentOptions.TopLeft, wrap: true);
+            quotes = UiKit.Text("대사", card.transform, UiKit.FMed(Fonts), 32f, UiKit.Warm, TextAlignmentOptions.TopLeft, wrap: true);
             UiKit.Place(quotes.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(90f, -540f), new Vector2(1320f, 180f));
             quotes.lineSpacing = 6f;
-            foot = UiKit.Text("발", card.transform, Fonts != null ? Fonts.B : null, 24f, UiKit.Grey, TextAlignmentOptions.Right);
+            foot = UiKit.Text("발", card.transform, UiKit.FMed(Fonts), 22f, UiKit.PaperDim, TextAlignmentOptions.Right);
             UiKit.Place(foot.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-60f, 30f), new Vector2(900f, 36f));
             dim.gameObject.SetActive(false);
         }
@@ -64,10 +65,10 @@ namespace Haengin
             string epTxt = ep != null ? $"{ep.No}화 「{ep.Title}」" : $"{s.Ep}화";
             head.text = $"{epTxt}   ·   {s.DateLabel} {s.TimeLabel}";
             title.text = s.Title;
-            tag.gameObject.SetActive(true);
+            tagPlate.gameObject.SetActive(true);
             tagText.text = move ? "이번 장면" : "제작 중 장면 · 스토리보드";
             if (!move) StoryboardShows++;
-            tag.color = move ? UiKit.Ink : UiKit.Accent;
+            tagPlate.color = move ? UiKit.Paper : UiKit.Accent;
             var lines = s.Board != null && s.Board.Length > 0 ? s.Board : new[] { s.Summary };
             body.text = "· " + string.Join("\n· ", lines);
             quotes.text = Quotes(s.Quotes);
@@ -84,9 +85,9 @@ namespace Haengin
             if (tagLine != null && tagLine.Contains("스토리보드")) StoryboardShows++;
             head.text = headLine ?? "";
             title.text = titleLine ?? "";
-            tag.gameObject.SetActive(!string.IsNullOrEmpty(tagLine));
+            tagPlate.gameObject.SetActive(!string.IsNullOrEmpty(tagLine));
             tagText.text = tagLine ?? "";
-            tag.color = accent ? UiKit.Accent : UiKit.Ink;
+            tagPlate.color = accent ? UiKit.Accent : UiKit.Paper;
             body.text = lines != null && lines.Length > 0 ? "· " + string.Join("\n· ", lines) : "";
             quotes.text = Quotes(quoteLines);
             foot.text = footLine ?? "";
@@ -101,7 +102,7 @@ namespace Haengin
             Mode = "소개";
             head.text = "행인1의 메인이벤트   ·   시우 루트 1부";
             title.text = t;
-            tag.gameObject.SetActive(false);
+            tagPlate.gameObject.SetActive(false);
             body.text = string.Join("\n\n", lines ?? new string[0]);
             quotes.text = string.IsNullOrEmpty(note) ? "" : $"<size=26><color=#5E5957>{note}</color></size>";
             foot.text = "× · Enter · 마우스 왼쪽   시작";
@@ -116,7 +117,11 @@ namespace Haengin
         {
             Side = side;
             var c = card.rectTransform;
-            dim.color = new Color(0f, 0f, 0f, side ? 0.08f : 0.55f);
+            dim.color = UiKit.Seen(Color.black, side ? 0.08f : 0.55f);
+            // D7: 가운데 카드 1480 은 4:3(1440)보다 넓음 → 화면 폭 − 76 안으로 줄임(글 상자는 카드 비율로)
+            float cw = ((RectTransform)transform).rect.width;
+            float k = cw > 10f ? Mathf.Min(1f, (cw - 76f) / 1480f) : 1f;
+            card.rectTransform.localScale = new Vector3(k, k, 1f);
             if (side) { c.anchorMin = c.anchorMax = new Vector2(1f, 0.5f); c.pivot = new Vector2(1f, 0.5f); c.anchoredPosition = new Vector2(-36f, 20f); c.sizeDelta = new Vector2(SideW, SideH); }
             else { c.anchorMin = c.anchorMax = new Vector2(0.5f, 0.5f); c.pivot = new Vector2(0.5f, 0.5f); c.anchoredPosition = new Vector2(0f, 10f); c.sizeDelta = new Vector2(1480f, 800f); }
             float w = side ? SideW - 90f : 1340f;
@@ -135,7 +140,7 @@ namespace Haengin
             // 2026-10-31: 긴 대사(서진수 끝 카드 4줄)가 아래 안내와 겹침 → 칸 안으로 줄임
             quotes.enableAutoSizing = true; quotes.fontSizeMin = 18f; quotes.fontSizeMax = quotes.fontSize;
             foot.rectTransform.sizeDelta = new Vector2(side ? SideW - 80f : 900f, 36f);
-            tag.rectTransform.sizeDelta = new Vector2(side ? 200f : 330f, 50f);
+            tagPlate.rectTransform.sizeDelta = new Vector2(side ? 200f : 330f, 50f);
         }
 
         static string Quotes(string[] q)

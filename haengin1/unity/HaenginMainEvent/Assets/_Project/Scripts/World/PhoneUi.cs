@@ -26,7 +26,7 @@ namespace Haengin
 
         GameObject root;
         TextMeshProUGUI[] tabText;
-        Image[] tabPlate;
+        Image[] tabPlate, tabBar;
         TextMeshProUGUI body, foot;
         InputAction nav, cancel;
         bool pCan; int lastX, openFrame;
@@ -35,24 +35,30 @@ namespace Haengin
         {
             if (root != null) return;
             UiKit.Canvas(gameObject, 62);
-            var frame = UiKit.Panel("휴대폰", transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-60f, 0f), new Vector2(720f, 900f), UiKit.Ink);
+            // D2(2026-11-05): B안 — 먹 판(위 주황 줄) 하나 · 탭 = 고른 탭 종이 칸 + 아래 주황 줄 + 먹 Black / 나머지 PaperDim Medium · 본문 Medium 종이색
+            var frame = UiKit.Plate("휴대폰", transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-60f, 0f), new Vector2(720f, 900f), UiKit.Edge.Top);
             root = frame.gameObject;
-            var screen = UiKit.Panel("화면", frame.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(680f, 840f), UiKit.Paper);
+            var screen = UiKit.Node("화면", frame.transform);
+            UiKit.Place(screen, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(680f, 840f));
             tabText = new TextMeshProUGUI[Tabs.Length];
             tabPlate = new Image[Tabs.Length];
+            tabBar = new Image[Tabs.Length];
             for (int i = 0; i < Tabs.Length; i++)
             {
                 var p = UiKit.Panel("탭 " + Tabs[i], screen.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(10f + i * (660f / Tabs.Length), -10f), new Vector2(660f / Tabs.Length - 4f, 50f), UiKit.Ink);
                 tabPlate[i] = p;
-                tabText[i] = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 19f, UiKit.Paper, TextAlignmentOptions.Center);
+                tabText[i] = UiKit.Text("글", p.transform, UiKit.FMed(Fonts), 19f, UiKit.PaperDim, TextAlignmentOptions.Center);
+                var tb = UiKit.Panel("고른 표시", p.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(660f / Tabs.Length - 4f, 5f), UiKit.Accent);
+                tb.gameObject.SetActive(false); tabBar[i] = tb;
                 UiKit.Stretch(tabText[i].rectTransform);
                 tabText[i].text = Tabs[i];
             }
-            body = UiKit.Text("본문", screen.transform, Fonts != null ? Fonts.B : null, 24f, UiKit.Ink, TextAlignmentOptions.TopLeft, wrap: true);
+            UiKit.Rule(screen, new Vector2(10f, -66f), 660f);
+            body = UiKit.Text("본문", screen.transform, UiKit.FMed(Fonts), 24f, UiKit.Paper, TextAlignmentOptions.TopLeft, wrap: true);
             UiKit.Place(body.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(26f, -80f), new Vector2(630f, 700f));
             body.lineSpacing = 8f;
             body.overflowMode = TextOverflowModes.Ellipsis;
-            foot = UiKit.Text("발", screen.transform, Fonts != null ? Fonts.B : null, 19f, UiKit.Grey, TextAlignmentOptions.Center);
+            foot = UiKit.Text("발", screen.transform, UiKit.FMed(Fonts), 19f, UiKit.PaperDim, TextAlignmentOptions.Center);
             UiKit.Place(foot.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 12f), new Vector2(640f, 30f));
             foot.text = "← → 탭   ○ · Esc · Tab 닫기";
             root.SetActive(false);
@@ -89,12 +95,15 @@ namespace Haengin
             for (int i = 0; i < Tabs.Length; i++)
             {
                 bool sel = i == Tab;
-                tabPlate[i].color = sel ? UiKit.Accent : UiKit.Ink;
-                tabText[i].color = sel ? UiKit.Ink : UiKit.Paper;       // 주황 판 위 종이색은 대비 3.2
+                tabPlate[i].color = sel ? UiKit.Paper : new Color(0f, 0f, 0f, 0f);
+                tabText[i].color = sel ? UiKit.Ink : UiKit.PaperDim;
+                var want = sel ? UiKit.FBlack(Fonts) : UiKit.FMed(Fonts);
+                if (want != null && tabText[i].font != want) tabText[i].font = want;
+                tabBar[i].gameObject.SetActive(sel);
             }
             body.text = Content != null ? Content(Tab) ?? "" : "";
             string al = ActLabel != null ? ActLabel(Tab) : "";
-            foot.text = string.IsNullOrEmpty(al) ? "← → 탭   ○ · Esc · Tab 닫기" : $"← → 탭   Enter · × {al}   ○ · Esc 닫기";
+            foot.text = UiKit.KeyMark(string.IsNullOrEmpty(al) ? "← → 탭   ○ · Esc · Tab 닫기" : $"← → 탭   Enter · × {al}   ○ · Esc 닫기");
         }
 
         void Update()

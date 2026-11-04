@@ -19,7 +19,6 @@ namespace Haengin
         public InputActionAsset Actions;
 
         public static StageHud Instance { get; private set; }
-        static readonly Color Ink = new Color(0.102f, 0.078f, 0.090f), Paper = new Color(0.957f, 0.937f, 0.902f);
 
         // ── 시험·녹화가 읽는 것
         public string LastBanner { get; private set; } = "";
@@ -41,7 +40,8 @@ namespace Haengin
         TextMeshProUGUI bannerText, bigText, cardSmall, cardBig, resultText, defeatLine, defeatHint, dialogWho, dialogText, promptText, yName;
         TextMeshProUGUI[] dialogOpt = new TextMeshProUGUI[2];
         Image[] dialogOptPlate = new Image[2];
-        Image defeatInk, yFill;
+        readonly UiKit.Row[] dialogRows = new UiKit.Row[2];
+        Image defeatInk, defeatPlate, yFill, dialogTag;
         Image[] yDots = new Image[3];
         float bannerLeft, bigLeft, cardLeft, resultLeft, defeatT;
         Action<bool> dialogDone;
@@ -66,7 +66,7 @@ namespace Haengin
             var s = subs.Find(x => x.Anchor == anchor) ?? subs.Find(x => x.Left <= 0f);
             if (s == null)
             {
-                var go = Plate("자막", root, UiKit.Seen(Ink, 0.93f), out var t, 24f, Paper);
+                var go = Plate("자막", root, UiKit.Seen(UiKit.Ink, 0.93f), out var t, 24f, UiKit.Paper);
                 s = new Sub { Go = go, Text = t };
                 subs.Add(s);
             }
@@ -114,7 +114,7 @@ namespace Haengin
         public void Dialog(string who, string text, string yes, string no, Action<bool> done)
         {
             Build();
-            dialogWho.text = who; dialogText.text = text;
+            UiKit.SetTag(dialogTag, dialogWho, who, 140f, 22f); dialogText.text = text;
             dialogOpt[0].text = yes; dialogOpt[1].text = no;
             dialogSel = 0;
             dialogDone = done;
@@ -142,7 +142,7 @@ namespace Haengin
             ybar.SetActive(f != null);
         }
 
-        public void YachaDowns(int downs) { Build(); for (int i = 0; i < yDots.Length; i++) yDots[i].color = i < downs ? Ink : new Color(Paper.r, Paper.g, Paper.b, 0.9f); }
+        public void YachaDowns(int downs) { Build(); for (int i = 0; i < yDots.Length; i++) yDots[i].color = i < downs ? UiKit.Ink : new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.9f); }
 
         public void HideAll()
         {
@@ -183,11 +183,13 @@ namespace Haengin
             {
                 defeatT += rdt;
                 float u = Mathf.Clamp01(defeatT / 1.0f);
-                defeatInk.color = UiKit.Seen(Ink, 0.9f * u);
+                defeatInk.color = UiKit.Seen(UiKit.CoverInk, UiKit.CoverA * u);
+                defeatPlate.color = new Color(UiKit.InkPlate.r, UiKit.InkPlate.g, UiKit.InkPlate.b, UiKit.InkPlate.a * Mathf.Clamp01((defeatT - 0.5f) / 0.3f));
                 defeatInk.rectTransform.localScale = Vector3.one * (1.6f - 0.6f * u);
                 defeatLine.alpha = Mathf.Clamp01((defeatT - 0.6f) / 0.4f);
                 defeatHint.alpha = Mathf.Clamp01((defeatT - 1.0f) / 0.3f);
-                defeatHint.text = CombatHud.PadLast ? "× 다시      ○ 그만" : "Enter 다시      Esc 그만";
+                string dh = UiKit.KeyMark(UiKit.PadLast ? "× 다시      ○ 그만" : "Enter 다시      Esc 그만");
+                if (defeatHint.text != dh) defeatHint.text = dh;
                 if (defeatT > 1.0f)
                 {
                     if (Pressed(Submit, ref prevSub)) DefeatChoose(true);
@@ -266,8 +268,7 @@ namespace Haengin
             for (int i = 0; i < 2; i++)
             {
                 bool sel = i == dialogSel;
-                dialogOptPlate[i].color = sel ? Paper : UiKit.Seen(Ink, 0.92f);
-                dialogOpt[i].color = sel ? Ink : Paper;
+                UiKit.SetRow(dialogRows[i], sel, null);
             }
         }
 
@@ -285,7 +286,10 @@ namespace Haengin
             canvas = MakeCanvas("무대 화면", 36, out root);
             top = MakeCanvas("무대 화면(위)", 45, out topRoot);
 
-            banner = Plate("배너", root, Ink, out bannerText, 54f, Paper);
+            // D2(2026-11-05): B안 — 배너 = 먹 판 + 왼쪽 주황 줄 + Noto Black
+            banner = Plate("배너", root, UiKit.InkPlate, out bannerText, 54f, UiKit.Paper);
+            bannerText.font = UiKit.FBlack();
+            UiKit.EdgeLine(banner.transform, UiKit.Edge.Left, UiKit.Accent).gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
             Anchor(banner, new Vector2(0.5f, 1f), new Vector2(0f, -170f));
             banner.SetActive(false);
 
@@ -298,22 +302,27 @@ namespace Haengin
                 var bgo = new GameObject("붓 판", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)) { layer = 5 };
                 bgo.transform.SetParent(bigWord.transform, false);
                 var br = (RectTransform)bgo.transform; br.sizeDelta = new Vector2(1040f, 500f); br.anchoredPosition = new Vector2(-10f, -16f);
-                var ri = bgo.GetComponent<RawImage>(); ri.texture = Kit.Brush; ri.color = new Color(Paper.r, Paper.g, Paper.b, 0.92f); ri.raycastTarget = false;
+                var ri = bgo.GetComponent<RawImage>(); ri.texture = Kit.Brush; ri.color = new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.92f); ri.raycastTarget = false;
             }
-            bigText = Text(bigWord.transform, 170f, Ink, new Vector2(900f, 240f));
-            bigText.outlineWidth = 0.22f; bigText.outlineColor = Paper;
+            bigText = Text(bigWord.transform, 170f, UiKit.Ink, new Vector2(900f, 240f));
+            bigText.outlineWidth = 0.22f; bigText.outlineColor = UiKit.Paper;
             bigWord.SetActive(false);
 
             nameCard = new GameObject("이름 카드", typeof(RectTransform)) { layer = 5 };
             nameCard.transform.SetParent(root, false);
             Anchor(nameCard, new Vector2(0.5f, 0.5f), new Vector2(0f, 120f));
-            var ncPlate = Img(nameCard.transform, Ink, new Vector2(960f, 190f), Vector2.zero);
-            ncPlate.color = UiKit.Seen(Ink, 0.86f);
-            cardSmall = Text(nameCard.transform, 30f, Paper, new Vector2(900f, 44f)); cardSmall.rectTransform.anchoredPosition = new Vector2(0f, 48f);
-            cardBig = Text(nameCard.transform, 72f, Color.white, new Vector2(940f, 96f)); cardBig.rectTransform.anchoredPosition = new Vector2(0f, -18f);
+            // 이름 카드 = 먹 판(위 주황 줄) · 머리말 Medium 흐림 · 이름 Noto Black 종이색
+            var ncPlate = Img(nameCard.transform, UiKit.InkPlate, new Vector2(960f, 190f), Vector2.zero);
+            UiKit.EdgeLine(ncPlate.transform, UiKit.Edge.Top, UiKit.Accent);
+            cardSmall = Text(nameCard.transform, 30f, UiKit.PaperDim, new Vector2(900f, 44f)); cardSmall.rectTransform.anchoredPosition = new Vector2(0f, 48f);
+            cardSmall.font = UiKit.FMed();
+            cardBig = Text(nameCard.transform, 72f, UiKit.Paper, new Vector2(940f, 96f)); cardBig.rectTransform.anchoredPosition = new Vector2(0f, -18f);
+            cardBig.font = UiKit.FBlack();
             nameCard.SetActive(false);
 
-            result = Plate("결과 카드", root, Paper, out resultText, 30f, Ink);
+            result = Plate("결과 카드", root, UiKit.InkPlate, out resultText, 30f, UiKit.Paper);      // 옛 종이 판 → 먹 판 + 위 주황 줄
+            resultText.font = UiKit.FMed();
+            UiKit.EdgeLine(result.transform, UiKit.Edge.Top, UiKit.Accent).gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
             Anchor(result, new Vector2(1f, 0f), new Vector2(-48f, 120f), pivot: new Vector2(1f, 0f));
             result.SetActive(false);
 
@@ -323,7 +332,7 @@ namespace Haengin
             prompt = pimg.gameObject;
             promptKeyBox = UiKit.KeyChip("키 칸", pimg.transform, null, "E", 72f, true, out promptKey);
             promptKeyBox.anchoredPosition = Vector2.zero;
-            promptText = UiKit.Text("행동", pimg.transform, UiKit.FBlack(), 30f, Paper, TextAlignmentOptions.MidlineLeft);
+            promptText = UiKit.Text("행동", pimg.transform, UiKit.FBlack(), 30f, UiKit.Paper, TextAlignmentOptions.MidlineLeft);
             UiKit.Place(promptText.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(94f, 0f), new Vector2(300f, 60f));
             promptWhat = UiKit.Text("대상", pimg.transform, UiKit.FMed(), 22f, UiKit.PaperDim, TextAlignmentOptions.MidlineLeft);
             UiKit.Place(promptWhat.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(300f, 1f), new Vector2(300f, 60f));
@@ -334,38 +343,43 @@ namespace Haengin
             ybar.transform.SetParent(root, false);
             Anchor(ybar, new Vector2(0.5f, 1f), new Vector2(0f, -70f));
             yName = Text(ybar.transform, 28f, Color.white, new Vector2(700f, 40f)); yName.rectTransform.anchoredPosition = new Vector2(0f, 26f);
-            yName.outlineWidth = 0.25f; yName.outlineColor = Ink;
-            var yBack = Img(ybar.transform, Ink, new Vector2(606f, 20f), new Vector2(0f, -6f));
+            yName.outlineWidth = 0.25f; yName.outlineColor = UiKit.Ink;
+            var yBack = Img(ybar.transform, UiKit.Ink, new Vector2(606f, 20f), new Vector2(0f, -6f));
             yFill = Img(yBack.transform, Color.white, new Vector2(600f, 14f), Vector2.zero);
             yFill.type = Image.Type.Filled; yFill.fillMethod = Image.FillMethod.Horizontal; yFill.fillOrigin = 0;
-            for (int i = 0; i < 3; i++) { yDots[i] = Img(ybar.transform, Paper, new Vector2(16f, 16f), new Vector2(-24f + 24f * i, -34f)); }
+            for (int i = 0; i < 3; i++) { yDots[i] = Img(ybar.transform, UiKit.Paper, new Vector2(16f, 16f), new Vector2(-24f + 24f * i, -34f)); }
             ybar.SetActive(false);
 
             // 패배 화면(맨 위 캔버스)
             defeat = new GameObject("패배 화면", typeof(RectTransform)) { layer = 5 };
             defeat.transform.SetParent(topRoot, false);
             var dr = (RectTransform)defeat.transform; dr.anchorMin = Vector2.zero; dr.anchorMax = Vector2.one; dr.offsetMin = dr.offsetMax = Vector2.zero;
-            defeatInk = Img(defeat.transform, Ink, Vector2.zero, Vector2.zero);
+            defeatInk = Img(defeat.transform, UiKit.Ink, Vector2.zero, Vector2.zero);
             var ir = defeatInk.rectTransform; ir.anchorMin = Vector2.zero; ir.anchorMax = Vector2.one; ir.offsetMin = ir.offsetMax = Vector2.zero;
-            defeatLine = Text(defeat.transform, 64f, Paper, new Vector2(1000f, 100f)); defeatLine.rectTransform.anchoredPosition = new Vector2(0f, 40f);
+            defeatPlate = Img(defeat.transform, UiKit.InkPlate, new Vector2(760f, 250f), new Vector2(0f, -10f));
+            UiKit.EdgeLine(defeatPlate.transform, UiKit.Edge.Top, UiKit.Accent);
+            defeatLine = Text(defeat.transform, 64f, UiKit.Paper, new Vector2(700f, 100f)); defeatLine.rectTransform.anchoredPosition = new Vector2(0f, 40f);
+            defeatLine.font = UiKit.FBlack();
             defeatLine.text = "…일어나.";
-            defeatHint = Text(defeat.transform, 30f, Paper, new Vector2(1000f, 50f)); defeatHint.rectTransform.anchoredPosition = new Vector2(0f, -70f);
+            defeatHint = Text(defeat.transform, 26f, UiKit.Paper, new Vector2(700f, 50f)); defeatHint.rectTransform.anchoredPosition = new Vector2(0f, -66f);
+            defeatHint.font = UiKit.FMed();
             defeat.SetActive(false);
 
             // 대화 판(아래 가운데)
             dialog = new GameObject("대화", typeof(RectTransform)) { layer = 5 };
             dialog.transform.SetParent(topRoot, false);
             Anchor(dialog, new Vector2(0.5f, 0f), new Vector2(0f, 120f), pivot: new Vector2(0.5f, 0f));
-            var dp = Img(dialog.transform, UiKit.Seen(Ink, 0.9f), new Vector2(1200f, 230f), new Vector2(0f, 115f));
-            dialogWho = Text(dialog.transform, 26f, new Color(0.886f, 0.345f, 0.173f), new Vector2(1140f, 36f)); dialogWho.alignment = TextAlignmentOptions.Left;
-            dialogWho.rectTransform.anchoredPosition = new Vector2(0f, 200f);
-            dialogText = Text(dialog.transform, 30f, Paper, new Vector2(1140f, 90f)); dialogText.alignment = TextAlignmentOptions.TopLeft;
+            var dp = Img(dialog.transform, UiKit.InkPlate, new Vector2(1200f, 230f), new Vector2(0f, 115f));
+            dialogWho = UiKit.NameTag("이름띠", dp.transform, null, new Vector2(0f, 1f), Vector2.zero, Vector2.zero, new Vector2(180f, 44f), 26f, out dialogTag, 22f);
+            dialogText = Text(dialog.transform, 30f, UiKit.Paper, new Vector2(1140f, 90f)); dialogText.alignment = TextAlignmentOptions.TopLeft;
+            dialogText.font = UiKit.FMed();
             dialogText.textWrappingMode = TextWrappingModes.Normal;
-            dialogText.rectTransform.anchoredPosition = new Vector2(0f, 135f);
+            dialogText.rectTransform.anchoredPosition = new Vector2(0f, 145f);
             for (int i = 0; i < 2; i++)
             {
-                dialogOptPlate[i] = Img(dialog.transform, Paper, new Vector2(260f, 52f), new Vector2(-150f + 300f * i, 42f));
-                dialogOpt[i] = Text(dialogOptPlate[i].transform, 28f, Ink, new Vector2(260f, 52f));
+                var c5 = new Vector2(0.5f, 0.5f);
+                var row = UiKit.ListRow("선택 " + i, dialog.transform, null, new Vector2(0.5f, 0f), c5, new Vector2(-150f + 300f * i, 42f), new Vector2(260f, 52f), 28f);
+                dialogRows[i] = row; dialogOptPlate[i] = row.Plate; dialogOpt[i] = row.Label;
             }
             dialog.SetActive(false);
         }

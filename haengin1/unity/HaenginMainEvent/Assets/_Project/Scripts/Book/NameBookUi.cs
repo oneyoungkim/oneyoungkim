@@ -37,8 +37,10 @@ namespace Haengin
             if (word != null) return;
             UiKit.Canvas(gameObject, 47);
             // 2026-10-31: 호칭 글이 판 없이 배경 위에 → 종이 판(판째로 날아감)
-            wordPlate = UiKit.Panel("호칭 판", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 300f), new Vector2(500f, 120f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.97f));
-            word = UiKit.Text("호칭", wordPlate.transform, Fonts != null ? Fonts.Br : null, 76f, UiKit.Ink, TextAlignmentOptions.Center);
+            // D2·D5(2026-11-05): B안 — 호칭 판 = 먹 판(위 주황 줄) + Noto Black(붓 글꼴은 의성어만)
+            wordPlate = UiKit.Panel("호칭 판", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 300f), new Vector2(500f, 120f), UiKit.InkPlate);
+            UiKit.EdgeLine(wordPlate.transform, UiKit.Edge.Top, UiKit.Accent);
+            word = UiKit.Text("호칭", wordPlate.transform, UiKit.FBlack(Fonts), 64f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Stretch(word.rectTransform);
             var m = new Material(word.fontSharedMaterial);
             m.EnableKeyword(ShaderUtilities.Keyword_Outline);
@@ -56,7 +58,7 @@ namespace Haengin
             // B6(2026-11-05): 4:3 에서 대사 판(49) 뒤로 가려지던 것 → 아이콘만 대사 판 위 순서(50)
             var ic = icon.gameObject.AddComponent<Canvas>(); ic.overrideSorting = true; ic.sortingOrder = 50;
 
-            var g = UiKit.Panel("도감", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1240f, 900f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.97f));
+            var g = UiKit.Plate("도감", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1240f, 900f), UiKit.Edge.Top);
             grid = g.gameObject;
             grid.SetActive(false);
         }
@@ -124,7 +126,7 @@ namespace Haengin
             Build();
             foreach (Transform c in grid.transform) Destroy(c.gameObject);
             Cells.Clear();
-            var head = UiKit.Text("제목", grid.transform, Fonts != null ? Fonts.Br : null, 44f, UiKit.Ink, TextAlignmentOptions.Center);
+            var head = UiKit.Text("제목", grid.transform, UiKit.FBlack(Fonts), 42f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Place(head.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -20f), new Vector2(1100f, 60f));
             head.text = "불린 이름";
             for (int slot = 1; slot <= 9; slot++)
@@ -142,22 +144,22 @@ namespace Haengin
         {
             bool got = e != null && book.Has(e.Name);
             var tone = e == null ? NameTone.Empty : e.Tone;
-            Color bg = !got ? new Color(UiKit.Paper.r * 0.93f, UiKit.Paper.g * 0.93f, UiKit.Paper.b * 0.93f) : tone == NameTone.Warm ? WarmCell : GreyCell;
-            if (tone == NameTone.Locked) bg = UiKit.Ink;
+            Color bg = !got ? UiKit.Track : tone == NameTone.Warm ? WarmCell : GreyCell;      // 못 얻은 칸 = 트랙 색(먹 판 위 빈칸)
+            if (tone == NameTone.Locked) bg = UiKit.Track;
             var cell = UiKit.Panel("칸 " + tag, grid.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), pos, small ? new Vector2(560f, 70f) : new Vector2(360f, 200f), bg);
             if (got && tone == NameTone.Mock)
             {
                 // 먹 테(놀림)
                 var o = cell.gameObject.AddComponent<Outline>();
-                o.effectColor = UiKit.Ink; o.effectDistance = new Vector2(6f, -6f);
+                o.effectColor = UiKit.Warm; o.effectDistance = new Vector2(6f, -6f);      // 먹 판 위라 먹 테 → Warm 테
             }
             string big = tone == NameTone.Locked ? "?" : got ? e.Name : "";
-            var t = UiKit.Text("호칭", cell.transform, Fonts != null ? Fonts.Br : null, small ? 32f : 46f, tone == NameTone.Locked ? UiKit.Paper : UiKit.Ink, TextAlignmentOptions.Center);
+            var t = UiKit.Text("호칭", cell.transform, UiKit.FBlack(Fonts), small ? 30f : 42f, tone == NameTone.Locked ? UiKit.PaperDim : UiKit.Ink, TextAlignmentOptions.Center);
             UiKit.Place(t.rectTransform, new Vector2(0.5f, small ? 0.5f : 0.62f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(small ? 540f : 340f, 64f));
             t.text = big;
             if (!small && got)
             {
-                var d = UiKit.Text("설명", cell.transform, Fonts != null ? Fonts.B : null, 19f, UiKit.Ink, TextAlignmentOptions.Center, wrap: true);
+                var d = UiKit.Text("설명", cell.transform, UiKit.FMed(Fonts), 19f, UiKit.Ink, TextAlignmentOptions.Center, wrap: true);
                 UiKit.Place(d.rectTransform, new Vector2(0.5f, 0.22f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(330f, 64f));
                 d.text = $"{e.Caller}\n{e.Note}";
             }

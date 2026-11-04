@@ -237,9 +237,7 @@ namespace Haengin
                 if (!on) continue;
                 bool sel = i == Selected;
                 rows[i].Label.text = page.Items[i].Text();
-                rows[i].Plate.color = sel ? UiKit.Paper : UiKit.Seen(UiKit.Ink, 0.93f);
-                rows[i].Bar.enabled = sel;
-                rows[i].Label.color = sel ? UiKit.Ink : UiKit.Paper;
+                UiKit.SetRow(new UiKit.Row { Rt = rows[i].Rt, Plate = rows[i].Plate, Bar = rows[i].Bar, Label = rows[i].Label }, sel, Fonts);
                 rows[i].Rt.anchoredPosition = new Vector2(0f, (main ? -60f : 120f) - i * 66f);
             }
         }
@@ -260,25 +258,23 @@ namespace Haengin
             title = UiKit.Text("제목", transform, Fonts != null ? Fonts.Br : null, 110f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Place(title.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 258f), new Vector2(1500f, 150f));
             title.text = "행인1의 메인이벤트";
-            sub = UiKit.Text("부제", transform, Fonts != null ? Fonts.B : null, 30f, UiKit.Ink, TextAlignmentOptions.Center);
+            // D2·D5(2026-11-05): 제목 로고만 '그림 제목'으로 붓 글꼴 예외 · 쪽 제목 Noto Black · 글 Medium · 줄 = UiKit.ListRow
+            sub = UiKit.Text("부제", transform, UiKit.FMed(Fonts), 30f, UiKit.Ink, TextAlignmentOptions.Center);
             UiKit.Place(sub.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 110f), new Vector2(1500f, 44f));
             sub.text = "1장 「행인1」 오픈월드 데모 — 2026년 3월 3일 ~ 5월 8일";
-            head = UiKit.Text("쪽 제목", transform, Fonts != null ? Fonts.Br : null, 54f, UiKit.Ink, TextAlignmentOptions.Center);
+            head = UiKit.Text("쪽 제목", transform, UiKit.FBlack(Fonts), 50f, UiKit.Ink, TextAlignmentOptions.Center);
             UiKit.Place(head.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 250f), new Vector2(1500f, 80f));
-            note = UiKit.Text("설명", transform, Fonts != null ? Fonts.B : null, 24f, UiKit.Grey, TextAlignmentOptions.Center);
+            note = UiKit.Text("설명", transform, UiKit.FMed(Fonts), 24f, UiKit.Grey, TextAlignmentOptions.Center);
             UiKit.Place(note.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 190f), new Vector2(1500f, 40f));
-            var hint = UiKit.Text("조작", transform, Fonts != null ? Fonts.B : null, 20f, UiKit.Grey, TextAlignmentOptions.Center);
+            var hint = UiKit.Text("조작", transform, UiKit.FMed(Fonts), 20f, UiKit.Grey, TextAlignmentOptions.Center);
             UiKit.Place(hint.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 30f), new Vector2(1500f, 34f));
             hint.text = "↑↓ 고르기    × (A) · Enter 선택    ○ (B) · Backspace 돌아가기";
             rows = new Row[MaxRows];
             for (int i = 0; i < MaxRows; i++)
             {
                 var c5 = new Vector2(0.5f, 0.5f);
-                var plate = UiKit.Panel("항목 " + (i + 1), transform, c5, c5, Vector2.zero, new Vector2(760f, 56f), UiKit.Ink);
-                var bar = UiKit.Panel("고른 표시", plate.transform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(8f, 56f), UiKit.Accent);
-                var label = UiKit.Text("글", plate.transform, Fonts != null ? Fonts.B : null, 26f, UiKit.Paper, TextAlignmentOptions.Center);
-                UiKit.Stretch(label.rectTransform);
-                rows[i] = new Row { Rt = (RectTransform)plate.transform, Plate = plate, Bar = bar, Label = label };
+                var r = UiKit.ListRow("항목 " + (i + 1), transform, Fonts, c5, c5, Vector2.zero, new Vector2(760f, 56f), 26f);
+                rows[i] = new Row { Rt = r.Rt, Plate = r.Plate, Bar = r.Bar, Label = r.Label };
             }
         }
 

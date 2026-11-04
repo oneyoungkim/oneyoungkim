@@ -42,14 +42,15 @@ namespace Haengin
             var dim = UiKit.Panel("어둡게", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, UiKit.Seen(Color.black, 0.6f));
             UiKit.Stretch(dim.rectTransform);
             root = dim.gameObject;
-            var card = UiKit.Panel("계획표", dim.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1500f, 960f), UiKit.Paper);
-            head = UiKit.Text("머리", card.transform, Fonts != null ? Fonts.Br : null, 44f, UiKit.Ink, TextAlignmentOptions.Left);
+            // D2(2026-11-05): B안 — 먹 판(위 주황 줄) · 머리 Noto Black · 열 머리말 흐림 · 고른 칸 = 종이 칸 + 먹 글자 · 이벤트 칸 = 트랙 칸 + Warm
+            var card = UiKit.Plate("계획표", dim.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1500f, 960f), UiKit.Edge.Top);
+            head = UiKit.Text("머리", card.transform, UiKit.FBlack(Fonts), 42f, UiKit.Paper, TextAlignmentOptions.Left);
             UiKit.Place(head.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(50f, -20f), new Vector2(1400f, 60f));
             string[] colNames = { "날짜", "새벽", "저녁", "밤", "주말" };
             float[] colX = { 50f, 330f, 600f, 870f, 1140f };
             for (int c = 0; c < 5; c++)
             {
-                var t = UiKit.Text("열 " + c, card.transform, Fonts != null ? Fonts.B : null, 22f, UiKit.Grey, TextAlignmentOptions.Left);
+                var t = UiKit.Text("열 " + c, card.transform, UiKit.FMed(Fonts), 20f, UiKit.PaperDim, TextAlignmentOptions.Left);
                 UiKit.Place(t.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(colX[c], -88f), new Vector2(260f, 30f));
                 t.text = colNames[c];
             }
@@ -60,7 +61,7 @@ namespace Haengin
                 {
                     var p = UiKit.Panel($"칸 {r},{c}", card.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(colX[c] - 8f, -120f - r * 50f), new Vector2(c == 0 ? 270f : 255f, 46f), new Color(0f, 0f, 0f, 0f));
                     plates[r, c] = p;
-                    var t = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 22f, UiKit.Ink, TextAlignmentOptions.Left);
+                    var t = UiKit.Text("글", p.transform, UiKit.FMed(Fonts), 22f, UiKit.Paper, TextAlignmentOptions.Left);
                     UiKit.Place(t.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(10f, 0f), new Vector2(c == 0 ? 260f : 245f, 44f));
                     cells[r, c] = t;
                 }
@@ -69,14 +70,14 @@ namespace Haengin
             for (int i = 0; i < 2; i++)
             {
                 buttons[i] = UiKit.Panel("단추 " + i, card.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-260f + i * 520f, 40f), new Vector2(480f, 60f), UiKit.Ink);
-                buttonText[i] = UiKit.Text("글", buttons[i].transform, Fonts != null ? Fonts.B : null, 26f, UiKit.Paper, TextAlignmentOptions.Center);
+                buttonText[i] = UiKit.Text("글", buttons[i].transform, UiKit.FBold(Fonts), 26f, UiKit.Paper, TextAlignmentOptions.Center);
                 UiKit.Stretch(buttonText[i].rectTransform);
                 buttonText[i].text = bt[i];
             }
-            foot = UiKit.Text("발", card.transform, Fonts != null ? Fonts.B : null, 20f, UiKit.Grey, TextAlignmentOptions.Right);
+            foot = UiKit.Text("발", card.transform, UiKit.FMed(Fonts), 20f, UiKit.PaperDim, TextAlignmentOptions.Right);
             UiKit.Place(foot.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-50f, 98f), new Vector2(1400f, 30f));
             foot.text = "↑↓ 날짜   ← → 칸   × 바꾸기   맡기면: 돈 100% · 부 스탯 75% · 관계 이벤트 없음 · 시간·피로 그대로";
-            montage = UiKit.Text("몽타주", dim.transform, Fonts != null ? Fonts.B : null, 28f, UiKit.Paper, TextAlignmentOptions.TopLeft, wrap: true);
+            montage = UiKit.Text("몽타주", dim.transform, UiKit.FMed(Fonts), 28f, UiKit.Paper, TextAlignmentOptions.TopLeft, wrap: true);
             UiKit.Place(montage.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1400f, 900f));
             montage.gameObject.SetActive(false);
             root.SetActive(false);
@@ -168,11 +169,18 @@ namespace Haengin
                     if (c == 0) t.text = $"{p.Day / 100}/{p.Day % 100}({GameClock.WeekdayOfKey(p.Day)}){(ev != null ? " ◆" : "")}";
                     else t.text = ev != null && c == 1 ? $"이벤트 — {ev}" : ev != null ? "" : WeekPlanner.Get(p, c - 1);
                     bool sel = Row == r && Col == c - 1 && c > 0;
-                    plates[r, c].color = sel ? new Color(UiKit.Accent.r, UiKit.Accent.g, UiKit.Accent.b, 0.35f) : ev != null ? new Color(UiKit.Endure.r, UiKit.Endure.g, UiKit.Endure.b, 0.15f) : new Color(0, 0, 0, r % 2 == 0 ? 0.04f : 0f);
-                    t.color = ev != null ? UiKit.Endure : UiKit.Ink;
+                    plates[r, c].color = sel ? UiKit.Paper : ev != null ? UiKit.Track : new Color(0, 0, 0, 0);
+                    t.color = sel ? UiKit.Ink : ev != null ? UiKit.Warm : UiKit.Paper;
                 }
             }
-            for (int i = 0; i < 2; i++) buttons[i].color = Row == Rows && Col == i ? UiKit.Accent : UiKit.Ink;
+            for (int i = 0; i < 2; i++)
+            {
+                bool bs = Row == Rows && Col == i;      // 규칙 9: 고른 단추 = 종이 판 + 먹 Black · 나머지 = 트랙 판 + 종이색 Bold
+                buttons[i].color = bs ? UiKit.Paper : UiKit.Track;
+                buttonText[i].color = bs ? UiKit.Ink : UiKit.Paper;
+                var bf = bs ? UiKit.FBlack(Fonts) : UiKit.FBold(Fonts);
+                if (bf != null && buttonText[i].font != bf) buttonText[i].font = bf;
+            }
         }
 
         /// 맡긴 결과 몽타주(하루 한 줄 · 0.22초) → 결산 줄. 봇은 빠르게

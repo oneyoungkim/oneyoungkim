@@ -31,16 +31,17 @@ namespace Haengin
             var bg = UiKit.Panel("챕터 카드", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, UiKit.Ink);
             UiKit.Stretch(bg.rectTransform);
             root = bg.gameObject;
-            small = UiKit.Text("작은 글", bg.transform, Fonts != null ? Fonts.B : null, 28f, new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.7f), TextAlignmentOptions.Center);
+            // D2·D5(2026-11-05): 붓 제목 → Noto Black · 흐린 글 PaperDim(불투명) · 본문 Medium
+            small = UiKit.Text("작은 글", bg.transform, UiKit.FMed(Fonts), 28f, UiKit.PaperDim, TextAlignmentOptions.Center);
             UiKit.Place(small.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -120f), new Vector2(1600f, 40f));
-            title = UiKit.Text("제목", bg.transform, Fonts != null ? Fonts.Br : null, 96f, UiKit.Paper, TextAlignmentOptions.Center);
+            title = UiKit.Text("제목", bg.transform, UiKit.FBlack(Fonts), 92f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Place(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -170f), new Vector2(1700f, 130f));
-            sub = UiKit.Text("부제", bg.transform, Fonts != null ? Fonts.B : null, 34f, UiKit.Warm, TextAlignmentOptions.Center, wrap: true);
+            sub = UiKit.Text("부제", bg.transform, UiKit.FMed(Fonts), 34f, UiKit.Warm, TextAlignmentOptions.Center, wrap: true);
             UiKit.Place(sub.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -320f), new Vector2(1500f, 100f));
-            body = UiKit.Text("본문", bg.transform, Fonts != null ? Fonts.B : null, 30f, UiKit.Paper, TextAlignmentOptions.TopLeft, wrap: true);
+            body = UiKit.Text("본문", bg.transform, UiKit.FMed(Fonts), 30f, UiKit.Paper, TextAlignmentOptions.TopLeft, wrap: true);
             UiKit.Place(body.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -440f), new Vector2(1300f, 520f));
             body.lineSpacing = 14f;
-            foot = UiKit.Text("발", bg.transform, Fonts != null ? Fonts.B : null, 24f, UiKit.PaperDim, TextAlignmentOptions.Right);
+            foot = UiKit.Text("발", bg.transform, UiKit.FMed(Fonts), 24f, UiKit.PaperDim, TextAlignmentOptions.Right);
             UiKit.Place(foot.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-80f, 50f), new Vector2(1200f, 36f));
             root.SetActive(false);
         }

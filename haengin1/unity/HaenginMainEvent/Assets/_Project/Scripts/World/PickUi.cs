@@ -26,6 +26,7 @@ namespace Haengin
         TextMeshProUGUI title, foot;
         TextMeshProUGUI[] rows;
         Image[] plates;
+        UiKit.Row[] rowParts;
         InputAction nav, cancel;
         bool pCan; int lastY, openFrame, forced = -2;
 
@@ -33,20 +34,18 @@ namespace Haengin
         {
             if (root != null) return;
             UiKit.Canvas(gameObject, 64);
-            var frame = UiKit.Panel("고르기", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(820f, 120f + Max * 58f), UiKit.Ink);
+            // D2(2026-11-05): B안 — 먹 판(위 주황 줄) · 제목 Noto Black · 줄 = 규칙 9(고른 줄 종이 판 + 왼쪽 주황 + 먹 Black / 나머지 먹 판 + 종이색 Bold)
+            var frame = UiKit.Plate("고르기", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(820f, 120f + Max * 58f), UiKit.Edge.Top);
             root = frame.gameObject;
-            title = UiKit.Text("제목", frame.transform, Fonts != null ? Fonts.Br : null, 32f, UiKit.Paper, TextAlignmentOptions.Left);
+            title = UiKit.Text("제목", frame.transform, UiKit.FBlack(Fonts), 32f, UiKit.Paper, TextAlignmentOptions.Left);
             UiKit.Place(title.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(28f, -16f), new Vector2(770f, 44f));
-            rows = new TextMeshProUGUI[Max]; plates = new Image[Max];
+            rows = new TextMeshProUGUI[Max]; plates = new Image[Max]; rowParts = new UiKit.Row[Max];
             for (int i = 0; i < Max; i++)
             {
-                var p = UiKit.Panel("줄 " + i, frame.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(20f, -70f - i * 58f), new Vector2(780f, 52f), UiKit.Paper);
-                plates[i] = p;
-                rows[i] = UiKit.Text("글", p.transform, Fonts != null ? Fonts.B : null, 23f, UiKit.Ink, TextAlignmentOptions.Left);
-                UiKit.Place(rows[i].rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(16f, 0f), new Vector2(752f, 48f));
-                rows[i].overflowMode = TextOverflowModes.Ellipsis;
+                var r = UiKit.ListRow("줄 " + i, frame.transform, Fonts, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(20f, -70f - i * 58f), new Vector2(780f, 52f), 23f);
+                plates[i] = r.Plate; rows[i] = r.Label; rowParts[i] = r;
             }
-            foot = UiKit.Text("발", frame.transform, Fonts != null ? Fonts.B : null, 19f, UiKit.PaperDim, TextAlignmentOptions.Center);
+            foot = UiKit.Text("발", frame.transform, UiKit.FMed(Fonts), 19f, UiKit.PaperDim, TextAlignmentOptions.Center);
             UiKit.Place(foot.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 10f), new Vector2(780f, 30f));
             root.SetActive(false);
         }
@@ -102,8 +101,7 @@ namespace Haengin
             for (int i = 0; i < Count; i++)
             {
                 bool sel = i == Selected;
-                plates[i].color = sel ? UiKit.Accent : UiKit.Paper;
-                rows[i].color = UiKit.Ink;       // 주황 판 위 종이색은 대비 3.2
+                UiKit.SetRow(rowParts[i], sel, Fonts);
             }
         }
     }

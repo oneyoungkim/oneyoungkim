@@ -45,26 +45,28 @@ namespace Haengin
             if (toast != null) return;
             UiKit.Canvas(gameObject, 46);
             // 종이 띠 위 먹 붓 숫자(외곽선 재질은 붓 글꼴이 뭉개져서 띠로)
-            toastPlate = UiKit.Panel("가계부 한 줄 띠", transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-40f, -112f), new Vector2(200f, 56f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.9f));
-            UiKit.Fit(toastPlate, 22, 22, 6, 8);
-            toast = UiKit.Text("가계부 한 줄", toastPlate.transform, Fonts != null ? Fonts.Br : null, 32f, UiKit.Ink, TextAlignmentOptions.Right);
+            // D2(2026-11-05): B안 — 먹 판 + 왼쪽 주황 줄 · 숫자 Barlow(붓 글꼴은 의성어만 — D5)
+            toastPlate = UiKit.Panel("가계부 한 줄 띠", transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-38f, -158f), new Vector2(200f, 56f), UiKit.InkPlate);
+            UiKit.Fit(toastPlate, 24, 22, 6, 8);
+            UiKit.EdgeLine(toastPlate.transform, UiKit.Edge.Left, UiKit.Accent).gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            toast = UiKit.Text("가계부 한 줄", toastPlate.transform, UiKit.FNum(Fonts), 34f, UiKit.Paper, TextAlignmentOptions.Right);
             toastCg = toastPlate.gameObject.AddComponent<CanvasGroup>();
             toastPlate.gameObject.SetActive(false);
 
             // 공개 표
-            var t = UiKit.Panel("가계부 표", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 30f), new Vector2(1180f, 760f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.95f));
+            var t = UiKit.Plate("가계부 표", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 30f), new Vector2(1180f, 760f), UiKit.Edge.Top);
             table = t.gameObject;
-            var head = UiKit.Text("제목", t.transform, Fonts != null ? Fonts.Br : null, 40f, UiKit.Ink, TextAlignmentOptions.Center);
+            var head = UiKit.Text("제목", t.transform, UiKit.FBlack(Fonts), 38f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Place(head.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -26f), new Vector2(1100f, 56f));
             head.text = "반시우 가계부. 2026년 3월.";
             tableRows = UiKit.Node("줄", t.transform);
             UiKit.Place(tableRows, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -100f), new Vector2(1080f, 640f));
             table.SetActive(false);
 
-            warn = UiKit.Panel("경고", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 180f), new Vector2(760f, 96f), UiKit.Ink);
-            warnText = UiKit.Text("글", warn.transform, Fonts != null ? Fonts.B : null, 34f, UiKit.Paper, TextAlignmentOptions.Center);   // 본문 글꼴(— 가 붓 글꼴에 없음)
+            warn = UiKit.Panel("경고", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 180f), new Vector2(760f, 96f), UiKit.InkPlate);
+            warnText = UiKit.Text("글", warn.transform, UiKit.FBlack(Fonts), 34f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Stretch(warnText.rectTransform);
-            UiKit.Panel("붉은 테", warn.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(760f, 6f), UiKit.Endure);
+            UiKit.Panel("붉은 테", warn.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(760f, UiKit.Stripe), UiKit.EndureLit);
             warn.gameObject.SetActive(false);
 
             // 퀘스트 「하늘이 생일」: 하늘 코팅 메모가 그대로 체크리스트(손글씨 글꼴)
@@ -117,7 +119,7 @@ namespace Haengin
             foreach (var r in rows)
             {
                 bool head = r.StartsWith("[");
-                var tx = UiKit.Text("줄", tableRows, head ? (Fonts != null ? Fonts.Br : null) : (Fonts != null ? Fonts.B : null), head ? 32f : 27f, head ? UiKit.Endure : UiKit.Ink, TextAlignmentOptions.Left);
+                var tx = UiKit.Text("줄", tableRows, head ? UiKit.FBlack(Fonts) : UiKit.FMed(Fonts), head ? 30f : 27f, head ? UiKit.Warm : UiKit.Paper, TextAlignmentOptions.Left);
                 UiKit.Place(tx.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(head ? 0f : 40f, -y), new Vector2(1040f, head ? 46f : 40f));
                 tx.text = r;
                 tx.maxVisibleCharacters = 0;

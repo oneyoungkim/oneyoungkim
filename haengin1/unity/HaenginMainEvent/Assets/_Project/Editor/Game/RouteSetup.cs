@@ -138,45 +138,20 @@ namespace Haengin.EditorGame
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             scaler.matchWidthOrHeight = 1f;
 
-            // 판(가로는 글 길이에 맞춤)
-            var plate = new GameObject("판", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(HorizontalLayoutGroup), typeof(ContentSizeFitter)) { layer = 5 };
-            plate.transform.SetParent(root.transform, false);
-            var prt = (RectTransform)plate.transform;
-            prt.anchorMin = prt.anchorMax = new Vector2(0.5f, 1f);
-            prt.pivot = new Vector2(0.5f, 1f);
-            prt.anchoredPosition = new Vector2(0f, -28f);
-            var img = plate.GetComponent<Image>();
-            img.color = Paper;
-            img.raycastTarget = false;
-            var lay = plate.GetComponent<HorizontalLayoutGroup>();
-            lay.padding = new RectOffset(16, 20, 7, 8);
-            lay.spacing = 11f;
-            lay.childAlignment = TextAnchor.MiddleCenter;
-            lay.childControlWidth = lay.childControlHeight = true;
-            lay.childForceExpandWidth = lay.childForceExpandHeight = false;
-            var fit = plate.GetComponent<ContentSizeFitter>();
-            fit.horizontalFit = fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            // 왼쪽 주황 막대(체크포인트 색과 같은 길잡이 색)
-            var dot = new GameObject("길잡이 색", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(LayoutElement)) { layer = 5 };
-            dot.transform.SetParent(plate.transform, false);
-            var dimg = dot.GetComponent<Image>();
-            dimg.color = Accent; dimg.raycastTarget = false;
-            var le = dot.GetComponent<LayoutElement>();
-            le.preferredWidth = le.minWidth = 6f; le.preferredHeight = le.minHeight = 26f;
-
-            var txtGo = new GameObject("글", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI)) { layer = 5 };
-            txtGo.transform.SetParent(plate.transform, false);
-            var txt = txtGo.GetComponent<TextMeshProUGUI>();
-            txt.font = font;
-            txt.fontSize = 26f;
-            txt.color = Ink;
-            txt.alignment = TextAlignmentOptions.MidlineLeft;
-            txt.textWrappingMode = TextWrappingModes.NoWrap;
-            txt.raycastTarget = false;
+            // D3(2026-11-05): B안 '다음' 판(UiKit.NextPlate 과 같은 자리·모양)을 여기서 바로 만듦 — 옛 RouteHud.BStyle(실행 중 덧칠) 대신
+            //   오른쪽 위 (−38,−38) 538×106 먹 판 + 왼쪽 주황 줄 · 머리말 Medium 18 흐림 · 제목 Noto Black 32
+            var uf = AssetDatabase.LoadAssetAtPath<UiFonts>("Assets/_Project/Settings/UiFonts.asset");
+            var tr = new Vector2(1f, 1f);
+            var pimg = UiKit.Plate("판", root.transform, tr, tr, new Vector2(-38f, -38f), new Vector2(UiKit.NextPlate.W, UiKit.NextPlate.H), UiKit.Edge.Left);
+            var plate = pimg.gameObject;
+            var head = UiKit.Label("머리말", plate.transform, uf, new Vector2(UiKit.NextPlate.X, -12f), UiKit.NextPlate.Inner);
+            if (uf != null && uf.Medium != null) head.font = uf.Medium;
+            var txt = UiKit.TextAt("글", plate.transform, uf != null && uf.Black != null ? uf.Black : font, 32f, UiKit.Paper, new Vector2(UiKit.NextPlate.X, -46f), new Vector2(UiKit.NextPlate.Inner, 60f), TextAlignmentOptions.BaselineLeft);
+            txt.textWrappingMode = TextWrappingModes.NoWrap; txt.overflowMode = TextOverflowModes.Ellipsis;
 
             var hud = root.AddComponent<RouteHud>();
             hud.Text = txt;
+            hud.Head = head;
             hud.Plate = plate;
             hud.Guide = guide;
 

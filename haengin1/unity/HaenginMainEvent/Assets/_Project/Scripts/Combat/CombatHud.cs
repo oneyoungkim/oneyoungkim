@@ -22,7 +22,6 @@ namespace Haengin
         public FxKit Kit;
         public TMP_FontAsset Font;
 
-        public static readonly Color Ink = new Color(0.102f, 0.078f, 0.090f), Paper = new Color(0.957f, 0.937f, 0.902f), Orange = new Color(0.886f, 0.345f, 0.173f);
         /// 왼쪽 위 '반시우' 판의 오른쪽·아래 끝(1080 기준, 위 왼쪽에서) — 드릴 머리글 판이 비켜 갈 때
         public const float MeRight = 566f, MeBottom = 146f;
         /// 화면 위쪽에서 비워 둘 높이(1080 기준) — 드릴 머리글 판(위 가운데)이 떠 있으면 머리 위 대상 이름·바를 그 아래로(B안 2026-11-05)
@@ -83,7 +82,8 @@ namespace Haengin
         void Build()
         {
             if (canvas != null) return;
-            var font = Font != null ? Font : Kit != null && Kit.Font != null ? Kit.Font : TMP_Settings.defaultFontAsset;
+            if (UiKit.Fallback == null) UiKit.Fallback = Font != null ? Font : Kit != null ? Kit.Font : null;
+            var font = UiKit.FBlack();      // D4(2026-11-05): KR_Bold 고정 → UiFonts(이름·기세 = Noto Black)
             Font = font;
             var go = new GameObject("전투 HUD", typeof(RectTransform)) { layer = 5 };
             go.transform.SetParent(transform, false);
@@ -102,17 +102,17 @@ namespace Haengin
             var tl = new Vector2(0f, 1f);
             var me = Rect("시우", root, tl, tl, tl, new Vector2(48f, -48f), new Vector2(440f, 110f));
             Img("시우 판", me, null, UiKit.InkPlate, new Vector2(-12f, 10f), new Vector2(530f, 108f));      // 2026-10-31: 이름·기세 글이 판 없이 배경 위에
-            nameText = Text("이름", me, font, 28f, Color.white, TextAlignmentOptions.TopLeft, new Vector2(0f, 0f), new Vector2(420f, 36f));
+            nameText = Text("이름", me, font, 28f, UiKit.Paper, TextAlignmentOptions.TopLeft, new Vector2(0f, 0f), new Vector2(420f, 36f));
             nameText.text = "반시우";
             Outline(nameText, 0.22f);
-            var hpFrame = Img("체력 테", me, null, Ink, new Vector2(0f, -40f), new Vector2(426f, 24f));
-            hpRecent = Img("최근 피해", hpFrame.rectTransform, null, Color.white, new Vector2(3f, -3f), new Vector2(420f, 18f));
+            var hpFrame = Img("체력 테", me, null, UiKit.Ink, new Vector2(0f, -40f), new Vector2(426f, 24f));
+            hpRecent = Img("최근 피해", hpFrame.rectTransform, null, UiKit.Paper, new Vector2(3f, -3f), new Vector2(420f, 18f));
             Filled(hpRecent);
-            hpFill = Img("체력", hpFrame.rectTransform, null, Paper, new Vector2(3f, -3f), new Vector2(420f, 18f));
+            hpFill = Img("체력", hpFrame.rectTransform, null, UiKit.Paper, new Vector2(3f, -3f), new Vector2(420f, 18f));
             Filled(hpFill);
-            var heatFrame = Img("기세 테", me, null, Ink, new Vector2(0f, -70f), new Vector2(426f, 16f));
+            var heatFrame = Img("기세 테", me, null, UiKit.Ink, new Vector2(0f, -70f), new Vector2(426f, 16f));
             var heatBack = Img("기세 바탕", heatFrame.rectTransform, null, new Color(0.25f, 0.22f, 0.22f), new Vector2(3f, -3f), new Vector2(420f, 10f));
-            heatFill = Img("기세", heatFrame.rectTransform, null, Orange, new Vector2(3f, -3f), new Vector2(420f, 10f));
+            heatFill = Img("기세", heatFrame.rectTransform, null, UiKit.Accent, new Vector2(3f, -3f), new Vector2(420f, 10f));
             Filled(heatFill);
             maxRoot = new GameObject("기세 MAX", typeof(RectTransform)) { layer = 5 };
             maxRoot.transform.SetParent(me, false);
@@ -120,16 +120,16 @@ namespace Haengin
             mr.anchorMin = mr.anchorMax = mr.pivot = tl;
             mr.anchoredPosition = new Vector2(0f, -52f);
             mr.sizeDelta = new Vector2(440f, 50f);
-            maxBrush = Img("먹 붓 획", mr, Kit != null ? Kit.Brush : null, UiKit.Seen(Ink, 0.9f), new Vector2(-8f, 6f), new Vector2(436f, 56f));
+            maxBrush = Img("먹 붓 획", mr, Kit != null ? Kit.Brush : null, UiKit.Seen(UiKit.Ink, 0.9f), new Vector2(-8f, 6f), new Vector2(436f, 56f));
             // 2026-11-05: 붓 획이 가로로 1.03배까지 숨 쉬어(오른쪽 끝 441) '기세' 글 왼쪽에 걸침(글자 감사 Q57) → 글을 452 로
-            maxText = Text("기세 글", mr, font, 20f, Color.white, TextAlignmentOptions.Left, new Vector2(452f, -12f), new Vector2(60f, 28f));
+            maxText = Text("기세 글", mr, font, 20f, UiKit.Paper, TextAlignmentOptions.Left, new Vector2(452f, -12f), new Vector2(60f, 28f));
             maxText.text = "기세";
             Outline(maxText, 0.25f);
             maxRoot.transform.SetSiblingIndex(heatFrame.transform.GetSiblingIndex());     // 바 뒤에 붓 획
             maxRoot.SetActive(false);
 
             // 막기 반원(발밑)
-            guard = Img("가드", root, Kit != null ? Kit.Arc : null, Color.white, Vector2.zero, new Vector2(160f, 80f), center: true, bottom: true);
+            guard = Img("가드", root, Kit != null ? Kit.Arc : null, UiKit.Paper, Vector2.zero, new Vector2(160f, 80f), center: true, bottom: true);
             guard.type = Image.Type.Filled;
             guard.fillMethod = Image.FillMethod.Radial180;
             guard.fillOrigin = (int)Image.Origin180.Bottom;
@@ -142,12 +142,12 @@ namespace Haengin
             tr.anchorMin = tr.anchorMax = Vector2.zero;
             tr.pivot = new Vector2(0.5f, 0f);
             tr.sizeDelta = new Vector2(220f, 70f);
-            tgTri = Img("역삼각형", tr, Kit != null ? Kit.Tri : null, Color.white, new Vector2(0f, 46f), new Vector2(22f, 22f), center: true, bottom: true);
+            tgTri = Img("역삼각형", tr, Kit != null ? Kit.Tri : null, UiKit.Paper, new Vector2(0f, 46f), new Vector2(22f, 22f), center: true, bottom: true);
             Img("이름 판", tr, null, UiKit.InkPlate, new Vector2(0f, 14f), new Vector2(200f, 32f), center: true, bottom: true);      // 2026-10-31
-            tgName = Text("이름", tr, font, 24f, Color.white, TextAlignmentOptions.Bottom, new Vector2(-110f, 14f), new Vector2(220f, 30f), bottom: true);
+            tgName = Text("이름", tr, font, 24f, UiKit.Paper, TextAlignmentOptions.Bottom, new Vector2(-110f, 14f), new Vector2(220f, 30f), bottom: true);
             Outline(tgName, 0.25f);
-            var tgBack = Img("바 바탕", tr, null, Ink, new Vector2(0f, 0f), new Vector2(166f, 14f), center: true, bottom: true);
-            tgFill = Img("바", tgBack.rectTransform, null, Color.white, new Vector2(3f, -3f), new Vector2(160f, 8f));
+            var tgBack = Img("바 바탕", tr, null, UiKit.Ink, new Vector2(0f, 0f), new Vector2(166f, 14f), center: true, bottom: true);
+            tgFill = Img("바", tgBack.rectTransform, null, UiKit.Paper, new Vector2(3f, -3f), new Vector2(160f, 8f));
             Filled(tgFill);
             tgRoot.SetActive(false);
 
@@ -157,16 +157,16 @@ namespace Haengin
             var pr = (RectTransform)plate.transform;
             pr.anchorMin = pr.anchorMax = Vector2.zero; pr.pivot = new Vector2(0f, 0.5f);
             pr.sizeDelta = new Vector2(150f, 46f);
-            var pimg = plate.GetComponent<Image>(); pimg.color = Ink; pimg.raycastTarget = false;
-            var pin = Img("판", pr, null, Paper, new Vector2(3f, -3f), new Vector2(144f, 40f));
-            plateText = Text("글", pin.rectTransform, font, 24f, Ink, TextAlignmentOptions.Center, Vector2.zero, new Vector2(144f, 40f));
+            var pimg = plate.GetComponent<Image>(); pimg.color = UiKit.Ink; pimg.raycastTarget = false;
+            var pin = Img("판", pr, null, UiKit.Paper, new Vector2(3f, -3f), new Vector2(144f, 40f));
+            plateText = Text("글", pin.rectTransform, font, 24f, UiKit.Ink, TextAlignmentOptions.Center, Vector2.zero, new Vector2(144f, 40f));
             plateGroup = plate.AddComponent<CanvasGroup>();
             plateGroup.alpha = 0f;
             plate.SetActive(false);
 
             // 7-4 화면 밖 화살표(흰 테 + 먹)
-            arrowBack = Img("화살표 테", root, Kit != null ? Kit.Tri : null, Color.white, Vector2.zero, new Vector2(60f, 60f), center: true);
-            arrow = Img("화살표", arrowBack.rectTransform, Kit != null ? Kit.Tri : null, Ink, Vector2.zero, new Vector2(46f, 46f), center: true);
+            arrowBack = Img("화살표 테", root, Kit != null ? Kit.Tri : null, UiKit.Paper, Vector2.zero, new Vector2(60f, 60f), center: true);
+            arrow = Img("화살표", arrowBack.rectTransform, Kit != null ? Kit.Tri : null, UiKit.Ink, Vector2.zero, new Vector2(46f, 46f), center: true);
             arrowBack.gameObject.SetActive(false);
             arrow = arrowBack;    // 보임 여부는 테로
 
@@ -196,8 +196,8 @@ namespace Haengin
             var r = (RectTransform)go.transform;
             r.anchorMin = r.anchorMax = Vector2.zero; r.pivot = new Vector2(0.5f, 0f);
             r.sizeDelta = new Vector2(166f, 14f);
-            var back = Img("바 바탕", r, null, Ink, Vector2.zero, new Vector2(166f, 14f), center: true, bottom: true);
-            var fill = Img("바", back.rectTransform, null, Color.white, new Vector2(3f, -3f), new Vector2(160f, 8f));
+            var back = Img("바 바탕", r, null, UiKit.Ink, Vector2.zero, new Vector2(166f, 14f), center: true, bottom: true);
+            var fill = Img("바", back.rectTransform, null, UiKit.Paper, new Vector2(3f, -3f), new Vector2(160f, 8f));
             Filled(fill);
             var g = go.AddComponent<CanvasGroup>();
             go.SetActive(false);
@@ -238,7 +238,7 @@ namespace Haengin
             else recent = hp;
             hpRecent.fillAmount = recent;
             float blink = hp < 0.3f ? 0.55f + 0.45f * Mathf.Cos(t * Mathf.PI * 2f / 0.8f) : 1f;
-            hpFill.color = new Color(Paper.r, Paper.g, Paper.b, blink);
+            hpFill.color = new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, blink);
 
             // 기세
             heatFill.fillAmount = pc.Heat.Value / HeatGauge.Max;
@@ -248,7 +248,7 @@ namespace Haengin
             {
                 float w = 0.85f + 0.15f * Mathf.Sin(t * 9f);
                 maxBrush.rectTransform.localScale = new Vector3(1f + 0.03f * Mathf.Sin(t * 7f), w, 1f);
-                maxBrush.color = new Color(Ink.r, Ink.g, Ink.b, 0.75f + 0.2f * Mathf.Sin(t * 5f));
+                maxBrush.color = new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.75f + 0.2f * Mathf.Sin(t * 5f));
                 if (!tipHeat) { tipHeat = true; DebugHud.Toast(PadLast ? "벽이나 구경꾼 앞에서 △" : "벽이나 구경꾼 앞에서 우클릭", 3f); }
             }
 
@@ -399,7 +399,7 @@ namespace Haengin
             ring.localScale = new Vector3(size, size, 1f);
             mpb.Clear();
             mpb.SetTexture("_MainTex", Kit.Ring);
-            mpb.SetColor("_Color", new Color(Ink.r, Ink.g, Ink.b, alpha));
+            mpb.SetColor("_Color", new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, alpha));
             r.SetPropertyBlock(mpb);
         }
 
@@ -460,7 +460,7 @@ namespace Haengin
         static void Outline(TextMeshProUGUI t, float w)
         {
             t.outlineWidth = w;
-            t.outlineColor = Ink;
+            t.outlineColor = UiKit.Ink;
         }
     }
 }

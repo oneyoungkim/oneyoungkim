@@ -78,9 +78,6 @@ namespace Haengin
         public string Label(int i) => rows != null && i >= 0 && i < visible.Count ? rows[i].Label.text : "";
         public string HintText => hint != null ? hint.text : "";
 
-        static readonly Color Ink = new Color(0.102f, 0.078f, 0.090f);          // #1A1417
-        static readonly Color Paper = new Color(0.957f, 0.937f, 0.902f);         // #F4EFE6
-        static readonly Color Accent = new Color(0.886f, 0.345f, 0.173f);        // #E2582C 길잡이 주황
         const string Hint = "이동 WASD·왼스틱   달리기 Shift·R2   카메라 마우스·오른스틱   카메라 정렬 Q·L1   일시정지 Esc·Options   정보 F1";
         const string MenuHint = "↑↓ 고르기    × (A) · Enter 선택    ○ (B) · Esc 돌아가기";
 
@@ -285,9 +282,7 @@ namespace Haengin
             for (int i = 0; i < rows.Length; i++)
             {
                 bool sel = i == Selected;
-                rows[i].Plate.color = sel ? Paper : UiKit.Seen(Ink, 0.92f);
-                rows[i].Bar.enabled = sel;
-                rows[i].Label.color = sel ? Ink : Paper;
+                UiKit.SetRow(new UiKit.Row { Rt = rows[i].Rt, Plate = rows[i].Plate, Bar = rows[i].Bar, Label = rows[i].Label }, sel, null);
             }
         }
 
@@ -314,7 +309,7 @@ namespace Haengin
             bool Expanded() => userOpen == 1 || (userOpen != 0 && (Teach || firstLeft > 0f));      // B8: '접음'이면 처음 보는 안내도 안 펼침
             if (!paused && ((kb != null && kb.hKey.wasPressedThisFrame) || (gp != null && gp.rightStickButton.wasPressedThisFrame))) ToggleHint();
             if (firstLeft > 0f) firstLeft -= UiKit.RealDt;
-            bool hidden = HintsHidden;
+            bool hidden = HintsHidden || GameState.Modal || OverScreens();      // D7: 휴대폰·계획·고르기·장 카드(Modal) · 스토리보드·회차 카드·알바·땋기·먹 닦기
             bool expanded = Expanded() && !hidden;
             // 대사 판(화면 아래 1416 폭)이 떠 있으면: 칩은 숨기고, 펼친 안내는 대사 판 오른쪽 위로(이름띠는 판 왼쪽 위)
             if (subUi == null && Time.unscaledTime > subLook) { subUi = FindAnyObjectByType<SubtitleUi>(); innerUi = FindAnyObjectByType<InnerVoiceUi>(); subLook = Time.unscaledTime + 2f; }
@@ -348,6 +343,22 @@ namespace Haengin
                 foldLe.preferredWidth = foldKeyBox.sizeDelta.x;
                 LayoutRebuilder.ForceRebuildLayoutImmediate(hintRt);
             }
+        }
+
+        StoryBoardUi sbUi; EpisodeCard epUi; JobGame jobUi; BraidGame braidUi; InkWipe wipeUi; float scrLook;
+        /// 이 캔버스(70)보다 아래 순서로 그려지는 전체 화면들이 떠 있나(2초마다 찾아 둠)
+        bool OverScreens()
+        {
+            if (Time.unscaledTime > scrLook)
+            {
+                scrLook = Time.unscaledTime + 2f;
+                if (sbUi == null) sbUi = FindAnyObjectByType<StoryBoardUi>();
+                if (epUi == null) epUi = FindAnyObjectByType<EpisodeCard>();
+                if (jobUi == null) jobUi = FindAnyObjectByType<JobGame>();
+                if (braidUi == null) braidUi = FindAnyObjectByType<BraidGame>();
+                if (wipeUi == null) wipeUi = FindAnyObjectByType<InkWipe>();
+            }
+            return (sbUi != null && sbUi.Shown) || (epUi != null && epUi.Shown) || (jobUi != null && jobUi.Shown) || (braidUi != null && braidUi.Shown) || (wipeUi != null && wipeUi.Visible);
         }
 
         /// 판(과 이름띠가 안내 판 가로 범위에 걸치면 이름띠까지)의 위 끝 — 이 캔버스 단위
@@ -388,7 +399,7 @@ namespace Haengin
             // 조작 안내(왼쪽 아래 한 줄 — B안 먹 판, 기본 접음) + 「조작 보기」 칩(H · R3)
             var hp = Panel("조작 안내", transform, Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(38f, 40f), Vector2.zero, UiKit.InkPlate);
             Fit(hp, 16, 18, 8, 9);
-            hint = Text("글", hp.transform, UiKit.FMed(), 20f, Paper, TextAlignmentOptions.MidlineLeft);
+            hint = Text("글", hp.transform, UiKit.FMed(), 20f, UiKit.Paper, TextAlignmentOptions.MidlineLeft);
             hint.text = Hint;
             hintPlate = hp.gameObject; hintRt = hp.rectTransform;
             // 동네-6(2026-11-05): 펼친 동안 접는 법이 화면에 없던 것 → 줄 끝에 'H 접기'(패드 R3)
@@ -403,7 +414,7 @@ namespace Haengin
             lay.childControlWidth = lay.childControlHeight = false; lay.childForceExpandWidth = lay.childForceExpandHeight = false;
             var cfit = cp.gameObject.AddComponent<ContentSizeFitter>(); cfit.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
             chipKeyBox = UiKit.KeyChip("키", cp.transform, null, "H", 34f, false, out chipKey);
-            var cl = Text("글", cp.transform, UiKit.FMed(), 20f, Paper, TextAlignmentOptions.MidlineLeft);
+            var cl = Text("글", cp.transform, UiKit.FMed(), 20f, UiKit.Paper, TextAlignmentOptions.MidlineLeft);
             cl.text = "조작 보기";
             cl.rectTransform.sizeDelta = new Vector2(cl.GetPreferredValues("조작 보기").x + 2f, 34f);
             chip = cp.gameObject; chipRt = cp.rectTransform;
@@ -411,9 +422,12 @@ namespace Haengin
 
             // 짧은 알림(아래 가운데)
             var b0 = new Vector2(0.5f, 0f);
-            toastPlate = Panel("알림", transform, b0, b0, b0, new Vector2(0f, 96f), Vector2.zero, UiKit.Seen(Ink, 0.94f)).gameObject;
-            Fit(toastPlate.GetComponent<Image>(), 18, 18, 8, 9);
-            toastText = Text("글", toastPlate.transform, font, 22f, Paper, TextAlignmentOptions.Center);
+            // D2(2026-11-05): B안 알림 판 — 먹 판 + 왼쪽 주황 줄 + Medium 22
+            var tp = Panel("알림", transform, b0, b0, b0, new Vector2(0f, 96f), Vector2.zero, UiKit.InkPlate);
+            toastPlate = tp.gameObject;
+            Fit(tp, 24, 20, 9, 10);
+            UiKit.EdgeLine(tp.transform, UiKit.Edge.Left, UiKit.Accent).gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            toastText = Text("글", toastPlate.transform, UiKit.FMed(), 22f, UiKit.Paper, TextAlignmentOptions.Center);
             toastPlate.SetActive(false);
 
             // 일시정지 메뉴
@@ -425,8 +439,9 @@ namespace Haengin
             dim.raycastTarget = false;
 
             var c50 = new Vector2(0.5f, 0.5f);
-            Panel("일시정지 판", menuRoot.transform, c50, c50, c50, new Vector2(0f, -90f), new Vector2(680f, 620f), UiKit.Seen(Ink, 0.95f));     // 2026-10-31: 제목·조작 글이 판 없이 화면 위에
-            var title = Text("제목", menuRoot.transform, font, 44f, Paper, TextAlignmentOptions.Center);
+            // D2(2026-11-05): B안 판(위 주황 줄) · 제목 Noto Black · 줄 = UiKit.ListRow(고른 줄 종이 판 + 왼쪽 주황 + 먹 Black)
+            UiKit.Plate("일시정지 판", menuRoot.transform, c50, c50, new Vector2(0f, -90f), new Vector2(680f, 620f), UiKit.Edge.Top);
+            var title = Text("제목", menuRoot.transform, UiKit.FBlack(), 44f, UiKit.Paper, TextAlignmentOptions.Center);
             Place(title.rectTransform, new Vector2(0f, 150f), new Vector2(600f, 64f));
             title.text = "일시정지";
 
@@ -434,13 +449,10 @@ namespace Haengin
             for (int i = 0; i < MaxItems; i++)
             {
                 var c5 = new Vector2(0.5f, 0.5f);
-                var plate = Panel("항목 " + (i + 1), menuRoot.transform, c5, c5, c5, new Vector2(0f, 60f - i * 68f), new Vector2(560f, 56f), Ink);
-                var bar = Panel("고른 표시", plate.transform, Vector2.zero, new Vector2(0f, 1f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(8f, 0f), Accent);
-                var label = Text("글", plate.transform, font, 26f, Paper, TextAlignmentOptions.Center);
-                Stretch(label.rectTransform);
-                rows[i] = new Row { Rt = (RectTransform)plate.transform, Plate = plate, Bar = bar, Label = label };
+                var r = UiKit.ListRow("항목 " + (i + 1), menuRoot.transform, null, c5, c5, new Vector2(0f, 60f - i * 68f), new Vector2(560f, 56f), 26f);
+                rows[i] = new Row { Rt = r.Rt, Plate = r.Plate, Bar = r.Bar, Label = r.Label };
             }
-            var mh = Text("조작", menuRoot.transform, font, 20f, Paper, TextAlignmentOptions.Center);
+            var mh = Text("조작", menuRoot.transform, UiKit.FMed(), 20f, UiKit.PaperDim, TextAlignmentOptions.Center);
             Place(mh.rectTransform, new Vector2(0f, -170f), new Vector2(900f, 34f));
             mh.text = MenuHint;
             menuHint = mh;

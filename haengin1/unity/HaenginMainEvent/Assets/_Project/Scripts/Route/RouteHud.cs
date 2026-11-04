@@ -15,6 +15,8 @@ namespace Haengin
     public sealed class RouteHud : MonoBehaviour
     {
         public TextMeshProUGUI Text;
+        /// B안 '다음' 판 머리말(「다음 · 73m」). RouteSetup 이 판을 만들 때 넣음 — 없으면(시험용 맨 글 판) 한 줄 그대로
+        public TextMeshProUGUI Head;
         [Tooltip("판(배경). 글이 비면 숨김")]
         public GameObject Plate;
         public RouteGuide Guide;
@@ -25,8 +27,6 @@ namespace Haengin
         [Tooltip("목표 기준점 높이(원판 위 m) — 기둥 가운데쯤")] public float ArrowAimHeight = 1.5f;
         [Tooltip("이 뷰포트 안쪽에 목표가 보이면 화살표를 숨긴다(가장자리 여유)")] public float ArrowInset = 0.04f;
 
-        static readonly Color Accent = new Color(0.886f, 0.345f, 0.173f);   // #E2582C 길잡이 주황
-        static readonly Color Ink = new Color(0.102f, 0.078f, 0.090f);      // #1A1417
         RectTransform arrow;
         Image arrowImg;
         float arrowAlpha;
@@ -41,7 +41,7 @@ namespace Haengin
         bool finished;
         string last;
 
-        void OnEnable() { Hook(); BStyle(); }
+        void OnEnable() => Hook();
         /// 지금 '도착'(1.6초)·완주(4초) 알림 중인지 — 자유 이동 중엔 이 판 대신 세계 HUD '다음' 판 머리말이 '도착'으로 바뀜(B12)
         public bool Flashing => !string.IsNullOrEmpty(flash) && Time.unscaledTime < flashUntil;
         void OnDisable() => Unhook();
@@ -95,7 +95,6 @@ namespace Haengin
         void LateUpdate()
         {
             Hook();
-            BStyle();
             string line;
             if (hooked != null && !hooked.isActiveAndEnabled) line = "";      // M3: 무대 장면(Zone1 루트 꺼짐)에선 도착 알림도 숨김
             else if (Time.unscaledTime < flashUntil) line = flash;
@@ -172,7 +171,7 @@ namespace Haengin
                     float d = SignedDist(q, P);                      // 안쪽 음수
                     float fill = Mathf.Clamp01(0.5f - (d + 3.2f));   // 테두리 3px 안쪽 = 주황
                     float all = Mathf.Clamp01(0.5f - d);             // 바깥 경계까지(먹색 테두리 포함)
-                    var c = Color.Lerp(Ink, Accent, fill);
+                    var c = Color.Lerp(UiKit.Ink, UiKit.Accent, fill);
                     c.a = all;
                     px[y * N + x] = c;
                 }
@@ -253,7 +252,7 @@ namespace Haengin
             {
                 last = line;
                 bool has = !string.IsNullOrEmpty(line);
-                if (bHead != null)
+                if (Head != null)
                 {
                     // "다음: 국밥집 · 73m" → 머리말 「다음 · 73m」 + 제목 「국밥집」 · "도착: 국밥집" → 「도착」 + 「국밥집」
                     string s = line ?? "", head = "", title = s;
@@ -261,7 +260,7 @@ namespace Haengin
                     if (c > 0) { head = s.Substring(0, c); title = s.Substring(c + 2); }
                     int dot = title.LastIndexOf(" · ", System.StringComparison.Ordinal);
                     if (dot > 0 && title.EndsWith("m")) { head += " · " + title.Substring(dot + 3); title = title.Substring(0, dot); }
-                    bHead.text = UiKit.Tab(head);
+                    Head.text = UiKit.Tab(head);
                     Text.text = title;
                     UiKit.FitWidth(Text, UiKit.NextPlate.Inner, 32f, 22f);
                 }
@@ -275,31 +274,5 @@ namespace Haengin
         }
 
         // ───────────────────────── B안 판(docs/16): 장면에 저장된 옛 판(위 가운데 종이 띠)을 실행할 때 오른쪽 위 '다음' 판 모양으로
-        TextMeshProUGUI bHead;
-        bool bDone;
-
-        void BStyle()
-        {
-            if (bDone || Plate == null || Text == null) return;
-            bDone = true;
-            var img = Plate.GetComponent<UnityEngine.UI.Image>();
-            if (img == null || Text.gameObject == Plate || !Text.transform.IsChildOf(Plate.transform)) return;      // 시험용 맨 글 판은 그대로
-            var f = UiFonts.Current;
-            if (UiKit.Fallback == null) UiKit.Fallback = Text.font;
-            foreach (var lg in Plate.GetComponents<UnityEngine.UI.LayoutGroup>()) lg.enabled = false;
-            foreach (var cf in Plate.GetComponents<UnityEngine.UI.ContentSizeFitter>()) cf.enabled = false;
-            for (int i = 0; i < Plate.transform.childCount; i++) { var ch = Plate.transform.GetChild(i); if (ch != Text.transform) ch.gameObject.SetActive(false); }
-            var rt = (RectTransform)Plate.transform;
-            var tr = new Vector2(1f, 1f);
-            UiKit.Place(rt, tr, tr, new Vector2(-38f, -38f), new Vector2(UiKit.NextPlate.W, UiKit.NextPlate.H));
-            img.color = UiKit.InkPlate;
-            UiKit.EdgeLine(Plate.transform, UiKit.Edge.Left, UiKit.Accent);
-            bHead = UiKit.Label("머리말", Plate.transform, f, new Vector2(UiKit.NextPlate.X, -12f), UiKit.NextPlate.Inner);
-            if (f != null) Text.font = f.K;
-            Text.fontSize = 32f; Text.color = UiKit.Paper; Text.alignment = TextAlignmentOptions.BaselineLeft;
-            Text.textWrappingMode = TextWrappingModes.NoWrap; Text.overflowMode = TextOverflowModes.Ellipsis;
-            UiKit.Place(Text.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(UiKit.NextPlate.X, -46f), new Vector2(UiKit.NextPlate.Inner, 60f));
-            string l = last; last = null; Show(l);
-        }
     }
 }

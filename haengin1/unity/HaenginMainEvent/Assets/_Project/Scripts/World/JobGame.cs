@@ -25,6 +25,8 @@ namespace Haengin
         public float LastScore { get; private set; }
         public int Prompts { get; private set; }
         public int Hits { get; private set; }
+        /// 판정 칸(맞는 자리) 초록 — 먹 판 위 불투명(옛 0.85 반투명)
+        static readonly Color ZoneGreen = new Color32(80, 140, 88, 255);
         public string PromptText => prompt != null ? prompt.text : "";
 
         GameObject root;
@@ -40,27 +42,27 @@ namespace Haengin
         {
             if (root != null) return;
             UiKit.Canvas(gameObject, 58);
-            var bg = UiKit.Panel("알바 판", transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1180f, 360f), new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.96f));
+            var bg = UiKit.Panel("알바 판", transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1180f, 360f), UiKit.InkPlate);      // D2(2026-11-05): B안 — 먹 판 + 위 주황 줄
             root = bg.gameObject;
-            UiKit.Panel("먹 띠", bg.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1180f, 8f), UiKit.Ink);
-            title = UiKit.Text("제목", bg.transform, Fonts != null ? Fonts.Br : null, 40f, UiKit.Ink, TextAlignmentOptions.Left);
+            UiKit.EdgeLine(bg.transform, UiKit.Edge.Top, UiKit.Accent);
+            title = UiKit.Text("제목", bg.transform, UiKit.FBlack(Fonts), 38f, UiKit.Paper, TextAlignmentOptions.Left);
             UiKit.Place(title.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -18f), new Vector2(700f, 56f));
-            scoreText = UiKit.Text("점수", bg.transform, Fonts != null ? Fonts.B : null, 24f, UiKit.Grey, TextAlignmentOptions.Right);
+            scoreText = UiKit.Text("점수", bg.transform, UiKit.FNum(Fonts), 28f, UiKit.PaperDim, TextAlignmentOptions.Right);
             UiKit.Place(scoreText.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-40f, -26f), new Vector2(420f, 40f));
-            help = UiKit.Text("방법", bg.transform, Fonts != null ? Fonts.B : null, 22f, UiKit.Grey, TextAlignmentOptions.Left, wrap: true);
+            help = UiKit.Text("방법", bg.transform, UiKit.FMed(Fonts), 22f, UiKit.PaperDim, TextAlignmentOptions.Left, wrap: true);
             UiKit.Place(help.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -74f), new Vector2(1100f, 34f));
-            prompt = UiKit.Text("문제", bg.transform, Fonts != null ? Fonts.Br : null, 44f, UiKit.Ink, TextAlignmentOptions.Center);
+            prompt = UiKit.Text("문제", bg.transform, UiKit.FBlack(Fonts), 42f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Place(prompt.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -112f), new Vector2(1100f, 56f));
             slots = new TextMeshProUGUI[4];
             for (int i = 0; i < 4; i++)
             {
-                var sp = UiKit.Panel("칸 " + i, bg.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-405f + i * 270f, 70f), new Vector2(250f, 70f), UiKit.Seen(UiKit.Ink, 0.85f));
-                slots[i] = UiKit.Text("글", sp.transform, Fonts != null ? Fonts.B : null, 26f, UiKit.Paper, TextAlignmentOptions.Center);
+                var sp = UiKit.Panel("칸 " + i, bg.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-405f + i * 270f, 70f), new Vector2(250f, 70f), UiKit.Track);
+                slots[i] = UiKit.Text("글", sp.transform, UiKit.FBold(Fonts), 26f, UiKit.Paper, TextAlignmentOptions.Center);
                 UiKit.Stretch(slots[i].rectTransform);
             }
-            barBack = UiKit.Panel("막대", bg.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 160f), new Vector2(900f, 26f), UiKit.Seen(UiKit.Ink, 0.25f));
-            barZone = UiKit.Panel("칸", barBack.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 26f), new Color(0.35f, 0.62f, 0.38f, 0.85f));
-            barMark = UiKit.Panel("표시", barBack.transform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(14f, 44f), UiKit.Ink);
+            barBack = UiKit.Panel("막대", bg.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 160f), new Vector2(900f, 26f), UiKit.Track);
+            barZone = UiKit.Panel("칸", barBack.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 26f), ZoneGreen);
+            barMark = UiKit.Panel("표시", barBack.transform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(14f, 44f), UiKit.Paper);
             timer = UiKit.Panel("시간", bg.transform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(40f, 28f), new Vector2(1100f, 10f), UiKit.Accent);
             root.SetActive(false);
         }

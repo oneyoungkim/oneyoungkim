@@ -24,6 +24,8 @@ namespace Haengin
         GameObject root, board;
         TextMeshProUGUI head, note, boardText, boardHead;
         struct Row { public RectTransform Rt; public Image Plate, Bar; public TextMeshProUGUI Label; }
+        /// 화이트보드 색(세계 안 물건 — UiKit 판 색과 따로): 판 · 알루미늄 틀 · 파란 마커
+        static readonly Color BoardWhite = new Color(0.96f, 0.96f, 0.95f), BoardFrame = new Color(0.30f, 0.33f, 0.36f), Marker = new Color(0.12f, 0.16f, 0.36f);
         Row[] rows;
         Action onClose;
         public bool Open => open;
@@ -36,25 +38,25 @@ namespace Haengin
         {
             if (built) return; built = true;
             UiKit.Canvas(gameObject, 13);
-            var f = Fonts != null ? Fonts.B : null; var br = Fonts != null ? Fonts.Br : null;
+            var f = Fonts != null ? Fonts.B : null;
             var c5 = new Vector2(0.5f, 0.5f);
             root = UiKit.Node("메뉴", transform).gameObject; UiKit.Stretch((RectTransform)root.transform);
-            var plate = UiKit.Panel("판", root.transform, c5, c5, new Vector2(0f, -40f), new Vector2(760f, 420f), UiKit.Paper);
-            head = UiKit.Text("제목", plate.transform, br, 40f, UiKit.Ink, TextAlignmentOptions.Center); UiKit.Place(head.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -18f), new Vector2(720f, 60f));
-            note = UiKit.Text("설명", plate.transform, f, 22f, UiKit.Grey, TextAlignmentOptions.Center, true); UiKit.Place(note.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -80f), new Vector2(700f, 60f));
+            // D2(2026-11-05): B안 — 먹 판(위 주황 줄) · 제목 Noto Black · 설명 Medium 흐림 · 줄 = UiKit.ListRow(고른 줄 = 종이 판 + 왼쪽 주황 + 먹 Black)
+            var plate = UiKit.Plate("판", root.transform, c5, c5, new Vector2(0f, -40f), new Vector2(760f, 420f), UiKit.Edge.Top);
+            head = UiKit.Text("제목", plate.transform, UiKit.FBlack(Fonts), 40f, UiKit.Paper, TextAlignmentOptions.Center); UiKit.Place(head.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -18f), new Vector2(720f, 60f));
+            note = UiKit.Text("설명", plate.transform, UiKit.FMed(Fonts), 22f, UiKit.PaperDim, TextAlignmentOptions.Center, true); UiKit.Place(note.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -80f), new Vector2(700f, 60f));
             rows = new Row[MaxRows];
             for (int i = 0; i < MaxRows; i++)
             {
-                var p = UiKit.Panel("항목 " + (i + 1), plate.transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -160f - i * 62f), new Vector2(640f, 54f), UiKit.Ink);
-                var bar = UiKit.Panel("고른 표시", p.transform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(8f, 54f), UiKit.Accent);
-                var l = UiKit.Text("글", p.transform, f, 26f, UiKit.Paper, TextAlignmentOptions.Center); UiKit.Stretch(l.rectTransform);
-                rows[i] = new Row { Rt = p.rectTransform, Plate = p, Bar = bar, Label = l };
+                var r = UiKit.ListRow("항목 " + (i + 1), plate.transform, Fonts, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -160f - i * 62f), new Vector2(640f, 54f), 26f);
+                rows[i] = new Row { Rt = r.Rt, Plate = r.Plate, Bar = r.Bar, Label = r.Label };
             }
             board = UiKit.Node("화이트보드", transform).gameObject; UiKit.Stretch((RectTransform)board.transform);
-            var bp = UiKit.Panel("보드판", board.transform, c5, c5, new Vector2(0f, 0f), new Vector2(1400f, 820f), new Color(0.96f, 0.96f, 0.95f));
-            var frame = UiKit.Panel("틀", bp.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1400f, 70f), new Color(0.30f, 0.33f, 0.36f));
-            boardHead = UiKit.Text("보드 제목", frame.transform, br, 34f, UiKit.Paper, TextAlignmentOptions.Left); UiKit.Place(boardHead.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(24f, 0f), new Vector2(1300f, 60f));
-            boardText = UiKit.Text("보드 글", bp.transform, Fonts != null ? Fonts.H : f, 27f, new Color(0.12f, 0.16f, 0.36f), TextAlignmentOptions.TopLeft, true); UiKit.Place(boardText.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -90f), new Vector2(1320f, 700f));
+            // 보드 = 체육관 화이트보드(세계 안 물건) → 손글씨 Gaegu 유지(D6), 틀 제목만 Noto Black(D5)
+            var bp = UiKit.Panel("보드판", board.transform, c5, c5, new Vector2(0f, 0f), new Vector2(1400f, 820f), BoardWhite);
+            var frame = UiKit.Panel("틀", bp.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1400f, 70f), BoardFrame);
+            boardHead = UiKit.Text("보드 제목", frame.transform, UiKit.FBlack(Fonts), 32f, UiKit.Paper, TextAlignmentOptions.Left); UiKit.Place(boardHead.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(24f, 0f), new Vector2(1300f, 60f));
+            boardText = UiKit.Text("보드 글", bp.transform, Fonts != null ? Fonts.H : f, 27f, Marker, TextAlignmentOptions.TopLeft, true); UiKit.Place(boardText.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -90f), new Vector2(1320f, 700f));
             root.SetActive(false); board.SetActive(false);
             if (Actions != null)
             {
@@ -175,9 +177,8 @@ namespace Haengin
                 if (!on) continue;
                 bool isSel = i == sel;
                 rows[i].Label.text = items[i].Text;
-                rows[i].Plate.color = isSel ? UiKit.Accent : items[i].Enabled ? UiKit.Seen(UiKit.Ink, 0.95f) : UiKit.Grey;
-                rows[i].Bar.enabled = isSel;
-                rows[i].Label.color = isSel ? UiKit.Ink : UiKit.Paper;       // 주황 판 위 종이색은 대비 3.2
+                UiKit.SetRow(new UiKit.Row { Rt = rows[i].Rt, Plate = rows[i].Plate, Bar = rows[i].Bar, Label = rows[i].Label }, isSel, Fonts);
+                if (!isSel && !items[i].Enabled) rows[i].Label.color = UiKit.PaperDim;      // 못 고르는 줄 = 흐린 글(먹 판 위 4.9:1)
             }
         }
     }
