@@ -269,7 +269,7 @@ namespace Haengin
             }
             // B안: 자유 이동 중엔 세계 HUD 오른쪽 위 '다음' 판이 같은 안내(거리 포함)를 맡음 → 이 판은 숨김(겹침·중복 없앰)
             var world = WorldHud.Live;
-            bool on = !string.IsNullOrEmpty(last) && !(world != null && world.NextShown);
+            bool on = !string.IsNullOrEmpty(last) && !(world != null && world.NextShown) && !GameState.Modal && !WorldHud.CenterUp;      // 2026-11-05: 휴대폰·계획표 같은 판이 떠 있으면 숨김(휴대폰 위로 '도착' 판이 비어져 나왔음)
             if (Plate != null && Plate.activeSelf != on) Plate.SetActive(on);
         }
 

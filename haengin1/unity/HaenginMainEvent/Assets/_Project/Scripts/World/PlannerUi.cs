@@ -18,6 +18,9 @@ namespace Haengin
         public InputActionAsset Actions;
         public const int Rows = 14;
         public bool Shown => root != null && root.activeSelf;
+        RectTransform cardRt;
+        /// D7: 1500 폭 카드는 4:3(1440)보다 넓음 → 화면 폭 − 76 안으로 줄임
+        void FitCard() { if (cardRt == null) return; float cw = ((RectTransform)transform).rect.width; float k = cw > 10f ? Mathf.Min(1f, (cw - 76f) / 1500f) : 1f; if (Mathf.Abs(cardRt.localScale.x - k) > 0.001f) cardRt.localScale = new Vector3(k, k, 1f); }
         public int Row { get; private set; }
         public int Col { get; private set; }
         public string MontageText => montage != null ? montage.text : "";
@@ -44,6 +47,7 @@ namespace Haengin
             root = dim.gameObject;
             // D2(2026-11-05): B안 — 먹 판(위 주황 줄) · 머리 Noto Black · 열 머리말 흐림 · 고른 칸 = 종이 칸 + 먹 글자 · 이벤트 칸 = 트랙 칸 + Warm
             var card = UiKit.Plate("계획표", dim.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1500f, 960f), UiKit.Edge.Top);
+            cardRt = card.rectTransform;
             head = UiKit.Text("머리", card.transform, UiKit.FBlack(Fonts), 42f, UiKit.Paper, TextAlignmentOptions.Left);
             UiKit.Place(head.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(50f, -20f), new Vector2(1400f, 60f));
             string[] colNames = { "날짜", "새벽", "저녁", "밤", "주말" };
@@ -157,6 +161,7 @@ namespace Haengin
 
         void Refresh()
         {
+            FitCard();
             for (int r = 0; r < Rows; r++)
             {
                 bool has = plan != null && r < plan.Count;

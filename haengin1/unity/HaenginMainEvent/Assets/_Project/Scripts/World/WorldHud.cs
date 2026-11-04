@@ -37,7 +37,17 @@ namespace Haengin
         public int PendingToasts => pending.Count + live.Count;
         /// 오른쪽 위 '다음' 판이 이번 프레임에 보이나(Update 에서 정해짐 — 길잡이 띠는 이때 숨김)
         public bool NextShown => Shown && hasNext && !BoardCenter();
-        static bool BoardCenter() { var b = WorldRunner.Instance != null && WorldRunner.Instance.Story != null ? WorldRunner.Instance.Story.Board : null; return b != null && b.Shown && !b.Side; }
+        /// 가운데 큰 화면(스토리보드·가계부 표·도감·계획표·장 카드·알바)이 떠 있나 — 길잡이 판도 이때 숨김
+        public static bool CenterUp => BoardCenter();
+        static bool BoardCenter()
+        {
+            var w = WorldRunner.Instance; var st = w != null ? w.Story : null;
+            var b = st != null ? st.Board : null;
+            if (b != null && b.Shown && !b.Side) return true;
+            // D7(2026-11-05): 가운데 큰 화면(가계부 표·도감·계획표·장 카드·알바)이 떠 있어도 왼쪽 위 판을 숨김 — 1200 에서 목표 띠 글이 가계부 표 줄과 겹쳤음
+            return (st != null && ((st.LedgerUi != null && st.LedgerUi.TableShown) || (st.NameUi != null && st.NameUi.GridShown)))
+                || (w != null && ((w.PlannerView != null && w.PlannerView.Shown) || (w.ChapterView != null && w.ChapterView.Shown) || (w.Job != null && w.Job.Shown)));
+        }
         public RectTransform NextRect => next != null ? next.Plate.rectTransform : null;
 
         Image plate, goalPlate, fatFill;

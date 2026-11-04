@@ -178,7 +178,8 @@ namespace Haengin
             // D9(2026-11-05): 대사·속마음 판이 떠 있으면 상호작용 안내를 숨김(아래 가운데에서 판과 겹침 — Q57 제외 줄을 없애며 찾음)
             if (talkLook < Time.unscaledTime) { talkLook = Time.unscaledTime + 2f; if (subUi == null) subUi = FindAnyObjectByType<SubtitleUi>(); if (innerUi == null) innerUi = FindAnyObjectByType<InnerVoiceUi>(); }
             bool talk = (subUi != null && subUi.Visible) || (innerUi != null && innerUi.Visible);
-            bool showP = near != null && !talk;
+            var wr = WorldRunner.Instance;
+            bool showP = near != null && !talk && !(wr != null && wr.Job != null && wr.Job.Shown);      // 알바 판이 떠 있는 동안도 숨김
             if (prompt.activeSelf != showP) prompt.SetActive(showP);
             if (showP) SetPrompt(CombatHud.PadLast ? "×" : "E", near.Prompt);
 
