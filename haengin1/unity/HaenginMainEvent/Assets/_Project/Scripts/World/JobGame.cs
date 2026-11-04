@@ -54,11 +54,11 @@ namespace Haengin
             slots = new TextMeshProUGUI[4];
             for (int i = 0; i < 4; i++)
             {
-                var sp = UiKit.Panel("칸 " + i, bg.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-405f + i * 270f, 70f), new Vector2(250f, 70f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.85f));
+                var sp = UiKit.Panel("칸 " + i, bg.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-405f + i * 270f, 70f), new Vector2(250f, 70f), UiKit.Seen(UiKit.Ink, 0.85f));
                 slots[i] = UiKit.Text("글", sp.transform, Fonts != null ? Fonts.B : null, 26f, UiKit.Paper, TextAlignmentOptions.Center);
                 UiKit.Stretch(slots[i].rectTransform);
             }
-            barBack = UiKit.Panel("막대", bg.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 160f), new Vector2(900f, 26f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.25f));
+            barBack = UiKit.Panel("막대", bg.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 160f), new Vector2(900f, 26f), UiKit.Seen(UiKit.Ink, 0.25f));
             barZone = UiKit.Panel("칸", barBack.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 26f), new Color(0.35f, 0.62f, 0.38f, 0.85f));
             barMark = UiKit.Panel("표시", barBack.transform, new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(14f, 44f), UiKit.Ink);
             timer = UiKit.Panel("시간", bg.transform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(40f, 28f), new Vector2(1100f, 10f), UiKit.Accent);

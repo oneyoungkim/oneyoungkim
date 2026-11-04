@@ -25,7 +25,7 @@ namespace Haengin
         {
             if (root != null) return;
             UiKit.Canvas(gameObject, 40);
-            root = UiKit.Panel("국물 게이지", transform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(40f, 120f), new Vector2(420f, 64f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.94f));
+            root = UiKit.Panel("국물 게이지", transform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(40f, 120f), new Vector2(420f, 64f), UiKit.Seen(UiKit.Ink, 0.94f));
             label = UiKit.Text("이름", root.transform, Fonts != null ? Fonts.Br : null, 30f, UiKit.Paper, TextAlignmentOptions.Left);
             UiKit.Place(label.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(18f, 0f), new Vector2(110f, 50f));
             var bg = UiKit.Panel("바 바탕", root.transform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(130f, 0f), new Vector2(210f, 22f), new Color(0.25f, 0.22f, 0.22f));
@@ -36,7 +36,7 @@ namespace Haengin
             UiKit.Place(prompt.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 250f), new Vector2(600f, 60f));
             var m = new Material(prompt.fontSharedMaterial); m.EnableKeyword(ShaderUtilities.Keyword_Outline); m.SetColor(ShaderUtilities.ID_OutlineColor, UiKit.Ink); m.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.25f);
             prompt.fontMaterial = m;
-            beatPlate = UiKit.Panel("박자", transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 180f), new Vector2(230f, 60f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.6f));
+            beatPlate = UiKit.Panel("박자", transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 180f), new Vector2(230f, 60f), UiKit.Seen(UiKit.Ink, 0.6f));
             beatL = UiKit.Panel("□", beatPlate.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-50f, 0f), new Vector2(40f, 40f), UiKit.Paper);
             beatR = UiKit.Panel("○", beatPlate.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(50f, 0f), new Vector2(40f, 40f), UiKit.Paper);
             root.gameObject.SetActive(false); prompt.gameObject.SetActive(false); beatPlate.gameObject.SetActive(false);

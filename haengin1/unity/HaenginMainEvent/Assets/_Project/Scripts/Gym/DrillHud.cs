@@ -286,7 +286,7 @@ namespace Haengin
                     ticks[i].rectTransform.anchoredPosition = new Vector2(x, -18f);
                     int mark = beat.Mark(b);
                     bool taken = beat.Taken(b);
-                    ticks[i].color = taken ? new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.25f) : mark == 1 ? UiKit.Warm : UiKit.Paper;
+                    ticks[i].color = taken ? UiKit.RuleColor : mark == 1 ? UiKit.Warm : UiKit.Paper;
                     tickMarks[i].text = d.Id == "D02" ? (mark == 1 ? "△" : "") : d.Id == "D06" ? (mark == 1 ? "△" : "□") : "";
                 }
             }

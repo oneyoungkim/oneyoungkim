@@ -481,6 +481,40 @@ namespace Haengin.Tests
             Assert.IsEmpty(bad, string.Join("\n", bad));
         }
 
+        // ───────────────────────── Q58 글꼴 라이선스(2026-11-05 B1): UiFonts 가 가리키는 글꼴(대체 글꼴 포함)의 ttf 마다 빌드 licenses/ 에 OFL 이 복사됨
+        //   빌드 뒤 정리(BatchTools.CopyFontLicenses — 원본이 없으면 빌드 실패)를 임시 폴더로 돌려 봄
+        [Test]
+        public void Q58_Font_Licenses_For_Every_UiFont()
+        {
+            var bt = System.Type.GetType("Haengin.EditorTools.BatchTools, Haengin.EditorTools");
+            Assert.NotNull(bt, "BatchTools 없음");
+            var fonts = UnityEditor.AssetDatabase.LoadAssetAtPath<UiFonts>("Assets/_Project/Settings/UiFonts.asset");
+            Assert.NotNull(fonts, "UiFonts.asset 없음");
+            string tmp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "haengin_q58_" + System.Guid.NewGuid().ToString("N"));
+            var bad = new List<string>(); var log = new List<string>();
+            try
+            {
+                bt.GetMethod("CopyFontLicenses").Invoke(null, new object[] { tmp });
+                foreach (var (nm, fa) in new[] { ("Body", fonts.Body), ("Medium", fonts.Medium), ("Black", fonts.Black), ("Num", fonts.Num), ("Brush", fonts.Brush), ("Hand", fonts.Hand) })
+                {
+                    if (fa == null) { bad.Add(nm + ": 글꼴 없음"); continue; }
+                    foreach (var f in new[] { fa }.Concat(fa.fallbackFontAssetTable ?? new List<TMP_FontAsset>()).Where(x => x != null))
+                    {
+                        string ttf = f.sourceFontFile != null ? UnityEditor.AssetDatabase.GetAssetPath(f.sourceFontFile) : UnityEditor.AssetDatabase.GUIDToAssetPath(f.creationSettings.sourceFontFileGUID);
+                        if (string.IsNullOrEmpty(ttf)) { bad.Add($"{nm}/{f.name}: 원본 ttf 를 모름"); continue; }
+                        string dst = (string)bt.GetMethod("LicenseFor").Invoke(null, new object[] { ttf });
+                        if (dst == null) { bad.Add($"{nm}/{f.name}: {ttf} 가 라이선스 목록에 없음"); continue; }
+                        var fi = new System.IO.FileInfo(System.IO.Path.Combine(tmp, dst));
+                        if (!fi.Exists || fi.Length < 1000) bad.Add($"{nm}/{f.name}: {dst} 복사 안 됨");
+                        else log.Add($"{nm}/{f.name}: {ttf} → {dst} ({fi.Length} bytes)");
+                    }
+                }
+            }
+            finally { if (System.IO.Directory.Exists(tmp)) System.IO.Directory.Delete(tmp, true); }
+            Debug.Log("[Q] Q58 글꼴 라이선스\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join("\n", bad));
+        }
+
         // ───────────────────────── Q57 글자·배경(2026-10-31 대표 "글자와 배경이 어지럽게 겹친다"): 대표 화면마다 판 ≥ 85% · 대비 · 글자끼리 겹침 0 · 화면 밖 0 · 공중/누운 월드 글자 0
         //   화면은 사실 화면 대신 UI 뺀 카메라 그림으로 배경을 잼. 나머지 화면(알바·전투·자전거·일시정지…)은 QA 봇 실제 화면(text_bad.tsv) — docs/15 8-12
         [UnityTest, Timeout(1800000)]

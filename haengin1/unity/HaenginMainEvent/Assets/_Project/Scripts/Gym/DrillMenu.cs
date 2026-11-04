@@ -175,7 +175,7 @@ namespace Haengin
                 if (!on) continue;
                 bool isSel = i == sel;
                 rows[i].Label.text = items[i].Text;
-                rows[i].Plate.color = isSel ? UiKit.Accent : items[i].Enabled ? new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.95f) : UiKit.Grey;
+                rows[i].Plate.color = isSel ? UiKit.Accent : items[i].Enabled ? UiKit.Seen(UiKit.Ink, 0.95f) : UiKit.Grey;
                 rows[i].Bar.enabled = isSel;
                 rows[i].Label.color = isSel ? UiKit.Ink : UiKit.Paper;       // 주황 판 위 종이색은 대비 3.2
             }

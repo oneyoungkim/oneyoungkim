@@ -11,12 +11,40 @@ namespace Haengin
 {
     public static partial class UiKit
     {
-        public const float PlateA = 0.93f, Stripe = 5f, RuleW = 1.5f;
-        /// 먹 판(0.93)
-        public static Color InkPlate => new Color(Ink.r, Ink.g, Ink.b, PlateA);
-        /// 판 안 구분선(종이색 25%) · 막대 바탕
-        public static Color RuleColor => new Color(Paper.r, Paper.g, Paper.b, 0.25f);
+        /// PlateA = 시안(sRGB) 기준 판 불투명도 · 구분선 1px · 키 상자 테두리 2px(정수 px — 1.5 는 변마다 1·2px 로 그려짐)
+        public const float PlateA = 0.93f, CoverA = 0.86f, Stripe = 5f, RuleW = 1f, KeyLineW = 2f;
+        /// 먹 판(시안 0.93 — 선형 색공간 보정 Seen 을 거친 값)
+        public static Color InkPlate => Seen(Ink, PlateA);
+        /// 판 위 막대 바탕(트랙) — 미리 섞은 불투명 색(먹 판 위 종이색 18% 를 sRGB 로 섞은 시안 값). 채움(주황) 대 트랙 3.0:1
+        public static readonly Color Track = new Color32(63, 58, 57, 255);
+        /// 판 안 구분선·보상 칸 선 — 미리 섞은 불투명 색(먹 판 위 종이색 25% 의 시안 값), 1px
+        public static readonly Color RuleColor = new Color32(75, 71, 72, 255);
+        /// 화면 덮개 먹(시안 B_3 #0E0B0C) — Cover 가 Seen 으로 보정해 씀(흰 배경 → 약 48)
+        public static readonly Color CoverInk = new Color32(14, 11, 12, 255);
+        /// 위험 붉은색(트랙 위 막대 채움용). Endure(#7A1E1E)는 트랙과 1.1:1 이라 같은 붉은 계열을 밝힌 값(트랙 대비 3.2:1)
+        public static readonly Color EndureLit = new Color32(255, 64, 64, 255);
         public enum Edge { None, Top, Left }
+
+        // ───────────────────────── 선형 색공간 보정(2026-11-05 A1)
+        // 프로젝트가 Linear 색공간이라 UI 알파가 선형 빛 공간에서 섞인다 → 시안(브라우저 sRGB 섞기)의 0.93 이 화면에서는 밝은 배경 위 0.73~0.84 로 옅게 보였다.
+        // 규칙: ① 어두운 반투명(먹 판·덮개)은 Seen(색, 시안 알파)로만 지정한다 — 가장 밝은 배경(흰색)에서 시안과 같게 보이는 섞기 알파로 바꿔 줌(어두운 배경에선 시안보다 조금 진함).
+        //       ② 판 위에 놓이는 밝은 반투명(트랙·구분선·보상 선)은 반투명으로 두지 않고 미리 섞은 불투명 색(Track·RuleColor)을 쓴다.
+        /// 시안(sRGB 섞기) 기준 알파 a → 화면에서 같게 보이는 섞기 알파(흰 배경 기준, 채널 중 가장 진한 값)
+        public static float SeenA(Color c, float a)
+        {
+            if (a <= 0f || a >= 1f || QualitySettings.activeColorSpace != ColorSpace.Linear) return a;
+            float r = a;
+            for (int i = 0; i < 3; i++)
+            {
+                float cl = Mathf.GammaToLinearSpace(c[i]);
+                if (cl > 0.98f) continue;
+                r = Mathf.Max(r, (1f - Mathf.GammaToLinearSpace(a * c[i] + 1f - a)) / (1f - cl));
+            }
+            return Mathf.Min(Mathf.Ceil(r * 255f - 1e-3f) / 255f, 1f);      // 꼭짓점 색은 8비트 — 내림되면 시안보다 옅어지므로 올림
+        }
+
+        /// 색 c 를 시안 알파 a 로 — 보정된 알파를 단 색
+        public static Color Seen(Color c, float a) => new Color(c.r, c.g, c.b, SeenA(c, a));
 
         // ───────────────────────── 글꼴(UiFonts 참조가 없으면 장면이 불러온 UiFonts.Current → 그것도 없으면 Fallback(한글 본문 글꼴))
         /// UiFonts 를 못 찾을 때 쓸 한글 글꼴(GameUi·StageHud·길잡이가 자기 글꼴을 넣음 — TMP 기본 글꼴엔 한글이 없음)
@@ -56,10 +84,10 @@ namespace Haengin
         public static Image Rule(Transform parent, Vector2 pos, float width) =>
             Panel("구분선", parent, new Vector2(0f, 1f), new Vector2(0f, 1f), pos, new Vector2(width, RuleW), RuleColor);
 
-        /// 화면 전체 덮개(먹)
-        public static Image Cover(string name, Transform parent, float a)
+        /// 화면 전체 덮개(시안 먹 #0E0B0C, a = 시안 알파 → Seen 보정)
+        public static Image Cover(string name, Transform parent, float a = CoverA)
         {
-            var c = Panel(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(Ink.r, Ink.g, Ink.b, a));
+            var c = Panel(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, Seen(CoverInk, a));
             Stretch(c.rectTransform);
             return c;
         }
@@ -120,7 +148,7 @@ namespace Haengin
         public static RectTransform KeyChip(string name, Transform parent, UiFonts f, string key, float h, bool interact, out TextMeshProUGUI label)
         {
             var box = Panel(name, parent, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(h, h), interact ? Accent : new Color(Ink.r, Ink.g, Ink.b, 0f));
-            if (!interact) Border(box.transform, Paper, RuleW);
+            if (!interact) Border(box.transform, Paper, KeyLineW);
             label = Text("키", box.transform, FNum(f), h * 0.64f, interact ? Ink : Paper, TextAlignmentOptions.Center);
             Stretch(label.rectTransform);
             SetKey(box.rectTransform, label, key, h);
@@ -154,10 +182,10 @@ namespace Haengin
         }
 
         // ───────────────────────── 막대
-        /// 막대(바탕 종이색 25% + 채움, 판 왼쪽 위 기준). 채움은 SetBar(앵커 비율 — 스프라이트 없이)
+        /// 막대(바탕 = 트랙 불투명 색 + 채움, 판 왼쪽 위 기준). 채움은 SetBar(앵커 비율 — 스프라이트 없이)
         public static Image Bar(string name, Transform parent, Vector2 pos, Vector2 size, Color fill, out Image back)
         {
-            back = Panel(name + " 바탕", parent, new Vector2(0f, 1f), new Vector2(0f, 1f), pos, size, RuleColor);
+            back = Panel(name + " 바탕", parent, new Vector2(0f, 1f), new Vector2(0f, 1f), pos, size, Track);
             var fi = Panel(name, back.transform, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, fill);
             var rt = fi.rectTransform;
             rt.anchorMin = Vector2.zero; rt.anchorMax = new Vector2(0f, 1f); rt.pivot = new Vector2(0f, 0.5f);
@@ -209,7 +237,7 @@ namespace Haengin
             var label = Text("항목", row, FMed(f), labelSize, Paper, TextAlignmentOptions.MidlineLeft);
             Place(label.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(labelW, height));
             float gap = 24f, barW = width - labelW - valueW - gap * 2f;
-            var back = Panel("막대 바탕", row, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(labelW + gap, 0f), new Vector2(barW, barH), new Color(Paper.r, Paper.g, Paper.b, 0.18f));
+            var back = Panel("막대 바탕", row, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(labelW + gap, 0f), new Vector2(barW, barH), Track);
             var fill = Panel("막대", back.transform, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Accent);
             var fr = fill.rectTransform; fr.anchorMin = Vector2.zero; fr.anchorMax = new Vector2(0f, 1f); fr.pivot = new Vector2(0f, 0.5f); fr.offsetMin = fr.offsetMax = Vector2.zero;
             var value = Text("값", row, FNum(f), valueSize, Paper, TextAlignmentOptions.MidlineRight);

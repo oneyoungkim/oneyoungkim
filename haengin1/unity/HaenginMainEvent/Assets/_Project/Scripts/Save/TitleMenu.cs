@@ -229,7 +229,7 @@ namespace Haengin
                 if (!on) continue;
                 bool sel = i == Selected;
                 rows[i].Label.text = page.Items[i].Text();
-                rows[i].Plate.color = sel ? UiKit.Paper : new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.93f);
+                rows[i].Plate.color = sel ? UiKit.Paper : UiKit.Seen(UiKit.Ink, 0.93f);
                 rows[i].Bar.enabled = sel;
                 rows[i].Label.color = sel ? UiKit.Ink : UiKit.Paper;
                 rows[i].Rt.anchoredPosition = new Vector2(0f, (main ? -60f : 120f) - i * 66f);

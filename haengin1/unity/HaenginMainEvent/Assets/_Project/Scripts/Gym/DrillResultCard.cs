@@ -39,7 +39,7 @@ namespace Haengin
             UiKit.Canvas(gameObject, 14);
             root = UiKit.Node("결과", transform).gameObject;
             UiKit.Stretch((RectTransform)root.transform);
-            UiKit.Cover("어둠", root.transform, 0.86f);
+            UiKit.Cover("어둠", root.transform);
             var f = Fonts;
             var tl = new Vector2(0f, 1f);
             var c5 = new Vector2(0.5f, 0.5f);
@@ -76,7 +76,7 @@ namespace Haengin
             // 보상 칸(위아래 선 · 칸 사이 선)
             rewardRoot = UiKit.Node("보상", card);
             UiKit.Place(rewardRoot, tl, tl, new Vector2(960f, -672f), new Vector2(744f, 118f));
-            var rLine = new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.3f);
+            var rLine = UiKit.RuleColor;
             UiKit.Panel("보상 위 선", rewardRoot, tl, tl, Vector2.zero, new Vector2(744f, UiKit.RuleW), rLine);
             UiKit.Panel("보상 아래 선", rewardRoot, Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(744f, UiKit.RuleW), rLine);
             for (int i = 0; i < 5; i++)
@@ -252,8 +252,8 @@ namespace Haengin
         {
             var r = rows[i];
             r.Label.alpha = a; r.Value.alpha = a;
-            r.Back.color = new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.18f * a);
-            r.Rule.color = new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.25f * a);
+            r.Back.color = new Color(UiKit.Track.r, UiKit.Track.g, UiKit.Track.b, a);
+            r.Rule.color = new Color(UiKit.RuleColor.r, UiKit.RuleColor.g, UiKit.RuleColor.b, a);
             r.Fill.color = new Color(UiKit.Accent.r, UiKit.Accent.g, UiKit.Accent.b, a);
         }
 

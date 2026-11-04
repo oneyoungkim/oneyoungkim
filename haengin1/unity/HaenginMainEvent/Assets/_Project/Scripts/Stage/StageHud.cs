@@ -66,7 +66,7 @@ namespace Haengin
             var s = subs.Find(x => x.Anchor == anchor) ?? subs.Find(x => x.Left <= 0f);
             if (s == null)
             {
-                var go = Plate("자막", root, new Color(Ink.r, Ink.g, Ink.b, 0.93f), out var t, 24f, Paper);
+                var go = Plate("자막", root, UiKit.Seen(Ink, 0.93f), out var t, 24f, Paper);
                 s = new Sub { Go = go, Text = t };
                 subs.Add(s);
             }
@@ -183,7 +183,7 @@ namespace Haengin
             {
                 defeatT += rdt;
                 float u = Mathf.Clamp01(defeatT / 1.0f);
-                defeatInk.color = new Color(Ink.r, Ink.g, Ink.b, 0.9f * u);
+                defeatInk.color = UiKit.Seen(Ink, 0.9f * u);
                 defeatInk.rectTransform.localScale = Vector3.one * (1.6f - 0.6f * u);
                 defeatLine.alpha = Mathf.Clamp01((defeatT - 0.6f) / 0.4f);
                 defeatHint.alpha = Mathf.Clamp01((defeatT - 1.0f) / 0.3f);
@@ -266,7 +266,7 @@ namespace Haengin
             for (int i = 0; i < 2; i++)
             {
                 bool sel = i == dialogSel;
-                dialogOptPlate[i].color = sel ? Paper : new Color(Ink.r, Ink.g, Ink.b, 0.92f);
+                dialogOptPlate[i].color = sel ? Paper : UiKit.Seen(Ink, 0.92f);
                 dialogOpt[i].color = sel ? Ink : Paper;
             }
         }
@@ -308,7 +308,7 @@ namespace Haengin
             nameCard.transform.SetParent(root, false);
             Anchor(nameCard, new Vector2(0.5f, 0.5f), new Vector2(0f, 120f));
             var ncPlate = Img(nameCard.transform, Ink, new Vector2(960f, 190f), Vector2.zero);
-            ncPlate.color = new Color(Ink.r, Ink.g, Ink.b, 0.86f);
+            ncPlate.color = UiKit.Seen(Ink, 0.86f);
             cardSmall = Text(nameCard.transform, 30f, Paper, new Vector2(900f, 44f)); cardSmall.rectTransform.anchoredPosition = new Vector2(0f, 48f);
             cardBig = Text(nameCard.transform, 72f, Color.white, new Vector2(940f, 96f)); cardBig.rectTransform.anchoredPosition = new Vector2(0f, -18f);
             nameCard.SetActive(false);
@@ -356,7 +356,7 @@ namespace Haengin
             dialog = new GameObject("대화", typeof(RectTransform)) { layer = 5 };
             dialog.transform.SetParent(topRoot, false);
             Anchor(dialog, new Vector2(0.5f, 0f), new Vector2(0f, 120f), pivot: new Vector2(0.5f, 0f));
-            var dp = Img(dialog.transform, new Color(Ink.r, Ink.g, Ink.b, 0.9f), new Vector2(1200f, 230f), new Vector2(0f, 115f));
+            var dp = Img(dialog.transform, UiKit.Seen(Ink, 0.9f), new Vector2(1200f, 230f), new Vector2(0f, 115f));
             dialogWho = Text(dialog.transform, 26f, new Color(0.886f, 0.345f, 0.173f), new Vector2(1140f, 36f)); dialogWho.alignment = TextAlignmentOptions.Left;
             dialogWho.rectTransform.anchoredPosition = new Vector2(0f, 200f);
             dialogText = Text(dialog.transform, 30f, Paper, new Vector2(1140f, 90f)); dialogText.alignment = TextAlignmentOptions.TopLeft;

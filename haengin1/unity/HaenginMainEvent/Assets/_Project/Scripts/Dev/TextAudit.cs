@@ -88,7 +88,24 @@ namespace Haengin
             return (Mathf.Max(x, y) + 0.05f) / (Mathf.Min(x, y) + 0.05f);
         }
 
-        static Color Over(Color top, float a, Color back) => new Color(top.r * a + back.r * (1f - a), top.g * a + back.g * (1f - a), top.b * a + back.b * (1f - a), 1f);
+        /// 화면과 같은 섞기(2026-11-05 A1): 프로젝트가 Linear 색공간이라 UI 는 선형 빛 공간에서 섞인다(감마 그대로 섞으면 판을 실제보다 진하게 잼)
+        static Color Over(Color top, float a, Color back)
+        {
+            if (QualitySettings.activeColorSpace != ColorSpace.Linear)
+                return new Color(top.r * a + back.r * (1f - a), top.g * a + back.g * (1f - a), top.b * a + back.b * (1f - a), 1f);
+            float M(float t, float b) => Mathf.LinearToGammaSpace(Mathf.GammaToLinearSpace(t) * a + Mathf.GammaToLinearSpace(b) * (1f - a));
+            return new Color(M(top.r, back.r), M(top.g, back.g), M(top.b, back.b), 1f);
+        }
+
+        /// 화면 기준 실효 불투명도: 뒤 판들을 흰 배경·검은 배경 위에 합성(w·k)해 sRGB 로 '배경이 얼마나 비치나'를 잼.
+        /// 어두운 판 = 흰 배경에서 (1 − w)/(1 − k), 밝은 판 = 검은 배경에서 k/w — 검토(전후 회귀)와 같은 sRGB 섞기 기준, 채널 중 가장 옅은 값
+        public static float Seen(Color w, Color k)
+        {
+            float e = 1f;
+            for (int c = 0; c < 3; c++)
+                e = Mathf.Min(e, k[c] <= 0.5f ? (1f - w[c]) / Mathf.Max(1e-4f, 1f - k[c]) : k[c] / Mathf.Max(1e-4f, w[c]));
+            return Mathf.Clamp01(e);
+        }
 
         /// 글자 둘레 띠의 어두운 쪽·밝은 쪽 표본(판이 모자라는 글자의 실제 배경)
         static void Ring(Texture2D shot, Rect r, out Color dark, out Color light)
@@ -139,13 +156,13 @@ namespace Haengin
                 var cut = graphics.FirstOrDefault(x => x.order > ord && x.a >= 0.5f && x.g.canvas.rootCanvas == t.canvas.rootCanvas && Cover(x.rect, rect) >= 0.04f && Cover(x.rect, rect) < 0.9f);      // 같은 화면 안에서 일부만 덮임(다른 화면의 카드가 HUD 위에 뜬 건 정상)
                 var it = new Item { T = t, Path = PathOf(t.transform), Text = clean.Length > 40 ? clean.Substring(0, 40) : clean, R = rect, Size = t.fontSize, TextC = t.color, CutBy = cut.g != null ? cut.g.name : "" };
                 // 뒤의 판 합성
-                float clear = 1f; Color acc = Color.black; string plate = "";
+                string plate = "";
                 var behind = graphics.Where(x => x.order < ord && Cover(x.rect, rect) >= 0.75f).ToList();
-                foreach (var x in behind) { acc = Over(x.g.color, x.a, acc); clear *= 1f - x.a; plate = x.g.name; }
-                it.PlateA = 1f - clear; it.Plate = plate;
-                Ring(shot, rect, out var dark, out var light);
+                foreach (var x in behind) plate = x.g.name;
                 // 판 합성: 맨 뒤(화면)부터
                 Color Comp(Color bg) { var c = bg; foreach (var x in behind) c = Over(x.g.color, x.a, c); return c; }
+                it.PlateA = behind.Count == 0 ? 0f : Seen(Comp(Color.white), Comp(Color.black)); it.Plate = plate;
+                Ring(shot, rect, out var dark, out var light);
                 var cd = Comp(dark); var cl = Comp(light);
                 // 그림이 든 판(종이·붓 띠)은 색 값으로 못 잼 → 화면 표본(UI 포함 화면일 때) · 없으면 대비 검사 안 함
                 // (맨 위 불투명 판만 봄 — 그 뒤 전환 그림은 안 보임)

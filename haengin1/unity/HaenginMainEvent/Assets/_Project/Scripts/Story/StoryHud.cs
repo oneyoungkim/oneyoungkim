@@ -33,7 +33,7 @@ namespace Haengin
         {
             if (datePlate != null) return;
             UiKit.Canvas(gameObject, 30);
-            datePlate = UiKit.Panel("날짜 판", transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(32f, -30f), new Vector2(420f, 64f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.86f));
+            datePlate = UiKit.Panel("날짜 판", transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(32f, -30f), new Vector2(420f, 64f), UiKit.Seen(UiKit.Ink, 0.86f));
             UiKit.Fit(datePlate, 22, 26, 10, 12);
             dateText = UiKit.Text("글", datePlate.transform, Fonts != null ? Fonts.B : null, 30f, UiKit.Paper, TextAlignmentOptions.Left);
             var band = UiKit.Panel("주황 띠", datePlate.transform, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.zero, new Vector2(6f, 0f), UiKit.Accent);
@@ -41,12 +41,12 @@ namespace Haengin
             band.rectTransform.anchorMax = new Vector2(0f, 1f);
             datePlate.gameObject.SetActive(false);
 
-            chip = UiKit.Panel("시각 칩", transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(32f, -30f), new Vector2(110f, 44f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.94f));
+            chip = UiKit.Panel("시각 칩", transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(32f, -30f), new Vector2(110f, 44f), UiKit.Seen(UiKit.Ink, 0.94f));
             chipText = UiKit.Text("글", chip.transform, Fonts != null ? Fonts.B : null, 24f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Stretch(chipText.rectTransform);
             chip.gameObject.SetActive(false);
 
-            stub = UiKit.Panel("자리 장면", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(1300f, 200f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.94f));
+            stub = UiKit.Panel("자리 장면", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(1300f, 200f), UiKit.Seen(UiKit.Ink, 0.94f));
             UiKit.Fit(stub, 40, 40, 20, 24);
             stubText = UiKit.Text("글", stub.transform, Fonts != null ? Fonts.B : null, 28f, UiKit.Paper, TextAlignmentOptions.Center, wrap: true);
             stubText.GetComponent<RectTransform>().sizeDelta = new Vector2(1220f, 0f);
@@ -54,7 +54,7 @@ namespace Haengin
             le.preferredWidth = 1220f;
             stub.gameObject.SetActive(false);
 
-            screenPlate = UiKit.Panel("화면 글자 판", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 40f), new Vector2(800f, 160f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.95f));     // 2026-10-31: 판 없이 배경 위에
+            screenPlate = UiKit.Panel("화면 글자 판", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 40f), new Vector2(800f, 160f), UiKit.Seen(UiKit.Ink, 0.95f));     // 2026-10-31: 판 없이 배경 위에
             screenPlate.gameObject.SetActive(false);
             screen = UiKit.Text("화면 글자", screenPlate.transform, Fonts != null ? Fonts.Br : null, 64f, UiKit.Paper, TextAlignmentOptions.Center, wrap: true);
             UiKit.Stretch(screen.rectTransform, 24f);

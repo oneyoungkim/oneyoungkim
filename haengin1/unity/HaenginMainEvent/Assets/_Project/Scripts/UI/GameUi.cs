@@ -262,7 +262,7 @@ namespace Haengin
             for (int i = 0; i < rows.Length; i++)
             {
                 bool sel = i == Selected;
-                rows[i].Plate.color = sel ? Paper : new Color(Ink.r, Ink.g, Ink.b, 0.92f);
+                rows[i].Plate.color = sel ? Paper : UiKit.Seen(Ink, 0.92f);
                 rows[i].Bar.enabled = sel;
                 rows[i].Label.color = sel ? Ink : Paper;
             }
@@ -362,7 +362,7 @@ namespace Haengin
 
             // 짧은 알림(아래 가운데)
             var b0 = new Vector2(0.5f, 0f);
-            toastPlate = Panel("알림", transform, b0, b0, b0, new Vector2(0f, 96f), Vector2.zero, new Color(Ink.r, Ink.g, Ink.b, 0.94f)).gameObject;
+            toastPlate = Panel("알림", transform, b0, b0, b0, new Vector2(0f, 96f), Vector2.zero, UiKit.Seen(Ink, 0.94f)).gameObject;
             Fit(toastPlate.GetComponent<Image>(), 18, 18, 8, 9);
             toastText = Text("글", toastPlate.transform, font, 22f, Paper, TextAlignmentOptions.Center);
             toastPlate.SetActive(false);
@@ -372,11 +372,11 @@ namespace Haengin
             menuRoot.transform.SetParent(transform, false);
             Stretch((RectTransform)menuRoot.transform);
             var dim = menuRoot.AddComponent<Image>();
-            dim.color = new Color(0f, 0f, 0f, 0.55f);
+            dim.color = UiKit.Seen(Color.black, 0.55f);
             dim.raycastTarget = false;
 
             var c50 = new Vector2(0.5f, 0.5f);
-            Panel("일시정지 판", menuRoot.transform, c50, c50, c50, new Vector2(0f, -90f), new Vector2(680f, 620f), new Color(Ink.r, Ink.g, Ink.b, 0.95f));     // 2026-10-31: 제목·조작 글이 판 없이 화면 위에
+            Panel("일시정지 판", menuRoot.transform, c50, c50, c50, new Vector2(0f, -90f), new Vector2(680f, 620f), UiKit.Seen(Ink, 0.95f));     // 2026-10-31: 제목·조작 글이 판 없이 화면 위에
             var title = Text("제목", menuRoot.transform, font, 44f, Paper, TextAlignmentOptions.Center);
             Place(title.rectTransform, new Vector2(0f, 150f), new Vector2(600f, 64f));
             title.text = "일시정지";

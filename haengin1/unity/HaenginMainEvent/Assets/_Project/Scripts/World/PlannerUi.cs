@@ -39,7 +39,7 @@ namespace Haengin
         {
             if (root != null) return;
             UiKit.Canvas(gameObject, 63);
-            var dim = UiKit.Panel("어둡게", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(0f, 0f, 0f, 0.6f));
+            var dim = UiKit.Panel("어둡게", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, UiKit.Seen(Color.black, 0.6f));
             UiKit.Stretch(dim.rectTransform);
             root = dim.gameObject;
             var card = UiKit.Panel("계획표", dim.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1500f, 960f), UiKit.Paper);

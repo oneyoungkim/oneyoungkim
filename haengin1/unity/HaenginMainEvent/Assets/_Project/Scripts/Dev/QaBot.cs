@@ -295,6 +295,7 @@ namespace Haengin
                 yield return eof;
                 frameN++;
                 if (pendingIssueShot != null && shotQ.Count == 0) { string k = pendingIssueShot; pendingIssueShot = null; ShotNow("발견_" + k); if (found.TryGetValue(k, out var f)) f.Shot = lastShot; }
+                if (bgFor != null) { BgTwin(); continue; }
                 bool lap = lapOn && frameN % lapEvery == 0;
                 bool rec = recLeft > 0;
                 bool hash = frameN % 30 == 0;
@@ -305,7 +306,9 @@ namespace Haengin
                 if (tex == null) continue;
                 try
                 {
-                    while (shotQ.Count > 0) { string shotPath = shotQ.Dequeue(); File.WriteAllBytes(shotPath, tex.EncodeToJPG(88)); AuditShot(tex, Path.GetFileName(shotPath)); }
+                    string lastPath = null;
+                    while (shotQ.Count > 0) { string shotPath = shotQ.Dequeue(); File.WriteAllBytes(shotPath, tex.EncodeToJPG(88)); AuditShot(tex, Path.GetFileName(shotPath)); lastPath = shotPath; }
+                    if (lastPath != null && bgOn) BgStart(Path.GetFileName(lastPath));
                     if (rec) { File.WriteAllBytes(Path.Combine(recDir, $"f_{recFrame:00000}.jpg"), RecBytes(tex)); recFrame++; recLeft--; if (recLeft == 0 && recAsync) { recAsync = false; Time.captureDeltaTime = baseDelta; } }
                     if (lap || hash)
                     {
@@ -317,6 +320,55 @@ namespace Haengin
                 catch (Exception e) { L("사진 쓰기 실패 " + e.Message); }
                 Destroy(tex);
             }
+        }
+
+        // ───────────────────────── -qabg(2026-11-05 A1): 사진마다 바로 다음 프레임을 UI 없이 한 장 더(bg/) + 판 자리(plates.tsv) — 화면 기준 실효 불투명도를 전후 회귀로 잴 때
+        static readonly bool bgOn = Arg("-qabg");
+        string bgFor;
+        readonly List<Canvas> bgOff = new List<Canvas>();
+        StreamWriter plateW;
+
+        void BgStart(string file)
+        {
+            try
+            {
+                if (plateW == null) { Directory.CreateDirectory(Path.Combine(Out, "bg")); plateW = new StreamWriter(Path.Combine(Out, "plates.tsv"), false, new UTF8Encoding(false)) { AutoFlush = true }; }
+                int n = 0;
+                foreach (var g in FindObjectsByType<Image>(FindObjectsSortMode.None))
+                {
+                    if (!g.isActiveAndEnabled || g.canvas == null || !g.canvas.isActiveAndEnabled || g.canvas.rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay || g.color.a < 0.02f) continue;
+                    var c = new Vector3[4]; g.rectTransform.GetWorldCorners(c);
+                    float w = c[2].x - c[0].x, h = c[2].y - c[0].y;
+                    if (w < 2f || h < 2f) continue;
+                    long ord = (long)g.canvas.rootCanvas.sortingOrder * 100000L + g.canvasRenderer.absoluteDepth;
+                    var col = g.color;
+                    plateW.WriteLine($"{file}\t{TextAudit.PathOf(g.transform)}\t{ord}\t{c[0].x:0.0},{c[0].y:0.0},{w:0.0},{h:0.0}\t{col.r:0.0000},{col.g:0.0000},{col.b:0.0000},{col.a:0.0000}\t{(g.sprite != null ? g.sprite.name : "")}");
+                    n++;
+                }
+                bgOff.Clear();
+                foreach (var cv in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+                    if (cv.isRootCanvas && cv.enabled && cv.renderMode != RenderMode.WorldSpace) { cv.enabled = false; bgOff.Add(cv); }
+                bgFor = file;
+            }
+            catch (Exception e) { L("배경 쌍 준비 실패 " + e.Message); BgEnd(); }
+        }
+
+        void BgTwin()
+        {
+            try
+            {
+                var tex = ScreenCapture.CaptureScreenshotAsTexture();
+                if (tex != null) { File.WriteAllBytes(Path.Combine(Out, "bg", bgFor), tex.EncodeToJPG(95)); Destroy(tex); }
+            }
+            catch (Exception e) { L("배경 쌍 실패 " + e.Message); }
+            BgEnd();
+        }
+
+        void BgEnd()
+        {
+            foreach (var cv in bgOff) if (cv != null) cv.enabled = true;
+            bgOff.Clear();
+            bgFor = null;
         }
 
         byte[] Small(Texture2D src, int w, int h, int q)

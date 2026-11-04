@@ -20,7 +20,7 @@ namespace Haengin
             var go = new GameObject(name);
             UiKit.Canvas(go, order);
             var tag = go.AddComponent<ScreenTag>();
-            tag.plate = UiKit.Panel("판", go.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(40f, 40f), new Color(UiKit.Ink.r, UiKit.Ink.g, UiKit.Ink.b, 0.94f));
+            tag.plate = UiKit.Panel("판", go.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(40f, 40f), UiKit.Seen(UiKit.Ink, 0.94f));
             UiKit.Fit(tag.plate, 14, 14, 5, 7);
             tag.text = UiKit.Text("글", tag.plate.transform, font, size, UiKit.Paper, TextAlignmentOptions.Center);
             tag.plate.gameObject.SetActive(false);

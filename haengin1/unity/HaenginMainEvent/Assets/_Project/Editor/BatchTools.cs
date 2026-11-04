@@ -306,20 +306,42 @@ namespace Haengin.EditorTools
         public const string OflSource = "Assets/_Project/Fonts/OFL.txt";
         public const string OflTarget = "licenses/NotoSansKR-OFL.txt";
 
-        /// 빌드 뒤 정리: 글꼴 라이선스(OFL 1.1 은 글꼴과 함께 배포할 때 라이선스 동봉 의무) 복사, 배포 금지 디버그 폴더(…_DoNotShip) 삭제
+        /// 글꼴 원본(ttf) → (라이선스 원본, 빌드 안 자리). OFL 1.1 은 글꼴과 함께 배포할 때 라이선스 동봉 의무 — UiFonts 가 가리키는 글꼴은 모두 여기에 있어야 함(시험 Q58)
+        public static readonly (string Ttf, string Src, string Dst)[] FontLicenses =
+        {
+            ("Assets/_Project/Fonts/NotoSansKR-Bold.ttf", OflSource, OflTarget),
+            ("Assets/_Project/Fonts/NotoSansKR-Medium.ttf", "Assets/_Project/Fonts/OFL-NotoSansKR.txt", "licenses/NotoSansKR-Medium-Black-OFL.txt"),
+            ("Assets/_Project/Fonts/NotoSansKR-Black.ttf", "Assets/_Project/Fonts/OFL-NotoSansKR.txt", "licenses/NotoSansKR-Medium-Black-OFL.txt"),
+            ("Assets/_Project/Fonts/BarlowCondensed-Bold.ttf", "Assets/_Project/Fonts/OFL-BarlowCondensed.txt", "licenses/BarlowCondensed-OFL.txt"),
+            ("Assets/_Project/Fonts/BlackHanSans-Regular.ttf", "Assets/_Project/Fonts/OFL-BlackHanSans.txt", "licenses/BlackHanSans-OFL.txt"),
+            ("Assets/_Project/Fonts/Gaegu-Regular.ttf", "Assets/_Project/Fonts/OFL-Gaegu.txt", "licenses/Gaegu-OFL.txt"),
+        };
+
+        /// 글꼴 ttf 의 빌드 안 라이선스 자리(없으면 null)
+        public static string LicenseFor(string ttf) => FontLicenses.FirstOrDefault(x => string.Equals(x.Ttf, ttf, StringComparison.OrdinalIgnoreCase)).Dst;
+
+        /// 글꼴 라이선스를 outDir/licenses 로 복사. 원본이 하나라도 없으면 예외 → 빌드 실패(BuildWindows 가 잡아 종료 코드 1)
+        public static List<string> CopyFontLicenses(string outDir)
+        {
+            var done = new List<string>();
+            foreach (var (_, srcRel, dstRel) in FontLicenses)
+            {
+                if (done.Contains(dstRel)) continue;
+                string src = FullPath(srcRel);
+                if (!File.Exists(src)) throw new FileNotFoundException("글꼴 라이선스가 없습니다: " + srcRel);
+                string dst = Path.Combine(outDir, dstRel);
+                Directory.CreateDirectory(Path.GetDirectoryName(dst));
+                File.Copy(src, dst, true);
+                Debug.Log($"{Tag} 글꼴 라이선스 동봉: {dst} ({new FileInfo(dst).Length} bytes)");
+                done.Add(dstRel);
+            }
+            return done;
+        }
+
+        /// 빌드 뒤 정리: 글꼴 라이선스 복사(의성어 그림은 Black Han Sans 로 구웠지만 출처 표시로 같이 둠), 배포 금지 디버그 폴더(…_DoNotShip) 삭제
         static void Finish(string outDir)
         {
-            string src = FullPath(OflSource);
-            if (!File.Exists(src)) throw new FileNotFoundException("글꼴 라이선스가 없습니다: " + OflSource);
-            string dst = Path.Combine(outDir, OflTarget);
-            Directory.CreateDirectory(Path.GetDirectoryName(dst));
-            File.Copy(src, dst, true);
-            Debug.Log($"{Tag} 글꼴 라이선스 동봉: {dst} ({new FileInfo(dst).Length} bytes)");
-            // M2: 의성어 그림을 Black Han Sans 로 구웠다(글꼴 파일 자체는 빌드에 안 들어가지만 출처 표시로 같이 둔다)
-            string bhs = FullPath("Assets/_Project/Fonts/OFL-BlackHanSans.txt");
-            if (File.Exists(bhs)) { string d2 = Path.Combine(outDir, "licenses/BlackHanSans-OFL.txt"); File.Copy(bhs, d2, true); Debug.Log($"{Tag} 글꼴 라이선스 동봉: {d2}"); }
-            string gaegu = FullPath("Assets/_Project/Fonts/OFL-Gaegu.txt");
-            if (File.Exists(gaegu)) { string d3 = Path.Combine(outDir, "licenses/Gaegu-OFL.txt"); File.Copy(gaegu, d3, true); Debug.Log($"{Tag} 글꼴 라이선스 동봉: {d3}"); }
+            CopyFontLicenses(outDir);
             foreach (var d in Directory.GetDirectories(outDir, "*_DoNotShip"))
             {
                 Directory.Delete(d, true);

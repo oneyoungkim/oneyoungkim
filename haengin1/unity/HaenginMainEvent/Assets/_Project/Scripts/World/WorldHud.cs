@@ -134,6 +134,7 @@ namespace Haengin
             hr.sizeDelta = new Vector2(Mathf.Max(dw, 10f) + 4f, hr.sizeDelta.y);
             FatigueFill = Mathf.Clamp01(i.Fatigue / 100f);
             UiKit.SetBar(fatFill, FatigueFill);
+            fatFill.color = i.Fatigue >= 85 ? UiKit.EndureLit : UiKit.Accent;      // A6(2026-11-05): 85 이상 = 위험 붉은색(트랙 대비 3:1 넘게 밝힌 값), 그 밖 = 주황
             fatText.text = UiKit.Tab(i.Fatigue.ToString());
             fatState.text = i.Fatigue >= 85 ? "한계" : i.Fatigue >= 70 ? "지침" : "";
             var sr = fatState.rectTransform;
