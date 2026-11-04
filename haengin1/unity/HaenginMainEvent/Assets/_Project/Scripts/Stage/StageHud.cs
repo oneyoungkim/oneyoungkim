@@ -42,6 +42,7 @@ namespace Haengin
         Image[] dialogOptPlate = new Image[2];
         readonly UiKit.Row[] dialogRows = new UiKit.Row[2];
         Image defeatInk, defeatPlate, yFill, dialogTag;
+        SubtitleUi subUi; InnerVoiceUi innerUi; float talkLook;
         Image[] yDots = new Image[3];
         float bannerLeft, bigLeft, cardLeft, resultLeft, defeatT;
         Action<bool> dialogDone;
@@ -174,7 +175,10 @@ namespace Haengin
             // QA Q01: 이야기 장면(컷신·대사·이동 장면)·오픈월드 카드·휴대폰 중엔 안내를 숨김 — 자막 뒤로 '× 국밥집 — 직원가' 가 비치던 것
             bool storyBusy = StoryRunner.Active || (WorldRunner.On && !WorldRunner.Instance.Free);
             if (pc != null && !pc.Active && !GameState.Modal && !GameState.InputLocked && !storyBusy) near = Interactable.Nearest(pc.transform.position);
-            bool showP = near != null;
+            // D9(2026-11-05): 대사·속마음 판이 떠 있으면 상호작용 안내를 숨김(아래 가운데에서 판과 겹침 — Q57 제외 줄을 없애며 찾음)
+            if (talkLook < Time.unscaledTime) { talkLook = Time.unscaledTime + 2f; if (subUi == null) subUi = FindAnyObjectByType<SubtitleUi>(); if (innerUi == null) innerUi = FindAnyObjectByType<InnerVoiceUi>(); }
+            bool talk = (subUi != null && subUi.Visible) || (innerUi != null && innerUi.Visible);
+            bool showP = near != null && !talk;
             if (prompt.activeSelf != showP) prompt.SetActive(showP);
             if (showP) SetPrompt(CombatHud.PadLast ? "×" : "E", near.Prompt);
 

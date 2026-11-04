@@ -19,6 +19,81 @@ namespace Haengin
             yield return Section("U2 대화", U_Talk, 420f);
             yield return Section("U3 선택지", U_Choice, 120f);
             yield return Section("U4 드릴", U_Drill, 420f);
+            yield return Section("U5 화면", U_Screens, 300f);
+        }
+
+        /// 2단계(D2)에서 B안으로 바꾼 화면: 하나씩 띄워 사진(실제 화면 글자 감사 같이) — 각 화면은 띄운 뒤 닫음
+        IEnumerator U_Screens()
+        {
+            int day = NextDay("수");
+            yield return Load(day, 15 * 60, SceneLoader.Zone1, m => { Unlocks(m); m.G.Fatigue = 30; });
+            yield return Frames(40);
+            // 일시정지
+            GameState.SetPaused(true); yield return Frames(20);
+            yield return Shot("화면_일시정지");
+            GameState.SetPaused(false); yield return Frames(10);
+            // 휴대폰(문자 · 가계부 탭)
+            if (W.Phone != null)
+            {
+                W.Phone.Open(0); yield return Frames(20); yield return Shot("화면_휴대폰");
+                W.Phone.SetTab(3); yield return Frames(10); yield return Shot("화면_휴대폰_가계부");
+                W.Phone.Close(); yield return Frames(10);
+            }
+            // 이야기 날짜 판
+            var sh = St != null ? St.Hud : null;
+            if (sh != null) { sh.ShowDate(); yield return Frames(20); yield return Shot("화면_날짜판"); sh.HideDate(); yield return Frames(5); }
+            // 도감
+            if (St != null && St.NameUi != null && St.Def != null)
+            {
+                St.NameUi.ShowGrid(St.Def.Names, St.Names); yield return Frames(20); yield return Shot("화면_도감");
+                St.NameUi.HideGrid(); yield return Frames(5);
+            }
+            // 가계부 표
+            var led = FindAnyObjectByType<LedgerUi>(FindObjectsInactive.Include);
+            if (led != null)
+            {
+                var co = StartCoroutine(led.Reveal(new[] { "[3월 첫째 주]", "국밥집 알바 +45,000원", "생활비 −32,000원", "[남은 돈]", "지갑 15,100원" }));
+                yield return Secs(2.5f); yield return Shot("화면_가계부");
+                StopCoroutine(co); led.HideAll(); yield return Frames(5);
+            }
+            // 계획표(맡기기 전 — 바로 닫음)
+            if (W.PlannerView != null && W.Planner != null)
+            {
+                bool closed = false;
+                var plan = W.Planner.Make(day, 7);
+                var co = StartCoroutine(W.PlannerView.Edit(plan, d => null, "이번 주 계획", ok => closed = true));
+                yield return Frames(30); yield return Shot("화면_계획");
+                W.PlannerView.Force(1);
+                for (int i = 0; i < 120 && !closed; i++) yield return null;
+                if (!closed) StopCoroutine(co);
+                yield return Frames(10);
+            }
+            // 알바(국밥집 서빙 몇 초)
+            if (W.Job != null)
+            {
+                bool done = false;
+                var co = StartCoroutine(W.Job.Play("serve", 0.8f, day, r => done = true));
+                yield return Secs(2.0f); yield return Shot("화면_알바");
+                for (int i = 0; i < 900 && !done; i++) yield return null;
+                if (!done) StopCoroutine(co);
+                yield return Frames(10);
+            }
+            // 장 카드
+            if (W.ChapterView != null)
+            {
+                var co = StartCoroutine(W.ChapterView.Show("intro", "1장", "행인1", "2026년 3월 3일 ~ 5월 8일", "혜화동. 시우는 오늘도 배달을 나간다.", "× · Enter 계속", 1.5f));
+                yield return Secs(1.2f); yield return Shot("화면_장카드");
+                yield return co;
+                W.ChapterView.Hide(); yield return Frames(10);
+            }
+            // 패배(무대 화면이 있으면)
+            var stage = StageHud.Instance;
+            if (stage != null)
+            {
+                stage.Defeat(() => { }, () => { });
+                yield return Secs(1.6f); yield return Shot("화면_패배");
+                stage.DefeatChoose(false); yield return Frames(10);
+            }
         }
 
         /// 동네: 국밥집 문 앞(상호작용 안내) · 16:30 · 엄마 문자

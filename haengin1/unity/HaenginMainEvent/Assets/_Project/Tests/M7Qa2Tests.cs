@@ -594,7 +594,6 @@ namespace Haengin.Tests
                 var items = TextAudit.Ui(tex, false);
                 foreach (var pr in TextAudit.Problems(items))
                 {
-                    if ((pr.StartsWith("겹침") || pr.StartsWith("가림")) && (pr.Contains("조작 안내") || pr.Contains("상호작용"))) continue;     // 배치 화면이 4:3 · 시험이 자유 상태에서 자막을 띄움 — 16:9 실제 화면은 QA 봇(text_bad.tsv)
                     bad.Add(screen + ": " + pr);
                 }
                 foreach (var wi in TextAudit.World(Camera.main)) if (wi.Floating || wi.Lying) bad.Add($"{screen}: 월드 글자 {(wi.Floating ? "공중" : "누움")} {wi.Path} '{wi.Text}'");
@@ -622,6 +621,20 @@ namespace Haengin.Tests
             var sub = Object.FindAnyObjectByType<SubtitleUi>(FindObjectsInactive.Include);
             var inner = Object.FindAnyObjectByType<InnerVoiceUi>(FindObjectsInactive.Include);
             if (sub != null) { sub.Show("이윤준", "다 모였네. 얘 보러 온 거 맞지?"); yield return Check("자막"); sub.Hide(); }
+            // D9(2026-11-05): 자막 크기 0.85/1.2 · 여러 줄 · 속마음+자막 동시(펼친 조작 안내가 판 위로 비켜 가는지 — B3)
+            int keepSize = PlayerPrefs.GetInt(SubtitleUi.SizeKey, 1), keepHint = GameUi.HintMode;
+            GameUi.HintMode = 1;
+            foreach (int size in new[] { 0, 2 })
+            {
+                PlayerPrefs.SetInt(SubtitleUi.SizeKey, size);
+                if (sub != null) { sub.Show("이윤준", "토요일 저녁, 레슨이 끝났는데 아무도 안 갔다. 사무실 앞에 관장이 다섯이었다. 다들 시우를 보러 왔다고 했다. 이윤준 관장은 웃기만 했다."); yield return Check($"자막 크기 {size} 여러 줄"); }
+                if (sub != null && inner != null) { inner.Show("관장이 다섯. 다들 나를 보러 왔다고 했다."); yield return Check($"속마음+자막 크기 {size}"); inner.Hide(); }
+                if (sub != null) sub.Hide();
+            }
+            PlayerPrefs.SetInt(SubtitleUi.SizeKey, keepSize); GameUi.HintMode = keepHint;
+            yield return null;
+            var story = Object.FindAnyObjectByType<StoryHud>(FindObjectsInactive.Include);
+            if (story != null) { story.ShowDate(); yield return Check("이야기 날짜 판"); story.HideDate(); }
             if (inner != null) { inner.Show("토요일 저녁, 레슨이 끝났는데 아무도 안 갔다. 사무실 앞에 관장이 다섯이었다."); yield return Check("속마음"); inner.Hide(); }
             var board = w.Story.Board;
             board.ShowCard("개인레슨   ·   3월 14일(토) 17:30", "김승연(딥마카이) — 첫 레슨", "레슨", true, new[] { "출장 레슨 — 타격 기본기 · 17:30 · 50,000원", "이번 판: 스탯 ×1.8 · 판정 +6 · 피로 ×1.5" }, new[] { "김승연|관장님한테 얘기 들었어." }, "× · Enter · 마우스 왼쪽   다음", true);
