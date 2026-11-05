@@ -145,7 +145,7 @@ namespace Haengin
             Hud?.Show(true);
         }
 
-        const string Hint = "페달 R2·W · 브레이크 L2·S · 방향 왼스틱·A D · 오르막 □ ○ 번갈아(J K) · 건네기 ×·E(멈춰서)";
+        const string Hint = "페달 [R2]·[W] · 브레이크 [L2]·[S] · 방향 [왼스틱]·[A D] · 오르막 [□] [○] 번갈아([J] [K]) · 건네기 [×]·[E](멈춰서)";
 
         public void Finish()
         {

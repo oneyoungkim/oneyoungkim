@@ -194,7 +194,7 @@ namespace Haengin
             for (int i = 0; i < cards.Length; i++)
             {
                 var c = cards[i];
-                board.ShowCard($"하루 루프 안내 {i + 1} / {cards.Length}", c[0], "안내", false, new[] { c[1], c[2], c[3] }, null, "× · Enter · 마우스 왼쪽   다음");
+                board.ShowCard($"하루 루프 안내 {i + 1} / {cards.Length}", c[0], "안내", false, new[] { c[1], c[2], c[3] }, null, "[×] · [Enter] · [마우스 왼쪽]   다음");
                 yield return WaitPress();
                 board.Hide();
             }
@@ -371,7 +371,7 @@ namespace Haengin
             string kind = c.Kind switch { CardKind.Core => "핵심", CardKind.Season => "계절", CardKind.Cond => "조건", CardKind.Side => "동네 사연", CardKind.Msg => "문자", CardKind.System => "시스템", _ => "반복" };
             string where = PlaceName(c.Place);
             board.ShowCard($"{Def.Chapter(c.Chapter)?.Label ?? ""}   ·   {GameClock.DateText} {GameClock.TimeText}{(where.Length > 0 ? "   ·   " + where : "")}", Director.TitleOf(c),
-                kind + (c.HasScenes ? "" : " · 스토리보드"), c.Kind == CardKind.Core, Director.BoardOf(c), Director.QuotesOf(c), "× · Enter · 마우스 왼쪽   다음");
+                kind + (c.HasScenes ? "" : " · 스토리보드"), c.Kind == CardKind.Core, Director.BoardOf(c), Director.QuotesOf(c), "[×] · [Enter] · [마우스 왼쪽]   다음");
             yield return WaitPress();
             board.Hide();
         }
@@ -405,7 +405,7 @@ namespace Haengin
             bool lockWas = GameState.InputLocked;
             GameState.InputLocked = true;    // 카드가 떠 있는 동안 걷기·상호작용 안내 막음(Modal 은 TalkInput 다음 입력까지 막아서 쓰지 않음)
             InputMaps.Use(Actions, InputMaps.Talk);
-            GameUi.HintOverride = "다음 × · Enter · 마우스 왼쪽";
+            GameUi.HintOverride = "다음 [×] · [Enter] · [마우스 왼쪽]";
             yield return null;
             float t = 0f;
             while (true)
@@ -438,7 +438,7 @@ namespace Haengin
             sb.Append("목표 — ").Append(demo && ch.HasDemo ? ch.DemoGoal : ch.Goal).Append('\n');
             foreach (var g in demo && ch.HasDemo ? ch.DemoGoals : ch.Goals) sb.Append("□ ").Append(g.Label).Append('\n');
             if (demo && ch.HasDemo) { sb.Append("\n1장 전체 목표 — ").Append(ch.Goal).Append('\n'); foreach (var g in ch.Goals) sb.Append("· ").Append(g.Label).Append('\n'); }
-            yield return ChapterView.Show("장", $"{ch.Period} · {ch.Age} · {ch.Ladder}", ch.Label, demo && ch.HasDemo ? ch.DemoTitle : ch.Goal, sb.ToString(), "× · Enter   시작", BotSkill > 0f ? BotRead * 2f : 0f);
+            yield return ChapterView.Show("장", $"{ch.Period} · {ch.Age} · {ch.Ladder}", ch.Label, demo && ch.HasDemo ? ch.DemoTitle : ch.Goal, sb.ToString(), "[×] · [Enter]   시작", BotSkill > 0f ? BotRead * 2f : 0f);
         }
 
         public static string PlaceName(string key) => key switch

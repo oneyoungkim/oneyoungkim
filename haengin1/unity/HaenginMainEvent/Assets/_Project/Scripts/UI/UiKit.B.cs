@@ -203,7 +203,7 @@ namespace Haengin
         }
 
         // ───────────────────────── 키 칩
-        /// 키 칩: 종이색 1.5px 테두리 상자 + Barlow 키 이름 · interact = 주황 칸 + 먹 글자(E·× 같은 상호작용 키). 왼쪽 가운데 기준
+        /// 키 칩: 종이색 2px 테두리 상자 + Barlow 키 이름 · interact = 주황 칸 + 먹 글자(E·× 같은 상호작용 키). 왼쪽 가운데 기준
         public static RectTransform KeyChip(string name, Transform parent, UiFonts f, string key, float h, bool interact, out TextMeshProUGUI label)
         {
             var box = Panel(name, parent, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(h, h), interact ? Accent : new Color(Ink.r, Ink.g, Ink.b, 0f));
@@ -217,7 +217,8 @@ namespace Haengin
         /// 키 칩 글 + 폭
         public static void SetKey(RectTransform box, TextMeshProUGUI label, string key, float h)
         {
-            label.text = key ?? "";
+            label.text = key == "×" ? "<font=\"" + (FBold() != null ? FBold().name : "") + "\"><size=130%>×</size></font>" : key ?? "";
+            if (key == "×" && FBold() != null) MaterialReferenceManager.AddFontAsset(FBold());
             float w = Mathf.Max(h, label.GetPreferredValues(label.text).x + h * 0.42f);
             box.sizeDelta = new Vector2(w, h);
         }
@@ -274,6 +275,16 @@ namespace Haengin
             label.rectTransform.offsetMax = new Vector2(-Mathf.Round(fontSize * 0.5f), 0f);
             label.overflowMode = TextOverflowModes.Ellipsis;
             return new Row { Rt = plate.rectTransform, Plate = plate, Bar = bar, Label = label };
+        }
+
+        /// 종이 바탕 화면(타이틀)의 목록 줄 — 고른 줄이 가장 진하게(docs/16 규칙 9 '종이 바탕 변형', 3단계 결정 ①)
+        public static void SetRowOnPaper(Row r, bool selected, UiFonts f)
+        {
+            r.Plate.color = selected ? InkPlate : new Color(Ink.r, Ink.g, Ink.b, 0f);
+            r.Bar.enabled = selected;
+            r.Label.color = selected ? Paper : Ink;
+            var want = selected ? FBlack(f) : FBold(f);
+            if (want != null && r.Label.font != want) r.Label.font = want;
         }
 
         public static void SetRow(Row r, bool selected, UiFonts f)
@@ -345,13 +356,18 @@ namespace Haengin
         }
 
         /// 안내 한 줄에서 키 이름(□△○× · R1 · Space …)만 Warm 으로
-        public static string KeyMark(string s)
+        /// 안내 줄 그리기(3단계 결정 ②): 글 속 [키] 표시(자료 — 안내 글을 만들 때 키에 붙임)만 Warm 으로 감쌈(종이 바탕 = AccentText).
+        ///   □△○× 기호는 한 단계 크고 굵게. 표시가 없는 옛 글은 낱말 목록(KeyWords)으로. ' · ' 앞은 줄 안 바꿈 빈칸(Glue)
+        public static string KeyMark(string s, bool onPaper = false)
         {
             if (string.IsNullOrEmpty(s)) return "";
             s = Glue(s);
-            string hex = ColorUtility.ToHtmlStringRGB(Warm);
-            // 드릴-8(2026-11-05): □△○× 기호는 가는 외곽선이라 Warm 이 흐림(3.6~4.3:1) → 기호만 한 단계 크고 굵게
-            return KeyWords.Replace(s, m => "<color=#" + hex + ">" + (Symbols.IsMatch(m.Value) ? "<size=118%><b>" + m.Value + "</b></size>" : m.Value) + "</color>");
+            string hex = ColorUtility.ToHtmlStringRGB(onPaper ? AccentText : Warm);
+            if (s.IndexOf('[') >= 0 && Marked.IsMatch(s)) return Marked.Replace(s, m => KeySpan(m.Groups[1].Value, hex));
+            return KeyWords.Replace(s, m => KeySpan(m.Value, hex));
         }
+
+        static readonly Regex Marked = new Regex(@"\[([^\[\]<>]+)\]");
+        static string KeySpan(string k, string hex) => "<color=#" + hex + ">" + (Symbols.IsMatch(k) ? "<size=118%><b>" + k + "</b></size>" : k) + "</color>";
     }
 }

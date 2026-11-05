@@ -81,10 +81,10 @@ namespace Haengin
             UiKit.Place(timeText.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-24f, -24f), new Vector2(200f, 62f));
             UiKit.Rule(pt, new Vector2(24f, -67f), 576f);
             // 머리말 글 상자(TMP 는 글꼴 ascender~descender 로 잼)가 값(Barlow 50) 상자와 닿지 않게 -71
-            // 동네-3(2026-11-05): 머리말 줄을 4px 내림 — 8px(값 위 12px)는 바를로 글 상자 위 여백(1em)과 겹쳐 글자 감사(Q57) 겹침에 걸림
-            UiKit.Label("지갑 머리말", pt, f, new Vector2(24f, -75f), 140f).text = "지갑";
-            UiKit.Label("생활비 머리말", pt, f, new Vector2(HouseX, -75f), 200f).text = "생활비";
-            UiKit.Label("피로 머리말", pt, f, new Vector2(FatX, -75f), 140f).text = "피로";
+            // 동네-3(3단계 V1-05): 머리말 줄을 8px 내려 값 위 약 12px — 글자 감사 겹침을 잉크 상자 기준으로 바꾼 뒤
+            UiKit.Label("지갑 머리말", pt, f, new Vector2(24f, -79f), 140f).text = "지갑";
+            UiKit.Label("생활비 머리말", pt, f, new Vector2(HouseX, -79f), 200f).text = "생활비";
+            UiKit.Label("피로 머리말", pt, f, new Vector2(FatX, -79f), 140f).text = "피로";
             walletText = UiKit.TextAt("지갑", pt, UiKit.FNum(f), 50f, UiKit.Paper, new Vector2(24f, -118f), new Vector2(140f, 64f), TextAlignmentOptions.BaselineLeft);
             envLabel = UiKit.TextAt("봉투 머리말", pt, UiKit.FMed(f), 18f, UiKit.PaperDim, new Vector2(24f, -170f), new Vector2(60f, 28f), TextAlignmentOptions.BaselineLeft);
             envLabel.text = "봉투";

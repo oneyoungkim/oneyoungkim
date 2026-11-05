@@ -26,8 +26,8 @@ namespace Haengin
         public const float MeRight = 566f, MeBottom = 146f;
         /// 화면 위쪽에서 비워 둘 높이(1080 기준) — 드릴 머리글 판(위 가운데)이 떠 있으면 머리 위 대상 이름·바를 그 아래로(B안 2026-11-05)
         public static float TopReserve;
-        public const string PadHint = "□ 약 · △ 강 · ○ 잡기 · × 회피 · R1 막기 · L1 락온";
-        public const string KeyHint = "좌클릭 약 · 우클릭 강 · F 잡기 · Space 회피 · Ctrl 막기 · Q 락온";
+        public const string PadHint = "[□] 약 · [△] 강 · [○] 잡기 · [×] 회피 · [R1] 막기 · [L1] 락온";
+        public const string KeyHint = "[좌클릭] 약 · [우클릭] 강 · [F] 잡기 · [Space] 회피 · [Ctrl] 막기 · [Q] 락온";
 
         // ── 시험·녹화가 읽는 것
         public bool Visible { get; private set; }
@@ -101,7 +101,7 @@ namespace Haengin
             // 7-1 시우(왼쪽 위)
             var tl = new Vector2(0f, 1f);
             var me = Rect("시우", root, tl, tl, tl, new Vector2(48f, -48f), new Vector2(440f, 110f));
-            var mePlate = Img("시우 판", me, null, UiKit.InkPlate, new Vector2(-12f, 10f), new Vector2(530f, 108f));
+            var mePlate = Img("시우 판", me, null, UiKit.InkPlate, new Vector2(-10f, 10f), new Vector2(528f, 108f));      // V3-05: 왼쪽 끝 38
             UiKit.EdgeLine(mePlate.transform, UiKit.Edge.Top, UiKit.Accent);      // 드릴-9(2026-11-05): 상태 판 = 위 주황 줄      // 2026-10-31: 이름·기세 글이 판 없이 배경 위에
             nameText = Text("이름", me, font, 28f, UiKit.Paper, TextAlignmentOptions.TopLeft, new Vector2(0f, 0f), new Vector2(420f, 36f));
             nameText.text = "반시우";
@@ -306,7 +306,7 @@ namespace Haengin
                 if (!plate.activeSelf) { plate.SetActive(true); plateA = 0f; }
                 plateA = Mathf.MoveTowards(plateA, 1f, rdt / 0.15f);
                 plateGroup.alpha = plateA;
-                plateText.text = PadLast ? "△ 기세" : "우클릭 기세";
+                plateText.text = UiKit.KeyMark(PadLast ? "[△] 기세" : "[우클릭] 기세");
                 var at = cam.WorldToScreenPoint(ht.Chest);
                 Place((RectTransform)plate.transform, at, new Vector2(70f, 0f));
             }

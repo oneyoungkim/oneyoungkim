@@ -165,7 +165,7 @@ namespace Haengin
             {
                 case "serve":
                     title.text = "국밥집 저녁 — 서빙";
-                    help.text = "주문이 뜨면 그 상으로: ← 1번 상 · ↑ 2번 상 · → 3번 상 · ↓ 4번 상. 빨리 갖다 놓을수록 좋다.";
+                    help.text = UiKit.KeyMark("주문이 뜨면 그 상으로: [←] 1번 상 · [↑] 2번 상 · [→] 3번 상 · [↓] 4번 상. 빨리 갖다 놓을수록 좋다.");
                     SetSlots("← 1번 상", "↑ 2번 상", "→ 3번 상", "↓ 4번 상");
                     string[] menu = { "순대국 둘", "따로국밥", "섞어 하나", "공깃밥 추가", "깍두기 리필", "순대국 특", "수육 小", "물 한 병" };
                     for (int i = 0; i < 10; i++)
@@ -180,12 +180,12 @@ namespace Haengin
                     break;
                 case "dish":
                     title.text = "국밥집 저녁 — 설거지";
-                    help.text = "움직이는 표시가 초록 칸에 올 때 × · Enter · Space. 뚝배기 열 개.";
+                    help.text = UiKit.KeyMark("움직이는 표시가 초록 칸에 올 때 [×] · [Enter] · [Space]. 뚝배기 열 개.");
                     yield return Bar(10, 1.15f, (sc) => { total += sc; count++; Score(total, count); });
                     break;
                 case "stock":
                     title.text = "편의점 야간 입고 — 선입선출";
-                    help.text = "유통기한이 빠른 상품을 앞줄로: ← 왼쪽 상품 · → 오른쪽 상품. 끝에 폐기 상품을 × 로 찍는다.";
+                    help.text = UiKit.KeyMark("유통기한이 빠른 상품을 앞줄로: [←] 왼쪽 상품 · [→] 오른쪽 상품. 끝에 폐기 상품을 [×] 로 찍는다.");
                     string[] items = { "삼각김밥 참치마요", "바나나우유", "샌드위치", "컵라면", "삼각김밥 전주비빔", "초코우유", "도시락", "두유" };
                     for (int i = 0; i < 9; i++)
                     {
@@ -206,7 +206,7 @@ namespace Haengin
                     break;
                 case "counter":
                     title.text = "편의점 계산대 — 거스름돈";
-                    help.text = "값과 받은 돈을 보고 거스름돈을 고른다: ← · ↑ · →";
+                    help.text = UiKit.KeyMark("값과 받은 돈을 보고 거스름돈을 고른다: [←] · [↑] · [→]");
                     for (int i = 0; i < 8; i++)
                     {
                         int price = 1200 + 100 * Mathf.FloorToInt(Roll(i) * 80f);
@@ -229,7 +229,7 @@ namespace Haengin
                     break;
                 case "site":
                     title.text = "노가다 — 유로폼 나르기 · 못질";
-                    help.text = "흔들리는 무게 중심을 ← → 로 가운데 칸에(하체로 버틴다). 다음은 박자에 맞춰 × 로 못질.";
+                    help.text = UiKit.KeyMark("흔들리는 무게 중심을 [← →] 로 가운데 칸에(하체로 버틴다). 다음은 박자에 맞춰 [×] 로 못질.");
                     SetSlots("", "", "", "");
                     prompt.text = "유로폼 나르기";
                     float bal = 0f;
@@ -253,10 +253,13 @@ namespace Haengin
             done?.Invoke(LastScore);
         }
 
+        /// 화살표(←↑→↓)를 같은 폭 칸에 — 화살표 뒤 간격이 같게(V4-10)
+        static string Arrow(string s) => !string.IsNullOrEmpty(s) && s.Length > 1 && "←↑→↓".IndexOf(s[0]) >= 0 ? "<mspace=0.9em>" + s[0] + "</mspace>" + s.Substring(1) : s ?? "";
+
         void SetSlots(string a, string b, string c, string d)
         {
             var v = new[] { a, b, c, d };
-            for (int i = 0; i < 4; i++) { slots[i].text = v[i]; slots[i].transform.parent.gameObject.SetActive(!string.IsNullOrEmpty(v[i])); }
+            for (int i = 0; i < 4; i++) { slots[i].text = Arrow(v[i]); slots[i].transform.parent.gameObject.SetActive(!string.IsNullOrEmpty(v[i])); }
         }
 
         void Score(float total, int count) => scoreText.text = $"{count}개 · {Mathf.RoundToInt(100f * total / Mathf.Max(1, count))}점";

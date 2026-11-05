@@ -621,7 +621,7 @@ namespace Haengin
             Debug.Log($"[World] 데모 끝: {(met ? "목표 달성" : "목표 미달")} · {Model.Status}\n{sb}");
             Trace.Add($"데모 끝 {(met ? "달성" : "미달")}");
             if (Hud != null) Hud.Shown = false;
-            yield return ChapterView.Show("데모 끝", $"{GameClock.DateText} · 1장 「행인1」 데모", met ? "목표 달성" : "목표 미달", ch.DemoTitle, sb.ToString(), "× · Enter   다음", BotSkill > 0f ? BotRead * 3f : 0f);
+            yield return ChapterView.Show("데모 끝", $"{GameClock.DateText} · 1장 「행인1」 데모", met ? "목표 달성" : "목표 미달", ch.DemoTitle, sb.ToString(), "[×] · [Enter]   다음", BotSkill > 0f ? BotRead * 3f : 0f);
             var next = Def.Chapter("2");
             if (next != null)
             {
@@ -629,7 +629,7 @@ namespace Haengin
                 pb.Append(next.Goal).Append('\n');
                 foreach (var g in next.Goals) pb.Append("· ").Append(g.Label).Append('\n');
                 pb.Append($"\n해금 — {next.Unlocks}\n\n1장 「행인1」은 계속됩니다. 5월엔 등굣길 시비, 8월엔 대학로, 9월엔 와룡공원의 밤, 그리고 첫눈의 야차.");
-                yield return ChapterView.Show("예고", "다음 장 예고", next.Label, $"{next.Period} · {next.Age} · {next.Ladder}", pb.ToString(), "× · Enter   계속 돌아다니기", BotSkill > 0f ? BotRead * 3f : 0f);
+                yield return ChapterView.Show("예고", "다음 장 예고", next.Label, $"{next.Period} · {next.Age} · {next.Ladder}", pb.ToString(), "[×] · [Enter]   계속 돌아다니기", BotSkill > 0f ? BotRead * 3f : 0f);
             }
             PlayerPrefs.SetInt("haengin.world.demo", met ? 1 : 2); PlayerPrefs.Save();
             DemoEnded?.Invoke();

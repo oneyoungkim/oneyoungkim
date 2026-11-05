@@ -41,7 +41,7 @@ namespace Haengin
         bool finished;
         string last;
 
-        void OnEnable() => Hook();
+        void OnEnable() { Hook(); if (Plate != null && Plate.GetComponent<UiMotion>() == null) UiMotion.On(Plate.transform, new Vector2(1f, 0f)); }      // C1-08
         /// 지금 '도착'(1.6초)·완주(4초) 알림 중인지 — 자유 이동 중엔 이 판 대신 세계 HUD '다음' 판 머리말이 '도착'으로 바뀜(B12)
         public bool Flashing => !string.IsNullOrEmpty(flash) && Time.unscaledTime < flashUntil;
         void OnDisable() => Unhook();

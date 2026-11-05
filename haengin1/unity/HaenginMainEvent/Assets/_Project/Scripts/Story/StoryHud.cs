@@ -28,7 +28,7 @@ namespace Haengin
         Image datePlate, chip, stub;
         TextMeshProUGUI dateText, chipText, stubText, screen;
         float dateLeft, screenLeft;
-        string chipRaw = "";
+        string chipRaw = "", dateRaw = "";
 
         void Build()
         {
@@ -71,7 +71,7 @@ namespace Haengin
         public void ShowDate()
         {
             Build();
-            dateText.text = GameClock.Label;
+            dateText.text = UiKit.NumRich(GameClock.Label, Fonts);      // 결정 ③: 자료 줄 숫자 Barlow
             dateLeft = DateSecs;
             UiMotion.Show(datePlate.gameObject);      // F1: 사라지는 중이면 취소
             chip.gameObject.SetActive(false);
@@ -118,7 +118,7 @@ namespace Haengin
             float rdt = UiKit.RealDt;
             if (datePlate.gameObject.activeSelf)
             {
-                dateText.text = GameClock.Label;
+                if (GameClock.Label != dateRaw) { dateRaw = GameClock.Label; dateText.text = UiKit.NumRich(dateRaw, Fonts); }
                 dateLeft -= rdt;
                 if (dateLeft <= 0f) { UiMotion.Hide(datePlate.gameObject); }      // D8
             }

@@ -72,7 +72,7 @@ namespace Haengin
             var lines = s.Board != null && s.Board.Length > 0 ? s.Board : new[] { s.Summary };
             body.text = "· " + string.Join("\n· ", lines);
             quotes.text = Quotes(s.Quotes);
-            foot.text = move ? "× · Enter · 마우스 왼쪽   출발" : "× · Enter · 마우스 왼쪽   다음";
+            foot.text = UiKit.KeyMark(move ? "[×] · [Enter] · [마우스 왼쪽]   출발" : "[×] · [Enter] · [마우스 왼쪽]   다음");
             Open();
         }
 
@@ -90,7 +90,7 @@ namespace Haengin
             tagPlate.color = accent ? UiKit.Accent : UiKit.Paper;
             body.text = lines != null && lines.Length > 0 ? "· " + string.Join("\n· ", lines) : "";
             quotes.text = Quotes(quoteLines);
-            foot.text = footLine ?? "";
+            foot.text = UiKit.KeyMark(footLine ?? "");
             Open();
         }
 
@@ -105,7 +105,7 @@ namespace Haengin
             tagPlate.gameObject.SetActive(false);
             body.text = string.Join("\n\n", lines ?? new string[0]);
             quotes.text = string.IsNullOrEmpty(note) ? "" : $"<size=26><color=#{ColorUtility.ToHtmlStringRGB(UiKit.PaperDim)}>{note}</color></size>";      // F3: 먹 판 위 흐린 글 = PaperDim(옛 종이 판용 #5E5957 은 2.6:1)
-            foot.text = "× · Enter · 마우스 왼쪽   시작";
+            foot.text = UiKit.KeyMark("[×] · [Enter] · [마우스 왼쪽]   시작");
             Open();
         }
 

@@ -20,7 +20,7 @@ namespace Haengin
         readonly HashSet<AttackRun> landed = new HashSet<AttackRun>();
         AttackRun myRun; bool myRunHit;
         public int Violations { get; private set; }
-        public override string Hint => "라이트 — 머리는 터치(□만). △ 머리 강타는 스톱";
+        public override string Hint => "라이트 — 머리는 터치([□]만). [△] 머리 강타는 스톱";
 
         public override void Begin(DrillRunner r)
         {

@@ -27,6 +27,7 @@ namespace Haengin
             if (!go.TryGetComponent<Canvas>(out var c)) c = go.AddComponent<Canvas>();
             c.renderMode = RenderMode.ScreenSpaceOverlay;
             c.sortingOrder = order;
+            c.pixelPerfect = true;      // 3단계 V1-06: 줄·테두리를 화면 픽셀에 맞춤
             if (!go.TryGetComponent<CanvasScaler>(out var s)) s = go.AddComponent<CanvasScaler>();
             s.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             s.referenceResolution = new Vector2(1920f, 1080f);

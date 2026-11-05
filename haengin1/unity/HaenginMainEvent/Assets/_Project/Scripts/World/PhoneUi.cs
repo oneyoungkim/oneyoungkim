@@ -60,7 +60,7 @@ namespace Haengin
             body.overflowMode = TextOverflowModes.Ellipsis;
             foot = UiKit.Text("발", screen.transform, UiKit.FMed(Fonts), 19f, UiKit.PaperDim, TextAlignmentOptions.Center);
             UiKit.Place(foot.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 12f), new Vector2(640f, 30f));
-            foot.text = "← → 탭   ○ · Esc · Tab 닫기";
+            foot.text = "[← →] 탭   [○] · [Esc] · [Tab] 닫기";
             root.SetActive(false);
         }
 
@@ -128,7 +128,7 @@ namespace Haengin
             }
             body.text = Columns(Content != null ? Content(Tab) ?? "" : "");
             string al = ActLabel != null ? ActLabel(Tab) : "";
-            foot.text = UiKit.KeyMark(string.IsNullOrEmpty(al) ? "← → 탭   ○ · Esc · Tab 닫기" : $"← → 탭   Enter · × {al}   ○ · Esc 닫기");
+            foot.text = UiKit.KeyMark(string.IsNullOrEmpty(al) ? "[← →] 탭   [○] · [Esc] · [Tab] 닫기" : $"[← →] 탭   [Enter] · [×] {al}   [○] · [Esc] 닫기");
         }
 
         void Update()

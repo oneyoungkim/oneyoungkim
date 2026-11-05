@@ -3,6 +3,7 @@
 // 오른쪽 지표 표(항목 · 얇은 주황 막대 = m_i · 값 Barlow 60) · 아래 코치 이름띠 + 한 줄 · 보상 칸(머리말 + Barlow 58, 피로만 Warm) · 닫기 키 칩.
 // 나타남: 표 한 줄씩 70ms 간격, 등급이 마지막(Update 가 ShownFor 로 그림 — 코루틴이 끊겨 등급이 빈칸으로 남던 것을 없앰).
 // 첫 S: 등급 판이 가로로 뒤집힌 뒤 '시뮬 해금' 칩. 시뮬 결과는 등급 대신 '시뮬'.
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -223,13 +224,37 @@ namespace Haengin
         }
 
         /// 나타남(ShownFor 기준): 표 한 줄씩 70ms → 등급(마지막, 1.15 → 1) → 첫 S 면 등급 판 뒤집기 뒤 '시뮬 해금'
+        // V2-02(3단계): 4:3 에서 카드를 줄이면 1px 선이 빠지고 주황 줄이 4px 가 됨 → 줄인 만큼 선 두께를 키워 화면에서 같게
+        readonly List<(RectTransform rt, Vector2 size, bool horiz)> lines = new List<(RectTransform, Vector2, bool)>();
+        void KeepLines(float k)
+        {
+            if (lines.Count == 0)
+                foreach (var im in card.GetComponentsInChildren<Image>(true))
+                {
+                    string n = im.name;
+                    if (n != "주황 줄" && n != "구분선" && n != "강조 줄" && n != "보상 위 선" && n != "보상 아래 선" && !n.StartsWith("칸 선")) continue;
+                    var rt = im.rectTransform; var sz = rt.sizeDelta;
+                    bool stretchX = rt.anchorMin.x != rt.anchorMax.x, stretchY = rt.anchorMin.y != rt.anchorMax.y;
+                    bool horiz = stretchX ? true : stretchY ? false : sz.x >= sz.y;
+                    lines.Add((rt, sz, horiz));
+                }
+            float f = k > 0.01f && k < 1f ? 1f / k : 1f;
+            foreach (var (rt, sz, horiz) in lines)
+            {
+                if (rt == null) continue;
+                var s = rt.sizeDelta;
+                if (horiz) s.y = sz.y * f; else s.x = sz.x * f;
+                rt.sizeDelta = s;
+            }
+        }
+
         void Reveal()
         {
-            float t = ShownFor;
+            float t = Accessibility.Reduced ? 99f : ShownFor;      // C2-02: 흔들림 줄이기면 바로 다 보임
             // 좁은 화면(4:3)에선 카드 전체를 줄여 화면 안에
             float cw = ((RectTransform)transform).rect.width;
             float k = cw > 10f ? Mathf.Min(1f, (cw - 76f) / Content) : 1f;      // 결과-7: 좌우 여백 38 씩
-            if (Mathf.Abs(card.localScale.y - k) > 0.001f) card.localScale = new Vector3(k, k, 1f);
+            if (Mathf.Abs(card.localScale.y - k) > 0.001f) { card.localScale = new Vector3(k, k, 1f); KeepLines(k); }
             int shown = 0;
             for (int i = 0; i < 5; i++)
             {

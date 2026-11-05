@@ -52,7 +52,7 @@ namespace Haengin
             float cyc = Actors.Clips.CycleSec("JumpRope");
             me.ScriptAnim = "JumpRope"; me.ScriptRate = cyc > 0.01f ? Mathf.Clamp((float)(cyc / Beat.Interval) * (doubleUnder ? 1f : 1f), 0.5f, 2.5f) : 1f;
         }
-        public override string Hint => doubleUnder ? "박자에 × 점프 · △ 표시에는 △ 더블언더" : "박자에 × 점프 — 발끝";
+        public override string Hint => doubleUnder ? "박자에 [×] 점프 · [△] 표시에는 [△] 더블언더" : "박자에 [×] 점프 — 발끝";
 
         public override void RoundStart(int round)
         {
@@ -183,7 +183,7 @@ namespace Haengin
         /// 진단: 누름 · 기술 시작 · 몸 상태 때문에 건너뜀 · 집계된 타격
         public int Presses, Attacks, SkippedBusy, Hits;
         public string LastSkip = "";
-        public override string Hint => "□ 약 · △ 강(길게) · 박자 안에 · 돌아올 때 쳐 · 치고 R1 가드";
+        public override string Hint => "[□] 약 · [△] 강(길게) · 박자 안에 · 돌아올 때 쳐 · 치고 [R1] 가드";
 
         public override void Begin(DrillRunner r)
         {
@@ -280,7 +280,7 @@ namespace Haengin
     public sealed class SpeedBagStation : DrillStation
     {
         float freeze; double lastBeatT = -9, freezeUntil = -1;
-        public override string Hint => "□ □ △ △ 교대 — 박자에";
+        public override string Hint => "[□] [□] [△] [△] 교대 — 박자에";
         public override void RoundStart(int round)
         {
             Beat = new BeatTrack(round == 1 ? 150 : round == 2 ? 170 : 190, 1.0) { Window = BeatTrack.WindowFor(R.Speed) };

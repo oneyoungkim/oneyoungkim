@@ -223,9 +223,13 @@ namespace Haengin
             return -1;
         }
 
+        RectTransform bandW;
         void Refresh()
         {
             if (!built || page == null) return;
+            // V1-03: 4:3 에서 로고 띠(1500)가 화면 밖으로 → min(1500, 캔버스 폭 − 76)
+            float cw = ((RectTransform)transform).rect.width;
+            if (bandW != null && cw > 10f) { float bw = Mathf.Min(1500f, cw - 76f); if (Mathf.Abs(bandW.sizeDelta.x - bw) > 0.5f) { bandW.sizeDelta = new Vector2(bw, 200f); title.rectTransform.sizeDelta = new Vector2(bw, 150f); } }
             head.text = page.Title;
             note.text = page.Note ?? "";
             bool main = string.IsNullOrEmpty(page.Title);
@@ -237,7 +241,7 @@ namespace Haengin
                 if (!on) continue;
                 bool sel = i == Selected;
                 rows[i].Label.text = page.Items[i].Text();
-                UiKit.SetRow(new UiKit.Row { Rt = rows[i].Rt, Plate = rows[i].Plate, Bar = rows[i].Bar, Label = rows[i].Label }, sel, Fonts);
+                UiKit.SetRowOnPaper(new UiKit.Row { Rt = rows[i].Rt, Plate = rows[i].Plate, Bar = rows[i].Bar, Label = rows[i].Label }, sel, Fonts);      // 결정 ①
                 rows[i].Rt.anchoredPosition = new Vector2(0f, (main ? -60f : 120f) - i * 66f);
             }
         }
@@ -255,6 +259,7 @@ namespace Haengin
             raw.texture = UiKit.BrushBand(512, 64, 11, 0.08f);
             raw.raycastTarget = false;
             UiKit.Place(bandRt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 250f), new Vector2(1500f, 200f));
+            bandW = bandRt;
             title = UiKit.Text("제목", transform, Fonts != null ? Fonts.Br : null, 110f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Place(title.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 258f), new Vector2(1500f, 150f));
             title.text = "행인1의 메인이벤트";
@@ -268,7 +273,7 @@ namespace Haengin
             UiKit.Place(note.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 190f), new Vector2(1500f, 40f));
             var hint = UiKit.Text("조작", transform, UiKit.FMed(Fonts), 20f, UiKit.Grey, TextAlignmentOptions.Center);
             UiKit.Place(hint.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 30f), new Vector2(1500f, 34f));
-            hint.text = "↑↓ 고르기    × (A) · Enter 선택    ○ (B) · Backspace 돌아가기";
+            hint.text = UiKit.KeyMark("[↑↓] 고르기    [×] [(A)] · [Enter] 선택    [○] [(B)] · [Backspace] 돌아가기", true);      // 종이 바탕: 키 = AccentText
             rows = new Row[MaxRows];
             for (int i = 0; i < MaxRows; i++)
             {

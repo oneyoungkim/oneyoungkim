@@ -126,6 +126,7 @@ namespace Haengin
             Build();
             foreach (Transform c in grid.transform) Destroy(c.gameObject);
             Cells.Clear();
+            UiKit.EdgeLine(grid.transform, UiKit.Edge.Top, UiKit.Accent);      // V4-01: 위 주황 줄도 지워졌던 것
             var head = UiKit.Text("제목", grid.transform, UiKit.FBlack(Fonts), 42f, UiKit.Paper, TextAlignmentOptions.Center);
             UiKit.Place(head.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -20f), new Vector2(1100f, 60f));
             head.text = "불린 이름";

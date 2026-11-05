@@ -67,7 +67,8 @@ namespace Haengin
             var s = subs.Find(x => x.Anchor == anchor) ?? subs.Find(x => x.Left <= 0f);
             if (s == null)
             {
-                var go = Plate("자막", root, UiKit.Seen(UiKit.Ink, 0.93f), out var t, 24f, UiKit.Paper);
+                var go = Plate("자막", root, UiKit.InkPlate, out var t, 24f, UiKit.Paper);
+                t.font = UiKit.FMed();      // C1-07: 무대 자막 = 본문 Medium
                 s = new Sub { Go = go, Text = t };
                 subs.Add(s);
             }
@@ -193,7 +194,7 @@ namespace Haengin
                 defeatInk.rectTransform.localScale = Vector3.one * (1.6f - 0.6f * u);
                 defeatLine.alpha = Mathf.Clamp01((defeatT - 0.6f) / 0.4f);
                 defeatHint.alpha = Mathf.Clamp01((defeatT - 1.0f) / 0.3f);
-                string dh = UiKit.KeyMark(UiKit.PadLast ? "× 다시      ○ 그만" : "Enter 다시      Esc 그만");
+                string dh = UiKit.KeyMark(UiKit.PadLast ? "[×] 다시      [○] 그만" : "[Enter] 다시      [Esc] 그만");
                 if (defeatHint.text != dh) defeatHint.text = dh;
                 if (defeatT > 1.0f)
                 {
@@ -310,6 +311,7 @@ namespace Haengin
                 var ri = bgo.GetComponent<RawImage>(); ri.texture = Kit.Brush; ri.color = new Color(UiKit.Paper.r, UiKit.Paper.g, UiKit.Paper.b, 0.92f); ri.raycastTarget = false;
             }
             bigText = Text(bigWord.transform, 170f, UiKit.Ink, new Vector2(900f, 240f));
+            bigText.font = UiKit.FBlack();      // C1-07
             bigText.outlineWidth = 0.22f; bigText.outlineColor = UiKit.Paper;
             bigWord.SetActive(false);
 
@@ -347,7 +349,8 @@ namespace Haengin
             ybar = new GameObject("야차 바", typeof(RectTransform)) { layer = 5 };
             ybar.transform.SetParent(root, false);
             Anchor(ybar, new Vector2(0.5f, 1f), new Vector2(0f, -70f));
-            yName = Text(ybar.transform, 28f, Color.white, new Vector2(700f, 40f)); yName.rectTransform.anchoredPosition = new Vector2(0f, 26f);
+            yName = Text(ybar.transform, 28f, UiKit.Paper, new Vector2(700f, 40f)); yName.rectTransform.anchoredPosition = new Vector2(0f, 26f);
+            yName.font = UiKit.FBlack();      // C1-07
             yName.outlineWidth = 0.25f; yName.outlineColor = UiKit.Ink;
             var yBack = Img(ybar.transform, UiKit.Ink, new Vector2(606f, 20f), new Vector2(0f, -6f));
             yFill = Img(yBack.transform, Color.white, new Vector2(600f, 14f), Vector2.zero);

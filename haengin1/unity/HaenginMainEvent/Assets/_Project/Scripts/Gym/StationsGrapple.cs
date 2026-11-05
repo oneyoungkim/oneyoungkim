@@ -15,7 +15,7 @@ namespace Haengin
         double nextShotAt;
         int seq;
         bool sprawled; double recoverFrom = -1;
-        public override string Hint => "'샷!' 에 L↓ + × 스프롤 → 바로 R1 — 페이크엔 가만히";
+        public override string Hint => "'샷!' 에 [L↓] + [×] 스프롤 [→] 바로 [R1] — 페이크엔 가만히";
 
         public override void RoundStart(int round)
         {
@@ -133,7 +133,7 @@ namespace Haengin
         bool finishing; double finishAt;
         public double Cursor(double t) { double u = (t - repStart) / Period; u -= Math.Floor(u); return u; }   // 0~1, 녹색 = 0.5 ± 0.025
         public int Step => step; public int Reps => reps; public bool Finishing => finishing;
-        public override string Hint => "○ 레벨 체인지(녹색) → L↑ 스텝 → △ 길게 드라이브 → 피니시";
+        public override string Hint => "[○] 레벨 체인지(녹색) [→] [L↑] 스텝 [→] [△] 길게 드라이브 [→] 피니시";
 
         public override void RoundStart(int round)
         {
@@ -219,7 +219,7 @@ namespace Haengin
     public sealed class GroundStation : DrillStation
     {
         int side = -1; int escapes; int phase; double windowAt; bool guardUp; int openSide; bool bridged; double bridgeAt;
-        public override string Hint => R != null && R.Round == 1 ? "박자에 L↓ + × 새우 빼기(좌우 교대)" : "R1 가드 손 → 고준 무게가 앞으로 올 때 ○ 브릿지 → 벌어진 쪽 L 좌/우";
+        public override string Hint => R != null && R.Round == 1 ? "박자에 [L↓] + [×] 새우 빼기(좌우 교대)" : "[R1] 가드 손 [→] 고준 무게가 앞으로 올 때 [○] 브릿지 [→] 벌어진 쪽 [L 좌/우]";
 
         public override void RoundStart(int round)
         {

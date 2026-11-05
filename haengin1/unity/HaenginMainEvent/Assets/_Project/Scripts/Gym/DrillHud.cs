@@ -40,6 +40,8 @@ namespace Haengin
         float cueLeft, toastLeft, topW = TopW;
         // A4 아래 줄 배치
         const float Mg = 38f, Gap = 24f, HintY = 41f, RowY = 108f, CueMinW = 420f, HintMinW = 360f;
+        string planFor; bool planBeat; float planIcons;
+        static float IconsW(int n) => n <= 0 ? 0f : 125f + (n - 1) * 106f + (n - 1) * 4f;
         float hintPW = 60f, hintLayW = -1f, hintLayH = 60f, cueWantW = CueW, cueTop;
         bool cueRaised;
         int lastRound = -1, lastSec = -1;
@@ -142,7 +144,7 @@ namespace Haengin
             var c = AudioClip.Create("drill_tick", n, 1, sr, false); c.SetData(data, 0); return c;
         }
 
-        public void Show(bool on) { Build(); root.SetActive(on); GameUi.HintOverride = on ? "일시정지 Esc · Options" : null; if (!on) { cueLeft = 0f; toastLeft = 0f; SetToast(false); CombatHud.TopReserve = 0f; } NoticeOnly(false); if (on) PlaceTop(); }
+        public void Show(bool on) { Build(); root.SetActive(on); GameUi.HintOverride = on ? "일시정지 [Esc] · [Options]" : null; if (!on) { cueLeft = 0f; toastLeft = 0f; SetToast(false); CombatHud.TopReserve = 0f; } NoticeOnly(false); if (on) PlaceTop(); }
 
         /// QA Q34: 드릴을 못 시작할 때(문 닫음·회원만·막힘) 관장 말만 — 예전엔 Show(true) 로 지난 드릴의 이름판·타이머(0:40·R3/3)·안내까지 다시 떠 세계 HUD 와 겹쳤음
         public void Notice(string who, string line)
@@ -379,8 +381,14 @@ namespace Haengin
             float total = 0f;
             int n = combo != null ? Mathf.Min(combo.Tokens.Count, MaxIcons) : 0;
             for (int i = 0; i < n; i++) total += (i == combo.Next ? 125f : 106f) + (i > 0 ? 4f : 0f);
-            float lift = LayoutBottom(hintOn, beatOn, n > 0 ? total : 0f, out float stackTop);
-            float baseY = (beatOn ? RowY + BeatH + 14f : RowY) + lift;
+            // V2-03·V2-M01(3단계): 아래 줄 자리는 이 드릴 동안 가장 큰 모양으로 고정 — 박자 띠는 준비 단계부터 자리를 잡고, 입력 칸 폭은 나온 것 중 가장 넓은 것(최소 3칸)
+            //   콤비마다·라운드 시작마다 코치 말 판 폭·글자 크기·줄 수가 튀던 것
+            if (d.Id != planFor) { planFor = d.Id; planBeat = false; planIcons = 0f; }
+            if (st != null && st.Beat != null) planBeat = true;
+            if (st != null && st.Combo != null) planIcons = Mathf.Max(planIcons, IconsW(Mathf.Max(3, Mathf.Min(st.Combo.Tokens.Count, MaxIcons))));
+            planIcons = Mathf.Max(planIcons, n > 0 ? total : 0f);
+            float lift = LayoutBottom(hintOn, planBeat, planIcons, out float stackTop);
+            float baseY = (planBeat ? RowY + BeatH + 14f : RowY) + lift;
             float x0 = -total * 0.5f;
             for (int i = 0; i < MaxIcons; i++)
             {

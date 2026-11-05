@@ -59,7 +59,7 @@ namespace Haengin
             if (Actions != null && nav == null) { nav = Actions.FindAction("Menu/Navigate", false); cancel = Actions.FindAction("Menu/Cancel", false); Actions.FindActionMap("Menu", false)?.Enable(); }
             Count = Mathf.Min(Max, options.Length);
             title.text = head;
-            foot.text = string.IsNullOrEmpty(footLine) ? "↑ ↓ 고르기   Enter · E 고름   Esc · ○ 그만" : footLine;
+            foot.text = UiKit.KeyMark(string.IsNullOrEmpty(footLine) ? "[↑ ↓] 고르기   [Enter] · [E] 고름   [Esc] · [○] 그만" : footLine);
             for (int i = 0; i < Max; i++) { plates[i].gameObject.SetActive(i < Count); if (i < Count) rows[i].text = options[i]; }
             var rt = (RectTransform)root.transform;
             rt.sizeDelta = new Vector2(820f, 120f + Count * 58f);

@@ -79,7 +79,7 @@ namespace Haengin
                 float dt = UiKit.RealDt;
                 if (!GameState.Paused) t += dt;
                 bool right = beat % 2 == 1;
-                prompt.text = right ? "○ · K · 마우스 오른쪽 — 오른쪽 가닥을 가운데로" : "□ · J · 마우스 왼쪽 — 왼쪽 가닥을 가운데로";
+                prompt.text = UiKit.KeyMark(right ? "[○] · [K] · [마우스 오른쪽] — 오른쪽 가닥을 가운데로" : "[□] · [J] · [마우스 왼쪽] — 왼쪽 가닥을 가운데로", true);
                 float phase = t - beat * Interval;          // 0 = 박자 가운데
                 ((RectTransform)marker.transform).anchoredPosition = new Vector2(Mathf.Clamp(phase / Interval * BarW, -BarW / 2f, BarW / 2f), 84f);
                 bool inWin = Mathf.Abs(phase) <= Window;

@@ -19,7 +19,7 @@ namespace Haengin
         {
             public TextMeshProUGUI T;
             public string Path, Text, Plate = "", CutBy = "", Across = "";
-            public Rect R;
+            public Rect R, Ink;
             public float Size, PlateA, Contrast = 99f;
             public float Alpha = 1f;
             public Color TextC, Back;
@@ -153,11 +153,23 @@ namespace Haengin
                 var bounds = t.textBounds;
                 if (bounds.size.x <= 0.5f || bounds.size.y <= 0.5f) continue;
                 var rect = WorldRect(t.rectTransform, bounds);
+                Rect ink = rect;
+                {
+                    var tinf = t.textInfo; bool anyInk = false; Vector3 mn = Vector3.zero, mx = Vector3.zero;
+                    for (int k = 0; tinf != null && k < tinf.characterCount; k++)
+                    {
+                        var ch = tinf.characterInfo[k];
+                        if (!ch.isVisible) continue;
+                        if (!anyInk) { mn = ch.bottomLeft; mx = ch.topRight; anyInk = true; }
+                        else { mn = Vector3.Min(mn, ch.bottomLeft); mx = Vector3.Max(mx, ch.topRight); }
+                    }
+                    if (anyInk) { var bb = new Bounds(); bb.SetMinMax(mn, mx); ink = WorldRect(t.rectTransform, bb); }
+                }
                 long ord = Order(t);
                 // 앞의 불투명 판에 덮이면 안 보임
                 if (graphics.Any(x => x.order > ord && x.a >= MinPlate && Cover(x.rect, rect) >= 0.9f)) continue;
                 var cut = graphics.FirstOrDefault(x => x.order > ord && x.a >= 0.5f && x.g.canvas.rootCanvas == t.canvas.rootCanvas && Cover(x.rect, rect) >= 0.04f && Cover(x.rect, rect) < 0.9f);      // 같은 화면 안에서 일부만 덮임(다른 화면의 카드가 HUD 위에 뜬 건 정상)
-                var it = new Item { T = t, Path = PathOf(t.transform), Text = clean.Length > 40 ? clean.Substring(0, 40) : clean, R = rect, Size = t.fontSize, TextC = t.color, CutBy = cut.g != null ? cut.g.name : "" };
+                var it = new Item { T = t, Path = PathOf(t.transform), Text = clean.Length > 40 ? clean.Substring(0, 40) : clean, R = rect, Ink = ink, Size = t.fontSize, TextC = t.color, CutBy = cut.g != null ? cut.g.name : "" };
                 // 뒤의 판 합성
                 string plate = "";
                 var behind = graphics.Where(x => x.order < ord && Cover(x.rect, rect) >= 0.75f).ToList();
@@ -231,9 +243,11 @@ namespace Haengin
             for (int a = 0; a < items.Count; a++)
                 for (int b = a + 1; b < items.Count; b++)
                 {
-                    float w = Mathf.Min(items[a].R.xMax, items[b].R.xMax) - Mathf.Max(items[a].R.xMin, items[b].R.xMin), h = Mathf.Min(items[a].R.yMax, items[b].R.yMax) - Mathf.Max(items[a].R.yMin, items[b].R.yMin);
+                    // 3단계 V1-05: 잉크 상자(글자 모양)끼리 — 줄 상자는 글꼴 위·아래 여백(Barlow 1em)까지 들어 있어 머리말·값처럼 가까운 줄을 겹침으로 셌음
+                    Rect ra = items[a].Ink.width > 0f ? items[a].Ink : items[a].R, rb = items[b].Ink.width > 0f ? items[b].Ink : items[b].R;
+                    float w = Mathf.Min(ra.xMax, rb.xMax) - Mathf.Max(ra.xMin, rb.xMin), h = Mathf.Min(ra.yMax, rb.yMax) - Mathf.Max(ra.yMin, rb.yMin);
                     if (w <= 2f || h <= 2f) continue;
-                    float small = Mathf.Min(items[a].R.width * items[a].R.height, items[b].R.width * items[b].R.height);
+                    float small = Mathf.Min(ra.width * ra.height, rb.width * rb.height);
                     if (w * h > small * 0.08f) bad.Add($"겹침\t{items[a].Path}\t{items[a].Text} ↔ {items[b].Path} {items[b].Text}");
                 }
             return bad;

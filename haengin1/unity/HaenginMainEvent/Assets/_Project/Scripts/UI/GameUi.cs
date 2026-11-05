@@ -78,8 +78,8 @@ namespace Haengin
         public string Label(int i) => rows != null && i >= 0 && i < visible.Count ? rows[i].Label.text : "";
         public string HintText => hint != null ? hint.text : "";
 
-        const string Hint = "이동 WASD·왼스틱   달리기 Shift·R2   카메라 마우스·오른스틱   카메라 정렬 Q·L1   일시정지 Esc·Options   정보 F1";
-        const string MenuHint = "↑↓ 고르기    × (A) · Enter 선택    ○ (B) · Esc 돌아가기";
+        const string Hint = "이동 [WASD]·[왼스틱]   달리기 [Shift]·[R2]   카메라 [마우스]·[오른스틱]   카메라 정렬 [Q]·[L1]   일시정지 [Esc]·[Options]   정보 [F1]";
+        const string MenuHint = "[↑↓] 고르기    [×] [(A)] · [Enter] 선택    [○] [(B)] · [Esc] 돌아가기";
 
         struct Row { public RectTransform Rt; public Image Plate, Bar; public TextMeshProUGUI Label; }
 
@@ -360,7 +360,7 @@ namespace Haengin
                 if (braidUi == null) braidUi = FindAnyObjectByType<BraidGame>();
                 if (wipeUi == null) wipeUi = FindAnyObjectByType<InkWipe>();
             }
-            return (sbUi != null && sbUi.Shown) || (epUi != null && epUi.Shown) || (jobUi != null && jobUi.Shown) || (braidUi != null && braidUi.Shown) || (wipeUi != null && wipeUi.Visible);
+            return WorldHud.CenterUp || (sbUi != null && sbUi.Shown) || (epUi != null && epUi.Shown) || (jobUi != null && jobUi.Shown) || (braidUi != null && braidUi.Shown) || (wipeUi != null && wipeUi.Visible);
         }
 
         /// 판(과 이름띠가 안내 판 가로 범위에 걸치면 이름띠까지)의 위 끝 — 이 캔버스 단위
@@ -396,6 +396,7 @@ namespace Haengin
             scaler.referenceResolution = new Vector2(1920f, 1080f);
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             scaler.matchWidthOrHeight = 1f;
+            var gcv = GetComponent<Canvas>(); if (gcv != null) gcv.pixelPerfect = true;      // V1-06
             gameObject.layer = 5;   // UI
 
             // 조작 안내(왼쪽 아래 한 줄 — B안 먹 판, 기본 접음) + 「조작 보기」 칩(H · R3)
@@ -456,7 +457,7 @@ namespace Haengin
             }
             var mh = Text("조작", menuRoot.transform, UiKit.FMed(), 20f, UiKit.PaperDim, TextAlignmentOptions.Center);
             Place(mh.rectTransform, new Vector2(0f, -170f), new Vector2(900f, 34f));
-            mh.text = MenuHint;
+            mh.text = UiKit.KeyMark(MenuHint);
             menuHint = mh;
             menuRoot.SetActive(false);
             Refresh();

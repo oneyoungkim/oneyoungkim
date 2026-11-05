@@ -21,6 +21,8 @@ namespace Haengin
         TextMeshProUGUI label, value, prompt;
         float flash;
 
+        TMPro.TextMeshProUGUI coldText;
+
         void Build()
         {
             if (root != null) return;
@@ -60,7 +62,11 @@ namespace Haengin
             value.text = Mathf.RoundToInt(Soup.Value).ToString();
             var rt = fill.rectTransform;
             rt.sizeDelta = new Vector2(210f * Mathf.Clamp01(Soup.Value / SoupGauge.Max), 22f);
-            fill.color = Soup.Value >= 40f ? UiKit.Accent : UiKit.EndureLit;      // B안 막대 = 주황, 위험 = 밝힌 붉은색(트랙 대비 3:1 — A6 과 같은 규칙)
+            bool cold = Soup.Value < 40f;
+            fill.color = cold ? UiKit.EndureLit : UiKit.Accent;
+            if (coldText == null) { coldText = UiKit.Text("식는 중", root.transform, UiKit.FBlack(Fonts), 20f, UiKit.Warm, TMPro.TextAlignmentOptions.Left); UiKit.Place(coldText.rectTransform, new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(8f, 0f), new Vector2(120f, 30f)); coldText.text = "식는 중"; }
+            coldText.gameObject.SetActive(cold);
+            if (cold && !Accessibility.Reduced) coldText.alpha = 0.55f + 0.45f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 4f)); else coldText.alpha = 1f;      // C2-03      // B안 막대 = 주황, 위험 = 밝힌 붉은색(트랙 대비 3:1 — A6 과 같은 규칙)
             flash = Mathf.Max(0f, flash - rdt);
             prompt.gameObject.SetActive(PromptOn);
             prompt.text = PromptText;

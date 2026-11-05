@@ -19,6 +19,8 @@ namespace Haengin
         public const int Rows = 14;
         public bool Shown => root != null && root.activeSelf;
         RectTransform cardRt;
+        readonly Image[] btnBar = new Image[2];
+        bool footPad, footSet;
         /// D7: 1500 폭 카드는 4:3(1440)보다 넓음 → 화면 폭 − 76 안으로 줄임
         void FitCard() { if (cardRt == null) return; float cw = ((RectTransform)transform).rect.width; float k = cw > 10f ? Mathf.Min(1f, (cw - 76f) / 1500f) : 1f; if (Mathf.Abs(cardRt.localScale.x - k) > 0.001f) cardRt.localScale = new Vector3(k, k, 1f); }
         public int Row { get; private set; }
@@ -79,7 +81,7 @@ namespace Haengin
                 buttonText[i].text = bt[i];
             }
             foot = UiKit.Text("발", card.transform, UiKit.FMed(Fonts), 20f, UiKit.PaperDim, TextAlignmentOptions.Right);
-            UiKit.Place(foot.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-50f, 98f), new Vector2(1400f, 30f));
+            UiKit.Place(foot.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-50f, 116f), new Vector2(1400f, 30f));      // V4-04: 단추(40~100) 위 틈 16
             foot.text = "↑↓ 날짜   ← → 칸   × 바꾸기   맡기면: 돈 100% · 부 스탯 75% · 관계 이벤트 없음 · 시간·피로 그대로";
             montage = UiKit.Text("몽타주", dim.transform, UiKit.FMed(Fonts), 28f, UiKit.Paper, TextAlignmentOptions.TopLeft, wrap: true);
             UiKit.Place(montage.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1400f, 900f));
@@ -162,6 +164,8 @@ namespace Haengin
         void Refresh()
         {
             FitCard();
+            bool pad = UiKit.PadLast;      // 결정 ②: 계획표 발은 지금 입력 장치의 키
+            if (!footSet || pad != footPad) { footSet = true; footPad = pad; foot.text = UiKit.KeyMark($"[↑↓] 날짜   [← →] 칸   {(pad ? "[×]" : "[Enter]·[Space]")} 바꾸기   맡기면: 돈 100% · 부 스탯 75% · 관계 이벤트 없음 · 시간·피로 그대로"); }
             for (int r = 0; r < Rows; r++)
             {
                 bool has = plan != null && r < plan.Count;
@@ -182,6 +186,8 @@ namespace Haengin
             {
                 bool bs = Row == Rows && Col == i;      // 규칙 9: 고른 단추 = 종이 판 + 먹 Black · 나머지 = 트랙 판 + 종이색 Bold
                 buttons[i].color = bs ? UiKit.Paper : UiKit.Track;
+                if (btnBar[i] == null) { btnBar[i] = UiKit.Panel("고른 표시", buttons[i].transform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(6f, 60f), UiKit.Accent); }
+                btnBar[i].enabled = bs;      // V4-03: 규칙 9 — 고른 단추 왼쪽 주황 6px
                 buttonText[i].color = bs ? UiKit.Ink : UiKit.Paper;
                 var bf = bs ? UiKit.FBlack(Fonts) : UiKit.FBold(Fonts);
                 if (bf != null && buttonText[i].font != bf) buttonText[i].font = bf;

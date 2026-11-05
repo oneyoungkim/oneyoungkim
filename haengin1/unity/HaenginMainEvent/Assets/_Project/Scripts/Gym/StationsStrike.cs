@@ -20,7 +20,7 @@ namespace Haengin
         readonly List<double> expectHits = new List<double>();   // 미트: 토큰 순서대로 기대 타격 시각
         double lastExpect = -1, lastOpen = -1;
         public ShadowStation(bool mitt) { this.mitt = mitt; }
-        public override string Hint => mitt ? "호출 콤비를 미트에 — 미트 들리는 순간 · 끝나면 R1 가드" : "호출 콤비를 허공에 — 끝나면 R1 가드";
+        public override string Hint => mitt ? "호출 콤비를 미트에 — 미트 들리는 순간 · 끝나면 [R1] 가드" : "호출 콤비를 허공에 — 끝나면 [R1] 가드";
 
         public override void Begin(DrillRunner r)
         {

@@ -96,7 +96,7 @@ namespace Haengin
                 else if (Picker != null)
                 {
                     int pick = 0;
-                    yield return Picker.Pick($"{c.Name} — 무엇을 할까", opts.Select(d => $"{d.NameKr}  ·  {GymSave.NameOf(d.MainStat)}{(d.SubStat != Stat.None ? "·" + GymSave.NameOf(d.SubStat) : "")}{(Model.Count("fix." + d.Id) > 0 ? "  · 교정 받음" : "")}").ToArray(), "↑ ↓ 고르기   Enter 시작", v => pick = v);
+                    yield return Picker.Pick($"{c.Name} — 무엇을 할까", opts.Select(d => $"{d.NameKr}  ·  {GymSave.NameOf(d.MainStat)}{(d.SubStat != Stat.None ? "·" + GymSave.NameOf(d.SubStat) : "")}{(Model.Count("fix." + d.Id) > 0 ? "  · 교정 받음" : "")}").ToArray(), "[↑ ↓] 고르기   [Enter] 시작", v => pick = v);
                     drill = opts[Mathf.Clamp(pick, 0, opts.Count - 1)].Id;
                 }
                 else drill = opts[0].Id;
@@ -191,7 +191,7 @@ namespace Haengin
         {
             var board = Story != null ? Story.Board : null;
             if (board == null) yield break;
-            board.ShowCard(head, title, tag, accent, lines, quotes, "× · Enter · 마우스 왼쪽   다음", tag == "레슨");
+            board.ShowCard(head, title, tag, accent, lines, quotes, "[×] · [Enter] · [마우스 왼쪽]   다음", tag == "레슨");
             yield return WaitPress();
             board.Hide();
         }
@@ -431,11 +431,19 @@ namespace Haengin
             return true;
         }
 
+        static readonly Dictionary<string, Color> BuffCols = new Dictionary<string, Color> { { "stamina", new Color(0.36f, 0.55f, 0.45f) }, { "hp", new Color(0.62f, 0.25f, 0.22f) }, { "cond", new Color(0.30f, 0.42f, 0.62f) } };
+        readonly List<(string, string, Color)> buffList = new List<(string, string, Color)>();
+        int buffStamp = int.MinValue;
+
         void HudBuffs()
         {
             if (Hud == null || Model == null) return;
-            var list = new List<(string, string, Color)>();
-            var cols = new Dictionary<string, Color> { { "stamina", new Color(0.36f, 0.55f, 0.45f) }, { "hp", new Color(0.62f, 0.25f, 0.22f) }, { "cond", new Color(0.30f, 0.42f, 0.62f) } };
+            // D10(3단계): 매 프레임 목록·사전·문자열을 만들던 것 → 게임 분·효과 수·오늘이 바뀔 때만
+            int stamp = Model.AbsNow * 31 + Model.S.Buffs.Count * 7 + Model.Today;
+            if (stamp == buffStamp) return;
+            buffStamp = stamp;
+            var list = buffList; list.Clear();
+            var cols = BuffCols;
             foreach (var k in Model.Sh.BuffKinds)
             {
                 float v = Model.BuffValue(k); if (v <= 0f) continue;

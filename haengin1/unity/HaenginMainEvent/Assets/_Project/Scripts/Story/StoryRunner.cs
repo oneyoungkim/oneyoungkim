@@ -422,7 +422,7 @@ namespace Haengin
             End(s);
         }
 
-        const string TalkHint = "다음 × · Enter · 마우스 왼쪽   건너뛰기 길게 누르기   일시정지 Esc·Options";
+        const string TalkHint = "다음 [×] · [Enter] · [마우스 왼쪽]   건너뛰기 길게 누르기   일시정지 [Esc]·[Options]";
 
         // ───────────────────────── 보스전(2026-10-29): 6-3 = 민재(석 달) 1:1(나머지 둘은 지켜봄) · 7-1 = 1:3. 지면 패배 화면(다시·그만) — 그만이면 주차장에 다시 들어가면 시작
         public int BossFights, BossLosses;
