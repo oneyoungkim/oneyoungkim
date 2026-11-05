@@ -38,6 +38,15 @@ namespace Haengin
             if (m.outT < 0f) m.outT = 0f;
         }
 
+        /// 켬 — 사라지는 중(100ms)이면 그것을 취소하고 다시 보이게(3단계 F1: Hide 뒤 100ms 안에 다시 켜도 꺼지던 것)
+        public static void Show(GameObject go)
+        {
+            if (go == null) return;
+            var m = go.GetComponent<UiMotion>();
+            if (m != null) { m.outT = -1f; if (m.cg != null) m.cg.alpha = 1f; }
+            if (!go.activeSelf) go.SetActive(true);
+        }
+
         /// 사라지는 중
         public bool Leaving => outT >= 0f;
         /// 들어오는 중(시험)

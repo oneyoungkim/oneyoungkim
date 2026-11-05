@@ -104,7 +104,7 @@ namespace Haengin
             title.text = t;
             tagPlate.gameObject.SetActive(false);
             body.text = string.Join("\n\n", lines ?? new string[0]);
-            quotes.text = string.IsNullOrEmpty(note) ? "" : $"<size=26><color=#5E5957>{note}</color></size>";
+            quotes.text = string.IsNullOrEmpty(note) ? "" : $"<size=26><color=#{ColorUtility.ToHtmlStringRGB(UiKit.PaperDim)}>{note}</color></size>";      // F3: 먹 판 위 흐린 글 = PaperDim(옛 종이 판용 #5E5957 은 2.6:1)
             foot.text = "× · Enter · 마우스 왼쪽   시작";
             Open();
         }
@@ -152,7 +152,7 @@ namespace Haengin
                 int i = e.IndexOf('|');
                 string who = i >= 0 ? e.Substring(0, i) : "", line = i >= 0 ? e.Substring(i + 1) : e;
                 if (sb.Length > 0) sb.Append('\n');
-                sb.Append(string.IsNullOrEmpty(who) ? $"“{line}”" : $"<size=26><color=#5E5957>{who}</color></size>   “{line}”");
+                sb.Append(string.IsNullOrEmpty(who) ? $"“{line}”" : $"<size=26><color=#{ColorUtility.ToHtmlStringRGB(UiKit.PaperDim)}>{who}</color></size>   “{line}”");
             }
             return sb.ToString();
         }

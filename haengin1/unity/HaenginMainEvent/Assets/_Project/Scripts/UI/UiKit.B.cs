@@ -16,7 +16,7 @@ namespace Haengin
         /// 먹 판(시안 0.93 — 선형 색공간 보정 Seen 을 거친 값)
         public static Color InkPlate => Seen(Ink, PlateA);
         /// 판 위 막대 바탕(트랙) — 미리 섞은 불투명 색(먹 판 위 종이색 18% 를 sRGB 로 섞은 시안 값). 채움(주황) 대 트랙 3.0:1
-        public static readonly Color Track = new Color32(63, 58, 57, 255);
+        public static readonly Color Track = new Color32(56, 51, 50, 255);      // 3단계 F6: (63,58,57) 에서 조금 어둡게 — 주황 3.0 → 3.35:1, Warm 글 4.47 → 4.97:1
         /// 판 안 구분선·보상 칸 선 — 미리 섞은 불투명 색(먹 판 위 종이색 25% 의 시안 값), 1px
         public static readonly Color RuleColor = new Color32(75, 71, 72, 255);
         /// 화면 덮개 먹(시안 B_3 #0E0B0C) — Cover 가 Seen 으로 보정해 씀(흰 배경 → 약 48)
@@ -46,6 +46,25 @@ namespace Haengin
         // 프로젝트가 Linear 색공간이라 UI 알파가 선형 빛 공간에서 섞인다 → 시안(브라우저 sRGB 섞기)의 0.93 이 화면에서는 밝은 배경 위 0.73~0.84 로 옅게 보였다.
         // 규칙: ① 어두운 반투명(먹 판·덮개)은 Seen(색, 시안 알파)로만 지정한다 — 가장 밝은 배경(흰색)에서 시안과 같게 보이는 섞기 알파로 바꿔 줌(어두운 배경에선 시안보다 조금 진함).
         //       ② 판 위에 놓이는 밝은 반투명(트랙·구분선·보상 선)은 반투명으로 두지 않고 미리 섞은 불투명 색(Track·RuleColor)을 쓴다.
+        /// 상대 밝기(WCAG)·대비
+        public static float Lum(Color c)
+        {
+            float L(float v) => v <= 0.04045f ? v / 12.92f : Mathf.Pow((v + 0.055f) / 1.055f, 2.4f);
+            return 0.2126f * L(c.r) + 0.7152f * L(c.g) + 0.0722f * L(c.b);
+        }
+        public static float Contrast(Color a, Color b) { float x = Lum(a), y = Lum(b); return (Mathf.Max(x, y) + 0.05f) / (Mathf.Min(x, y) + 0.05f); }
+
+        /// 색 띠(버프 칩 머리 등) 위 글자: 불투명 띠 + 먹(이름띠 규칙)·종이 중 대비 높은 글자색. 둘 다 4.5:1 밑이면 종이 글자가 4.5:1 이 될 때까지 띠를 어둡게
+        public static Color TagBand(Color band, out Color text)
+        {
+            band.a = 1f;
+            float ci = Contrast(Ink, band), cp = Contrast(Paper, band);
+            if (ci >= 4.5f && ci >= cp) { text = Ink; return band; }
+            text = Paper;
+            for (int i = 0; i < 40 && Contrast(Paper, band) < 4.5f; i++) band = new Color(band.r * 0.94f, band.g * 0.94f, band.b * 0.94f, 1f);
+            return band;
+        }
+
         /// 시안(sRGB 섞기) 기준 알파 a → 화면에서 같게 보이는 섞기 알파(흰 배경 기준, 채널 중 가장 진한 값)
         public static float SeenA(Color c, float a)
         {

@@ -73,7 +73,7 @@ namespace Haengin
             Build();
             dateText.text = GameClock.Label;
             dateLeft = DateSecs;
-            datePlate.gameObject.SetActive(true);
+            UiMotion.Show(datePlate.gameObject);      // F1: 사라지는 중이면 취소
             chip.gameObject.SetActive(false);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)datePlate.transform);
         }
@@ -125,7 +125,7 @@ namespace Haengin
             bool wantChip = KeepChip && !datePlate.gameObject.activeSelf;
             if (chip.gameObject.activeSelf != wantChip) chip.gameObject.SetActive(wantChip);
             if (wantChip && GameClock.TimeText != chipRaw) { chipRaw = GameClock.TimeText; chipText.text = UiKit.Tab(chipRaw); }
-            if (screen.gameObject.activeSelf && screenLeft > 0f) { screenLeft -= rdt; if (screenLeft <= 0f) screen.gameObject.SetActive(false); screenPlate.gameObject.SetActive(false); }
+            if (screen.gameObject.activeSelf && screenLeft > 0f) { screenLeft -= rdt; if (screenLeft <= 0f) { screen.gameObject.SetActive(false); screenPlate.gameObject.SetActive(false); } }      // F2: 중괄호(시간 정한 화면 글이 첫 프레임에 판을 잃던 것)
         }
     }
 }

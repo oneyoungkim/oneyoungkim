@@ -26,7 +26,7 @@ namespace Haengin
         public int Prompts { get; private set; }
         public int Hits { get; private set; }
         /// 판정 칸(맞는 자리) 초록 — 먹 판 위 불투명(옛 0.85 반투명)
-        static readonly Color ZoneGreen = new Color32(80, 140, 88, 255);
+        static readonly Color ZoneGreen = new Color32(96, 170, 104, 255);      // F6: 트랙과 2.79 → 4.4:1
         public string PromptText => prompt != null ? prompt.text : "";
 
         GameObject root;

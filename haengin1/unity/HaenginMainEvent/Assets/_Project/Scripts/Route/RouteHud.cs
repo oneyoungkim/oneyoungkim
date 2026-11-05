@@ -101,7 +101,8 @@ namespace Haengin
             else if (finished || hooked == null || !hooked.isActiveAndEnabled) line = "";      // M3: 무대 장면에선 Zone1 루트(길잡이)가 꺼짐
             else line = hooked.HudLine();
             Show(line);
-            UpdateArrow(string.IsNullOrEmpty(line) || finished ? null : hooked != null ? hooked.CurrentTarget : null);
+            bool cover = GameState.Modal || WorldHud.CenterUp;      // F7: 휴대폰·계획표·가계부 표·도감 동안 화면 가장자리 화살표가 남던 것
+            UpdateArrow(cover || string.IsNullOrEmpty(line) || finished ? null : hooked != null ? hooked.CurrentTarget : null);
         }
 
         /// 길잡이 판의 화면 사각형(픽셀, 아래 왼쪽 원점). 판이 꺼져 있으면 false. 이름표가 판 밑으로 비켜 갈 때 쓴다(NameTags)

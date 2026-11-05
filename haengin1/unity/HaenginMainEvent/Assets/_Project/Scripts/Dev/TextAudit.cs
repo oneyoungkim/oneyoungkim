@@ -149,7 +149,7 @@ namespace Haengin
                 if (a < 0.05f) continue;
                 string clean = Clean(t.text);
                 if (clean.Length == 0 || t.maxVisibleCharacters <= 0) continue;
-                if (t.textInfo == null || t.textInfo.characterCount == 0) t.ForceMeshUpdate();
+                t.ForceMeshUpdate();      // 3단계 C1-02: 글자별 색을 읽으므로 지금 글로 다시 만듦(시험·QA 에서만 부름)
                 var bounds = t.textBounds;
                 if (bounds.size.x <= 0.5f || bounds.size.y <= 0.5f) continue;
                 var rect = WorldRect(t.rectTransform, bounds);
@@ -177,13 +177,39 @@ namespace Haengin
                     if (behind[b].a >= MinPlate) break;
                 }
                 if (textured && shotHasUi) { cd = dark; cl = light; }
-                float rd = Ratio(Over(t.color, a, cd), cd), rl = Ratio(Over(t.color, a, cl), cl);
+                // 3단계 C1-02: 글 전체 색 하나(t.color)가 아니라 글자마다 실제 색(<color>·KeyMark 등)과 <mark> 배경으로 잰다.
+                //   같은 색·배경·크기 묶음은 한 번만 · 기준(4.5 / 큰 글자 3) 대비 가장 모자란 묶음을 이 글의 대비로
+                float ga = GroupAlpha(t);
+                float rd = 99f, rl = 99f, bestScore = float.MaxValue;
+                Color backD = cd, backL = cl;
+                bool anyChar = false;
+                var ti = t.textInfo;
+                var seenKeys = new HashSet<long>();
+                for (int k = 0; ti != null && k < ti.characterCount; k++)
+                {
+                    var ch = ti.characterInfo[k];
+                    if (!ch.isVisible) continue;
+                    Color32 c = ch.color;
+                    bool hl = (ch.style & FontStyles.Highlight) == FontStyles.Highlight;
+                    Color32 h = hl ? ch.highlightState.color : new Color32(0, 0, 0, 0);
+                    bool big = ch.pointSize >= BigSize;
+                    long key = c.r | ((long)c.g << 8) | ((long)c.b << 16) | ((long)c.a << 24) | ((long)h.r << 32) | ((long)h.g << 40) | ((long)h.b << 48) | ((long)(h.a >> 2) << 56) | (big ? 1L << 62 : 0L);
+                    if (!seenKeys.Add(key)) continue;
+                    anyChar = true;
+                    float ca = c.a / 255f * ga;
+                    Color bd = cd, bl = cl;
+                    if (hl && h.a > 0) { float ha = h.a / 255f * ga; bd = Over(h, ha, cd); bl = Over(h, ha, cl); }
+                    float r1 = Ratio(Over(c, ca, bd), bd), r2 = Ratio(Over(c, ca, bl), bl);
+                    float score = Mathf.Min(r1, r2) / (big ? MinContrastBig : MinContrast);
+                    if (score < bestScore) { bestScore = score; rd = r1; rl = r2; backD = bd; backL = bl; it.Size = ch.pointSize; it.TextC = c; }
+                }
+                if (!anyChar) { rd = Ratio(Over(t.color, a, cd), cd); rl = Ratio(Over(t.color, a, cl), cl); }
                 if (textured && !shotHasUi) rd = rl = 99f;
                 it.Contrast = Mathf.Min(rd, rl);
                 it.Alpha = a;
                 var across = graphics.FirstOrDefault(x => x.order < ord && x.a >= 0.5f && x.g.canvas.rootCanvas == t.canvas.rootCanvas && !t.transform.IsChildOf(x.g.transform) && Cover(x.rect, rect) >= 0.05f && Cover(x.rect, rect) < 0.75f);
                 if (across.g != null) it.Across = across.g.name;
-                it.Back = rd < rl ? cd : cl;
+                it.Back = rd < rl ? backD : backL;
                 r.Add(it);
             }
             return r;

@@ -173,7 +173,6 @@ namespace Haengin
             string key = sb.ToString();
             if (key == buffKey) return;      // D10: 바뀔 때만 다시 그림(매 프레임 문자열·배치 계산 없게)
             buffKey = key;
-            string paper = ColorUtility.ToHtmlStringRGB(UiKit.Paper);
             for (int i = 0; i < list.Count || i < chips.Count; i++)
             {
                 if (i >= chips.Count)
@@ -190,7 +189,8 @@ namespace Haengin
                 pl.gameObject.SetActive(on);
                 if (!on) continue;
                 var (tag, text, col) = list[i];
-                tx.text = $"<mark=#{ColorUtility.ToHtmlStringRGB(col)}cc><color=#{paper}> {tag} </color></mark>";
+                var band = UiKit.TagBand(col, out var ink);      // F5: 반투명 mark(0.8)가 선형으로 섞여 4.5:1 밑 → 불투명 띠 + 대비 높은 글자색
+                tx.text = $"<mark=#{ColorUtility.ToHtmlStringRGB(band)}ff><color=#{ColorUtility.ToHtmlStringRGB(ink)}> {tag} </color></mark>";
                 float tw = tx.GetPreferredValues(tx.text).x;
                 tx.rectTransform.sizeDelta = new Vector2(tw + 2f, 38f);
                 vx.text = UiKit.Tab(text);

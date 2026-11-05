@@ -578,6 +578,32 @@ namespace Haengin.Tests
             Assert.IsEmpty(bad, string.Join(System.Environment.NewLine, bad));
         }
 
+        // ───────────────────────── Q60 사라지는 중에 다시 켜기(3단계 F1): UiMotion.Hide 뒤 100ms 안에 Show 하면 사라짐이 취소되고 계속 보임
+        [UnityTest]
+        public IEnumerator Q60_Motion_Show_Cancels_Hide()
+        {
+            var go = new GameObject("시험 판", typeof(RectTransform));
+            try
+            {
+                var m = go.AddComponent<UiMotion>();
+                if (Accessibility.Reduced) Assert.Ignore("흔들림 줄이기가 켜져 있으면 사라짐 없이 바로 끔");
+                yield return null; yield return null;
+                UiMotion.Hide(go);
+                Assert.IsTrue(go.activeSelf && m.Leaving, "Hide 직후 = 사라지는 중");
+                yield return null;
+                UiMotion.Show(go);
+                Assert.IsFalse(m.Leaving, "Show 가 사라짐을 취소");
+                float t0 = Time.realtimeSinceStartup;
+                while (Time.realtimeSinceStartup - t0 < 0.4f) yield return null;
+                Assert.IsTrue(go.activeSelf, "다시 켠 판이 0.4초 뒤에도 보임(옛: 100ms 뒤 꺼짐)");
+                UiMotion.Hide(go);
+                t0 = Time.realtimeSinceStartup;
+                while (Time.realtimeSinceStartup - t0 < 0.4f && go.activeSelf) yield return null;
+                if (!Accessibility.Reduced) Assert.IsFalse(go.activeSelf, "Hide 는 그대로 100ms 뒤 끔");
+            }
+            finally { Object.Destroy(go); }
+        }
+
         // ───────────────────────── Q57 글자·배경(2026-10-31 대표 "글자와 배경이 어지럽게 겹친다"): 대표 화면마다 판 ≥ 85% · 대비 · 글자끼리 겹침 0 · 화면 밖 0 · 공중/누운 월드 글자 0
         //   화면은 사실 화면 대신 UI 뺀 카메라 그림으로 배경을 잼. 나머지 화면(알바·전투·자전거·일시정지…)은 QA 봇 실제 화면(text_bad.tsv) — docs/15 8-12
         [UnityTest, Timeout(1800000)]
@@ -640,6 +666,14 @@ namespace Haengin.Tests
             board.ShowCard("개인레슨   ·   3월 14일(토) 17:30", "김승연(딥마카이) — 첫 레슨", "레슨", true, new[] { "출장 레슨 — 타격 기본기 · 17:30 · 50,000원", "이번 판: 스탯 ×1.8 · 판정 +6 · 피로 ×1.5" }, new[] { "김승연|관장님한테 얘기 들었어." }, "× · Enter · 마우스 왼쪽   다음", true);
             yield return Check("레슨 카드");
             board.Hide();
+            // 3단계 F3·F4: 스토리보드 소개 카드의 흐린 메모(옛 #5E5957 2.6:1) — 글자별 색으로 잼
+            board.ShowIntro("1막 — 행인1", new[] { "혜화동. 시우는 오늘도 배달을 나간다." }, "새 게임 · 1장 오픈월드 데모");
+            yield return Check("스토리보드 소개 카드");
+            board.Hide();
+            // 버프 칩(F5: 머리 글자 띠 — 반투명 mark 가 선형으로 섞여 4.5:1 밑이던 것)
+            w.Model.AddBuff("stamina", 10f, 120, "시험"); w.Model.AddBuff("hp", 5f, 90, "시험"); w.Model.AddBuff("cond", 3f, 60, "시험");
+            yield return Lab.Frames(5);
+            yield return Check("버프 칩");
             board.ShowCard("식사   ·   3월 14일(토) 12:30", "국밥", "식사", false, new[] { "돈 8,000원 · 피로 −5" }, new[] { "사장 할머니|많이 먹어." }, "× · Enter · 마우스 왼쪽   다음", false);
             yield return Check("식사 카드");
             board.Hide();

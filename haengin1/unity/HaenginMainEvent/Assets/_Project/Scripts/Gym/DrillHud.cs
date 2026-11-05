@@ -228,7 +228,7 @@ namespace Haengin
             cueText.enableAutoSizing = true;
             cueWantW = Mathf.Clamp(w, CueW, CueMaxW);
             cuePlate.rectTransform.sizeDelta = new Vector2(cueWantW, CueH);
-            cueLeft = 2.6f + line.Length * 0.05f; cuePlate.gameObject.SetActive(true);
+            cueLeft = 2.6f + line.Length * 0.05f; UiMotion.Show(cuePlate.gameObject);      // F1: 사라지는 중이면 취소
             if (sfx != null && tick != null && !Application.isBatchMode) sfx.PlayOneShot(tick, 0.5f);      // 음성 자리(합성음)
         }
 
