@@ -322,7 +322,7 @@ namespace Haengin
         }
 
         // ───────────────────────── 안내 글의 키 이름 강조(작은 글 → Warm)
-        static readonly Regex Symbols = new Regex("^[□△○×]+$");
+        static readonly Regex Symbols = new Regex("^[□△○×←↑→↓ ]+$");      // N2: 화살표도 기호처럼 크고 굵게
         static readonly Regex KeyWords = new Regex(@"(L1|L2|R1|R2|L3|R3|L↓|L↑|L 좌/우|Space|Shift|Ctrl|Enter|Esc|[□△○×]+)");
         /// '다음' 안내 판(오른쪽 위 538×106 · 왼쪽 주황 줄): 머리말 '다음 · 국밥집 · 73m'(Medium 18 흐림) · 제목(Noto Black 32) · 시각(Barlow 38 Warm).
         /// 세계 HUD(WorldHud)와 이야기 이동 장면의 길잡이(RouteHud)가 같은 판을 씀

@@ -111,7 +111,7 @@ namespace Haengin
             Filled(hpRecent);
             hpFill = Img("체력", hpFrame.rectTransform, null, UiKit.Paper, new Vector2(3f, -3f), new Vector2(420f, 18f));
             Filled(hpFill);
-            var heatFrame = Img("기세 테", me, null, UiKit.Ink, new Vector2(0f, -70f), new Vector2(426f, 16f));
+            var heatFrame = Img("기세 테", me, null, UiKit.Track, new Vector2(0f, -70f), new Vector2(426f, 16f));
             var heatBack = Img("기세 바탕", heatFrame.rectTransform, null, new Color(0.25f, 0.22f, 0.22f), new Vector2(3f, -3f), new Vector2(420f, 10f));
             heatFill = Img("기세", heatFrame.rectTransform, null, UiKit.Accent, new Vector2(3f, -3f), new Vector2(420f, 10f));
             Filled(heatFill);

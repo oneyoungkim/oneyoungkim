@@ -180,7 +180,8 @@ namespace Haengin
             if (talkLook < Time.unscaledTime) { talkLook = Time.unscaledTime + 2f; if (subUi == null) subUi = FindAnyObjectByType<SubtitleUi>(); if (innerUi == null) innerUi = FindAnyObjectByType<InnerVoiceUi>(); }
             bool talk = (subUi != null && subUi.Visible) || (innerUi != null && innerUi.Visible);
             var wr = WorldRunner.Instance;
-            bool showP = near != null && !talk && !(wr != null && wr.Job != null && wr.Job.Shown);      // 알바 판이 떠 있는 동안도 숨김
+            bool showP = near != null && !talk && !(wr != null && wr.Job != null && wr.Job.Shown) && !GameState.Modal && !WorldHud.CenterUp
+                && !(wr != null && wr.Story != null && wr.Story.Board != null && wr.Story.Board.Shown);      // N1(3단계 뒤): 카드·큰 화면 밑에 'E 들어가기'가 남던 것      // 알바 판이 떠 있는 동안도 숨김
             if (prompt.activeSelf != showP) prompt.SetActive(showP);
             if (showP) SetPrompt(CombatHud.PadLast ? "×" : "E", near.Prompt);
 
