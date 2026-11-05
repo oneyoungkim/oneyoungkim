@@ -23,6 +23,12 @@ namespace Haengin
         }
 
         /// 2단계(D2)에서 B안으로 바꾼 화면: 하나씩 띄워 사진(실제 화면 글자 감사 같이) — 각 화면은 띄운 뒤 닫음
+        IEnumerator ShotIf(string name, System.Func<bool> up, string why)
+        {
+            if (up()) { yield return Shot(name); yield break; }
+            Issue("u5.none." + name, "눈에 띔", $"{name}: 대상 판이 안 떠 있음 — {why}");
+        }
+
         IEnumerator U_Screens()
         {
             int day = NextDay("수");
@@ -30,22 +36,23 @@ namespace Haengin
             yield return Frames(40);
             // 일시정지
             GameState.SetPaused(true); yield return Frames(20);
-            yield return Shot("화면_일시정지");
+            yield return ShotIf("화면_일시정지", () => GameUi.Instance != null && GameUi.Instance.MenuVisible, "일시정지 메뉴");
             GameState.SetPaused(false); yield return Frames(10);
             // 휴대폰(문자 · 가계부 탭)
             if (W.Phone != null)
             {
-                W.Phone.Open(0); yield return Frames(20); yield return Shot("화면_휴대폰");
-                W.Phone.SetTab(3); yield return Frames(10); yield return Shot("화면_휴대폰_가계부");
+                W.Phone.Open(0); yield return Frames(20); yield return ShotIf("화면_휴대폰", () => W.Phone.Shown, "휴대폰");
+                W.Phone.SetTab(3); yield return Frames(10); yield return ShotIf("화면_휴대폰_가계부", () => W.Phone.Shown, "휴대폰 가계부 탭");
                 W.Phone.Close(); yield return Frames(10);
             }
             // 이야기 날짜 판
             var sh = St != null ? St.Hud : null;
-            if (sh != null) { sh.ShowDate(); yield return Frames(20); yield return Shot("화면_날짜판"); sh.HideDate(); yield return Frames(5); }
+            // 이야기 날짜 판은 자유 이동 중엔 세계 HUD 가 바로 내림(WorldRunner) — 실제 이야기 장면에서만 뜸 → 여기서는 찍지 않음(발견으로 남김)
+            if (sh != null) Issue("u5.none.화면_날짜판", "참고", "이야기 날짜 판은 이야기 장면에서만 — 자유 이동 사진 없음");
             // 도감
             if (St != null && St.NameUi != null && St.Def != null)
             {
-                St.NameUi.ShowGrid(St.Def.Names, St.Names); yield return Frames(20); yield return Shot("화면_도감");
+                St.NameUi.ShowGrid(St.Def.Names, St.Names); yield return Frames(20); yield return ShotIf("화면_도감", () => St.NameUi.GridShown, "도감");
                 St.NameUi.HideGrid(); yield return Frames(5);
             }
             // 가계부 표
@@ -53,7 +60,7 @@ namespace Haengin
             if (led != null)
             {
                 var co = StartCoroutine(led.Reveal(new[] { "[3월 첫째 주]", "국밥집 알바 +45,000원", "생활비 −32,000원", "[남은 돈]", "지갑 15,100원" }));
-                yield return Secs(2.5f); yield return Shot("화면_가계부");
+                yield return Secs(2.5f); yield return ShotIf("화면_가계부", () => led.TableShown, "가계부 표");
                 StopCoroutine(co); led.HideAll(); yield return Frames(5);
             }
             // 계획표(맡기기 전 — 바로 닫음)
@@ -62,7 +69,7 @@ namespace Haengin
                 bool closed = false;
                 var plan = W.Planner.Make(day, 7);
                 var co = StartCoroutine(W.PlannerView.Edit(plan, d => null, "이번 주 계획", ok => closed = true));
-                yield return Frames(30); yield return Shot("화면_계획");
+                yield return Frames(30); yield return ShotIf("화면_계획", () => W.PlannerView.Shown, "계획표");
                 W.PlannerView.Force(1);
                 for (int i = 0; i < 120 && !closed; i++) yield return null;
                 if (!closed) StopCoroutine(co);
@@ -73,7 +80,7 @@ namespace Haengin
             {
                 bool done = false;
                 var co = StartCoroutine(W.Job.Play("serve", 0.8f, day, r => done = true));
-                yield return Secs(2.0f); yield return Shot("화면_알바");
+                yield return Secs(2.0f); yield return ShotIf("화면_알바", () => W.Job.Shown, "알바 판");
                 for (int i = 0; i < 900 && !done; i++) yield return null;
                 if (!done) StopCoroutine(co);
                 yield return Frames(10);
@@ -82,16 +89,34 @@ namespace Haengin
             if (W.ChapterView != null)
             {
                 var co = StartCoroutine(W.ChapterView.Show("intro", "1장", "행인1", "2026년 3월 3일 ~ 5월 8일", "혜화동. 시우는 오늘도 배달을 나간다.", "× · Enter 계속", 1.5f));
-                yield return Secs(1.2f); yield return Shot("화면_장카드");
+                for (int i = 0; i < 180 && !W.ChapterView.Shown; i++) yield return null;
+                yield return Frames(30);
+                yield return ShotIf("화면_장카드", () => W.ChapterView.Shown, "장 카드");
                 yield return co;
                 W.ChapterView.Hide(); yield return Frames(10);
             }
+            // 카드: 스토리보드 소개 · 레슨 · 이벤트(4:3 포함 — 카드 1480 을 화면 폭 − 76 안으로 줄임)
+            var board = St != null ? St.Board : null;
+            if (board != null)
+            {
+                board.ShowIntro("1막 — 행인1", new[] { "혜화동. 시우는 오늘도 배달을 나간다." }, "새 게임 · 1장 오픈월드 데모");
+                yield return Frames(20); yield return ShotIf("화면_스토리보드", () => board.Shown, "스토리보드 카드"); board.Hide(); yield return Frames(5);
+                board.ShowCard("개인레슨   ·   3월 14일(토) 17:30", "김승연(딥마카이) — 첫 레슨", "레슨", true, new[] { "출장 레슨 — 타격 기본기 · 17:30 · 50,000원", "이번 판: 스탯 ×1.8 · 판정 +6 · 피로 ×1.5" }, new[] { "김승연|관장님한테 얘기 들었어." }, "[×] · [Enter] · [마우스 왼쪽]   다음", true);
+                yield return Frames(20); yield return ShotIf("화면_레슨카드", () => board.Shown, "레슨 카드"); board.Hide(); yield return Frames(5);
+                board.ShowCard("식사   ·   3월 14일(토) 12:30", "국밥", "식사", false, new[] { "돈 8,000원 · 피로 −5" }, new[] { "사장 할머니|많이 먹어." }, "[×] · [Enter] · [마우스 왼쪽]   다음");
+                yield return Frames(20); yield return ShotIf("화면_이벤트카드", () => board.Shown, "이벤트 카드"); board.Hide(); yield return Frames(5);
+            }
+            // 패드 기호 모드(R3·×): 강제 플래그로 조작 보기 칩·상호작용 안내
+            UiKit.ForcePad = true;
+            yield return Frames(20); yield return Shot("화면_패드기호");
+            UiKit.ForcePad = false;
+            yield return Frames(5);
             // 패배(무대 화면이 있으면)
             var stage = StageHud.Instance;
             if (stage != null)
             {
                 stage.Defeat(() => { }, () => { });
-                yield return Secs(1.6f); yield return Shot("화면_패배");
+                yield return Secs(1.6f); yield return ShotIf("화면_패배", () => stage.DefeatShown, "패배 화면");
                 stage.DefeatChoose(false); yield return Frames(10);
             }
         }
@@ -193,7 +218,7 @@ namespace Haengin
                 t += Time.unscaledDeltaTime;
                 var hud = gm.Hud;
                 bool round = gm.Runner.State == DrillRunner.Phase.Round;
-                if (hud != null && !shot && round && t > 4f && (id != "D04" || hud.CueShown)) { shot = true; ShotNow("드릴_" + id, hud.Cue ?? ""); }
+                if (hud != null && !shot && round && t > 4f && (id != "D04" || hud.CueShown)) { shot = true; ShotNow("드릴_" + id, hud.CueShown ? hud.Cue ?? "" : ""); }
                 // 알림판이 실제로 떠 있을 때만(글자 칸은 판이 꺼져도 지난 글을 들고 있음) · 맞은 순간 전투 의성어도 같이 떴으면 그때(D05 판 두 개 버그 확인)
                 bool toastUp = hud != null && hud.ToastRect != null && hud.ToastRect.gameObject.activeInHierarchy;
                 string toast = toastUp ? hud.Toast ?? "" : "";

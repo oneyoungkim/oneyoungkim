@@ -27,11 +27,14 @@ namespace Haengin
 
         // ───────────────────────── 마지막 입력 장치(B7 — 칩 H/R3 · 상호작용 E/× · 패배 안내 · 전투 안내가 같이 씀, 프레임마다 한 번 잼)
         static int padFrame = -1;
+        /// QA·시험: 패드 기호(R3·×)로 그리게 강제
+        public static bool ForcePad;
         static bool padLast;
         public static bool PadLast
         {
             get
             {
+                if (ForcePad) return true;
                 if (padFrame == Time.frameCount) return padLast;
                 padFrame = Time.frameCount;
                 var gp = UnityEngine.InputSystem.Gamepad.current; var kb = UnityEngine.InputSystem.Keyboard.current; var ms = UnityEngine.InputSystem.Mouse.current;

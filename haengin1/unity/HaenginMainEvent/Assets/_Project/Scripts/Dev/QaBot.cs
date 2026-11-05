@@ -326,6 +326,7 @@ namespace Haengin
         static readonly bool bgOn = Arg("-qabg");
         string bgFor;
         readonly List<Canvas> bgOff = new List<Canvas>();
+        readonly Dictionary<Canvas, int> bgDisp = new Dictionary<Canvas, int>();
         StreamWriter plateW;
 
         void BgStart(string file)
@@ -347,7 +348,7 @@ namespace Haengin
                 }
                 bgOff.Clear();
                 foreach (var cv in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
-                    if (cv.isRootCanvas && cv.enabled && cv.renderMode != RenderMode.WorldSpace) { cv.enabled = false; bgOff.Add(cv); }
+                    if (cv.isRootCanvas && cv.enabled && cv.renderMode != RenderMode.WorldSpace) { bgDisp[cv] = cv.targetDisplay; cv.targetDisplay = 7; bgOff.Add(cv); }
                 bgFor = file;
             }
             catch (Exception e) { L("배경 쌍 준비 실패 " + e.Message); BgEnd(); }
@@ -366,7 +367,8 @@ namespace Haengin
 
         void BgEnd()
         {
-            foreach (var cv in bgOff) if (cv != null) cv.enabled = true;
+            foreach (var cv in bgOff) if (cv != null) cv.targetDisplay = bgDisp.TryGetValue(cv, out var dd) ? dd : 0;
+            bgDisp.Clear();
             bgOff.Clear();
             bgFor = null;
         }
