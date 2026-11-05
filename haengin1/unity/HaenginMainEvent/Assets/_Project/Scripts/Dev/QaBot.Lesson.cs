@@ -12,21 +12,8 @@ namespace Haengin
     {
         IEnumerator PartL()
         {
-            if (labBase == null)
-            {
-                var f = Path.Combine(Out, "lab_base.json");
-                string alt = ArgVal("-qabase", "");
-                if (alt.Length > 0 && File.Exists(alt)) f = alt;
-                if (File.Exists(f)) labBase = SaveStore.ReadFile(f, out _);
-            }
-            if (W == null || !W.Active)
-            {
-                var title = FindAnyObjectByType<TitleMenu>();
-                if (title != null) title.Choose("새 게임");
-                for (int i = 0; i < 3600 && (W == null || !W.Active); i++) yield return null;
-                W.BotSkill = 0.9f; W.BotRead = 0.05f;
-                for (int i = 0; i < 60 * 600 && !W.Free; i++) yield return null;
-            }
+            // G7(2026-11-05): 시작을 B·C·U 와 같은 LabReady 로(옛 대기 — 새 게임 1장 카드에서 약 335초 멈춤)
+            yield return LabReady();
             if (labBase == null) { Issue("lab.nobase", "QA", "실험실 바탕 저장이 없음 — L 건너뜀"); yield break; }
             baseDay = labBase.Month * 100 + labBase.Day;
             yield return Section("L1 레슨 이윤준", () => L_Lesson("yunjun", "화목", 21 * 60 + 15, true), 240f);
@@ -36,6 +23,60 @@ namespace Haengin
             yield return Section("L5 레슨 서진수", () => L_Lesson("jinsoo_seo", "일", 19 * 60 + 30, false), 240f);
             yield return Section("L6 레슨 백승민", () => L_Lesson("seungmin_baek", "토", 14 * 60, false), 240f);
             yield return Section("L7 N13", L_N13, 240f);
+            yield return Section("L8 N13 뒤 서진수 레슨(같은 방문)", L_N13Lesson, 360f);
+        }
+
+        /// G7(2026-11-05): 5/3(일) 18:40 체육관 — N13 「다섯 사람」 장면이 끝난 뒤 같은 방문에서 19:30 서진수 첫 레슨. 예전엔 장면이 세운 코치 다섯이 반원 그대로 남고
+        ///   시우(장면이 매트 가장자리 소켓에 세움)와 레슨 코치(같은 소켓)가 겹쳐 레슨 카드 카메라를 시우 뒤통수가 덮었음(t3 사진 193 — A8 봇 경로에서만 우연히 나왔음)
+        IEnumerator L_N13Lesson()
+        {
+            yield return Load(503, 18 * 60 + 40, SceneLoader.Gym, m => { Unlocks(m); m.Unlock("lesson.seungmin"); m.L.SetWallet(900000); m.G.Fatigue = 0; new EventDirector(m).Done(W.Def.Card("N12"), 1); });
+            var gm = GymManager.Instance;
+            if (gm == null) { Issue("gym.none.l8", "진행 불가?", "체육관이 안 열림"); yield break; }
+            string why = W.BookNext("jinsoo_seo");
+            if (why != "") { Issue("lesson.book.l8", "눈에 띔", $"서진수 예약 안 됨: {why}"); yield break; }
+            W.BotSkill = 0.9f; W.BotRead = 3f;
+            W.BotLessonDrill = c => c.Drills.Contains("*") || c.Drills.Contains("D04") ? "D04" : c.Drills[0];
+            Story().Bot = StoryRunner.BotMode.Read;
+            bool done = false;
+            IEnumerator Wrap() { yield return W.RunCardBusy(W.Def.Card("N13"), true); done = true; }
+            W.StartCoroutine(Wrap());
+            yield return WaitFor(() => done, 200f);
+            Story().Bot = StoryRunner.BotMode.None;
+            yield return Frames(30);
+            var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+            string GuestsOn() => string.Join(",", gm.Guests.Where(g => g != null && g.gameObject.activeSelf).Select(g => g.Id));
+            int members = gm.Members.Count(m => m != null && m.gameObject.activeSelf);
+            L($"N13 뒤: 켜진 출장 코치 [{GuestsOn()}] · 관원 {members} · 배역 남음 {Story().CastHeld} · 시우–매트 가장자리 {HitResolver.Flat(Mo.Position - mat.position).magnitude:F2}m");
+            if (GuestsOn() != "") Issue("g7.guests.after", "눈에 띔", $"N13 뒤 출장 코치가 남음 [{GuestsOn()}]");
+            if (Story().CastHeld > 0) Issue("g7.cast.after", "눈에 띔", $"N13 뒤 장면 배역 {Story().CastHeld}개가 안 되돌아감");
+            yield return Shot("N13뒤_자유", $"출장 코치 [{GuestsOn()}] · 관원 {members}");
+            GameClock.AdvanceTo(19 * 60 + 25);
+            yield return WaitFor(() => W.Busy == "레슨", 40f);
+            var board = Story().Board;
+            yield return WaitFor(() => board.Shown && W.LessonCamera != null, 30f);
+            yield return Frames(40);     // 블렌드 뒤
+            if (board.Shown)
+            {
+                var seo = gm.Guest("jinsoo_seo");
+                var cam = Camera.main;
+                var v = cam.WorldToViewportPoint(seo.Anim.GetBoneTransform(HumanBodyBones.Head).position);
+                float gap = HitResolver.Flat(Mo.Position - seo.transform.position).magnitude;
+                L($"레슨 카드 {board.Title}: 켜진 출장 코치 [{GuestsOn()}] · 서진수 머리 화면 {v.x:F2},{v.y:F2} · 시우–서진수 {gap:F2}m · 돌림 {(W.LessonCamera != null ? W.LessonCamera.SpinDeg : 0f):F0}°");
+                if (GuestsOn() != "jinsoo_seo") Issue("g7.guests.lesson", "눈에 띔", $"5/3 레슨 카드에 출장 코치 [{GuestsOn()}](서진수 한 명이어야)");
+                if (gap < 1.2f) Issue("g7.overlap", "눈에 띔", $"5/3 레슨 카드: 시우와 서진수가 겹침 {gap:F2}m");
+                yield return Shot("N13뒤_카드_jinsoo_seo", board.Title);
+            }
+            else Issue("g7.nocard", "눈에 띔", $"N13 뒤 서진수 레슨 카드가 안 뜸(바쁨 '{W.Busy}' · {GameClock.TimeText})");
+            yield return WaitFor(() => gm.Runner.State == DrillRunner.Phase.Round, 40f);
+            yield return Frames(30);
+            gm.Runner.Abort();
+            yield return Frames(5);
+            for (int i = 0; i < 600 && gm.Busy && !board.Shown; i++) { gm.CloseCard(); yield return null; }
+            yield return WaitFor(() => board.Shown || W.Busy != "레슨", 20f);
+            if (board.Shown) { yield return Frames(40); yield return Shot("N13뒤_끝카드_jinsoo_seo", board.Title); }
+            yield return Advance(60f);
+            W.BotSkill = 0f; W.BotLessonDrill = null;
         }
 
         IEnumerator L_Lesson(string id, string days, int at, bool rec)

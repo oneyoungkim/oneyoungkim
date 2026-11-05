@@ -92,8 +92,12 @@ namespace Haengin
             if (wipe && Wipe != null) yield return Wipe.Cover();
             Covered?.Invoke();
 
+            bool held = false;
             if (place != Place)
             {
+                // G3 함께(2026-11-05): 옛 장소를 내리고 새 장소를 읽는 동안 시우를 붙듦 — 예전엔 바닥이 사라진 자리에서 떨어져 KillY 아래로 → '맵 밖으로 떨어짐' 경고·리스폰
+                //   (무대 → 무대: N01 국밥집 → 체육관, QA t3·run6 — 먹 닦기에 가려 화면엔 안 보였음). 순간 이동 뒤 풂(Reset 도 풂)
+                if (Motor != null && !Motor.Hold) { Motor.SetHold(true); held = true; }
                 // 지금 무대를 내린다
                 if (stageScene.IsValid() && stageScene.isLoaded)
                 {
@@ -143,6 +147,7 @@ namespace Haengin
                 Motor.KillY = place == Zone1 ? zoneKillY : (Stage != null ? Stage.KillY : -10f);
                 Motor.Teleport(feet, y);
             }
+            if (held && Motor != null) Motor.SetHold(false);
             if (Cam != null)
             {
                 var want = Indoor ? StageCam(Stage) : (outdoor != null ? outdoor : Cam.Tuning);
@@ -218,7 +223,7 @@ namespace Haengin
             Place = Zone1;
             if (ZoneRoot != null) ZoneRoot.SetActive(true);
             if (Cam != null && outdoor != null) Cam.Tuning = outdoor;
-            if (Motor != null) Motor.KillY = zoneKillY;
+            if (Motor != null) { Motor.KillY = zoneKillY; if (Motor.Hold) Motor.SetHold(false); }
             GameState.InputLocked = false;
             Busy = false;
         }

@@ -77,6 +77,15 @@ namespace Haengin
             inLesson = true;
             GymNpc coachNpc = c.Id == "yunjun" ? gm.Yunjun : c.Id == "gojun" ? gm.Gojun : gm.Guest(c.Id);
             var mat = gm.Sock("Sock_NPC_Coach_MatEdge");
+            // G7(2026-11-05): 시우가 코치 자리(매트 가장자리)에 서 있으면 코치와 겹쳐 레슨 카메라 가운데를 시우 뒤통수가 덮었음
+            //   (체육관 카드 장면이 place:시우 로 그 소켓에 세움 — N12·N13·N16 뒤 같은 방문의 레슨) → 코치 앞 2.4m 에서 코치를 보게(QA 봇 L·Q56 과 같은 자리)
+            if (mat != null && Loader != null && Loader.Motor != null && HitResolver.Flat(Loader.Motor.Position - mat.position).magnitude < 1.2f)
+            {
+                var sp = mat.position + mat.forward * 2.4f; var to = mat.position - sp;
+                Loader.Motor.ClearMoveInput();
+                Loader.Motor.Teleport(sp, Mathf.Atan2(to.x, to.z) * Mathf.Rad2Deg);
+                Loader.Cam?.SnapBehind();
+            }
             if (coachNpc != null && mat != null) { coachNpc.gameObject.SetActive(true); coachNpc.Place(mat.position, mat.forward, GymNpc.Routine.Watch); }
             yield return LessonCamOn(coachNpc);
             bool first = Model.Count("lesson." + c.Id) < 1;

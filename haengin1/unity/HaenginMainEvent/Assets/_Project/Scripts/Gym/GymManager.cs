@@ -411,6 +411,9 @@ namespace Haengin
                 case "mitt": pos = p + r * 3.1f + f * 0.55f + Vector3.up * 1.5f; look = p + f * 0.6f + Vector3.up * 1.1f; break;   // 시우 주먹과 이윤준 미트가 한 화면
                 case "side": pos = p + r * 3.0f + f * 0.8f + Vector3.up * 1.55f; look = p + f * 0.5f + Vector3.up * 1.05f; break;
                 case "shoulder": pos = p - f * 2.2f + r * 0.7f + Vector3.up * 1.75f; look = p + f * 1.1f + Vector3.up * 1.15f; break;
+                // G8(2026-11-05): D05 샌드백 — 'shoulder'(뒤 2.2m)는 카메라·시우·백이 한 줄이라(화면 가로 1~5°) 백이 조금만 와도 시우를 덮고 타격 별(깊이 무시)이 시우 머리 위에 그려졌음
+                //   → 시우 왼쪽 약간 뒤 2m 에서 옆모습(시우·백 가로 약 18° 떨어짐, 배경 남벽). 시뮬 몽타주 셋째 컷은 그대로 'shoulder'
+                case "bag": pos = p - f * 0.55f - r * 2.0f + Vector3.up * 1.5f; look = p + f * 0.4f + Vector3.up * 1.15f; break;
                 case "low": pos = p + r * 3.0f + f * 0.4f + Vector3.up * 0.9f; look = p + f * 0.4f + Vector3.up * 0.55f; break;
                 case "cage":
                     {

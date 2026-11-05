@@ -165,7 +165,8 @@ namespace Haengin
                     break;
                 case CamPreset.Close:
                     // 눈높이보다 조금 위(앉은 배우 앞 책상·식탁 위로 — 벽 검사가 책상 상판에 걸려 코앞으로 당겨지던 것)
-                    pos = head + fwd * 1.25f + right * 0.12f + Vector3.up * 0.12f;
+                    // G4(2026-11-05): 얼굴 쪽 각이 다른 배우에 막히면 조금 다가가고(closeK) 올려서(closeLift) 다시 찾음 — Snap 이 정하고 LateUpdate 도 같은 값
+                    pos = head + fwd * (1.25f * closeK) + right * 0.12f + Vector3.up * (0.12f + closeLift);
                     look = head - Vector3.up * 0.03f;
                     break;
                 case CamPreset.Wide:
@@ -298,6 +299,12 @@ namespace Haengin
         static Vector3 Spin(Vector3 p, Vector3 l, float deg) => deg == 0f ? p : l + Quaternion.Euler(0f, deg, 0f) * (p - l);
 
         public float SpinDeg => spin;
+        /// 근접 거리 배율·올림(G4 — 얼굴 쪽 각을 찾느라 다가간 만큼). 1·0 이면 예전 자리
+        float closeK = 1f, closeLift = 0f;
+        public float CloseK => closeK;
+        static readonly (float k, float up)[] CloseSteps = { (1f, 0f), (0.8f, 0.15f), (0.65f, 0.3f) };
+        /// 근접 카메라가 대상 앞 방향에서 벗어나도 되는 각(넘으면 뒤통수)
+        public const float CloseFaceMax = 95f;
         /// 진단(시험): 이야기 컷이 돌려 피한 수
         public static int StoryFixes;
         /// 진단(시험 S02): 돌려도 좋은 각을 못 찾은 이야기 컷
@@ -307,6 +314,7 @@ namespace Haengin
         {
             Gather();
             GatherProps();
+            closeK = 1f; closeLift = 0f;
             Want(out var p0, out var l, out var o);
             bool track = Preset == CamPreset.BackTrack || Preset == CamPreset.SideTrack;
             spin = 0f;
@@ -320,20 +328,48 @@ namespace Haengin
             else if (!track && !UseFixed)
             {
                 // 이야기 컷: ① 다른 배우·소품이 안 가리고 ② 벽에 당겨져도 원래 거리의 60% 넘게 남고 ③ 대상이 지붕 아래면 카메라도 지붕 아래(창·문 구멍으로 벽 밖에 나가지 않게)
-                float want = Vector3.Distance(p0, o);
                 bool roof = Physics.Raycast(l + Vector3.up * 0.3f, Vector3.up, 6f, Block, QueryTriggerInteraction.Ignore);
                 // ④ 카메라 밑에 바닥(무대 밖 허공이면 벽 밖 — C1-07 와이드·C1-19 와이드가 집·복도 건물 바깥에서 찍던 것)
-                bool Good(Vector3 c) => !Blocked(c, l) && Vector3.Distance(c, o) >= want * 0.6f && (!roof || Physics.Raycast(c, Vector3.up, 6f, Block, QueryTriggerInteraction.Ignore))
+                bool GoodAt(Vector3 c, Vector3 lk, Vector3 org, float want) => !Blocked(c, lk) && Vector3.Distance(c, org) >= want * 0.6f && (!roof || Physics.Raycast(c, Vector3.up, 6f, Block, QueryTriggerInteraction.Ignore))
                     && Physics.Raycast(c + Vector3.up * 0.1f, Vector3.down, 6f, Block, QueryTriggerInteraction.Ignore);
-                if (!Good(p))
-                    foreach (var d in SpinsWide)
+                bool found = false;
+                if (Preset == CamPreset.Close && Subject != null)
+                {
+                    // ⑤ G4(2026-11-05) 근접은 얼굴 쪽(대상 앞 방향과 95° 안)에서만: 예전엔 돌려 피하기가 ±100°~180° 를 골라 뒤통수를 찍었음
+                    //   (C1-11 4-5.10 '근접:임찬' — 시우가 카메라 0.75m 안이라 −135°, 4-5.09 민재 135° · 4-5.11 시우 100° 등).
+                    //   1배 거리 ±70° 안(예전 순서 그대로 — 지금 얼굴 쪽을 고르던 컷은 결과가 같음) → 0.8배·0.15m 위 → 0.65배·0.3m 위. 없으면 예전대로 찾고 StoryBad 에 '뒤통수'
+                    Measure(Subject, out _, out _, out var sf, out var sh);
+                    bool Face(Vector3 c) { var dd = c - sh; dd.y = 0f; return dd.sqrMagnitude < 1e-4f || Vector3.Angle(sf, dd) <= CloseFaceMax; }
+                    foreach (var (k, up) in CloseSteps)
                     {
-                        if (d == 0f) continue;
-                        var c = Clear(o, Spin(p0, l, d));
-                        if (Good(c)) { spin = d; p = c; break; }
+                        closeK = k; closeLift = up;
+                        Want(out var q0, out var ql, out var qo);
+                        float qw = Vector3.Distance(q0, qo);
+                        foreach (var d in SpinsWide)
+                        {
+                            if (Mathf.Abs(d) > 90f) continue;
+                            var c = Clear(qo, Spin(q0, ql, d));
+                            if (Face(c) && GoodAt(c, ql, qo, qw)) { spin = d; p = c; p0 = q0; l = ql; o = qo; found = true; break; }
+                        }
+                        if (found) break;
                     }
-                StoryFixes += spin != 0f ? 1 : 0;
-                if (!Good(p)) StoryBad.Add($"{CutCams.Name(Preset)}:{(Subject != null ? Subject.name : "-")} {(Blocked(p, l) ? "가림" : Vector3.Distance(p, o) < want * 0.6f ? $"벽에 당김 {Vector3.Distance(p, o):F1}/{want:F1}m" : !Physics.Raycast(p + Vector3.up * 0.1f, Vector3.down, 6f, Block, QueryTriggerInteraction.Ignore) ? "바닥 밖" : "지붕 밖")}");
+                    if (!found) { closeK = 1f; closeLift = 0f; Want(out p0, out l, out o); p = Clear(o, p0); }
+                }
+                if (!found)
+                {
+                    float want = Vector3.Distance(p0, o);
+                    bool Good(Vector3 c) => GoodAt(c, l, o, want);
+                    if (!Good(p))
+                        foreach (var d in SpinsWide)
+                        {
+                            if (d == 0f) continue;
+                            var c = Clear(o, Spin(p0, l, d));
+                            if (Good(c)) { spin = d; p = c; break; }
+                        }
+                    if (!Good(p)) StoryBad.Add($"{CutCams.Name(Preset)}:{(Subject != null ? Subject.name : "-")} {(Blocked(p, l) ? "가림" : Vector3.Distance(p, o) < want * 0.6f ? $"벽에 당김 {Vector3.Distance(p, o):F1}/{want:F1}m" : !Physics.Raycast(p + Vector3.up * 0.1f, Vector3.down, 6f, Block, QueryTriggerInteraction.Ignore) ? "바닥 밖" : "지붕 밖")}");
+                    else if (Preset == CamPreset.Close && Subject != null) StoryBad.Add($"{CutCams.Name(Preset)}:{Subject.name} 뒤통수(얼굴 쪽 각 없음 — 돌림 {spin:0}°)");
+                }
+                StoryFixes += spin != 0f || closeK != 1f ? 1 : 0;
             }
             transform.SetPositionAndRotation(p, Aim((l - p).sqrMagnitude > 1e-6f ? l - p : Vector3.forward));
             if (Cam != null) Cam.PreviousStateIsValid = false;

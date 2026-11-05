@@ -631,12 +631,21 @@ namespace Haengin
                 var t = kv.Key; var k = kv.Value;
                 if (t == null) continue;
                 foreach (var cl in t.GetComponentsInChildren<CastLook>(true)) { cl.Look(null); cl.Raise(null); cl.Face(null); }
-                t.localPosition = k.Pos; t.localRotation = k.Rot;
+                // G7(2026-11-05): 몸(CharacterController — 이윤준 미트 Fighter)이 있으면 그 몸째(transform 만 바꾸면 캐릭터 컨트롤러가 옛 자리로 되돌림 — docs/15 8-9 ①)
+                var fb = t.GetComponent<FighterBody>();
+                if (fb != null)
+                {
+                    var wp = t.parent != null ? t.parent.TransformPoint(k.Pos) : k.Pos;
+                    var wr = t.parent != null ? t.parent.rotation * k.Rot : k.Rot;
+                    fb.Place(wp, wr.eulerAngles.y);
+                }
+                else { t.localPosition = k.Pos; t.localRotation = k.Rot; }
                 var cp = t.GetComponent<CastPose>();
                 if (cp != null) { if (k.HadPose) { if (cp.State != k.Pose) cp.Set(k.Pose); } else Destroy(cp); }
                 if (t.gameObject.activeSelf != k.Active) t.gameObject.SetActive(k.Active);
             }
             kept.Clear();
+            Physics.SyncTransforms();
         }
 
         /// 이름 붙은 자리(무대의 빈 오브젝트)로 배우를 옮김 — cast:/place: 공용
@@ -662,6 +671,10 @@ namespace Haengin
             if (Bot == BotMode.Fast) Talk.RequestSkip();
             yield return Talk.Play(Dialogue.Get(key));
             bool skipped = Talk.Skipped;
+            // G7(2026-11-05): 체육관 카드 장면(N12~N16·C2-K1·C2-S1·C3-J1)은 이미 체육관이면 장소를 안 옮겨(먹 닦기 없음) 장면이 세운 배역(front: 출장 코치·이윤준 · members:off 관원)이
+            //   체육관을 나갈 때까지 그 자리에 남았음(N13 뒤 같은 방문의 5/3 서진수 레슨 카드에 코치 다섯이 반원 그대로) → 마지막 컷 카메라가 살아 있는 동안 되돌림(모두 시우 근접·미디엄으로 끝남).
+            //   다른 장소 장면은 그대로(다음 장소 이동 때 — 국밥집 C1-26 등)
+            if (Loader != null && Loader.Place == SceneLoader.Gym) RestoreCast();
             EndLines();
             Hud?.Screen(null, 0f);
             if (Endure != null && Endure.On) Endure.End();

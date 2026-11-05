@@ -244,9 +244,11 @@ namespace Haengin.Tests
             int boxes = guard.GetComponentsInChildren<BoxCollider>().Length;
             var me = M3Lab.Motor;
             // QA 봇 B22 와 같은 곳: 경계 안쪽 땅에서 바깥으로 4초 걷기
+            //   G3(2026-11-05): 동쪽은 z 120 이 '골목 끝 다세대 5' 상자 안(땅 26.7 은 건물 속 — 예전 기록 '시작 (-133.5, 26.7, 120.0)'은 건물 속을 지나 0.5m 틈에서 끝남)
+            //   → 걸어서 닿는 동쪽 끝 = 명륜3가 골목 동쪽 끝(QaBot.EdgeStarts 와 같은 점·길 방향)
             var cases = new (string name, float x, float z, Vector3 dir)[]
             {
-                ("동쪽", -133.5f, 120f, Vector3.right), ("남쪽", -200f, 73.5f, Vector3.back), ("서쪽", -270.5f, 120f, Vector3.left),
+                ("동쪽", -133f, 114.64f, new Vector3(10f, 0f, -2.8f).normalized), ("남쪽", -200f, 73.5f, Vector3.back), ("서쪽", -270.5f, 120f, Vector3.left),
                 ("북쪽", -150f, 170.5f, Vector3.forward), ("북동", -134.5f, 160f, new Vector3(1f, 0f, 1f).normalized), ("남서", -267.5f, 76.5f, new Vector3(-1f, 0f, -1f).normalized),
             };
             var log = new List<string>(); var bad = new List<string>();
@@ -1042,6 +1044,349 @@ namespace Haengin.Tests
             Assert.IsTrue(left == null, "스파링이 끝났는데 전투 봇이 시우에 남음");
         }
 
+        // ───────────────────────── Q70(G7 — 2026-11-05): 체육관 카드 장면(N13 「다섯 사람」)이 끝나면 장면이 세운 배역이 제자리로 — 출장 코치는 꺼지고 이윤준·관원은 원래 자리.
+        //   예전엔 장소를 옮길 때(먹 닦기)만 되돌려, 같은 방문 안에서 이어진 5/3 19:30 서진수 첫 레슨 카드에 코치 다섯이 반원 그대로 서 있었고
+        //   시우(장면이 매트 가장자리 소켓에 세움)와 레슨 코치(같은 소켓)가 겹쳐 레슨 카메라 가운데를 시우 뒤통수가 덮었음(QA t3 사진 193)
+        [UnityTest, Timeout(1500000)]
+        public IEnumerator Q70_Gym_Scene_Cast_Restored_Before_Lesson()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            yield return Start(w, Mid(w.Def, 503, 18 * 60 + 40, SceneLoader.Gym, m => { m.G.Fatigue = 0; m.L.SetWallet(900000); m.Unlock("lesson"); m.Unlock("lesson.guests"); m.Unlock("lesson.seungmin"); new EventDirector(m).Done(w.Def.Card("N12"), 1); }));
+            var gm = GymManager.Instance;
+            Assert.NotNull(gm, "체육관");
+            yield return Lab.Frames(20);
+            var bad = new List<string>(); var log = new List<string>();
+            int GuestsOn() => gm.Guests.Count(g => g != null && g.gameObject.activeSelf);
+            int MembersOn() => gm.Members.Count(m => m != null && m.gameObject.activeSelf);
+            int guests0 = GuestsOn(), members0 = MembersOn();
+            var yun0 = gm.Yunjun != null ? gm.Yunjun.transform.position : Vector3.zero;
+            string why = w.BookNext("jinsoo_seo");
+            Assert.AreEqual("", why, "5/3(일) 19:30 서진수 레슨 예약(시험 전제)");
+            var story = w.Story;
+            story.Bot = StoryRunner.BotMode.Read;
+            w.BotRead = 8f;
+            bool done = false;
+            IEnumerator Wrap() { yield return w.RunCardBusy(w.Def.Card("N13"), true); done = true; }
+            w.StartCoroutine(Wrap());
+            int guestsMid = 0;
+            float t0 = Time.realtimeSinceStartup;
+            while (!done && Time.realtimeSinceStartup - t0 < 300f) { guestsMid = Mathf.Max(guestsMid, GuestsOn()); yield return null; }
+            Assert.IsTrue(done, "N13 안 끝남");
+            yield return Lab.Frames(2);
+            float yunMove = gm.Yunjun != null ? HitResolver.Flat(gm.Yunjun.transform.position - yun0).magnitude : 0f;
+            yield return Lab.Frames(10);
+            float yunMove10 = gm.Yunjun != null ? HitResolver.Flat(gm.Yunjun.transform.position - yun0).magnitude : 0f;
+            log.Add($"N13 전: 출장 코치 {guests0} · 관원 {members0} · 장면 중 출장 코치 최대 {guestsMid}");
+            log.Add($"N13 뒤: 배역 남음 {story.CastHeld} · 출장 코치 {GuestsOn()} · 관원 {MembersOn()} · 이윤준 자리 차 {yunMove:F2}m(10프레임 뒤 {yunMove10:F2}m)");
+            if (guestsMid < 4) bad.Add($"장면 중 출장 코치가 {guestsMid}명(시험 전제 — N13 다섯이 섬)");
+            if (story.CastHeld != 0) bad.Add($"N13 뒤 장면 배역 {story.CastHeld}개가 안 되돌아감");
+            if (GuestsOn() != guests0) bad.Add($"N13 뒤 출장 코치 {GuestsOn()}명이 남음(장면 전 {guests0})");
+            if (MembersOn() != members0) bad.Add($"N13 뒤 관원 {MembersOn()}명(장면 전 {members0})");
+            if (yunMove > 0.3f || yunMove10 > 0.3f) bad.Add($"N13 뒤 이윤준이 제자리가 아님 {yunMove:F2}/{yunMove10:F2}m");
+            // 이어지는 레슨(5/3 19:30): 카드 동안 출장 코치는 서진수 한 명 · 시우와 1.2m 넘게 · 레슨 카메라가 코치 얼굴을 봄 · 다른 코치 얼굴이 화면에 없음
+            GameClock.AdvanceTo(19 * 60 + 25);
+            var board = story.Board;
+            t0 = Time.realtimeSinceStartup;
+            while (Time.realtimeSinceStartup - t0 < 60f && !(board != null && board.Shown && w.LessonCamera != null)) yield return null;
+            if (board == null || !board.Shown || w.LessonCamera == null) bad.Add($"레슨 카드·카메라 안 뜸(시각 {GameClock.TimeText} · 바쁨 '{w.Busy}')");
+            else
+            {
+                yield return Lab.Frames(2);
+                var lc = w.LessonCamera;
+                var seo = gm.Guest("jinsoo_seo");
+                var on = gm.Guests.Where(g => g != null && g.gameObject.activeSelf).Select(g => g.Id).ToList();
+                float gap = HitResolver.Flat(M3Lab.Motor.Position - seo.transform.position).magnitude;
+                seo.Anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                var head = seo.Anim.GetBoneTransform(HumanBodyBones.Head).position + Vector3.up * 0.08f;
+                Vector3 Vp(Vector3 q) { var lp = lc.transform.InverseTransformPoint(q); float ty = Mathf.Tan(CutCams.Fov(CamPreset.Mid) * 0.5f * Mathf.Deg2Rad); return new Vector3(0.5f + 0.5f * (lp.x / lp.z) / (ty * 16f / 9f), 0.5f + 0.5f * (lp.y / lp.z) / ty, lp.z); }
+                var vh = Vp(head);
+                bool blocked = lc.Blocked(lc.transform.position, head);
+                var seen = new List<string>();
+                foreach (var g in gm.Guests)
+                {
+                    if (g == null || g == seo || !g.gameObject.activeInHierarchy || g.Anim == null) continue;
+                    var v = Vp(g.Anim.GetBoneTransform(HumanBodyBones.Head).position);
+                    if (v.z > 0f && v.x > 0f && v.x < 1f && v.y > 0f && v.y < 1f) seen.Add(g.Id);
+                }
+                log.Add($"레슨 카드 {board.Title}: 켜진 출장 코치 [{string.Join(",", on)}] · 시우–서진수 {gap:F2}m · 서진수 머리 화면 {vh.x:F2},{vh.y:F2} · 가림 {blocked} · 화면 속 다른 코치 [{string.Join(",", seen)}] · 배역 남음 {story.CastHeld}");
+                if (on.Count != 1 || on[0] != "jinsoo_seo") bad.Add($"레슨 카드에 출장 코치 [{string.Join(",", on)}](서진수 한 명이어야)");
+                if (gap < 1.2f) bad.Add($"시우와 레슨 코치가 겹침 {gap:F2}m");
+                if (vh.z <= 0f || vh.x < 0.05f || vh.x > 0.6f || vh.y < 0.2f || vh.y > 0.98f) bad.Add($"서진수 얼굴이 레슨 카메라 왼쪽 60% 밖 {vh}");
+                if (blocked) bad.Add("서진수 얼굴이 가림(레슨 카메라)");
+                if (seen.Count > 0) bad.Add($"레슨 카메라에 다른 코치 [{string.Join(",", seen)}]");
+            }
+            Debug.Log("[Q] Q70 N13 뒤 레슨\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
+        }
+
+        // ───────────────────────── Q71(G8 — 2026-11-05): 샌드백은 친 쪽으로 밀려 나감(예전 BagSwing.Hit 부호가 반대 — 매달린 백(피벗 아래)인데 피벗 위 점 기준으로 써서
+        //   치는 사람·카메라 쪽으로 넘어와 시우 머리·몸을 덮었음, QA p4z 한 바퀴 D05 프레임) · 동쪽 벽(백 0.8m 옆)을 안 뚫게 각 한도
+        [UnityTest, Timeout(300000)]
+        public IEnumerator Q71a_Bag_Swings_Away_From_Hit()
+        {
+            var log = new List<string>(); var bad = new List<string>();
+            float prevCap = Time.captureDeltaTime;
+            Time.captureDeltaTime = 1f / 60f;
+            try
+            {
+                foreach (var (name, dir, power, hits, every) in new[] { ("오른쪽 한 번", Vector3.right, 3f, 1, 1), ("앞 한 번", Vector3.forward, 3f, 1, 1), ("오른쪽 세게 0.1초마다 10번", Vector3.right, 5f, 10, 6) })
+                {
+                    var go = new GameObject("bag_q71"); var sw = go.AddComponent<BagSwing>(); sw.Length = 2.68f;
+                    var holder = new GameObject("holder").transform; holder.SetParent(go.transform, false); holder.localPosition = new Vector3(0f, -2.08f, 0f);
+                    float maxAng = 0f; Vector3 far = Vector3.zero; Vector3 first = Vector3.zero;
+                    for (int i = 0; i < hits * every + 40; i++)
+                    {
+                        if (i % every == 0 && i / every < hits) sw.Hit(dir, power);
+                        yield return null;
+                        maxAng = Mathf.Max(maxAng, sw.Angle);
+                        var off = holder.position - go.transform.position; off.y = 0f;
+                        if (i == 8) first = off;
+                        if (off.magnitude > far.magnitude) far = off;
+                    }
+                    Object.Destroy(go);
+                    float along = Vector3.Dot(first, dir);
+                    log.Add($"{name}: 8프레임 뒤 백 아래 끝 {first.x:+0.00;-0.00},{first.z:+0.00;-0.00}m(친 쪽 {along:+0.00;-0.00}) · 가장 멀리 {far.x:+0.00;-0.00},{far.z:+0.00;-0.00} · 최대 각 {maxAng:F1}°");
+                    if (along < 0.05f) bad.Add($"{name}: 백이 친 쪽으로 안 감({along:+0.00;-0.00}m)");
+                    if (maxAng > 15.5f) bad.Add($"{name}: 각 {maxAng:F1}° > 15° (동쪽 벽 0.8m — 백 아래 끝이 벽을 뚫음)");
+                }
+            }
+            finally { Time.captureDeltaTime = prevCap; }
+            Debug.Log("[Q] Q71a 샌드백 흔들림\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
+        }
+
+        static float SegSeg(Vector3 a0, Vector3 a1, Vector3 b0, Vector3 b1)
+        {
+            float best = float.MaxValue;
+            for (int i = 0; i <= 40; i++)
+            {
+                var p = Vector3.Lerp(a0, a1, i / 40f);
+                var ab = b1 - b0; float t = Mathf.Clamp01(Vector3.Dot(p - b0, ab) / Mathf.Max(1e-6f, ab.sqrMagnitude));
+                best = Mathf.Min(best, Vector3.Distance(p, b0 + ab * t));
+            }
+            return best;
+        }
+
+        //   D05 드릴 카메라(네 화면비): 백이 시우 몸을 뚫거나 카메라–시우 머리 사이에 오지 않음 · 타격 별이 시우 얼굴 위에 안 그려짐 · 시우 머리·가슴이 화면 안(위 타이머 판 밑)
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q71b_D05_Bag_Clear_Of_Siwoo_All_Aspects()
+        {
+            yield return M3Lab.OpenZone1();
+            var r = M3Lab.Runner;
+            GymState.Current = new GymSave();
+            yield return r.Loader.Go(SceneLoader.Gym, "Floor", false, Vector3.zero, 0f, false);
+            yield return null; yield return null;
+            var gm = GymManager.Instance;
+            Assert.NotNull(gm, "체육관");
+            var book = Object.Instantiate(gm.Book);
+            foreach (var d in book.Drills) { d.RoundSec = 14f; d.RestSec = 1f; d.Rounds = 1; }
+            gm.Book = book;
+            var st = gm.Sock("Sock_Drill_D05_01");
+            BagSwing bag = null; float bd = float.MaxValue;
+            foreach (var b in gm.Bags) { if (b == null) continue; float d = (b.transform.position - st.position).sqrMagnitude; if (d < bd) { bd = d; bag = b; } }
+            Assert.NotNull(bag, "D05 샌드백");
+            var hitPts = new List<Vector3>();
+            void OnHit(HitEvent ev) { if (bag != null && ev.Victim == bag.Target) hitPts.Add(ev.Point); }
+            Fighter.AnyHit += OnHit;
+            var log = new List<string>(); var bad = new List<string>();
+            int frames = 0, through = 0, cover = 0, fxFace = 0, wall = 0, hits = 0; float minChest = 99f, minCover = 99f, minFx = 99f, maxWall = -99f, maxAng = 0f;
+            var aspects = new[] { ("16:9", 16f / 9f), ("16:10", 16f / 10f), ("21:9", 2520f / 1080f), ("4:3", 4f / 3f) };
+            var off = new Dictionary<string, int>(); foreach (var a in aspects) off[a.Item1] = 0;
+            string offEx = "";
+            try
+            {
+                Assert.IsTrue(gm.StartDrill("D05", 1f), "D05 시작(봇)");
+                var an = M3Lab.Motor.GetComponentInChildren<Animator>();
+                an.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                float t0 = Time.realtimeSinceStartup;
+                while (gm.Runner.State != DrillRunner.Phase.Result && Time.realtimeSinceStartup - t0 < 120f)
+                {
+                    yield return null;
+                    if (gm.Runner.State != DrillRunner.Phase.Round) { hitPts.Clear(); continue; }
+                    frames++;
+                    var cam = gm.DrillCam.transform;
+                    float ty = Mathf.Tan(gm.DrillCam.Lens.FieldOfView * 0.5f * Mathf.Deg2Rad);
+                    var head = an.GetBoneTransform(HumanBodyBones.Head).position + Vector3.up * 0.08f;
+                    var chest = an.GetBoneTransform(HumanBodyBones.Chest).position;
+                    var pv = bag.transform.position; var up = bag.transform.up;
+                    Vector3 a0 = pv - up * 0.7f, a1 = pv - up * 2.08f;
+                    maxAng = Mathf.Max(maxAng, bag.Angle);
+                    // 1) 가슴 높이에서 백 축과 시우 가슴(수평)
+                    float k = Mathf.InverseLerp(a0.y, a1.y, chest.y);
+                    float dChest = HitResolver.Flat(Vector3.Lerp(a0, a1, k) - chest).magnitude;
+                    minChest = Mathf.Min(minChest, dChest); if (dChest < 0.35f) through++;
+                    // 2) 카메라 → 시우 머리 선과 백 축(백 반지름 0.22 + 0.03)
+                    float dCov = SegSeg(cam.position, head, a0, a1);
+                    minCover = Mathf.Min(minCover, dCov); if (dCov < 0.25f) cover++;
+                    // 3) 네 화면비: 머리·가슴이 화면 안, 머리는 위 타이머 판(0.86) 밑
+                    Vector3 Vp(Vector3 q, float asp) { var lp = cam.InverseTransformPoint(q); return new Vector3(0.5f + 0.5f * (lp.x / lp.z) / (ty * asp), 0.5f + 0.5f * (lp.y / lp.z) / ty, lp.z); }
+                    foreach (var (an2, asp) in aspects)
+                    {
+                        var vh = Vp(head, asp); var vc = Vp(chest, asp);
+                        if (vh.z <= 0f || vh.x < 0.03f || vh.x > 0.97f || vh.y < 0.03f || vh.y > 0.86f || vc.x < 0.03f || vc.x > 0.97f || vc.y < 0.03f) { off[an2]++; if (offEx == "") offEx = $"{an2} 머리 {vh.x:F2},{vh.y:F2} 가슴 {vc.x:F2},{vc.y:F2}"; }
+                    }
+                    // 4) 타격 별(깊이 무시 — 맞는 점에 그려짐)이 시우 얼굴 위(화면 세로 단위 0.15 안)
+                    var vh0 = Vp(head, 16f / 9f);
+                    foreach (var hp in hitPts)
+                    {
+                        hits++;
+                        var vp = Vp(hp, 16f / 9f);
+                        float dd = new Vector2((vp.x - vh0.x) * 16f / 9f, vp.y - vh0.y).magnitude;
+                        minFx = Mathf.Min(minFx, dd); if (dd < 0.15f) fxFace++;
+                    }
+                    hitPts.Clear();
+                    // 5) 동쪽 벽(체육관 x 20.0): 백 아래 끝 + 반지름
+                    float wx = gm.transform.InverseTransformPoint(a1).x + 0.2f;
+                    maxWall = Mathf.Max(maxWall, wx); if (wx > 19.95f) wall++;
+                }
+            }
+            finally { Fighter.AnyHit -= OnHit; }
+            for (int i = 0; i < 600 && gm.Busy; i++) { gm.CloseCard(); yield return null; }
+            log.Add($"라운드 {frames}프레임 · 타격 {hits} · 백 최대 각 {maxAng:F1}°");
+            log.Add($"가슴 높이 백–시우 최소 {minChest:F2}m(0.35 미만 {through}프레임) · 카메라–머리 선과 백 최소 {minCover:F2}m(0.25 미만 {cover}) · 타격 별–얼굴 최소 {minFx:F2}(0.15 미만 {fxFace}) · 백 아래 끝 동쪽 최대 x {maxWall:F2}(벽 19.95 넘음 {wall})");
+            log.Add("화면 밖·타이머 판 아래 아님: " + string.Join(" · ", off.Select(kv => $"{kv.Key} {kv.Value}")) + (offEx != "" ? $" (예: {offEx})" : ""));
+            Debug.Log("[Q] Q71b D05 샌드백·카메라\n" + string.Join("\n", log));
+            if (frames < 60) bad.Add($"라운드 프레임 {frames}(시험 전제)");
+            if (hits < 5) bad.Add($"타격 {hits}(시험 전제)");
+            if (through > 0) bad.Add($"백이 시우 몸을 뚫음 {through}프레임(최소 {minChest:F2}m)");
+            if (cover > 0) bad.Add($"백이 카메라–시우 머리 사이 {cover}프레임");
+            if (fxFace > 0) bad.Add($"타격 별이 시우 얼굴 위 {fxFace}번");
+            if (wall > 0) bad.Add($"백이 동쪽 벽을 뚫음 {wall}프레임(x {maxWall:F2})");
+            foreach (var kv in off) if (kv.Value > 0) bad.Add($"{kv.Key} 시우 머리·가슴이 화면 밖·타이머 판 아래 아님 {kv.Value}프레임");
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
+        }
+
+        // ───────────────────────── Q68(G3 — 2026-11-05): 맵 끝 시험 점(QA B22 · QaBot.EdgeStarts)이 모두 걸을 땅에서 시작하고, 경계 쪽으로 3.5초 달려도
+        //   QA 감시와 같은 가운데 광선(발 +0.6m 에서 아래로 3m)이 0.5초 넘게 땅을 놓치지 않음. 예전 동쪽 점(−133, 120)은 Layers.Solid 광선이
+        //   '골목 끝 다세대 5' 지붕 위 3m 보이지 않는 막(EdgeGuard_Qa2) 윗면에 맞아 시우가 허공(막과 경계벽 사이 0.5m 틈 모서리)에 걸렸음('발밑에 땅 없음' 한 바퀴 약 300프레임)
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q68_Map_Edge_Starts_On_Ground()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            yield return Start(w, Mid(w.Def, 311, 14 * 60, SceneLoader.Zone1));
+            var me = M3Lab.Motor;
+            var log = new List<string>(); var bad = new List<string>();
+            bool oldHit = Physics.Raycast(new Vector3(-133f, 80f, 120f), Vector3.down, out var oh, 90f, Layers.Solid, QueryTriggerInteraction.Ignore);
+            string oldParent = oldHit && oh.collider.transform.parent != null ? oh.collider.transform.parent.name : "-";
+            log.Add($"예전 동쪽 점 (−133, 120) — Layers.Solid 첫 맞음 {(oldHit ? $"{oh.collider.name}(층 {oh.collider.gameObject.layer}) · 부모 {oldParent} · y {oh.point.y:F2}" : "없음")}");
+            foreach (var (p0, dir, n) in QaBot.EdgeStarts)
+            {
+                if (!QaBot.EdgeStart(p0, out var feet, out var col)) { bad.Add($"{n}: 시작점이 걸을 땅이 아님 — {(col != null ? $"{col.name}(층 {col.gameObject.layer})" : "없음")}"); continue; }
+                me.Teleport(feet + Vector3.up * 0.05f, Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg);
+                yield return Lab.Frames(10);
+                float miss = 0f, worst = 0f, t = 0f;
+                while (t < 3.5f)
+                {
+                    me.SetMoveInput(dir, 1f, true);
+                    yield return null;
+                    t += Time.deltaTime;
+                    var p = me.Position;
+                    if (!Physics.Raycast(p + Vector3.up * 0.6f, Vector3.down, out _, 3.0f, Layers.Solid, QueryTriggerInteraction.Ignore)) { miss += Time.deltaTime; worst = Mathf.Max(worst, miss); }
+                    else miss = 0f;
+                }
+                me.ClearMoveInput();
+                yield return Lab.Frames(5);
+                var q = me.Position;
+                bool inside = q.x >= -275f && q.x <= -129f && q.z >= 69f && q.z <= 175f;
+                log.Add($"{n}: 시작 {feet:F1}({col.name}) → 끝 {q:F1} · 발밑 땅 없음 최장 {worst:F2}초 · 경계 안 {inside} · 접지 {me.Grounded}");
+                if (worst >= 0.5f) bad.Add($"{n}: 발밑 땅 없음 {worst:F2}초");
+                if (!inside) bad.Add($"{n}: 경계 밖 {q:F1}");
+                if (q.y < feet.y - 6f) bad.Add($"{n}: 아래로 떨어짐 {feet.y:F1} → {q.y:F1}");
+            }
+            Debug.Log("[Q] Q68 맵 끝 시작점\n" + string.Join("\n", log));
+            Assert.IsTrue(oldHit && oldParent == "EdgeGuard_Qa2", "회귀 근거: 예전 동쪽 점은 보이지 않는 막(EdgeGuard_Qa2) 윗면에 맞았어야 — 맵·막이 바뀌었으면 이 줄을 고칠 것");
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
+        }
+
+        // ───────────────────────── Q69(G4 — 2026-11-05): '같은 상태 25초' 감시 서명(QaBot.StorySig)은 대사가 한 줄 넘어갈 때마다 바뀜.
+        //   예전 서명(스토리보드·자막만)은 C1-11 장면 4-5 의 자막 없는 구간(속마음 6줄·참기·화면 글자 '탁.' — 봇 읽기 36.7초)에 안 바뀌어 QA C07 이 '진행 불가?'로 잡았음(오탐 — 장면은 정상으로 끝남)
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q69_Stuck_Sig_Changes_During_Monologue()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            yield return Start(w, Mid(w.Def, 316, 8 * 60 + 5, "School", m => { m.G.Fatigue = 0; m.L.Apply("envelope", "+40000"); }));
+            var story = w.Story;
+            story.Bot = StoryRunner.BotMode.Read;
+            bool done = false;
+            IEnumerator Wrap() { yield return w.RunCardBusy(w.Def.Card("C1-11"), true); done = true; }
+            w.StartCoroutine(Wrap());
+            string sNew = null, sOld = null; float tNew = 0f, tOld = 0f, maxNew = 0f, maxOld = 0f; string atNew = "", atOld = "", fromOld = "";
+            int lines = 0; string lastLine = "";
+            float t0 = Time.realtimeSinceStartup;
+            while (!done && Time.realtimeSinceStartup - t0 < 600f)
+            {
+                yield return null;
+                float dt = UiKit.RealDt;                        // 대사 시계(봇 읽기 = 글자 수 ÷ 8 + 0.8초)
+                var cur = story.Talk != null ? story.Talk.Current : null;
+                if (cur != null && cur.Id != lastLine) { lastLine = cur.Id; lines++; }
+                string n = $"{w.Busy}|{QaBot.StorySig(story)}|{(int)GameClock.Minutes}";
+                string o = $"{w.Busy}|{(story.Board != null && story.Board.Shown ? story.Board.Title : "")}|{(story.Talk != null && story.Talk.Sub != null && story.Talk.Sub.Visible ? story.Talk.Sub.Text : "")}|{(int)GameClock.Minutes}";
+                if (n == sNew) tNew += dt; else { sNew = n; tNew = 0f; }
+                if (o == sOld) tOld += dt; else { sOld = o; tOld = 0f; fromOld = cur != null ? cur.Id : ""; }
+                if (tNew > maxNew) { maxNew = tNew; atNew = cur != null ? cur.Id : ""; }
+                if (tOld > maxOld) { maxOld = tOld; atOld = $"{fromOld}~{(cur != null ? cur.Id : "")}"; }
+            }
+            Debug.Log($"[Q] Q69 감시 서명: 줄 {lines} · 새 서명 가장 긴 같은 상태 {maxNew:F1}초({atNew}) · 옛 서명(스토리보드·자막만) {maxOld:F1}초({atOld}) — 감시 문턱 25초");
+            Assert.IsTrue(done, "C1-11 안 끝남");
+            Assert.Greater(lines, 20, "대사 줄을 못 셈(시험 전제)");
+            Assert.Less(maxNew, 12f, $"새 서명이 {maxNew:F1}초 동안 안 바뀜({atNew}) — 한 줄 최장 7.7초(글자 수 ÷ 8 + 0.8)");
+        }
+
+        // ───────────────────────── Q72(G3 함께 — 2026-11-05): 장소를 옮기는 동안(옛 장소를 내리고 새 장소를 읽는 사이) 시우가 바닥 없는 자리에서 떨어지지 않음.
+        //   예전엔 무대 → 무대(N01 국밥집 → 체육관)에서 KillY(−10) 아래로 떨어져 '맵 밖으로 떨어짐' 경고·리스폰(QA t3 356.6초 · run6 — 먹 닦기에 가려 화면엔 안 보임)
+        [UnityTest, Timeout(600000)]
+        public IEnumerator Q72_Place_Change_No_Fall()
+        {
+            yield return M3Lab.OpenZone1();
+            var r = M3Lab.Runner;
+            var me = M3Lab.Motor;
+            var log = new List<string>(); var bad = new List<string>();
+            int warns = 0;
+            void OnLog(string msg, string st, LogType type) { if (msg.Contains("맵 밖으로 떨어짐")) warns++; }
+            bool tele = false;
+            void OnTele(Vector3 d) { tele = true; }
+            Application.logMessageReceived += OnLog;
+            me.Teleported += OnTele;
+            try
+            {
+                yield return r.Loader.Go("Gukbap", "Door", false, Vector3.zero, 0f, false);
+                yield return Lab.Frames(20);
+                foreach (var (to, sp) in new[] { (SceneLoader.Gym, "Spawn"), ("Home", "Spawn"), ("Conv", "Door"), (SceneLoader.Zone1, "") })
+                {
+                    string from = r.Loader.Place;
+                    float y0 = me.Position.y, minY = y0; int resp0 = me.Respawns, w0 = warns; int frames = 0;
+                    tele = false;
+                    bool zone = to == SceneLoader.Zone1;
+                    var zp = new Vector3(-197.5f, 30.7f, 97.4f);
+                    r.StartCoroutine(r.Loader.Go(to, zone ? null : sp, zone, zp, 0f, false));
+                    yield return null;
+                    while (r.Loader.Busy && frames < 3000) { if (!tele) minY = Mathf.Min(minY, me.Position.y); frames++; yield return null; }
+                    yield return Lab.Frames(10);
+                    float drop = y0 - minY;
+                    // 옮긴 뒤 다시 걸을 수 있음(붙들기가 풀림) — 네 방향 중 가장 멀리 간 거리
+                    float walked = 0f;
+                    foreach (var d in new[] { Vector3.forward, Vector3.back, Vector3.left, Vector3.right })
+                    {
+                        var a = me.Position;
+                        for (int i = 0; i < 20; i++) { me.SetMoveInput(d, 1f, false); yield return null; }
+                        me.ClearMoveInput();
+                        walked = Mathf.Max(walked, HitResolver.Flat(me.Position - a).magnitude);
+                    }
+                    log.Add($"{from} → {to}: 옮기는 동안 {frames}프레임 · 순간 이동 전 최대 낙하 {drop:F2}m · 리스폰 +{me.Respawns - resp0} · 경고 +{warns - w0} · 끝 {me.Position:F1} 접지 {me.Grounded} · 뒤에 걸음 {walked:F2}m");
+                    if (drop > 0.3f) bad.Add($"{from} → {to}: 옮기는 동안 {drop:F2}m 떨어짐");
+                    if (me.Respawns != resp0) bad.Add($"{from} → {to}: 리스폰 {me.Respawns - resp0}");
+                    if (warns != w0) bad.Add($"{from} → {to}: '맵 밖으로 떨어짐' 경고 {warns - w0}");
+                    if (walked < 0.1f) bad.Add($"{from} → {to}: 옮긴 뒤 못 걸음(붙들림?) {walked:F2}m");
+                }
+            }
+            finally { Application.logMessageReceived -= OnLog; me.Teleported -= OnTele; }
+            Debug.Log("[Q] Q72 장소 옮기는 동안 낙하\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
+        }
+
         // ───────────────────────── Q57 글자·배경(2026-10-31 대표 "글자와 배경이 어지럽게 겹친다"): 대표 화면마다 판 ≥ 85% · 대비 · 글자끼리 겹침 0 · 화면 밖 0 · 공중/누운 월드 글자 0
         //   화면은 사실 화면 대신 UI 뺀 카메라 그림으로 배경을 잼. 나머지 화면(알바·전투·자전거·일시정지…)은 QA 봇 실제 화면(text_bad.tsv) — docs/15 8-12
         [UnityTest, Timeout(1800000)]
@@ -1646,6 +1991,60 @@ namespace Haengin.Tests
                 yield return Lab.Frames(5);
             }
             Debug.Log("[Q] S04 장면 컷 가림\n" + string.Join("\n", log));
+            Assert.IsEmpty(bad, string.Join(" | ", bad));
+        }
+
+        // ───────────────────────── S05 이야기 근접 컷은 얼굴 쪽에서(G4 — 2026-11-05): C1-11 4-5.10 '근접:임찬'(속마음 — 임찬이 내 가방 지퍼를 열었다)이
+        //   돌려 피하기(시우가 카메라 0.75m 안)에서 −135° 를 골라 임찬 뒤통수·사물함만 보였음. S04 의 네 카드에서 근접 컷마다 카메라가 대상 얼굴 쪽(앞 방향과 95° 안)인지
+        [UnityTest, Timeout(2400000)]
+        public IEnumerator S05_Story_Close_Shows_Face()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var runs = new (string card, int day, int min, string place)[] { ("C1-07", 313, 21 * 60 + 25, "Home"), ("C1-11", 316, 8 * 60 + 5, "School"), ("C1-19", 429, 9 * 60, "School"), ("N01", 310, 20 * 60 + 25, "Gukbap") };
+            var log = new List<string>(); var bad = new List<string>();
+            int closeCuts = 0;
+            foreach (var r in runs)
+            {
+                var c = w.Def.Card(r.card);
+                yield return Start(w, Mid(w.Def, r.day, r.min, r.place, m => { m.G.Fatigue = 0; m.L.Apply("envelope", "+40000"); }));
+                var story = w.Story;
+                story.Bot = StoryRunner.BotMode.Read;
+                int d0 = story.DlgPlayed;
+                var pending = new List<DlgLine>();
+                void OnShown(DlgLine l) { if (l != null && l.Mode != DlgMode.Event && l.Mode != DlgMode.Choice && (l.Cam ?? "").StartsWith("근접")) pending.Add(l); }
+                story.Talk.Shown += OnShown;
+                bool done = false;
+                IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; }
+                w.StartCoroutine(Wrap());
+                float t0 = Time.realtimeSinceStartup;
+                while (!done && Time.realtimeSinceStartup - t0 < 600f && !(r.card == "N01" && story.DlgPlayed > d0 && !story.InScene))
+                {
+                    if (pending.Count > 0)
+                    {
+                        var l = pending[0]; pending.RemoveAt(0);
+                        yield return null; yield return null;
+                        var live = Object.FindObjectsByType<CutCamDriver>(FindObjectsSortMode.None).FirstOrDefault(d => d != null && d.Cam != null && d.Cam.Priority.Value == CutCams.LivePriority && d.Preset == CamPreset.Close);
+                        if (live == null || live.Subject == null) { log.Add($"{r.card} {l.Id} {l.Cam}: 근접 카메라 없음"); continue; }
+                        var an = live.Subject.GetComponentInChildren<Animator>();
+                        if (an == null || !an.isHuman) { log.Add($"{r.card} {l.Id} {l.Cam}: 사람 아님 {live.Subject.name}"); continue; }
+                        var fwd = an.transform.forward; fwd.y = 0f;
+                        var head = an.GetBoneTransform(HumanBodyBones.Head).position;
+                        var to = live.transform.position - head; to.y = 0f;
+                        float ang = fwd.sqrMagnitude > 1e-4f && to.sqrMagnitude > 1e-4f ? Vector3.Angle(fwd, to) : 0f;
+                        float dist = Vector3.Distance(live.transform.position, head);
+                        closeCuts++;
+                        log.Add($"{r.card} {l.Id} {l.Cam}: 얼굴 쪽에서 {ang:F0}° · 돌림 {live.SpinDeg:F0}° · 머리까지 {dist:F2}m");
+                        if (ang > 95f) bad.Add($"{r.card} {l.Id} {l.Cam} 뒤통수 {ang:F0}°(돌림 {live.SpinDeg:F0}°)");
+                    }
+                    yield return null;
+                }
+                story.Talk.Shown -= OnShown;
+                w.Stop();
+                yield return Lab.Frames(5);
+            }
+            Debug.Log($"[Q] S05 근접 컷 얼굴 쪽 — {closeCuts}컷\n" + string.Join("\n", log));
+            Assert.Greater(closeCuts, 3, "근접 컷을 못 잼(시험 전제)");
             Assert.IsEmpty(bad, string.Join(" | ", bad));
         }
 

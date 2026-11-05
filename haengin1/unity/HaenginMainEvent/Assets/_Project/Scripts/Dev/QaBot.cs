@@ -495,7 +495,13 @@ namespace Haengin
                 if (free)
                 {
                     // 발밑
-                    if (!Physics.Raycast(p + Vector3.up * 0.6f, Vector3.down, out var hit, 3.0f, Layers.Solid, QueryTriggerInteraction.Ignore)) groundMiss += dt;
+                    if (!Physics.Raycast(p + Vector3.up * 0.6f, Vector3.down, out var hit, 3.0f, Layers.Solid, QueryTriggerInteraction.Ignore))
+                    {
+                        groundMiss += dt;
+                        // G3(2026-11-05): 땅은 못 찾는데 몸(캡슐)이 보이지 않는 막·경계벽(PlayerOnly) 모서리에 걸쳐 서 있으면 그것도 적음 — 사람이 오를 길이 없는 자리(봇 순간 이동을 의심)
+                        if (groundMiss > 0.5f && mo.Grounded && Physics.SphereCast(p + Vector3.up * 0.9f, 0.3f, Vector3.down, out var gh, 1.2f, Layers.Mask(Layers.PlayerOnly), QueryTriggerInteraction.Ignore))
+                            Issue($"onguard.{Ld.Place}.{Mathf.RoundToInt(p.x / 3)}.{Mathf.RoundToInt(p.z / 3)}", "눈에 띔", $"보이지 않는 막·경계벽(PlayerOnly) 위에 섬 — {gh.collider.name} ({Ld.Place} {p:F1})");
+                    }
                     else
                     {
                         groundMiss = 0f;
@@ -571,13 +577,26 @@ namespace Haengin
 
         string Sig()
         {
-            var st = Story();
-            string board = st != null && st.Board != null && st.Board.Shown ? st.Board.Title : "";
-            string sub = st != null && st.Talk != null && st.Talk.Sub != null && st.Talk.Sub.Visible ? st.Talk.Sub.Text : "";
             string job = W.Job != null && W.Job.Shown ? W.Job.PromptText : "";
             var p = Mo != null ? Vector3Int.RoundToInt(Mo.Position * 2f) : Vector3Int.zero;
             string drill = Gm != null && Gm.Runner != null ? Gm.Runner.State.ToString() : "";
-            return $"{W.Busy}|{board}|{sub}|{(int)GameClock.Minutes}|{job}|{Ld?.Place}|{p}|{drill}|{held.Count}";
+            return $"{W.Busy}|{StorySig(Story())}|{(int)GameClock.Minutes}|{job}|{Ld?.Place}|{p}|{drill}|{held.Count}";
+        }
+
+        /// '같은 상태' 감시의 이야기 몫: 스토리보드 제목 · 자막 · 지금 대사 줄 id · 속마음 · 화면 글자.
+        ///   G4(2026-11-05): 예전엔 스토리보드·자막만 봐서, 자막 없이 속마음 6줄·참기 선택·화면 글자 '탁.'만 36.7초(봇 읽기) 이어지는 C1-11 장면 4-5(4-5.10~4-5.21)를
+        ///   '같은 상태 25초 — 진행 불가?'로 잡았음(녹화 1/30 이라 실제 약 28초 · 장면은 정상으로 끝남 — 오탐). 줄이 한 줄이라도 넘어가면 달라지므로
+        ///   한 줄이 25초 넘게 안 넘어가는 진짜 막힘·입력 대기는 그대로 잡힘
+        public static string StorySig(StoryRunner st)
+        {
+            if (st == null) return "";
+            string board = st.Board != null && st.Board.Shown ? st.Board.Title : "";
+            var t = st.Talk;
+            string sub = t != null && t.Sub != null && t.Sub.Visible ? t.Sub.Text : "";
+            string line = t != null && t.Current != null ? t.Current.Id : "";
+            string inner = t != null && t.Inner != null && t.Inner.Visible ? t.Inner.Text : "";
+            string scr = st.Hud != null ? st.Hud.ScreenText : "";
+            return $"{board}|{sub}|{line}|{inner}|{scr}";
         }
 
         // ───────────────────────── 구역 실행(예외·시간 초과에도 다음 구역으로)

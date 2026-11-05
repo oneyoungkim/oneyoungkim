@@ -889,21 +889,41 @@ namespace Haengin
 
         static readonly Vector3 BMin = new Vector3(-274f, 15f, 70f), BMax = new Vector3(-130f, 62f, 174f);
 
+        /// 맵 끝 시험 점(B22 · 시험 Q42·Q68 이 같은 표를 씀) — 경계 안쪽 걸을 수 있는 땅에서 바깥으로.
+        ///   G3(2026-11-05): 동쪽은 z 120 이 '골목 끝 다세대 5'(지붕 35.12)가 경계 0.5m 앞까지 차 있어 사람이 닿는 땅이 아님 → 걸어서 닿는 동쪽 끝 = 명륜3가 골목 동쪽 끝(길 가운데 z 114.64, 길 방향으로)
+        public static readonly (Vector3 p, Vector3 dir, string n)[] EdgeStarts =
+        {
+            (new Vector3(-133f, 0f, 114.64f), new Vector3(10f, 0f, -2.8f).normalized, "동쪽끝"), (new Vector3(-200f, 0f, 73f), Vector3.back, "남쪽끝"),
+            (new Vector3(-271f, 0f, 120f), Vector3.left, "서쪽끝"), (new Vector3(-150f, 0f, 171f), Vector3.forward, "북쪽끝"),
+            (new Vector3(-135f, 0f, 160f), new Vector3(1f, 0f, 1f).normalized, "북동모서리"), (new Vector3(-268f, 0f, 76f), new Vector3(-1f, 0f, -1f).normalized, "남서모서리"),
+        };
+
+        /// 순간 이동 광선(G3): 보이지 않는 막·경계벽(PlayerOnly)은 뺌 — 예전 Layers.Solid 는 지붕 위 3m 막(EdgeGuard_Qa2) 윗면에 시우를 내려놓아,
+        ///   막과 경계벽 사이 0.5m 틈 모서리에 걸린 채 가운데 광선이 땅을 못 찾아 '발밑에 땅 없음'(B22 · 한 바퀴마다 약 300프레임)이 났음
+        public static readonly int EdgeProbe = Layers.Solid & ~Layers.Mask(Layers.PlayerOnly);
+
+        /// 점 위(y 80)에서 아래로 처음 맞은 것 — 땅(Ground)이어야 시작점으로 씀(건물 지붕·담 위면 false)
+        public static bool EdgeStart(Vector3 p0, out Vector3 feet, out Collider col)
+        {
+            feet = p0; col = null;
+            if (!Physics.Raycast(new Vector3(p0.x, 80f, p0.z), Vector3.down, out var h, 90f, EdgeProbe, QueryTriggerInteraction.Ignore)) return false;
+            feet = h.point; col = h.collider;
+            return h.collider.gameObject.layer == Layers.Ground;
+        }
+
         IEnumerator B_Edges()
         {
             int wk = NextDay("수");
             yield return Load(wk, 14 * 60, SceneLoader.Zone1, m => Unlocks(m), true, W.Def.Balance.Point("alley").Pos);
-            var pts = new (Vector3 p, Vector3 dir, string n)[]
+            foreach (var (p0, dir, n) in EdgeStarts)
             {
-                (new Vector3(-133f, 0f, 120f), Vector3.right, "동쪽끝"), (new Vector3(-200f, 0f, 73f), Vector3.back, "남쪽끝"),
-                (new Vector3(-271f, 0f, 120f), Vector3.left, "서쪽끝"), (new Vector3(-150f, 0f, 171f), Vector3.forward, "북쪽끝"),
-                (new Vector3(-135f, 0f, 160f), new Vector3(1f, 0f, 1f).normalized, "북동모서리"), (new Vector3(-268f, 0f, 76f), new Vector3(-1f, 0f, -1f).normalized, "남서모서리"),
-            };
-            foreach (var (p0, dir, n) in pts)
-            {
-                var p = p0; p.y = 80f;
-                if (!Physics.Raycast(p, Vector3.down, out var h, 90f, Layers.Solid, QueryTriggerInteraction.Ignore)) { L($"맵 끝 {n}: 땅 없음 {p0}"); continue; }
-                p = h.point + Vector3.up * 0.05f;
+                if (!EdgeStart(p0, out var feet, out var col))
+                {
+                    L($"맵 끝 {n}: 걸을 땅 아님 — {(col != null ? $"{col.name}(층 {col.gameObject.layer}) {feet:F1}" : "아무것도 없음")}");
+                    Issue("edge.start." + n, "QA", $"맵 끝 시험 점 {n} {p0:F1} 이 걸을 땅이 아님 — {(col != null ? col.name : "없음")}");
+                    continue;
+                }
+                var p = feet + Vector3.up * 0.05f;
                 Mo.Teleport(p, Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg);
                 Ld.Cam?.SnapBehind();
                 yield return Frames(20);

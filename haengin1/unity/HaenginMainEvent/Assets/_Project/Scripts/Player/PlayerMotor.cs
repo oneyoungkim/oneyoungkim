@@ -67,6 +67,17 @@ namespace Haengin
         public CharacterController Controller => cc;
         public int Respawns { get; private set; }
         bool killWait;
+        /// 장소를 옮기는 동안 붙들기(G3 함께 — 2026-11-05): 무대 → 무대로 옮길 때 옛 무대를 내리고 새 무대를 읽는 사이 바닥 없는 자리에서 떨어져
+        ///   KillY 아래로 → '맵 밖으로 떨어짐' 경고·리스폰(먹 닦기에 가려 화면엔 안 보임 — N01 국밥집 → 체육관). SceneLoader.Go 가 켜고 순간 이동 뒤 끔(Reset 도 끔)
+        public bool Hold { get; private set; }
+        public void SetHold(bool on)
+        {
+            Hold = on;
+            if (!on) return;
+            planarVel = prevPlanarVel = Vector3.zero; vy = 0f; ext = Vector3.zero;
+            Velocity = PlanarAccel = Vector3.zero;
+            PlanarSpeed = OwnSpeed = YawRate = StepDeltaY = 0f;
+        }
         /// 지난 이동에서 옆으로 부딪힌 것(전투 벽꽝 검사)
         public Collider LastSideHit => sideHit;
 
@@ -175,7 +186,7 @@ namespace Haengin
         void Update()
         {
             float dt = Time.deltaTime;
-            if (dt <= 0f || !cc.enabled) return;
+            if (dt <= 0f || !cc.enabled || Hold) return;
             t = T;
 
             // 1) 입력 꺼내기(한 프레임만 유효)
