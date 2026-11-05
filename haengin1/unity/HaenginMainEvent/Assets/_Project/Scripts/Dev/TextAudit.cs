@@ -168,7 +168,7 @@ namespace Haengin
                 long ord = Order(t);
                 // 앞의 불투명 판에 덮이면 안 보임
                 if (graphics.Any(x => x.order > ord && x.a >= MinPlate && Cover(x.rect, rect) >= 0.9f)) continue;
-                var cut = graphics.FirstOrDefault(x => x.order > ord && x.a >= 0.5f && x.g.canvas.rootCanvas == t.canvas.rootCanvas && Cover(x.rect, rect) >= 0.04f && Cover(x.rect, rect) < 0.9f);      // 같은 화면 안에서 일부만 덮임(다른 화면의 카드가 HUD 위에 뜬 건 정상)
+                var cut = graphics.FirstOrDefault(x => x.order > ord && x.a >= 0.5f && x.g.canvas.rootCanvas == t.canvas.rootCanvas && Cover(x.rect, ink) >= 0.04f && Cover(x.rect, ink) < 0.9f);      // 같은 화면 안에서 일부만 덮임(다른 화면의 카드가 HUD 위에 뜬 건 정상)
                 var it = new Item { T = t, Path = PathOf(t.transform), Text = clean.Length > 40 ? clean.Substring(0, 40) : clean, R = rect, Ink = ink, Size = t.fontSize, TextC = t.color, CutBy = cut.g != null ? cut.g.name : "" };
                 // 뒤의 판 합성
                 string plate = "";
@@ -219,7 +219,7 @@ namespace Haengin
                 if (textured && !shotHasUi) rd = rl = 99f;
                 it.Contrast = Mathf.Min(rd, rl);
                 it.Alpha = a;
-                var across = graphics.FirstOrDefault(x => x.order < ord && x.a >= 0.5f && x.g.canvas.rootCanvas == t.canvas.rootCanvas && !t.transform.IsChildOf(x.g.transform) && Cover(x.rect, rect) >= 0.05f && Cover(x.rect, rect) < 0.75f);
+                var across = graphics.FirstOrDefault(x => x.order < ord && x.a >= 0.5f && x.g.canvas.rootCanvas == t.canvas.rootCanvas && !t.transform.IsChildOf(x.g.transform) && Cover(x.rect, ink) >= 0.05f && Cover(x.rect, ink) < 0.75f);
                 if (across.g != null) it.Across = across.g.name;
                 it.Back = rd < rl ? backD : backL;
                 r.Add(it);

@@ -220,7 +220,7 @@ namespace Haengin
         /// 키 칩 글 + 폭
         public static void SetKey(RectTransform box, TextMeshProUGUI label, string key, float h)
         {
-            label.text = key == "×" ? "<font=\"" + (FBold() != null ? FBold().name : "") + "\"><size=130%>×</size></font>" : key ?? "";
+            label.text = key == "×" ? "<font=\"" + (FBold() != null ? FBold().name : "") + "\"><size=115%>×</size></font>" : key ?? "";
             if (key == "×" && FBold() != null) MaterialReferenceManager.AddFontAsset(FBold());
             float w = Mathf.Max(h, label.GetPreferredValues(label.text).x + h * 0.42f);
             box.sizeDelta = new Vector2(w, h);
