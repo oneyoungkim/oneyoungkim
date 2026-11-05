@@ -604,6 +604,42 @@ namespace Haengin.Tests
             finally { Object.Destroy(go); }
         }
 
+        // ───────────────────────── Q61 일시정지 '휴대폰'·'도감'(3단계 G9·G10): 자유 이동이 아니면 칸이 흐리고 안 열림 · 도감처럼 메뉴 위 화면이 떠 있으면 메뉴를 숨김
+        [UnityTest, Timeout(600000)]
+        public IEnumerator Q61_Pause_Book_Gate_And_Sub_Screen()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            yield return Start(w, Mid(w.Def, 312, 14 * 60, SceneLoader.Zone1, m => { m.G.Fatigue = 0; }));
+            yield return Lab.Frames(20);
+            var ui = GameUi.Instance;
+            Assert.NotNull(ui, "GameUi");
+            Assert.IsTrue(w.FreePaused, "자유 이동 중엔 일시정지 '휴대폰'을 고를 수 있음");
+            var keepHook = GameUi.BookHook; var keepAllowed = GameUi.BookAllowed; var keepSub = GameUi.SubOpen;
+            bool opened = false;
+            try
+            {
+                GameUi.BookHook = () => opened = true;
+                GameUi.BookAllowed = () => false;
+                GameState.SetPaused(true); yield return Lab.Frames(3);
+                int bi = -1; for (int i = 0; i < ui.ItemCount; i++) if (ui.ItemAt(i) == GameUi.Item.Book) bi = i;
+                Assert.GreaterOrEqual(bi, 0, "일시정지에 '휴대폰' 칸");
+                yield return Lab.Frames(2);
+                StringAssert.Contains("지금은 못 엶", ui.Label(bi), "못 고를 때 이유");
+                ui.Choose(GameUi.Item.Book);
+                Assert.IsFalse(opened, "자유 이동이 아니면 안 열림(G9)");
+                GameUi.BookAllowed = () => true;
+                ui.Choose(GameUi.Item.Book);
+                Assert.IsTrue(opened, "자유 이동이면 열림");
+                GameState.SetPaused(true); yield return Lab.Frames(3);
+                GameUi.SubOpen = () => true; yield return Lab.Frames(3);
+                Assert.IsFalse(ui.MenuVisible, "도감처럼 메뉴 위 화면이 떠 있으면 메뉴 숨김(G10)");
+                GameUi.SubOpen = () => false; yield return Lab.Frames(3);
+                Assert.IsTrue(ui.MenuVisible, "그 화면이 닫히면 메뉴가 다시 보임");
+            }
+            finally { GameUi.BookHook = keepHook; GameUi.BookAllowed = keepAllowed; GameUi.SubOpen = keepSub; GameState.SetPaused(false); }
+        }
+
         // ───────────────────────── Q57 글자·배경(2026-10-31 대표 "글자와 배경이 어지럽게 겹친다"): 대표 화면마다 판 ≥ 85% · 대비 · 글자끼리 겹침 0 · 화면 밖 0 · 공중/누운 월드 글자 0
         //   화면은 사실 화면 대신 UI 뺀 카메라 그림으로 배경을 잼. 나머지 화면(알바·전투·자전거·일시정지…)은 QA 봇 실제 화면(text_bad.tsv) — docs/15 8-12
         [UnityTest, Timeout(1800000)]

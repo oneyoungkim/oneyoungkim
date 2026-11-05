@@ -69,6 +69,9 @@ namespace Haengin
         /// '도감' 칸 이름(오픈월드에선 '휴대폰')
         public static string BookLabel = "도감";
         public static Func<bool> SubOpen;
+        /// '도감'·'휴대폰' 칸을 지금 고를 수 있나(없으면 늘 됨) — 못 고르면 흐리게 + 이유(G9)
+        public static Func<bool> BookAllowed;
+        bool BookOk => BookAllowed == null || BookAllowed();
         readonly System.Collections.Generic.List<Item> visible = new System.Collections.Generic.List<Item> { Item.Resume, Item.AutoAlign, Item.Quit, Item.Reduce };
         public Item ItemAt(int i) => i >= 0 && i < visible.Count ? visible[i] : Item.Resume;
 
@@ -104,7 +107,7 @@ namespace Haengin
         void OnDisable() { if (Instance == this) Instance = null; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; Teach = false; seenHints.Clear(); userOpen = -2; hiders.Clear(); RetryHook = null; SurrenderHook = null; BookHook = TitleHook = SubClose = null; SubOpen = null; BookLabel = "도감"; }
+        static void ResetStatics() { Instance = null; QuitHook = null; HintOverride = null; Teach = false; seenHints.Clear(); userOpen = -2; hiders.Clear(); BookAllowed = null; RetryHook = null; SurrenderHook = null; BookHook = TitleHook = SubClose = null; SubOpen = null; BookLabel = "도감"; }
 
         System.Collections.IEnumerator Start()
         {
@@ -155,6 +158,8 @@ namespace Haengin
                 sub = can = false;   // 여는 프레임의 입력은 버린다
             }
             if (paused && SubOpen != null && SubOpen()) { if (sub || can) SubClose?.Invoke(); }
+            bool subUp = paused && SubOpen != null && SubOpen();
+            if (paused && menuRoot.activeSelf == subUp) menuRoot.SetActive(!subUp);      // G10
             else if (paused) Menu(sub, can);
 
             // 조작 안내 줄(전투 중엔 전투 조작) — B안: 접어 두고 「조작 보기」 칩, 펼치는 때만 판
@@ -203,6 +208,9 @@ namespace Haengin
             Refresh();
         }
 
+        /// 시험: 메뉴 칸 고르기(키 입력 없이)
+        public void Choose(Item it) => Activate(it);
+
         void Activate(Item it)
         {
             switch (it)
@@ -216,7 +224,7 @@ namespace Haengin
                     break;
                 case Item.Retry: { var h = RetryHook; GameState.SetPaused(false); h?.Invoke(); break; }
                 case Item.Surrender: { var h = SurrenderHook; GameState.SetPaused(false); h?.Invoke(); break; }
-                case Item.Book: BookHook?.Invoke(); break;
+                case Item.Book: if (BookOk) BookHook?.Invoke(); break;      // G9: 싸움·대사 중엔 안 열림
                 case Item.SaveTitle: { var h = TitleHook; h?.Invoke(); break; }
                 case Item.Quit:
                     Debug.Log("[M1] 끝내기");
@@ -273,7 +281,7 @@ namespace Haengin
                     Item.Reduce => "흔들림 줄이기 ◀ " + (Accessibility.Reduced ? "켬" : "끔") + " ▶",
                     Item.Retry => "전투 다시",
                     Item.Surrender => "항복",
-                    Item.Book => BookLabel,
+                    Item.Book => BookOk ? BookLabel : BookLabel + "  — 지금은 못 엶",
                     Item.SaveTitle => "저장하고 타이틀로",
                     _ => "",
                 };

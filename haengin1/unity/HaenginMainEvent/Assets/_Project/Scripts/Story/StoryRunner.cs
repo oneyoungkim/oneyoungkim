@@ -162,7 +162,7 @@ namespace Haengin
             // M1 체크포인트 길잡이를 숨기고 이야기 목표만(빈 목록으로 시작)
             var guide = FindAnyObjectByType<RouteGuide>(FindObjectsInactive.Include);
             if (guide != null) guide.SetTargets(new TargetDef[0]);
-            GameUi.BookHook = OpenBook;
+            GameUi.BookHook = OpenBook; GameUi.BookAllowed = null;      // G9: 이야기 모드 '도감'은 늘 됨
             GameUi.TitleHook = SaveAndTitle;
             if (Talk != null) Talk.Bot = Bot != BotMode.None ? (l => BotAnswer != null ? BotAnswer(l) : 0) : null;
             Debug.Log($"[M3] 이야기 시작: {(test ? "시험 장면" : "데모")} {List.Length}개 중 {start + 1}번째({List[start].Id}){(save != null ? " · 이어하기" : "")}{(Bot != BotMode.None ? " · 봇 " + Bot : "")}");

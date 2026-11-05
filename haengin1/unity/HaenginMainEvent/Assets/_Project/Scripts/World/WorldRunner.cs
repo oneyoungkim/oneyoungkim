@@ -36,6 +36,11 @@ namespace Haengin
         public WeekPlanner Planner { get; private set; }
         /// 지금 하는 일(빈칸 = 자유 이동)
         public string Busy => busy.Count > 0 ? busy.Peek() : "";
+        /// 일시정지만 빼면 자유 이동인가(일시정지 메뉴의 '휴대폰'을 고를 수 있나 — G9)
+        public bool FreePaused => Active && busy.Count == 0 && (Loader == null || !Loader.Busy) && (Phone == null || !Phone.Shown) && (GymManager.Instance == null || !GymManager.Instance.Busy)
+            && !InFight && (Story == null || !Story.InScene);
+        /// 싸움 중인가(시비 말 걸기부터 — Ui 갱신이 매 프레임 넣음)
+        public bool InFight { get; private set; }
         public bool Free => Active && busy.Count == 0 && (Loader == null || !Loader.Busy) && !GameState.Paused && (Phone == null || !Phone.Shown) && (GymManager.Instance == null || !GymManager.Instance.Busy);
 
         [Header("봇(시험·스모크·녹화)")]
@@ -105,6 +110,7 @@ namespace Haengin
             Planner = new WeekPlanner(Model, Director) { Drills = Def.Drills != null ? Def.Drills.Drills : new DrillDef[0] };
             Story.HouseholdHook = v => Model.OnLedgerLine(v);
             GameUi.BookHook = () => OpenPhone(0);
+            GameUi.BookAllowed = () => FreePaused;      // G9
             GameUi.BookLabel = "휴대폰(Tab)";
             GameUi.TitleHook = SaveAndTitle;
             GymManager.Gate = GymGate;

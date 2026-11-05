@@ -28,6 +28,7 @@ namespace Haengin
             var es = encCache != null && encCache.isActiveAndEnabled ? encCache.State : Encounter.Phase.Armed;
             bool fight = (fightCache != null && fightCache.Active) || es == Encounter.Phase.Taunt || es == Encounter.Phase.Fight || es == Encounter.Phase.Finish;   // 시비 말 걸기부터(전투가 켜지는 그 프레임에 한 번 겹치던 것)
             bool show = busy.Count == 0 && !drill && !fight && (Story == null || !Story.InScene) && (Phone == null || !Phone.Shown) && (ChapterView == null || !ChapterView.Shown) && (Job == null || !Job.Shown);
+            InFight = fight;
             Hud.Shown = show;
             if (!show) return;
             // QA Q21: 이야기 체인이 끝난 뒤 몇 초 남는 이야기 날짜 판('5월 1일(금) 17:50 저녁')이 세계 HUD 날짜 줄과 왼쪽 위에서 겹쳤음
