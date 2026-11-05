@@ -89,6 +89,31 @@ namespace Haengin
 
         public void SetTab(int t) { Tab = (t + Tabs.Length) % Tabs.Length; Refresh(); }
 
+        /// '머리\t본문' 줄이 있으면 머리 열(가장 넓은 머리 + 14px)에 본문을 맞춤 — 줄이 바뀌어도 본문 열에서 이어짐(<indent>). 머리 숫자는 Barlow
+        string Columns(string s)
+        {
+            if (s.IndexOf('\t') < 0) return s;
+            var lines = s.Split('\n');
+            float w = 0f;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                int k = lines[i].IndexOf('\t');
+                if (k < 0) continue;
+                string head = UiKit.NumRich(lines[i].Substring(0, k), Fonts);
+                w = Mathf.Max(w, body.GetPreferredValues(head).x);
+            }
+            var sb = new System.Text.StringBuilder();
+            string ind = $"<indent={Mathf.Ceil(w + 14f)}>";
+            for (int i = 0; i < lines.Length; i++)
+            {
+                int k = lines[i].IndexOf('\t');
+                if (k < 0) sb.Append(lines[i]);
+                else sb.Append(UiKit.NumRich(lines[i].Substring(0, k), Fonts)).Append(ind).Append(lines[i].Substring(k + 1)).Append("</indent>");
+                if (i < lines.Length - 1) sb.Append('\n');
+            }
+            return sb.ToString();
+        }
+
         public void Refresh()
         {
             if (!Shown) return;
@@ -101,7 +126,7 @@ namespace Haengin
                 if (want != null && tabText[i].font != want) tabText[i].font = want;
                 tabBar[i].gameObject.SetActive(sel);
             }
-            body.text = Content != null ? Content(Tab) ?? "" : "";
+            body.text = Columns(Content != null ? Content(Tab) ?? "" : "");
             string al = ActLabel != null ? ActLabel(Tab) : "";
             foot.text = UiKit.KeyMark(string.IsNullOrEmpty(al) ? "← → 탭   ○ · Esc · Tab 닫기" : $"← → 탭   Enter · × {al}   ○ · Esc 닫기");
         }

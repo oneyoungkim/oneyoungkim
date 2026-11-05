@@ -155,7 +155,7 @@ namespace Haengin
             switch (tab)
             {
                 case 0:
-                    foreach (var m in Model.S.Phone.Skip(Mathf.Max(0, Model.S.Phone.Count - 14))) sb.Append($"{m.Day / 100}/{m.Day % 100} {GameClock.Hm(m.Min)}  <b>{m.From}</b>  {m.Text}\n");
+                    foreach (var m in Model.S.Phone.Skip(Mathf.Max(0, Model.S.Phone.Count - 14))) sb.Append($"{m.Day / 100}/{m.Day % 100} {GameClock.Hm(m.Min)}  <b>{m.From}</b>\t{m.Text}\n");      // 3단계 ②: \t = 본문 열(PhoneUi 가 맞춤)
                     if (sb.Length == 0) sb.Append("문자 없음");
                     break;
                 case 1:

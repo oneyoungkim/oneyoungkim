@@ -46,6 +46,9 @@ namespace Haengin
         // 프로젝트가 Linear 색공간이라 UI 알파가 선형 빛 공간에서 섞인다 → 시안(브라우저 sRGB 섞기)의 0.93 이 화면에서는 밝은 배경 위 0.73~0.84 로 옅게 보였다.
         // 규칙: ① 어두운 반투명(먹 판·덮개)은 Seen(색, 시안 알파)로만 지정한다 — 가장 밝은 배경(흰색)에서 시안과 같게 보이는 섞기 알파로 바꿔 줌(어두운 배경에선 시안보다 조금 진함).
         //       ② 판 위에 놓이는 밝은 반투명(트랙·구분선·보상 선)은 반투명으로 두지 않고 미리 섞은 불투명 색(Track·RuleColor)을 쓴다.
+        /// 안내 줄의 ' · ' 앞 빈칸을 줄 안 바꿈 빈칸(U+00A0)으로 — 줄이 바뀌어도 '·' 가 줄 첫머리에 오지 않음(3단계 ②)
+        public static string Glue(string s) => string.IsNullOrEmpty(s) ? s ?? "" : s.Replace(" · ", "\u00A0· ");
+
         /// 상대 밝기(WCAG)·대비
         public static float Lum(Color c)
         {
@@ -345,6 +348,7 @@ namespace Haengin
         public static string KeyMark(string s)
         {
             if (string.IsNullOrEmpty(s)) return "";
+            s = Glue(s);
             string hex = ColorUtility.ToHtmlStringRGB(Warm);
             // 드릴-8(2026-11-05): □△○× 기호는 가는 외곽선이라 Warm 이 흐림(3.6~4.3:1) → 기호만 한 단계 크고 굵게
             return KeyWords.Replace(s, m => "<color=#" + hex + ">" + (Symbols.IsMatch(m.Value) ? "<size=118%><b>" + m.Value + "</b></size>" : m.Value) + "</color>");
