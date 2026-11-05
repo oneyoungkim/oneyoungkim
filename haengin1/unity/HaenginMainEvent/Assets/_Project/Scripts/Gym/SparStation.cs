@@ -165,6 +165,8 @@ namespace Haengin
             if (headgearFoe != null) UnityEngine.Object.Destroy(headgearFoe);
             if (Actors.Mode != null && Actors.Mode.Active) Actors.Mode.End();
             if (Actors.Gojun != null) Actors.Gojun.gameObject.SetActive(true);
+            // G1(2026-11-05): 봇 스파링(QA·시험·스모크)이 시우에 붙인 전투 봇이 남아 다음 시비를 혼자 싸웠음(QA B15 '손 놓고 지기'가 이김) → 끝나면 뗌
+            if (bot != null) { UnityEngine.Object.Destroy(bot); bot = null; }
             GameState.InputLocked = false;
         }
 

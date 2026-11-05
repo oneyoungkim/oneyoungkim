@@ -82,7 +82,13 @@ namespace Haengin
                 label = c.Title;
                 return new Next { Title = c.Title, Time = GameClock.Hm(c.From), Place = PlaceName(c.Place) };
             }
-            if (now >= 22 * 60 || now < Def.Balance.Wake) { pointId = "home_door"; label = "집"; return new Next { Title = "잠(이불)", Time = "", Place = "집" }; }
+            if (now >= 22 * 60 || now < Def.Balance.Wake)
+            {
+                pointId = "home_door"; label = "집";
+                // G2(2026-11-05): 밤엔 '잠(이불)'만 보여 다음 새벽 배달(06:00)이 HUD 어디에도 안 보였음 → 이번 잠 뒤 새벽 배달이 있으면 같이
+                var dawn = DawnDelivery(now);
+                return dawn != null ? new Next { Title = "잠 — " + dawn.Name, Time = GameClock.Hm(dawn.Start), Place = "집" } : new Next { Title = "잠(이불)", Time = "", Place = "집" };
+            }
             ActivityDef best = null;
             foreach (var a in Def.Activities)
             {
@@ -97,6 +103,17 @@ namespace Haengin
             pointId = PointFor(best.Place, "");
             label = best.Name;
             return new Next { Title = best.Name, Time = GameClock.Hm(best.Start), Place = PlaceName(best.Place) };
+        }
+
+        /// G2: 이번 잠 뒤 새벽 배달 — 22시 넘으면 다음 날, 자정 넘으면 오늘. 열렸고 그 요일이고 아직 안 했으면(일요일 = 없음)
+        public ActivityDef DawnDelivery(int now)
+        {
+            var a = Def != null ? Def.Activity("job.delivery") : null;
+            if (a == null || Model == null || !Model.Unlocked(a.Unlock)) return null;
+            int day = now >= 22 * 60 ? GameClock.KeyPlus(Model.Today, 1) : Model.Today;
+            if (!a.OnDay(GameClock.WeekdayOfKey(day))) return null;
+            if (day == Model.Today && Model.DoneToday(a.Id)) return null;
+            return a;
         }
 
         static string PointFor(string place, string zone) => place switch
@@ -325,7 +342,9 @@ namespace Haengin
         bool DoorGate(StageDoor d)
         {
             if (!Active) return true;
-            if (!Free && busy.Count > 0) return false;
+            // G1-N1(2026-11-05): 자유 이동이 아니면(바쁨 · 체육관 드릴·결과 카드 · 휴대폰 · 일시정지) 또는 싸움·패배 화면 중이면 문도 안 열림.
+            //   (예전 'busy 가 있을 때만' — 드릴 결과 카드는 '드릴 뒤' 바쁨이 막아 실제로 새지는 않았음(Q63), 싸움·체육관 바쁨까지 같은 규칙으로 묶은 방어)
+            if (!Free || Fighting) return false;
             if (d.Target == SceneLoader.Gym)
             {
                 if (!Model.S.GymTrial && Model.S.GymMember == 0) { Hud?.Toast("마을버스 — 아직 대학로에 갈 일이 없다"); return false; }

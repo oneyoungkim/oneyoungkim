@@ -121,7 +121,8 @@ namespace Haengin
             var m = Actions.FindActionMap("Menu", false);
             if (m == null) return;
             if (on) { m.Enable(); pSub = submit != null && submit.IsPressed(); pCan = cancel != null && cancel.IsPressed(); heldDir = 0; }
-            else m.Disable();
+            // 닫을 때 Menu 맵을 끄지 않음(2026-11-05 QA B16): 일시정지 메뉴(GameUi)·휴대폰·고르기 판은 Menu 맵이 늘 켜져 있다고 보고 처음 한 번만 켬 —
+            //   예전엔 여기서 꺼 드릴 메뉴를 한 번 닫으면 일시정지 메뉴 ↑↓·Enter 가 안 먹었음(다른 판이 다시 켤 때까지)
         }
 
         public void Close()

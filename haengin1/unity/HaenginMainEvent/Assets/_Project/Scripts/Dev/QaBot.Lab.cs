@@ -15,22 +15,9 @@ namespace Haengin
     {
         IEnumerator PartB()
         {
-            if (labBase == null)
-            {
-                var f = Path.Combine(Out, "lab_base.json");
-                string alt = ArgVal("-qabase", "");
-                if (alt.Length > 0 && File.Exists(alt)) f = alt;
-                if (File.Exists(f)) labBase = SaveStore.ReadFile(f, out _);
-            }
-            if (W == null || !W.Active)
-            {
-                // B 만 돌릴 때: 타이틀 → 새 게임으로 세계를 띄운 뒤 바탕 저장으로 갈아탐
-                var title = FindAnyObjectByType<TitleMenu>();
-                if (title != null) title.Choose("새 게임");
-                for (int i = 0; i < 3600 && (W == null || !W.Active); i++) yield return null;
-                W.BotSkill = 0.9f; W.BotRead = 0.05f;
-                for (int i = 0; i < 60 * 600 && !W.Free; i++) yield return null;
-            }
+            // B 만 돌릴 때: 타이틀 → 새 게임으로 세계를 띄운 뒤 바탕 저장으로 갈아탐.
+            // G5 ④(2026-11-05): 옛 대기(봇 읽기를 Active 뒤에 켜 1장 카드에서 약 330초 멈춤 — 발견 '같은 화면 20초'·'같은 상태 25초' 덤)를 C·U 와 같은 LabReady 로(약 6초)
+            yield return LabReady();
             if (labBase == null) { Issue("lab.nobase", "QA", "실험실 바탕 저장이 없음 — B 건너뜀"); yield break; }
             baseDay = labBase.Month * 100 + labBase.Day;
             L($"실험실 바탕: {labBase.Label}");
@@ -367,22 +354,58 @@ namespace Haengin
                 else Issue("gym.marker", "눈에 띔", $"드릴 표시에서 × 를 눌러도 메뉴가 안 뜸({mk.name})");
             }
             string[] recs = { "D01", "D04", "D07", "D08" };
+            int started = 0;
             foreach (var def in Gm.Book.Drills.Where(x => x.Playable))
             {
                 M.G.Fatigue = 0;
+                M.G.InjuryUntil = -1; M.G.InjuryKind = "";     // 사람 D11(손 놓기)에서 머리를 맞으면 마지막 D11 이 '머리 부상'으로 막힘
+                // G5(2026-11-05): 18:00 + 사람 드릴 + 7개 × 30분 = 22:00 — 체육관 문 닫는 시각이라 D08·D10·D11 이 '문 닫았다'로 막혔음(게임 규칙대로) → 봇 순서가 마감 전으로 되돌림
+                if (KeepGymOpen(W.Def.Balance)) L($"G5 마감 전으로 시계 되돌림 → {GameClock.TimeText}");
                 yield return Frames(10);
-                L($"드릴 {def.Id} {def.NameKr}");
+                L($"드릴 {def.Id} {def.NameKr} · {GameClock.TimeText}");
                 bool rec = recs.Contains(def.Id);
+                int n0 = Gm.DrillsDone;
                 var play = PlayDrillShots(def);
                 if (rec) yield return RecWhile("드릴_" + def.Id + "_" + def.NameKr, 12f, play);
                 else yield return play;
+                if (Gm.DrillsDone > n0) started++;
                 yield return Advance(60f);
             }
+            L($"G5 드릴 {started}/{Gm.Book.Drills.Count(x => x.Playable)} 시작·끝");
+            // G5 ③: 문 닫음 경로도 한 번 — 22:01 에 드릴 표시에서 E → 관장 말 판만('문 닫았다 — 07:00~22:00')
+            GameClock.SetDate(GameClock.Year, GameClock.Month, GameClock.Day, 22 * 60 + 1);
+            yield return Frames(10);
+            var mk2 = Gm.Markers.FirstOrDefault(x => x != null && x.isActiveAndEnabled);
+            if (mk2 != null)
+            {
+                yield return WalkTo(mk2.transform.position, 0.8f, 12f, false, "드릴 표시 22시");
+                yield return Tap(Key.E);
+                yield return Frames(20);
+                yield return Shot("드릴_22시_문닫음", $"{GameClock.TimeText} · {Gm.Hud.CueName}: {Gm.Hud.Cue}");
+                if (!Gm.Hud.NoticeShown || !Gm.Hud.Cue.Contains("문 닫")) Issue("drill.closed.nonotice", "눈에 띔", $"22시 넘어 드릴 표시 E — 문 닫음 안내가 안 뜸('{Gm.Hud.Cue}')");
+                if (Gm.Busy) Issue("drill.closed.started", "눈에 띔", "22시 넘어 드릴 표시 E — 드릴·메뉴가 열림");
+                yield return Frames(200);
+            }
+        }
+
+        /// G5(2026-11-05): 드릴 하나 = 게임 30분(드릴이 끝날 때 WorldRunner.OnDrillFinished) — 이번 드릴이 체육관 닫는 시각을 넘기면 같은 날 backTo 로 되돌림(QA 순서용 — 게임 규칙은 그대로). 돌려주는 것 = 되돌렸나
+        public static bool KeepGymOpen(BalanceDef b, int backTo = 18 * 60)
+        {
+            if (b == null || (int)GameClock.Minutes + b.DrillMinutes <= b.GymClose) return false;
+            GameClock.SetDate(GameClock.Year, GameClock.Month, GameClock.Day, backTo);
+            return true;
         }
 
         IEnumerator PlayDrillShots(DrillDef def)
         {
-            if (!Gm.StartDrill(def.Id, 0.95f)) { Issue("drill.start." + def.Id, "눈에 띔", $"드릴 {def.Id} 시작 안 됨"); yield break; }
+            if (!Gm.StartDrill(def.Id, 0.95f))
+            {
+                // G5: 이유를 같이(예전엔 '시작 안 됨'만 — 문지기 거절은 로그도 없어 이유를 몰랐음)
+                string g = GymManager.Gate?.Invoke(def) ?? "";
+                string why = g.Length > 0 ? g : DrillSim.DirectBlocked(def, GymState.Current, GymSave.Today);
+                Issue("drill.start." + def.Id, "눈에 띔", $"드릴 {def.Id} 시작 안 됨 — {(why.Length > 0 ? why : "바쁨·자리 없음")} · {GameClock.TimeText}");
+                yield break;
+            }
             float t = 0f; int s = 0;
             while (Gm.Runner.State != DrillRunner.Phase.Result && t < 200f)
             {
@@ -615,9 +638,27 @@ namespace Haengin
             yield return Shot("시비_시작", enc != null ? enc.State.ToString() : "인카운터 없음");
             if (enc == null || enc.State == Encounter.Phase.Armed) { Issue("street.none", "눈에 띔", "시비가 열렸는데 주차장에 들어가도 안 걸림"); QuietStuck = false; yield break; }
             RecStart("시비_손놓기", 10f);
+            // G1(2026-11-05): 손 놓고 지는 데 걸리는 시간이 들쭉날쭉(적 공격권 — 1~4분, 200초를 넘겨 '질 때' 경로를 못 본 실행이 있었음) → 체력 10% 로 시작해 곧 지게
+            var pcl = FindAnyObjectByType<PlayerCombat>();
+            if (pcl != null && pcl.Me != null) { pcl.Me.Hp = Mathf.Min(pcl.Me.Hp, Mathf.Max(1, pcl.Me.MaxHp / 10)); L($"손 놓고 지기 — 체력 {pcl.Me.Hp}/{pcl.Me.MaxHp} 로(빨리 지게)"); }
             yield return WaitFor(() => enc.State == Encounter.Phase.Lost || enc.State == Encounter.Phase.Cleared, 200f);
             yield return Shot("시비_결과", enc.State.ToString());
             QuietStuck = false;
+            // G1(2026-11-05): 사람처럼 패배 화면에서 고름 — 1.5초 뒤 Esc(그만). 고른 뒤엔 전투가 꺼져야 함(예전엔 패배 화면·전투가 B15 끝까지 남아 B16 집으로 넘어감)
+            var sh = StageHud.Instance;
+            if (sh != null && sh.DefeatShown)
+            {
+                yield return Secs(1.5f);
+                yield return Shot("시비_패배화면", $"시비 {enc.State}");
+                yield return Tap(Key.Escape);
+                yield return Frames(30);
+                var pcq = FindAnyObjectByType<PlayerCombat>();
+                bool fighting = pcq != null && pcq.Active;
+                L($"시비 패배 → Esc(그만): 패배 화면 {sh.DefeatShown} · 전투 {fighting} · 시비 {enc.State} · 입력 맵 {InputMaps.Enabled(W.Actions)}");
+                if (fighting) Issue("combat.afterloss", "눈에 띔", $"시비에 지고 '그만'을 골랐는데 전투 상태가 남음 — 시비 {enc.State}");
+                if (sh.DefeatShown) Issue("defeat.noesc", "눈에 띔", "패배 화면에서 Esc(그만)가 안 먹음");
+                yield return Shot("시비_그만뒤", $"{M.S.StreetWins}승 {M.S.StreetLosses}패 · 전투 {fighting}");
+            }
             yield return Frames(60);
             yield return Advance(120f);
             yield return Shot("시비_뒤", $"{M.S.StreetWins}승 {M.S.StreetLosses}패 · {M.Status}");
@@ -673,7 +714,9 @@ namespace Haengin
             int w0 = M.L.Wallet, h0 = M.S.Household;
             yield return UseMarker("haneul");
             yield return WaitFor(() => Story().Board.Shown, 5f);
-            yield return Shot("하늘이_카드중");
+            yield return Shot("하늘이_카드중", Story().Board.Shown ? Story().Board.Title : "카드 없음");
+            // G1: 예전엔 B15 에서 남은 전투 조작 맵 때문에 E 가 안 먹어 카드가 한 번도 안 열렸음 — 카드 중 저장을 실제로 보는지
+            if (!Story().Board.Shown) Issue("savecard.nocard", "QA", $"하늘이 표시에서 E 를 눌러도 카드가 안 뜸 — 카드 중 저장을 못 봄 · 입력 맵 {InputMaps.Enabled(W.Actions)}");
             yield return SaveTitleContinue("카드중");
             if (M != null) L($"카드 중 저장 → 이어하기: 지갑 {w0} → {M.L.Wallet} · 생활비 {h0} → {M.S.Household} · {GameClock.TimeText} · {Ld.Place}");
             if (M != null && (M.L.Wallet != w0 || M.S.Household != h0)) Issue("savecard.money", "눈에 띔", $"카드 중 저장·불러오기 뒤 돈이 바뀜 지갑 {w0}→{M.L.Wallet} 생활비 {h0}→{M.S.Household}");
@@ -699,14 +742,29 @@ namespace Haengin
             yield return Advance(200f);
         }
 
+        /// G2(2026-11-05) 다시 짬: 예전엔 ① 05:02(02:00~05:30 강제 잠 구간 — 사람이 깨어 있을 수 없음)에 국밥집을 불러와 집으로 옮겨진 뒤 배달통 표시를 찾아 '표시 자리 없음' 발견이 났고
+        ///   ② 21:56 에서 2초·01:57 에서 30초만 기다려(걷는 동안 실제 1초 = 게임 3초) 22:00·02:00 에 닿지 않았고 ③ 바탕 저장의 '오늘 이미 한 일' 때문에 안내가 '오늘은 이미 했다'로 가려졌음.
+        ///   네 경계(22:00 · 05:00 · 23:00 · 02:00)마다 '다음' 판에 새벽 배달이 보이는지 봇이 잼(night.delivery.*)
         IEnumerator B_Night()
         {
             int wk = NextDay("월화수목금");
+            int next = NextDay("월화수목금", GameClock.KeyPlus(wk, 1));
             var cd = W.FindDoor("Conv");
-            yield return Load(wk, 21 * 60 + 56, SceneLoader.Zone1, m => { Unlocks(m); }, true, cd != null ? cd.ReturnPos : (Vector3?)null);
-            yield return Shot("21시56분_HUD");
-            yield return Secs(2.0f);
-            yield return Shot("22시_HUD", GameClock.TimeText);
+            void Fresh(WorldModel m) { Unlocks(m); foreach (var id in new[] { "job.delivery", "job.gukbap", "job.stock" }) ResetJob(m, id); }
+            void NightCheck(string at, string want)
+            {
+                string line = W.Hud != null ? W.Hud.NextLine : "";
+                L($"G2 {at}: {GameClock.DateText} {GameClock.TimeText} {Ld?.Place} · {line}");
+                if (!line.Contains(want)) Issue("night.delivery." + at, "눈에 띔", $"{at}: '다음' 판에 새벽 배달이 안 보임 — '{line}' ({GameClock.TimeText} {Ld?.Place})");
+            }
+            // 22:00 — 바깥(편의점 앞): 21:59 에서 걸어 22시를 넘김
+            yield return Load(wk, 21 * 60 + 59, SceneLoader.Zone1, Fresh, true, cd != null ? cd.ReturnPos : (Vector3?)null);
+            yield return Shot("21시59분_HUD", W.Hud != null ? W.Hud.NextLine : "");
+            yield return WaitFor(() => GameClock.Minutes >= 22 * 60, 40f);
+            if (GameClock.Minutes < 22 * 60) Issue("night.clock.22", "QA", $"22:00 에 못 닿음({GameClock.TimeText})");
+            yield return Frames(20);
+            yield return Shot("22시_HUD", $"{GameClock.TimeText} | {(W.Hud != null ? W.Hud.NextLine : "")}");
+            NightCheck("22시", "배달");
             yield return UseDoor(cd, "편의점(밤)");
             yield return Advance(120f);
             yield return Shot("밤_입고_표시", W.MarkerPrompt("job_stock"));
@@ -718,29 +776,48 @@ namespace Haengin
             yield return Frames(30);
             yield return Shot("밤_계산대_누름", W.MarkerPrompt("job_counter"));
             yield return Advance(60f);
-            // 새벽 5시 배달 표시(05:30 열림 전)
-            yield return Load(NextDay("월화수목금", GameClock.KeyPlus(wk, 1)), 5 * 60 + 2, "Gukbap", m => Unlocks(m));
-            yield return Shot("새벽5시_배달_표시", W.MarkerPrompt("job_delivery"));
+            // 05:00 — 02:00~05:30 은 강제 잠 구간: 05:02 국밥집을 불러오면 곧바로 집으로 옮겨 05:30 에 깨움 → 깬 뒤 '다음' 판에 배달
+            yield return Load(next, 5 * 60 + 2, "Gukbap", Fresh);
+            yield return WaitFor(() => W.Free && Ld.Place == "Home" && !Ld.Busy, 60f);
+            yield return Frames(20);
+            yield return Shot("새벽5시_강제잠_뒤", $"{GameClock.TimeText} {Ld.Place} | {(W.Hud != null ? W.Hud.NextLine : "")}");
+            if (Ld.Place != "Home" || (int)GameClock.Minutes != W.Def.Balance.Wake) Issue("night.dawn.wake", "눈에 띔", $"05:02 에 깨어 있음 — 강제 잠이 안 걸림({GameClock.TimeText} {Ld.Place})");
+            NightCheck("05시", "새벽 국밥 배달");
+            // 05:31 국밥집 — 배달통 표시(05:30 열림)
+            yield return Load(next, 5 * 60 + 31, "Gukbap", Fresh);
+            if (Marker("job_delivery") == null) Issue("marker.none.job_delivery", "진행 불가?", $"05:31 국밥집에 배달통 표시가 없음 ({Ld?.Place})");
+            string dp = W.MarkerPrompt("job_delivery");
+            yield return Shot("새벽5시31분_배달_표시", dp);
+            if (!dp.StartsWith("새벽 국밥 배달 06:00")) Issue("night.delivery.marker", "눈에 띔", $"05:31 배달통 안내가 '새벽 국밥 배달 06:00~' 이 아님 — '{dp}'");
             yield return UseMarker("job_delivery");
-            yield return Frames(30);
-            yield return Shot("새벽5시_배달_누름");
-            yield return Advance(300f);
-            // 국밥집 23시
-            yield return Load(wk, 23 * 60, "Gukbap", m => Unlocks(m));
-            yield return Shot("23시_서빙_표시", W.MarkerPrompt("job_serving"));
+            yield return WaitFor(() => ChoiceShown, 4f);
+            if (ChoiceShown)
+            {
+                yield return Shot("새벽5시31분_배달_누름", string.Join(" / ", Enumerable.Range(0, Story().Talk.Choice.Count).Select(Story().Talk.Choice.Label)));
+                yield return Choose(Story().Talk.Choice.Count - 1);      // '그만둔다'(자전거 코스로 가지 않게)
+            }
+            else Issue("night.delivery.nochoice", "눈에 띔", "05:31 배달통 E — 직접 한다/그만둔다 선택지가 안 뜸");
+            yield return Advance(60f);
+            // 23:00 — 국밥집 안(서빙은 밤이라 못 함, '다음' 판엔 내일 새벽 배달)
+            yield return Load(wk, 23 * 60, "Gukbap", Fresh);
+            yield return Shot("23시_서빙_표시", $"{W.MarkerPrompt("job_serving")} | {W.MarkerPrompt("job_delivery")} | {(W.Hud != null ? W.Hud.NextLine : "")}");
+            NightCheck("23시", "배달");
             yield return UseMarker("job_serving");
             yield return Frames(30);
             yield return Shot("23시_서빙_누름");
             yield return Advance(60f);
-            // 새벽 1:58 바깥 → 2시 강제 귀가
-            yield return Load(wk, 1 * 60 + 57, SceneLoader.Zone1, m => Unlocks(m), true, W.Def.Balance.Point("alley").Pos);
-            yield return Shot("새벽1시57분");
-            float t = 0f;
-            while (t < 30f && W.Free) { t += Time.unscaledDeltaTime; yield return null; }
+            // 02:00 — 골목 01:59 → 강제 귀가(집 05:30) → '다음' 판에 배달
+            yield return Load(wk, 1 * 60 + 59, SceneLoader.Zone1, Fresh, true, W.Def.Balance.Point("alley").Pos);
+            yield return Shot("새벽1시59분", W.Hud != null ? W.Hud.NextLine : "");
+            NightCheck("01시59분", "배달");
+            yield return WaitFor(() => W.Busy == "잠", 40f);
             yield return Frames(10);
-            yield return Shot("새벽2시_강제귀가");
-            yield return Advance(300f);
-            yield return Shot("강제귀가_뒤", M.Status);
+            yield return Shot("새벽2시_강제귀가", $"{GameClock.TimeText} · 바쁨 '{W.Busy}'");
+            if (W.Busy != "잠" && Ld.Place != "Home") Issue("night.force.sleep", "눈에 띔", $"02:00 강제 귀가가 안 걸림({GameClock.TimeText} · 바쁨 '{W.Busy}' · {Ld.Place})");
+            yield return WaitFor(() => W.Free && Ld.Place == "Home" && !Ld.Busy, 60f);
+            yield return Frames(20);
+            yield return Shot("강제귀가_뒤", $"{GameClock.TimeText} {Ld.Place} | {(W.Hud != null ? W.Hud.NextLine : "")} | {M.Status}");
+            NightCheck("02시", "새벽 국밥 배달");
         }
 
         IEnumerator B_MonthEnd()

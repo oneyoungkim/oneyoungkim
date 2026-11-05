@@ -397,7 +397,7 @@ namespace Haengin
         {
             if (!Active) return "";
             if (Model.S.GymMember == 0 && !inTrial && !inLesson) return "회원만 — 사무실에서 관장에게(회비 또는 청소 관원)";
-            if (!GymOpenHour(Model.Now, Def.Balance)) return "문 닫았다";
+            if (!GymOpenHour(Model.Now, Def.Balance)) return "문 닫았다";     // G5(2026-11-05): 시간까지 붙이면('— 07:00~22:00') 관장 말 판이 넓어져 드릴 자리 상호작용 안내와 겹쳐(QA 22:01 사진) 그대로 둠
             return "";
         }
         bool inTrial;
@@ -456,6 +456,23 @@ namespace Haengin
         }
 
         // ───────────────────────── 시비(M2 인카운터 Y4 재사용)
+        /// 시비 카드 싸움 시간 한도(초 — 시험은 줄임). G1(2026-11-05): 예전엔 넘으면 Fight 그대로 빠져나와 카드가 끝난 뒤 전투가 켜진 채 자유 이동이 됐음 → 패로 치고 전투를 끔
+        public float StreetFightLimit = 240f;
+        // G1: 시비 도중 멈추면(불러오기·타이틀로) 코루틴 뒷정리가 안 돌아 남던 것 — 봇이 끈 PInput · 무적 · 체력 효과
+        PInput fightPin; FightBot fightBot; PlayerCombat fightPc; int fightHpBase = -1;
+
+        void UndoFight()
+        {
+            if (fightBot != null) Destroy(fightBot);
+            if (fightPin != null) fightPin.enabled = true;
+            if (fightPc != null && fightPc.Me != null)
+            {
+                fightPc.Me.DebugInvuln = false;
+                if (fightHpBase > 0 && fightPc.Me.MaxHp != fightHpBase) { fightPc.Me.MaxHp = fightHpBase; fightPc.Me.Hp = Mathf.Min(fightPc.Me.Hp, fightHpBase); }
+            }
+            fightBot = null; fightPin = null; fightPc = null; fightHpBase = -1;
+        }
+
         IEnumerator StreetFight(CardDef c)
         {
             var enc = FindAnyObjectByType<Encounter>(FindObjectsInactive.Include);
@@ -469,6 +486,7 @@ namespace Haengin
             enc.ResetAll(true);
             // 먹은 효과 '체력': 싸움 최대 체력 +%(14-6)
             int hpBase = pc.Me.MaxHp;
+            fightPc = pc; fightHpBase = hpBase;
             if (Model.HpBonus > 0f) { pc.Me.MaxHp = Mathf.RoundToInt(hpBase * (1f + Model.HpBonus)); pc.Me.Hp = pc.Me.MaxHp; Hud?.Toast($"체력 효과 — 최대 체력 {hpBase} → {pc.Me.MaxHp}"); }
             (pc.Me.Body as PlayerBody)?.Place(d.ToWorld(d.RetryLocal) + Vector3.up * 0.1f, d.Yaw + 180f);
             Loader.Cam?.SnapBehind();
@@ -489,6 +507,7 @@ namespace Haengin
             {
                 pc.Me.DebugInvuln = true;
                 pin = FindAnyObjectByType<PInput>(); if (pin != null) pin.enabled = false;
+                fightPin = pin;
                 var motor = pc.Motor;
                 for (int i = 0; i < 900 && enc.State == Encounter.Phase.Armed; i++)
                 {
@@ -498,6 +517,7 @@ namespace Haengin
                 }
                 motor.ClearMoveInput();
                 bot = FightBot.On(pc, false);
+                fightBot = bot;
             }
             else
             {
@@ -505,13 +525,20 @@ namespace Haengin
                 Story.Talk?.Sub?.Hide();
             }
             float w = 0f;
-            while (enc.State != Encounter.Phase.Cleared && enc.State != Encounter.Phase.Lost && w < 240f) { w += Time.deltaTime; yield return null; }
+            while (enc.State != Encounter.Phase.Cleared && enc.State != Encounter.Phase.Lost && w < StreetFightLimit) { w += Time.deltaTime; yield return null; }
+            // 정리·결과 카드 중에 한도가 지났으면 마저(이긴 싸움을 시간 초과로 치지 않게)
+            for (float x = 0f; (enc.State == Encounter.Phase.Finish || enc.State == Encounter.Phase.Result) && x < 6f; x += Time.deltaTime) yield return null;
             bool won = enc.State == Encounter.Phase.Cleared;
             if (enc.State == Encounter.Phase.Lost) { StageHud.Instance?.DefeatChoose(false); yield return null; }
-            if (bot != null) Destroy(bot);
-            if (pin != null) pin.enabled = true;
-            pc.Me.DebugInvuln = false;
-            if (pc.Me.MaxHp != hpBase) { pc.Me.MaxHp = hpBase; pc.Me.Hp = Mathf.Min(pc.Me.Hp, hpBase); }
+            else if (!won)
+            {
+                // G1: 시간 초과(말 걸기·싸움 그대로) — 패로 치고 '그만'처럼 처음 자리로(전투 끔 · 시우는 주차장 밖 인도)
+                Debug.Log($"[World] 시비 {c?.Id} 시간 초과({StreetFightLimit:0}초 · {enc.State}) — 패로 치고 전투 끔");
+                StageHud.Instance?.HideDefeat();
+                enc.ResetAll(false);
+                yield return null;
+            }
+            UndoFight();
             Encounter.Suppress = true;
             watched = enc; watchedPhase = enc.State;
             var b = Def.Balance;

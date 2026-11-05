@@ -273,6 +273,47 @@ namespace Haengin
             Go(Phase.Armed);
         }
 
+        /// G1(2026-11-05): 불러오기·멈춤 정리 — 싸우던 중(말 걸기~결과·패배)이면 전투를 끄고 적·구경꾼·시우 몸 상태를 처음으로. 시우 자리는 그대로, 패배 화면 콜백 없이(다음 시비는 그대로 걸림)
+        ///   (예전엔 WorldRunner.Stop/Begin 이 인카운터를 안 봐서 집 저장을 열어도 전투 조작·전투 HUD·KO 자세가 남았음 — QA B16)
+        public void Abort()
+        {
+            if (State == Phase.Armed || State == Phase.Cleared) return;
+            foreach (var w in walls) if (w != null) w.enabled = false;
+            if (ring != null) ring.enabled = false;
+            if (Mode != null && Mode.Active) Mode.End(); else if (Player != null && Player.Active) Player.End();
+            TimeFx.Reset();
+            ClearSolo();
+            if (Def != null)
+            {
+                for (int i = 0; i < Brains.Count && i < Def.Foes.Length; i++)
+                {
+                    if (Brains[i] == null) continue;
+                    var feet = Ground(Def.ToWorld(Def.Foes[i].Local));
+                    Brains[i].ResetBrain(feet, FaceCenterYaw(feet));
+                }
+                for (int i = 0; i < Crowd.Count && i < Def.Crowd.Length; i++)
+                {
+                    var c = Crowd[i];
+                    if (c == null) continue;
+                    c.gameObject.SetActive(true);
+                    var p = Ground(Def.ToWorld(Def.Crowd[i]));
+                    c.transform.SetPositionAndRotation(p, Quaternion.Euler(0f, FaceCenterYaw(p), 0f));
+                    c.SetHome();
+                }
+            }
+            if (Player != null && Player.Me != null)
+            {
+                Player.Me.ResetFighter();
+                Player.Me.ScriptAnim = null;
+                if (Player.Heat != null && Player.T != null) Player.Heat.Set(Player.T.HeatStart);
+            }
+            rearmOnLeave = false;
+            lostAt = -1;
+            if (GameUi.RetryHook == (Action)RetryFromMenu) GameUi.RetryHook = null;
+            Debug.Log($"[Encounter] {(Def != null ? Def.Title : name)}: {State} 중 멈춤 — 전투 끔");
+            Go(Phase.Armed);
+        }
+
         /// QA Q27 오픈월드 '시비 반복': 시우를 옮기지 않고 적·구경꾼만 처음 자리로 — 다시 걸어 들어오면 시비(이긴 뒤 Cleared 에 머물러 두 번째 시비가 영영 안 걸리던 것)
         public void Rearm()
         {

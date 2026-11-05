@@ -542,15 +542,29 @@ namespace Haengin
             if (sameScreenFrames >= 60 * 20 && !W.Free && !QuietStuck) { Issue($"samescreen.{W.Busy}", "진행 불가?", $"같은 화면 20초 넘게 — 바쁨 '{W.Busy}'"); sameScreenFrames = -100000; }
             // 전투 상태가 바뀌면 기록 · 자유 이동 중 전투 HUD 가 2초 넘게 켜져 있으면 발견
             var pcb = pcCache != null ? pcCache : (pcCache = FindAnyObjectByType<PlayerCombat>());
+            // G1(2026-11-05): 정상 싸움은 뺌 — 시비 반복은 busy 없이 걸려 W.Free 가 참이라 예전 감시는 싸움 2초 만에 늘 발견으로 쳤음(B15).
+            //   주차장 인카운터 단계로 가림(W.InFight·FreePaused 는 PlayerCombat.Active 를 품어 쓰면 영영 발견이 안 나옴)
+            if (Time.unscaledTime >= encLookAt) { encLookAt = Time.unscaledTime + 0.5f; encWatch = StoryRunner.ParkingEncounter(); }
+            var es = encWatch != null && encWatch.isActiveAndEnabled ? encWatch.State : Encounter.Phase.Armed;
+            var sh = StageHud.Instance;
+            bool defeatUp = sh != null && sh.DefeatShown;
+            bool inZone = Ld != null && Ld.Place == SceneLoader.Zone1;
+            bool legit = (Gm != null && Gm.Busy) || (inZone && (es == Encounter.Phase.Taunt || es == Encounter.Phase.Fight || es == Encounter.Phase.Finish || es == Encounter.Phase.Result || (es == Encounter.Phase.Lost && defeatUp)));
             if (pcb != null)
             {
-                if (pcb.Active != pcActiveWas) { pcActiveWas = pcb.Active; L($"전투 상태 {(pcb.Active ? "켬" : "끔")} — 바쁨 '{W.Busy}' · 장소 {Ld?.Place} · 드릴 {(Gm != null && Gm.Runner != null ? Gm.Runner.State.ToString() : "-")} · 카드 {W.CurrentCard?.Id}"); }
-                if (pcb.Active && W.Free && !(Gm != null && Gm.Busy)) pcFreeT += dt; else pcFreeT = 0f;
-                if (pcFreeT > 2f) Issue("combat.free." + Ld?.Place, "눈에 띔", $"자유 이동 중인데 전투 상태(전투 HUD·전투 조작)가 켜져 있음 — {Ld?.Place}");
+                if (pcb.Active != pcActiveWas) { pcActiveWas = pcb.Active; L($"전투 상태 {(pcb.Active ? "켬" : "끔")} — 바쁨 '{W.Busy}' · 장소 {Ld?.Place} · 드릴 {(Gm != null && Gm.Runner != null ? Gm.Runner.State.ToString() : "-")} · 카드 {W.CurrentCard?.Id} · 시비 {es}"); }
+                if (pcb.Active && W.Free && !legit) pcFreeT += dt; else pcFreeT = 0f;
+                if (pcFreeT > 2f) Issue("combat.free." + Ld?.Place, "눈에 띔", $"자유 이동 중인데 전투 상태(전투 HUD·전투 조작)가 켜져 있음 — {Ld?.Place} · 시비 {es}");
             }
+            // 패배 화면이 싸움 없이 남음(주차장 인카운터가 꺼졌거나 Lost 가 아님 — 예전 B16 집 저장의 '…일어나')
+            if (defeatUp && !stagedDefeat && !(encWatch != null && encWatch.isActiveAndEnabled && es == Encounter.Phase.Lost)) staleDefeatT += dt; else staleDefeatT = 0f;
+            if (staleDefeatT > 1f) Issue("defeat.stale." + Ld?.Place, "눈에 띔", $"싸움이 없는데 패배 화면이 떠 있음 — {Ld?.Place} · 시비 {es}");
             BotWatch();
         }
-        PlayerCombat pcCache; bool pcActiveWas; float pcFreeT;
+        PlayerCombat pcCache; bool pcActiveWas; float pcFreeT, staleDefeatT, encLookAt;
+        Encounter encWatch;
+        /// 연출로 띄운 패배 화면(U5 사진) — 'defeat.stale' 감시에서 뺌
+        bool stagedDefeat;
 
         StoryRunner storyCache;
         StoryRunner Story() { if (storyCache == null) storyCache = W != null ? W.Story : null; return storyCache; }
@@ -796,7 +810,8 @@ namespace Haengin
             {
                 if (done != null && done()) yield break;
                 if (W == null || !W.Active) { yield return null; continue; }
-                bool free = W.Free && (Ld == null || !Ld.Busy) && !(Story() != null && Story().InScene);
+                // G1: 패배 화면('…일어나')은 Free 에 안 잡혀(시비 반복은 busy 없음) 넘기기가 10프레임 만에 끝나 화면을 못 골랐음 → 사람처럼 고름
+                bool free = W.Free && (Ld == null || !Ld.Busy) && !(Story() != null && Story().InScene) && !(StageHud.Instance != null && StageHud.Instance.DefeatShown);
                 if (free && done == null) { if (++freeFrames > 10) yield break; yield return null; continue; }
                 freeFrames = 0;
                 string kind, key; UiNow(out kind, out key);

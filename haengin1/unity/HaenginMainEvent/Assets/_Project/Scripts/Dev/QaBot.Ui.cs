@@ -115,9 +115,11 @@ namespace Haengin
             var stage = StageHud.Instance;
             if (stage != null)
             {
+                stagedDefeat = true;      // 연출 사진 — 'defeat.stale' 감시에서 뺌
                 stage.Defeat(() => { }, () => { });
                 yield return Secs(1.6f); yield return ShotIf("화면_패배", () => stage.DefeatShown, "패배 화면");
                 stage.DefeatChoose(false); yield return Frames(10);
+                stagedDefeat = false;
             }
         }
 

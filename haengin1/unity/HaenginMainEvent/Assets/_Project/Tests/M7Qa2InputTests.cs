@@ -80,6 +80,37 @@ namespace Haengin.Tests
             Debug.Log($"[Q] Q40 ② 드릴 D01: Esc 일시정지 · 멈춘 동안 라운드 {T0:F2}초 그대로 · 풀고 이어짐");
         }
 
+        // ───────────────────────── Q62b G1-b(2026-11-05): 시비 반복 싸움 중 Tab — 휴대폰이 안 열림(예전엔 Tab 을 키보드에서 바로 읽어 열렸고, 휴대폰은 내 입력만 막아 적은 계속 쳤음)
+        [UnityTest, Timeout(600000)]
+        public IEnumerator Q62b_Tab_Opens_No_Phone_In_Street_Fight()
+        {
+            var kb = InputSystem.AddDevice<Keyboard>();
+            kb.MakeCurrent();
+            WorldRunner w = null;
+            yield return M7Qa2Tests.Open(x => w = x);
+            var pk = w.Def.Balance.Point("parking");
+            yield return M7Qa2Tests.Start(w, M7Qa2Tests.Mid(w.Def, 311, 17 * 60, SceneLoader.Zone1, m => { m.G.Fatigue = 0; m.Unlock("street_repeat"); }, pk.Pos + new Vector3(0f, 0.5f, 25f)));
+            yield return Lab.Frames(30);
+            // 시험 전제: 자유 이동에선 Tab = 휴대폰
+            Press(kb.tabKey); yield return null; yield return null; Release(kb.tabKey); yield return Lab.Frames(5);
+            bool freeOpen = w.Phone.Shown;
+            w.Phone.Close();
+            yield return Lab.Frames(10);
+            Assert.IsTrue(freeOpen, "자유 이동 중 Tab 으로 휴대폰이 안 열림(시험 전제 — 가짜 키보드)");
+            var enc = StoryRunner.ParkingEncounter();
+            Assert.NotNull(enc, "주차장 시비 무대");
+            var pc = Object.FindAnyObjectByType<PlayerCombat>();
+            enc.Trigger();
+            float t0 = Time.realtimeSinceStartup;
+            while (!pc.Active && Time.realtimeSinceStartup - t0 < 5f) yield return null;
+            Assert.IsTrue(pc.Active, "시비 전투가 안 켜짐(시험 전제)");
+            Press(kb.tabKey); yield return null; yield return null; Release(kb.tabKey); yield return Lab.Frames(5);
+            bool fightOpen = w.Phone.Shown;
+            Debug.Log($"[Q] Q62b Tab: 자유 이동 휴대폰 {freeOpen} · 싸움 중 휴대폰 {fightOpen} · 시비 {enc.State} · Free {w.Free}");
+            if (fightOpen) w.Phone.Close();
+            Assert.IsFalse(fightOpen, "시비 싸움 중 Tab 으로 휴대폰이 열림");
+        }
+
         static IEnumerator Run(IEnumerator e, System.Action done) { yield return e; done(); }
     }
 }

@@ -113,6 +113,16 @@ namespace Haengin
             a?.Invoke();
         }
 
+        /// G1(2026-11-05): 패배 화면만 내림(다시·그만 콜백은 부르지 않음 — 불러오기·멈춤·시간 초과 정리)
+        public void HideDefeat()
+        {
+            if (!DefeatShown) return;
+            defeat.SetActive(false);
+            GameState.Modal = false;
+            defeatRetry = defeatQuit = null;
+            Debug.Log("[Stage] 패배 화면 내림(정리)");
+        }
+
         public void Dialog(string who, string text, string yes, string no, Action<bool> done)
         {
             Build();

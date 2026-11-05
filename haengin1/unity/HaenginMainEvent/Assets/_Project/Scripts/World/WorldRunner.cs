@@ -38,9 +38,11 @@ namespace Haengin
         public string Busy => busy.Count > 0 ? busy.Peek() : "";
         /// 일시정지만 빼면 자유 이동인가(일시정지 메뉴의 '휴대폰'을 고를 수 있나 — G9)
         public bool FreePaused => Active && busy.Count == 0 && (Loader == null || !Loader.Busy) && (Phone == null || !Phone.Shown) && (GymManager.Instance == null || !GymManager.Instance.Busy)
-            && !InFight && (Story == null || !Story.InScene);
+            && !Fighting && (Story == null || !Story.InScene);
         /// 싸움 중인가(시비 말 걸기부터 — Ui 갱신이 매 프레임 넣음)
         public bool InFight { get; private set; }
+        /// G1(2026-11-05): 싸움 중이거나 패배 화면('…일어나')이 떠 있음 — 시비 반복은 busy 없이 걸려 Free 가 참이라, 그동안 카드·02:00 강제 잠·휴대폰(Tab)·문을 새로 열지 않게
+        public bool Fighting => InFight || (StageHud.Instance != null && StageHud.Instance.DefeatShown);
         public bool Free => Active && busy.Count == 0 && (Loader == null || !Loader.Busy) && !GameState.Paused && (Phone == null || !Phone.Shown) && (GymManager.Instance == null || !GymManager.Instance.Busy);
 
         [Header("봇(시험·스모크·녹화)")]
@@ -92,6 +94,7 @@ namespace Haengin
         {
             if (Def == null) { Debug.LogError("[World] WorldDef 가 없습니다 — WorldSetup.Build"); return; }
             if (Active) Stop();
+            EndCombat();      // G1: 멈춘 뒤·처음 시작에도 남은 전투·패배 화면이 있으면 끔(시험·QA 의 제자리 불러오기)
             BotPreset?.Invoke(this);
             if (Story == null) Story = FindAnyObjectByType<StoryRunner>(FindObjectsInactive.Include);
             if (Loader == null) Loader = Story.Loader;
@@ -135,6 +138,9 @@ namespace Haengin
             Active = false;
             StopAllCoroutines();
             busy.Clear();
+            // G1(2026-11-05): 싸우던 중·패배 화면에서 멈추면(QA 불러오기·시험) 전투 조작·전투 HUD·패배 화면이 남아 이동·상호작용·일시정지가 먹통이었음 → 이야기 정리(Explore 맵) 전에 끔
+            UndoFight();
+            EndCombat();
             GymManager.Gate = null;
             GymManager.Finished -= OnDrillFinished;
             ShopStop();
@@ -148,6 +154,24 @@ namespace Haengin
             GameState.Modal = false;
             CutCams.ReleaseAll();
             Debug.Log("[World] 멈춤");
+        }
+
+        /// G1(2026-11-05): 남은 전투를 끈다 — 패배 화면(콜백 없이) · 싸우던 인카운터(시우 자리 그대로) · 전투 모드 · 전투 조작 맵. 돌려주는 것 = 끈 수
+        public static int EndCombat()
+        {
+            int n = 0;
+            var hud = StageHud.Instance;
+            if (hud != null && hud.DefeatShown) { hud.HideDefeat(); n++; }
+            foreach (var e in FindObjectsByType<Encounter>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (e != null && e.State != Encounter.Phase.Armed && e.State != Encounter.Phase.Cleared) { e.Abort(); n++; }
+            foreach (var cm in FindObjectsByType<CombatMode>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (cm != null && cm.Active) { cm.End(); n++; }
+            foreach (var pc in FindObjectsByType<PlayerCombat>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (pc != null && pc.Active) { pc.End(); n++; }
+            foreach (var pi in FindObjectsByType<PInput>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (pi != null && pi.CombatInput) { pi.SetCombatMap(false); n++; }
+            if (n > 0) { TimeFx.Reset(); Debug.Log($"[World] 남은 전투 끔 — {n}곳"); }
+            return n;
         }
 
         void SetYacha(bool on)
@@ -216,7 +240,7 @@ namespace Haengin
             if (!Free) return;
             // 걷는 동안 시계(일시정지·히트스톱이면 0)
             GameClock.Advance(TimeFx.Dt * Def.Balance.ClockRate / 60.0);
-            PhoneKey();
+            if (!Fighting) PhoneKey();      // G1: 시비 반복 싸움·패배 화면 중 Tab 으로 휴대폰이 열려 내 입력만 막히고 적은 계속 쳤음
             evalLeft -= UiKit.RealDt;
             if (evalLeft <= 0f) { evalLeft = 0.2f; Evaluate(); }
         }
@@ -224,6 +248,8 @@ namespace Haengin
         void Evaluate()
         {
             if (!Free) return;
+            // G1(2026-11-05): 시비 반복 싸움·패배 화면 동안엔 카드·02:00 강제 잠·레슨·데모 끝을 새로 열지 않음(싸움 한가운데 집으로 옮겨져 전투가 켜진 채 남을 수 있었음) — 시비 승패 기록만
+            if (Fighting) { if (Loader != null && Loader.Place == SceneLoader.Zone1) StreetRepeat(); return; }
             var b = Def.Balance;
             Model.BeginDayIfNeeded();
             // 자정을 넘김 — 어제의 '잠 전' 카드

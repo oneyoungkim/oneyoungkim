@@ -224,6 +224,7 @@ namespace Haengin
         {
             if (co != null) StopCoroutine(co);
             co = null;
+            UndoBoss();
             if (Cut != null) Cut.Abort();
             CutCtx.End();
             Talk?.HideAll();
@@ -427,6 +428,26 @@ namespace Haengin
         // ───────────────────────── 보스전(2026-10-29): 6-3 = 민재(석 달) 1:1(나머지 둘은 지켜봄) · 7-1 = 1:3. 지면 패배 화면(다시·그만) — 그만이면 주차장에 다시 들어가면 시작
         public int BossFights, BossLosses;
         public bool BossLast { get; private set; }
+        /// 보스전 시간 한도(초). 넘으면 전투를 끄고 '시간 초과'(G1)
+        public float BossFightLimit = 600f;
+        /// G1: 보스전 도중 멈추면(불러오기·시험 정리) 코루틴 뒷정리가 안 돌아 남던 것 — 임시 인카운터 · 숨긴 주차장 인카운터 · 봇이 끈 PInput · 무적
+        sealed class BossLeft { public GameObject Tmp; public Encounter Src, Enc; public bool SrcOn; public EncounterDef Def0, Copy; public PInput Pin; public PlayerCombat Pc; public FightBot Bot; }
+        BossLeft boss;
+
+        void UndoBoss()
+        {
+            var b = boss; boss = null;
+            if (b == null) return;
+            StageHud.Instance?.HideDefeat();
+            if (b.Enc != null) { b.Enc.Abort(); b.Enc.ClearSolo(); }
+            if (b.Bot != null) Destroy(b.Bot);
+            if (b.Pin != null) b.Pin.enabled = true;
+            if (b.Pc != null && b.Pc.Me != null) b.Pc.Me.DebugInvuln = false;
+            if (b.Tmp != null) { Destroy(b.Tmp); if (b.Src != null) b.Src.gameObject.SetActive(b.SrcOn); }
+            else if (b.Enc != null && b.Def0 != null) b.Enc.Def = b.Def0;
+            if (b.Copy != null) Destroy(b.Copy);
+            Debug.Log("[M3] 보스전 도중 멈춤 — 임시 인카운터·입력 되돌림");
+        }
         /// 후문 뒷골목 주차장 인카운터(장면에는 와룡공원 야차도 있음 — 아무거나 집으면 안 됨)
         public static Encounter ParkingEncounter()
         {
@@ -477,17 +498,22 @@ namespace Haengin
             FightBot bot = null; PInput pin = null;
             bool botOn = Bot != BotMode.None;
             if (botOn) { pc.Me.DebugInvuln = true; pin = FindAnyObjectByType<PInput>(); if (pin != null) pin.enabled = false; }
+            boss = new BossLeft { Tmp = tmp, Src = src, SrcOn = srcOn, Enc = enc, Def0 = def0, Copy = d, Pin = pin, Pc = pc };
             float w = 0f; int losses0 = enc.Losses; bool first = true;
-            while (enc.State != Encounter.Phase.Cleared && w < 600f)
+            while (enc.State != Encounter.Phase.Cleared && w < BossFightLimit)
             {
                 // 처음(과 봇)은 바로 시작, 사람이 '그만'을 고른 뒤엔 주차장 안으로 다시 들어오면(인카운터가 스스로) 시작
-                if (enc.State == Encounter.Phase.Armed && (first || botOn)) { first = false; enc.Trigger(); if (botOn && bot == null) bot = FightBot.On(pc, false); }
+                if (enc.State == Encounter.Phase.Armed && (first || botOn)) { first = false; enc.Trigger(); if (botOn && bot == null) { bot = FightBot.On(pc, false); boss.Bot = bot; } }
                 if (enc.State == Encounter.Phase.Lost && botOn) { StageHud.Instance?.DefeatChoose(true); }
                 w += Time.deltaTime;
                 yield return null;
             }
+            for (float x = 0f; (enc.State == Encounter.Phase.Finish || enc.State == Encounter.Phase.Result) && x < 6f; x += Time.deltaTime) yield return null;
             BossLast = enc.State == Encounter.Phase.Cleared;
             BossLosses += enc.Losses - losses0;
+            // G1(2026-11-05): 시간 초과면 전투·패배 화면(곧 지울 임시 인카운터의 다시·그만 콜백)이 켜진 채 남던 것 → 끔
+            if (!BossLast) { StageHud.Instance?.HideDefeat(); enc.Abort(); }
+            boss = null;
             if (bot != null) Destroy(bot);
             if (pin != null) pin.enabled = true;
             pc.Me.DebugInvuln = false;

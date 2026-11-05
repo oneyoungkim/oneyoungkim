@@ -640,6 +640,408 @@ namespace Haengin.Tests
             finally { GameUi.BookHook = keepHook; GameUi.BookAllowed = keepAllowed; GameUi.SubOpen = keepSub; GameState.SetPaused(false); }
         }
 
+        /// 실제 시간 s 초(세계 평가 0.2초·알림처럼 실제 시간으로 도는 것을 기다릴 때 — 배치 시험은 프레임이 빠름)
+        static IEnumerator Real(float s) { float t = Time.realtimeSinceStartup; while (Time.realtimeSinceStartup - t < s) yield return null; }
+        /// 조건이 될 때까지(실제 시간 s 초까지)
+        static IEnumerator Until(System.Func<bool> c, float s) { float t = Time.realtimeSinceStartup; while (!c() && Time.realtimeSinceStartup - t < s) yield return null; }
+
+        /// 시비 반복(주차장 북쪽 25m — Q27·Q36 과 같은 자리)에서 말 걸기 → 전투가 켜질 때까지
+        static IEnumerator StreetStart(WorldRunner w, int day, System.Action<Encounter, PlayerCombat> got)
+        {
+            var pk = w.Def.Balance.Point("parking");
+            yield return Start(w, Mid(w.Def, day, 17 * 60, SceneLoader.Zone1, m => { m.G.Fatigue = 0; m.Unlock("street_repeat"); }, pk.Pos + new Vector3(0f, 0.5f, 25f)));
+            yield return Lab.Frames(30);
+            var enc = StoryRunner.ParkingEncounter();
+            Assert.NotNull(enc, "주차장 시비 무대(45m 안)");
+            var pc = Object.FindAnyObjectByType<PlayerCombat>();
+            Assert.NotNull(pc);
+            enc.Trigger();
+            float t0 = Time.realtimeSinceStartup;      // 말 걸기 0.8초(실제 시간) 뒤 전투
+            while (!pc.Active && Time.realtimeSinceStartup - t0 < 5f) yield return null;
+            Assert.IsTrue(pc.Active, "시비 전투가 안 켜짐(시험 전제)");
+            got(enc, pc);
+        }
+
+        /// 손 놓고 지기(체력 0) → 패배 화면까지(쓰러지고 1.2초 — 실제 시간)
+        static IEnumerator LoseStreet(Encounter enc, PlayerCombat pc)
+        {
+            pc.Me.DebugInvuln = false;
+            pc.Me.Hp = 0;
+            float t0 = Time.realtimeSinceStartup;
+            while (!(enc.State == Encounter.Phase.Lost && StageHud.Instance != null && StageHud.Instance.DefeatShown) && Time.realtimeSinceStartup - t0 < 8f) yield return null;
+            Assert.AreEqual(Encounter.Phase.Lost, enc.State, "체력 0 → 패배");
+            Assert.IsTrue(StageHud.Instance != null && StageHud.Instance.DefeatShown, "패배 화면('…일어나')");
+        }
+
+        // ───────────────────────── Q62 G1-b(2026-11-05): 시비 반복 싸움·패배 화면 동안엔 02:00 강제 잠이 안 걸림(예전: Free 가 참이라 싸움 한가운데 집으로 옮겨져 전투가 켜진 채 남음) ·
+        //   지면 패 기록은 그대로 · '그만'이면 전투를 끄고 탐색으로 · 강제 잠은 싸움이 끝난 뒤에
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q62_Street_Fight_Holds_Night_Limit_And_Quit_Ends_Combat()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            Encounter enc = null; PlayerCombat pc = null;
+            yield return StreetStart(w, 311, (e, p) => { enc = e; pc = p; });
+            var pin = pc.GetComponent<PInput>() ?? Object.FindAnyObjectByType<PInput>();
+            int sleeps0 = w.Sleeps, loss0 = w.Model.S.StreetLosses;
+            GameClock.SetDate(2026, 3, 11, 2 * 60 + 1);        // 싸우는 중에 새벽 2시(같은 날 — 날 바뀜 카드 없이)
+            yield return Real(1.0f);                              // 세계 평가는 실제 0.2초마다
+            string mid = $"싸움 중 02:01 → 바쁨 '{w.Busy}' · 잠 +{w.Sleeps - sleeps0} · 장소 {w.Loader.Place} · 시비 {enc.State}";
+            Assert.AreEqual("", w.Busy, "싸움 중에 02:00 강제 잠(또는 카드)이 걸림 — " + mid);
+            Assert.AreEqual(sleeps0, w.Sleeps, mid);
+            Assert.AreEqual(SceneLoader.Zone1, w.Loader.Place, mid);
+            yield return LoseStreet(enc, pc);
+            yield return Real(1.0f);
+            string lost =$"패배 화면 → 바쁨 '{w.Busy}' · 시비 패 +{w.Model.S.StreetLosses - loss0}";
+            Assert.AreEqual("", w.Busy, "패배 화면 중에 강제 잠·카드가 걸림 — " + lost);
+            Assert.AreEqual(loss0 + 1, w.Model.S.StreetLosses, "싸움 중에도 시비 반복 승패 기록은 돌아야 함 — " + lost);
+            StageHud.Instance.DefeatChoose(false);       // 그만
+            yield return Lab.Frames(10);
+            string quit = $"그만 → 전투 {pc.Active} · 전투 맵 {pin.CombatInput} · 맵 {InputMaps.Enabled(w.Actions)} · Modal {GameState.Modal} · 시비 {enc.State}";
+            Assert.IsFalse(pc.Active, quit);
+            Assert.IsFalse(pin.CombatInput, quit);
+            Assert.AreEqual(InputMaps.Explore, InputMaps.Enabled(w.Actions), quit);
+            Assert.IsFalse(GameState.Modal, quit);
+            Assert.AreEqual(Encounter.Phase.Armed, enc.State, quit);
+            // 싸움이 끝나면 강제 잠이 정상으로(집 · 05:30 · 전투 없음)
+            yield return Until(() => w.Sleeps > sleeps0 && w.Free && !w.Loader.Busy, 90f);
+            string after = $"그 뒤 → 잠 +{w.Sleeps - sleeps0} · {GameClock.TimeText} {w.Loader.Place} · 전투 {pc.Active}";
+            Debug.Log($"[Q] Q62 시비 반복 싸움 중 밤 한계\n{mid}\n{lost}\n{quit}\n{after}");
+            Assert.AreEqual(sleeps0 + 1, w.Sleeps, "싸움이 끝난 뒤 강제 잠이 안 옴 — " + after);
+            Assert.AreEqual("Home", w.Loader.Place, after);
+            Assert.IsFalse(pc.Active, after);
+        }
+
+        // ───────────────────────── Q62a G1(2026-11-05): 패배 화면에서 불러오기(QA 의 제자리 불러오기 = Stop → Begin) — 전투 조작·전투 HUD·패배 화면·KO 가 안 남음
+        //   (예전 QA B16: 집 저장을 열어도 '…일어나'와 반시우 체력 바가 남고 E 가 안 먹어 하늘이 카드가 한 번도 안 열렸음)
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q62a_Load_After_Street_Loss_Leaves_No_Combat()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            Encounter enc = null; PlayerCombat pc = null;
+            yield return StreetStart(w, 311, (e, p) => { enc = e; pc = p; });
+            var pin = pc.GetComponent<PInput>() ?? Object.FindAnyObjectByType<PInput>();
+            yield return LoseStreet(enc, pc);
+            var pk = w.Def.Balance.Point("parking").Pos;
+            yield return Start(w, Mid(w.Def, 315, 10 * 60, "Home", m => m.G.Fatigue = 0));
+            var hud = StageHud.Instance;
+            var cm = CombatMode.Current;
+            string s = $"불러온 뒤 → 전투 {pc.Active} · 전투 모드 {(cm != null && cm.Active)} · 전투 맵 {pin.CombatInput} · 맵 {InputMaps.Enabled(w.Actions)} · 패배 화면 {(hud != null && hud.DefeatShown)} · Modal {GameState.Modal} · 몸 {pc.Me.State}/KO {pc.Me.KO} · {w.Loader.Place} · 시비 {StoryRunner.ParkingEncounter()?.State}";
+            Assert.IsFalse(pc.Active, "불러온 뒤에도 전투 상태 — " + s);
+            Assert.IsFalse(cm != null && cm.Active, s);
+            Assert.IsFalse(pin.CombatInput, s);
+            Assert.AreEqual(InputMaps.Explore, InputMaps.Enabled(w.Actions), s);
+            Assert.IsFalse(hud != null && hud.DefeatShown, "불러온 뒤에도 패배 화면 — " + s);
+            Assert.IsFalse(GameState.Modal, s);
+            Assert.AreEqual(Fighter.Phase.Free, pc.Me.State, s);
+            Assert.IsFalse(pc.Me.KO, s);
+            Assert.AreEqual("Home", w.Loader.Place, s);
+            var enc2 = StoryRunner.ParkingEncounter();
+            Assert.IsTrue(enc2 == null || enc2.State == Encounter.Phase.Armed, s);
+            // 남은 콜백 없음 — 패배 고르기를 불러도 시우가 주차장으로 안 옮겨짐(예전: Esc 가 남은 '그만'을 눌러 ResetAll 이 시우를 주차장 좌표로)
+            var p0 = M3Lab.Motor.Position;
+            hud?.DefeatChoose(false);
+            yield return Lab.Frames(5);
+            float moved = (M3Lab.Motor.Position - p0).magnitude;
+            Debug.Log($"[Q] Q62a 패배 화면에서 불러오기\n{s}\n패배 고르기 뒤 시우 이동 {moved:F2}m · 주차장까지 {Vector3.Distance(M3Lab.Motor.Position, pk):F0}m");
+            Assert.Less(moved, 0.5f, "패배 화면 콜백이 남아 시우를 옮김");
+        }
+
+        // ───────────────────────── Q62c G1(2026-11-05): 시비 카드(C1-24) 싸움이 시간 한도를 넘기면 패로 치고 전투를 끔 · 봇이 끈 입력·무적을 되돌림
+        //   (예전엔 Fight 그대로 루프를 빠져 카드가 끝난 뒤 전투가 켜진 채 자유 이동)
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q62c_Street_Card_Timeout_Ends_Combat()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var c = w.Def.Card("C1-24");
+            Assert.NotNull(c, "C1-24");
+            yield return Start(w, Mid(w.Def, 505, 16 * 60 + 40, SceneLoader.Zone1, m => m.G.Fatigue = 0));
+            w.StreetFightLimit = 2f;
+            int loss0 = w.Model.S.StreetLosses, win0 = w.Model.S.StreetWins;
+            var pc = Object.FindAnyObjectByType<PlayerCombat>();
+            var pin = pc.GetComponent<PInput>() ?? Object.FindAnyObjectByType<PInput>();
+            bool done = false, fought = false;
+            IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; }
+            w.StartCoroutine(Wrap());
+            float t0 = Time.realtimeSinceStartup;
+            while (!done && Time.realtimeSinceStartup - t0 < 300f) { if (pc.Active) fought = true; yield return null; }
+            yield return Free(w);
+            yield return Lab.Frames(10);
+            var enc = StoryRunner.ParkingEncounter();
+            string s = $"끝 {done} · 싸움 {fought} · 전투 {pc.Active} · 전투 맵 {pin.CombatInput} · 입력 켬 {pin.enabled} · 무적 {pc.Me.DebugInvuln} · 시비 {enc?.State} · 승 +{w.Model.S.StreetWins - win0} 패 +{w.Model.S.StreetLosses - loss0}";
+            Debug.Log("[Q] Q62c 시비 카드 시간 초과: " + s);
+            Assert.IsTrue(done, "카드가 안 끝남 — " + s);
+            Assert.IsTrue(fought, "싸움이 안 켜짐(시험 전제) — " + s);
+            Assert.IsFalse(pc.Active, "시간 초과 뒤 전투가 켜진 채 자유 이동 — " + s);
+            Assert.IsFalse(pin.CombatInput, s);
+            Assert.IsTrue(pin.enabled, "봇이 끈 입력이 안 돌아옴 — " + s);
+            Assert.IsFalse(pc.Me.DebugInvuln, s);
+            Assert.AreEqual(Encounter.Phase.Armed, enc.State, s);
+            Assert.AreEqual(loss0 + 1, w.Model.S.StreetLosses, "시간 초과 = 패 — " + s);
+        }
+
+        // ───────────────────────── Q62d G1(2026-11-05): 시비 카드(C1-24) 사람 손 — 대사 뒤 주차장에 들어가 손 놓고 지면 카드가 '그만'으로 끝내고 전투가 꺼짐
+        //   (QA B15 의 C1-24 사람 손 부분은 카드 조건 'after:school' 탓에 한 번도 안 돌았음 — 여기서 봄)
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q62d_Street_Card_Human_Loss_Ends_Combat()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var c = w.Def.Card("C1-24");
+            Assert.NotNull(c, "C1-24");
+            yield return Start(w, Mid(w.Def, 505, 16 * 60 + 40, SceneLoader.Zone1, m => m.G.Fatigue = 0));
+            w.BotSkill = 0f;                                  // 싸움은 사람(손 놓기)
+            w.Story.Bot = StoryRunner.BotMode.Fast;           // 대사는 빠르게
+            var pc = Object.FindAnyObjectByType<PlayerCombat>();
+            var pin = pc.GetComponent<PInput>() ?? Object.FindAnyObjectByType<PInput>();
+            int loss0 = w.Model.S.StreetLosses;
+            bool done = false, fought = false;
+            IEnumerator Wrap() { yield return w.RunCardBusy(c, true); done = true; }
+            w.StartCoroutine(Wrap());
+            float t0 = Time.realtimeSinceStartup;
+            Encounter enc = StoryRunner.ParkingEncounter();
+            int el0 = enc != null ? enc.Losses : 0;      // 패배(Lost)는 카드가 같은 프레임쯤 '그만'으로 넘겨 단계로는 못 잡음 → 인카운터 패 수로
+            while (!done && Time.realtimeSinceStartup - t0 < 240f)
+            {
+                enc = StoryRunner.ParkingEncounter();
+                // 대사가 끝나 '안으로 들어가면 시작'이면 주차장 안쪽(상대 앞)으로 — 사람이 걸어 들어가는 대신
+                if (enc != null && enc.State == Encounter.Phase.Armed && !Encounter.Suppress && !w.Story.InScene && !fought)
+                {
+                    M3Lab.Motor.Teleport(enc.Def.ToWorld(new Vector2(1.5f, -1.0f)) + Vector3.up * 0.1f, enc.Def.Yaw);
+                    yield return Lab.Frames(5);
+                }
+                if (pc.Active && !fought) { fought = true; pc.Me.DebugInvuln = false; pc.Me.Hp = 0; }
+                yield return null;
+            }
+            yield return Free(w);
+            yield return Lab.Frames(10);
+            enc = StoryRunner.ParkingEncounter();
+            bool lost = enc != null && enc.Losses > el0;
+            var hud = StageHud.Instance;
+            string s = $"끝 {done} · 싸움 {fought} · 짐 {lost} · 전투 {pc.Active} · 전투 맵 {pin.CombatInput} · 맵 {InputMaps.Enabled(w.Actions)} · 패배 화면 {(hud != null && hud.DefeatShown)} · 시비 {enc?.State} · 패 +{w.Model.S.StreetLosses - loss0}";
+            Debug.Log("[Q] Q62d 시비 카드 사람 손 패배: " + s);
+            Assert.IsTrue(done, "카드가 안 끝남 — " + s);
+            Assert.IsTrue(fought && lost, "싸움·패배가 안 일어남(시험 전제) — " + s);
+            Assert.IsFalse(pc.Active, "카드 시비에 진 뒤 전투 상태 — " + s);
+            Assert.IsFalse(pin.CombatInput, s);
+            Assert.AreEqual(InputMaps.Explore, InputMaps.Enabled(w.Actions), s);
+            Assert.IsFalse(hud != null && hud.DefeatShown, s);
+            Assert.AreEqual(Encounter.Phase.Armed, enc.State, s);
+            Assert.AreEqual(loss0 + 1, w.Model.S.StreetLosses, s);
+        }
+
+        // ───────────────────────── Q63 G1-N1(2026-11-05): 드릴 결과 카드가 떠 있는 동안 체육관 '나가기' 문이 안 열림 · 카드를 닫으면 문은 그대로 열림.
+        //   결과 카드 동안 PInput·Explore 는 살아 있지만 '드릴 뒤' 바쁨(AfterDrill — 카드를 닫을 때까지)이 문지기를 막음 — 고치기 전 코드에서도 통과(조사가 짚은 '카드 뒤 문'은 재현 안 됨, 회귀 시험으로 남김)
+        [UnityTest, Timeout(900000)]
+        public IEnumerator Q63_Door_Closed_Behind_Drill_Card()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            GymManager gm = null;
+            yield return Gym(w, 310, 16 * 60 + 45, x => gm = x);
+            Assert.IsTrue(gm.StartDrill("D01"), "D01 시작(사람)");
+            float r0 = Time.realtimeSinceStartup;
+            while (gm.Runner.State != DrillRunner.Phase.Round && Time.realtimeSinceStartup - r0 < 30f) yield return null;
+            gm.Runner.Abort();
+            for (int i = 0; i < 120 && !gm.Card.Visible; i++) yield return null;
+            Assert.IsTrue(gm.Card.Visible, "결과 카드(사람 — 자동으로 안 닫힘)");
+            var pin = Object.FindAnyObjectByType<PInput>();
+            string live = $"결과 카드 동안 입력 켬 {pin.enabled} · 맵 {InputMaps.Enabled(w.Actions)} · Free {w.Free} · 바쁨 '{w.Busy}'";
+            var exit = w.Loader.Stage.GetComponentsInChildren<StageDoor>(true).First(d => d.Target == SceneLoader.Zone1);
+            var sp = w.Loader.Stage.SpawnPoint("Spawn");
+            M3Lab.Motor.Teleport(sp.position + Vector3.up * 0.05f, sp.eulerAngles.y);
+            yield return Lab.Frames(3);
+            var near = Interactable.Nearest(M3Lab.Motor.Position);
+            int u0 = StageDoor.Uses;
+            exit.GetComponent<Interactable>().Use();       // PInput 이 E 에서 부르는 것과 같음(가장 가까운 상호작용)
+            yield return Lab.Frames(30);
+            string behind = $"카드 뒤 문 → 쓰임 +{StageDoor.Uses - u0} · {w.Loader.Place} · 로더 바쁨 {w.Loader.Busy} · 카드 {gm.Card.Visible} · 가장 가까운 {(near != null ? near.Prompt : "-")}";
+            Assert.AreEqual(u0, StageDoor.Uses, "결과 카드 뒤에서 문이 열림 — " + behind);
+            Assert.AreEqual(SceneLoader.Gym, w.Loader.Place, behind);
+            Assert.IsTrue(gm.Card.Visible, behind);
+            // 카드를 닫으면(자유 이동) 문은 열림 — 문지기가 평소 문까지 막지 않음
+            for (int i = 0; i < 300 && gm.Busy; i++) { gm.CloseCard(); yield return null; }
+            yield return Free(w);
+            exit.GetComponent<Interactable>().Use();
+            yield return Lab.Frames(10);
+            for (int i = 0; i < 1200 && w.Loader.Busy; i++) yield return null;
+            string open = $"카드 닫은 뒤 문 → 쓰임 +{StageDoor.Uses - u0} · {w.Loader.Place}";
+            Debug.Log($"[Q] Q63 드릴 결과 카드 뒤 문\n{live}\n{behind}\n{open}");
+            Assert.AreEqual(u0 + 1, StageDoor.Uses, open);
+            Assert.AreEqual(SceneLoader.Zone1, w.Loader.Place, open);
+        }
+
+        // ───────────────────────── Q64 G2(2026-11-05): 밤 경계마다 '다음' 판에 새벽 배달(06:00) — 22:00·23:00(내일 새벽) · 01:59(오늘 새벽) · 02:00 강제 귀가 뒤 · 05:02(강제 잠 구간) 뒤 ·
+        //   05:31 배달통 안내 · 토요일 밤(내일 일요일 = 배달 없음)은 '잠(이불)' 그대로. 예전엔 밤 내내 '잠(이불)'만이라 다음 새벽 배달이 HUD 어디에도 안 보였음
+        [UnityTest, Timeout(1200000)]
+        public IEnumerator Q64_Delivery_Shown_At_Night_Boundaries()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            var log = new List<string>();
+            void Quiet(WorldModel m) { m.G.Fatigue = 0; foreach (var c in w.Def.Cards) if (c.Demo && c.Kind != CardKind.Repeat && !m.CardDone(c.Id)) m.MarkCard(c, 3); }
+            string Next() => w.Hud != null ? w.Hud.NextLine : "";
+            void Check(string at, string want, bool has = true)
+            {
+                string n = Next();
+                log.Add($"{at}: {GameClock.DateText} {GameClock.TimeText} {w.Loader.Place} · {n}");
+                if (has) StringAssert.Contains(want, n, at + " '다음' 판");
+                else StringAssert.DoesNotContain(want, n, at + " '다음' 판");
+            }
+            // ① 3/10(화) 22:00 국밥집 — 내일(수) 새벽 배달
+            yield return Start(w, Mid(w.Def, 310, 22 * 60, "Gukbap", Quiet));
+            yield return Lab.Frames(20);
+            Check("22:00 국밥집", "배달"); Check("22:00 국밥집", "06:00");
+            Assert.IsTrue(PlaceMarker.All.Any(m => m != null && m.Func == "job_delivery" && m.isActiveAndEnabled), "국밥집 배달통 표시(시각과 관계없이)");
+            // ② 23:00
+            GameClock.SetDate(2026, 3, 10, 23 * 60);
+            yield return Lab.Frames(20);
+            Check("23:00 국밥집", "배달");
+            // ③ 3/11(수) 01:59 골목 — 오늘 새벽 배달 → 02:00 강제 귀가 → 집 05:30
+            yield return Start(w, Mid(w.Def, 311, 1 * 60 + 59, SceneLoader.Zone1, Quiet));
+            yield return Lab.Frames(10);
+            Check("01:59 골목", "배달");
+            int s0 = w.Sleeps;
+            GameClock.SetDate(2026, 3, 11, 2 * 60);
+            float z0 = Time.realtimeSinceStartup;
+            while (w.Busy != "잠" && Time.realtimeSinceStartup - z0 < 5f) yield return null;
+            Assert.AreEqual("잠", w.Busy, "02:00 강제 귀가가 안 걸림");
+            yield return Until(() => w.Sleeps > s0 && w.Free && !w.Loader.Busy, 90f);
+            yield return Lab.Frames(10);
+            Assert.AreEqual("Home", w.Loader.Place, "강제 귀가 → 집");
+            Assert.AreEqual(w.Def.Balance.Wake, (int)GameClock.Minutes, "05:30 기상");
+            Check("02:00 강제 귀가 뒤", "새벽 국밥 배달"); Check("02:00 강제 귀가 뒤", "06:00");
+            // ④ 3/12(목) 05:02 국밥집 — 02:00~05:30 은 깨어 있을 수 없음(강제 잠 → 집 05:30)
+            s0 = w.Sleeps;
+            yield return Start(w, Mid(w.Def, 312, 5 * 60 + 2, "Gukbap", Quiet));
+            yield return Until(() => w.Sleeps > s0 && w.Free && !w.Loader.Busy, 90f);
+            yield return Lab.Frames(10);
+            Assert.AreEqual("Home", w.Loader.Place, "05:02 = 강제 잠 구간 → 집");
+            Assert.AreEqual(w.Def.Balance.Wake, (int)GameClock.Minutes, "05:30 기상");
+            Check("05:02 뒤", "새벽 국밥 배달");
+            // ⑤ 05:31 국밥집 — 배달통 안내
+            yield return Start(w, Mid(w.Def, 312, 5 * 60 + 31, "Gukbap", Quiet));
+            yield return Lab.Frames(20);
+            string dp = w.MarkerPrompt("job_delivery");
+            log.Add($"05:31 배달통: {dp}");
+            StringAssert.StartsWith("새벽 국밥 배달 06:00~06:50", dp, "05:31 배달통 안내");
+            // ⑥ 3/14(토) 22:00 — 내일(일) 배달 없음
+            yield return Start(w, Mid(w.Def, 314, 22 * 60, SceneLoader.Zone1, Quiet));
+            yield return Lab.Frames(10);
+            Check("토 22:00 골목", "배달", false);
+            Debug.Log("[Q] Q64 밤 경계 배달 표시\n" + string.Join("\n", log));
+        }
+
+        // ───────────────────────── Q65 G5(2026-11-05): QA B07 순서(18:00 체육관 · 사람 드릴 1 + 플레이 10종 연속) — 드릴마다 게임 30분이라 8개 뒤 22:00 에 D08 부터 '문 닫았다'(게임 규칙 그대로, 이유는 관장 말로 뜸) ·
+        //   QA 봇 규칙(QaBot.KeepGymOpen — 마감 전이면 같은 날 18:00 으로)이면 11개 모두 시작
+        [UnityTest, Timeout(1500000)]
+        public IEnumerator Q65_Drill_Sequence_Gym_Close_And_Bot_Rule()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            yield return Start(w, Mid(w.Def, 310, 18 * 60, SceneLoader.Gym, m => { m.G.Fatigue = 0; foreach (var c in w.Def.Cards) if (c.Demo && c.Kind != CardKind.Repeat && !m.CardDone(c.Id)) m.MarkCard(c, 3); }));
+            GymManager gm = null;
+            for (int i = 0; i < 300 && gm == null; i++) { gm = GymManager.Instance; yield return null; }
+            Assert.NotNull(gm, "체육관");
+            var b = w.Def.Balance;
+            var ids = new List<string> { "D11" };
+            ids.AddRange(gm.Book.Drills.Where(x => x.Playable).Select(x => x.Id));
+            var log = new List<string>();
+            bool ok = false; double spent = 0;
+            IEnumerator One(string id)
+            {
+                GymState.Current.Fatigue = 0; GymState.Current.InjuryUntil = -1; GymState.Current.InjuryKind = "";
+                double t0 = GameClock.Minutes;
+                ok = gm.StartDrill(id, 0.9f);
+                spent = 0;
+                if (!ok) yield break;
+                float r0 = Time.realtimeSinceStartup;
+                while (gm.Runner.State != DrillRunner.Phase.Round && Time.realtimeSinceStartup - r0 < 30f) yield return null;
+                gm.Runner.Abort();
+                for (int i = 0; i < 300 && gm.Busy; i++) { gm.CloseCard(); yield return null; }
+                yield return Free(w);
+                spent = GameClock.Minutes - t0;
+            }
+            // ① 규칙 없이(예전 B07): 8개 뒤 22:00 — D08 부터 '문 닫았다'
+            int started = 0; string first = null; double at = -1; bool notice = false; string cue = "";
+            foreach (var id in ids)
+            {
+                yield return One(id);
+                if (ok) { started++; log.Add($"{id} 시작 · {spent:F1}분 → {GameClock.TimeText}"); Assert.That(spent, Is.InRange(b.DrillMinutes - 0.5, b.DrillMinutes + 1.5), $"{id} 드릴 하나 = 게임 {b.DrillMinutes}분"); }
+                else if (first == null) { first = id; at = GameClock.Minutes; notice = gm.Hud.NoticeShown; cue = gm.Hud.Cue; log.Add($"{id} 거절 {GameClock.TimeText} · 관장 말 '{cue}'"); }
+            }
+            Assert.AreEqual(8, started, "18:00 + 30분 × 8 = 22:00 까지 시작");
+            Assert.AreEqual("D08", first, "처음 막히는 드릴(QA t3·t5 와 같음)");
+            Assert.GreaterOrEqual((int)at, b.GymClose, "막힌 때 = 문 닫는 시각 뒤");
+            Assert.IsTrue(notice, "막히면 관장 말 판만(Q34)");
+            StringAssert.Contains("문 닫", cue, "막힌 이유가 화면에");
+            yield return Lab.Frames(200);
+            // ② QA 봇 규칙: 같은 날 18:00 부터 다시 — 드릴마다 KeepGymOpen
+            GameClock.SetDate(2026, 3, 10, 18 * 60);
+            yield return Free(w);
+            started = 0; int backs = 0; var refused = new List<string>();
+            foreach (var id in ids)
+            {
+                if (QaBot.KeepGymOpen(b)) { backs++; log.Add($"봇 규칙: 시계 되돌림 → {GameClock.TimeText}"); }
+                yield return One(id);
+                if (ok) started++; else refused.Add($"{id} {GameClock.TimeText} '{gm.Hud.Cue}'");
+            }
+            Debug.Log("[Q] Q65 드릴 순서와 체육관 마감\n" + string.Join("\n", log) + $"\n봇 규칙: 시작 {started}/{ids.Count} · 되돌림 {backs}");
+            Assert.IsEmpty(refused, "봇 규칙으로도 막힌 드릴: " + string.Join(", ", refused));
+            Assert.AreEqual(ids.Count, started);
+            Assert.GreaterOrEqual(backs, 1, "되돌림이 한 번은 있어야(11개 × 30분 > 4시간)");
+        }
+
+        // ───────────────────────── Q66(2026-11-05 QA B16 에서 찾음): 드릴 메뉴를 열고 닫아도 Menu 맵이 켜진 채 — 일시정지 메뉴(GameUi)·휴대폰·고르기 판은 Menu 맵이 늘 켜져 있다고 봄.
+        //   예전엔 드릴 메뉴가 닫을 때 Menu 맵을 꺼서, 드릴을 한 번 고른 뒤엔 일시정지 메뉴 ↑↓·Enter 가 안 먹었음(카드 중 '저장하고 타이틀로'를 못 고름)
+        [UnityTest, Timeout(600000)]
+        public IEnumerator Q66_Drill_Menu_Keeps_Menu_Map_On()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            GymManager gm = null;
+            yield return Gym(w, 310, 18 * 60, x => gm = x);
+            var menu = w.Actions.FindActionMap("Menu", false);
+            Assert.NotNull(menu, "Menu 맵");
+            bool before = menu.enabled;
+            var mk = gm.Markers.First(x => x != null && x.isActiveAndEnabled && gm.Book.Find(x.DrillId) != null && gm.Book.Find(x.DrillId).Playable);
+            gm.OnMarkerUsed(mk);
+            yield return Lab.Frames(5);
+            bool opened = gm.Menu.Open;
+            gm.Menu.Close();
+            yield return Lab.Frames(5);
+            Debug.Log($"[Q] Q66 드릴 메뉴({mk.DrillId}) 열기 {opened} → 닫은 뒤 Menu 맵 {before} → {menu.enabled}");
+            Assert.IsTrue(opened, "드릴 메뉴가 안 열림(시험 전제)");
+            Assert.IsTrue(before, "Menu 맵은 처음부터 켜져 있어야(GameUi)");
+            Assert.IsTrue(menu.enabled, "드릴 메뉴를 닫은 뒤 Menu 맵이 꺼짐 — 일시정지 메뉴 ↑↓·Enter 가 안 먹음");
+        }
+
+        // ───────────────────────── Q67(2026-11-05 QA B15 에서 찾음): 봇 스파링(D11) 뒤 시우에 전투 봇이 남지 않음 — 예전엔 남아 다음 시비를 혼자 싸워 이겼음('손 놓고 지기'가 이김)
+        [UnityTest, Timeout(600000)]
+        public IEnumerator Q67_Spar_Bot_Removed_After_Drill()
+        {
+            WorldRunner w = null;
+            yield return Open(x => w = x);
+            GymManager gm = null;
+            yield return Gym(w, 310, 18 * 60, x => gm = x);
+            GymState.Current.Fatigue = 0; GymState.Current.InjuryUntil = -1;
+            Assert.IsTrue(gm.StartDrill("D11", 0.9f), "D11 시작(봇)");
+            yield return Until(() => gm.Runner.State == DrillRunner.Phase.Round, 30f);
+            yield return Real(1.5f);                     // 봇이 라운드 중 붙음
+            var pc = Object.FindAnyObjectByType<PlayerCombat>();
+            bool during = pc.GetComponent<FightBot>() != null;
+            gm.Runner.Abort();
+            for (int i = 0; i < 300 && gm.Busy; i++) { gm.CloseCard(); yield return null; }
+            yield return Free(w);
+            yield return Lab.Frames(5);
+            var left = pc.GetComponent<FightBot>();
+            Debug.Log($"[Q] Q67 스파링 봇: 라운드 중 붙음 {during} · 끝난 뒤 남음 {(left != null ? (left.enabled ? "켜짐" : "꺼짐") : "없음")}");
+            Assert.IsTrue(during, "라운드 중 봇이 안 붙음(시험 전제)");
+            Assert.IsTrue(left == null, "스파링이 끝났는데 전투 봇이 시우에 남음");
+        }
+
         // ───────────────────────── Q57 글자·배경(2026-10-31 대표 "글자와 배경이 어지럽게 겹친다"): 대표 화면마다 판 ≥ 85% · 대비 · 글자끼리 겹침 0 · 화면 밖 0 · 공중/누운 월드 글자 0
         //   화면은 사실 화면 대신 UI 뺀 카메라 그림으로 배경을 잼. 나머지 화면(알바·전투·자전거·일시정지…)은 QA 봇 실제 화면(text_bad.tsv) — docs/15 8-12
         [UnityTest, Timeout(1800000)]

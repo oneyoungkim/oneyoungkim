@@ -207,7 +207,7 @@ namespace Haengin
             if (Busy || Book == null) return;
             var def = Book.Find(m.DrillId);
             if (def == null) return;
-            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Notice("이윤준", gw); StartCoroutine(HideHudLater(2.5f)); return; } }
+            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Notice("이윤준", gw); Debug.Log($"[Gym] 드릴 {def.Id} 문지기: {gw} · {GameClock.TimeText}"); StartCoroutine(HideHudLater(2.5f)); return; } }
             if (def.Id == "D14") { Menu.ShowBoard(Book, GymState.Current, null); return; }
             Menu.Show(def, GymState.Current, () => StartDrill(def.Id), () => StartCoroutine(SimCo(def)), null);
         }
@@ -218,7 +218,7 @@ namespace Haengin
             if (Busy || Book == null) return false;
             var def = Book.Find(id);
             if (def == null || Actors == null) return false;
-            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Notice("이윤준", gw); StartCoroutine(HideHudLater(2.5f)); return false; } }
+            if (Gate != null) { var gw = Gate(def); if (!string.IsNullOrEmpty(gw)) { Hud.Notice("이윤준", gw); Debug.Log($"[Gym] 드릴 {id} 문지기: {gw} · {GameClock.TimeText}"); StartCoroutine(HideHudLater(2.5f)); return false; } }     // G5: 거절도 로그에(예전엔 '막힘'만 남아 QA 가 이유를 몰랐음)
             string blocked = DrillSim.DirectBlocked(def, GymState.Current, GymSave.Today);
             if (blocked.Length > 0) { Hud.Notice("이윤준", blocked); Debug.Log($"[Gym] 드릴 {id} 막힘: {blocked}"); StartCoroutine(HideHudLater(2.5f)); return false; }
             var station = DrillStations.Create(def.Id);
